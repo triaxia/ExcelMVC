@@ -84,7 +84,8 @@ namespace ExcelMvc.Runtime
             var location = typeof (ObjectFactory<T>).Assembly.Location; // "" for sandbox execution 
             if (!string.IsNullOrEmpty(location))
             {
-                var path = Path.GetDirectoryName(new Uri(location).AbsolutePath);
+                //var path = Path.GetDirectoryName(new Uri(location).AbsolutePath);
+                var path = Path.GetDirectoryName(location);
                 var files = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
 
                 // exclude files already loaded
