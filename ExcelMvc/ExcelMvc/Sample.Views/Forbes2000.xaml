@@ -1,0 +1,110 @@
+﻿<Window x:Class="Sample.Views.Forbes2000"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStartupLocation="CenterOwner"
+        Title="Forbes (Wpf)" Height="400" Width="800">
+    <Grid>
+        <DataGrid x:Name="CompanyList" RowHeight="26" HeadersVisibility="All" AutoGenerateColumns="False" CanUserReorderColumns="False"
+                     HorizontalScrollBarVisibility="Visible" CanUserSortColumns="False" Grid.Row="0" CanUserAddRows="False"
+                     CanUserDeleteRows="False" SelectionUnit="CellOrRowHeader">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Company" SortMemberPath="Name">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Name, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Name, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Industry" SortMemberPath="Industry">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Industry, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Industry, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Country" SortMemberPath="Country">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Country, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Country, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Country" SortMemberPath="MarketValue">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=MarketValue, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=MarketValue, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Sales" SortMemberPath="Sales">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Sales, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Sales, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Profits" SortMemberPath="Profits">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Profits, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Profits, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Assets" SortMemberPath="Assets">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Assets, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Assets, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Rank" SortMemberPath="Rank">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Rank, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding Path=Rank, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

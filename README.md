@@ -1,13 +1,15 @@
-NppSalt - A simple Notepad++ Plug-in. 
+ExcelMvc 
+Writing Excel applications in C# with the MVC/MVVM pattern 
 
-Currently it provides the following functions:
+If you are a fan of developing applications using the MVC/MVVM pattern and you love Excel
+as the user interface for your applications, then ExcelMvc is the right component for you.
+It allows you to develop Excel applications with little or no VBA code. Everything you write
+can be tested, making Test-Driven-Development with Excel a possibility for the first time.
 
-1) It flashes the Notepad++ screen when it detects any open files have been changed by other people;
+Simply download the ExcelMvc source code and follow the Sample solution to get your ExcelMvc
+development started. You will find it is easy to develop fully testable Excel applications.
 
-2) It prevents concurrent Notepad++ sessions from overwriting each other's changes.
-   
-To compile the plug-in, simply open NppSalt.sln using Visual Studio 2010 (or a later version) and build.
-To deploy the plug-in, simply copy NppSalt.dll to Notepad++'s Plugins folder.
+More documentation will be included in the Sample solution.
 
 Peter Gu
 pete.x.gu@gmail.com
