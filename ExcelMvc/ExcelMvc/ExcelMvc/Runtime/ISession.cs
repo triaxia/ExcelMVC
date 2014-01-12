@@ -34,7 +34,8 @@ using System;
 namespace ExcelMvc.Runtime
 {
     /// <summary>
-    /// Defines an interface for sessions
+    /// Defines an interface for ExcelMvc sessions. ExcelMvc session objects are created by ExcelMvc 
+    /// automatically
     /// </summary>
     public interface ISession : IDisposable
     {

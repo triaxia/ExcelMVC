@@ -49,23 +49,6 @@ namespace ExcelMvc.Runtime
         {
         }
 
-        public void Update(Range range, int rowOffset, int rows, int columnOffset, int columns, object value)
-        {
-            if (IsCurrentThreadExcel())
-                range.MakeRange(rowOffset, rows, columnOffset, columns).Value = value;
-            else
-                Enqueue(new Item { Range = range, RowOffset = rowOffset, Rows = rows, ColumnOffset = columnOffset, Columns = columns , Value = value });
-        }
-
-        public void Update(Range range, Range rowIdStart, int rowCount, string rowId, int rows, int columnOffset, int columns, object value)
-        {
-            if (IsCurrentThreadExcel())
-                range.MakeRange(RowOffsetFromRowId(rowIdStart, rowCount, rowId), rows, columnOffset, columns).Value = value;
-            else
-                Enqueue(new Item { Range = range, RowIdStart = rowIdStart, RowId = rowId, RowCount = rowCount,
-                    Rows = rows, ColumnOffset = columnOffset, Columns = columns, Value = value });
-        }
-
         public class Item
         {
             public Range Range { get; set; }
@@ -80,6 +63,23 @@ namespace ExcelMvc.Runtime
             public int RowCount { get; set; }
         }
         private readonly Queue<Item> _items = new Queue<Item>();
+
+        public void Update(Range range, int rowOffset, int rows, int columnOffset, int columns, object value)
+        {
+            if (IsExcelMainThread())
+                range.MakeRange(rowOffset, rows, columnOffset, columns).Value = value;
+            else
+                Enqueue(new Item { Range = range, RowOffset = rowOffset, Rows = rows, ColumnOffset = columnOffset, Columns = columns , Value = value });
+        }
+
+        public void Update(Range range, Range rowIdStart, int rowCount, string rowId, int rows, int columnOffset, int columns, object value)
+        {
+            if (IsExcelMainThread())
+                range.MakeRange(RowOffsetFromRowId(rowIdStart, rowCount, rowId), rows, columnOffset, columns).Value = value;
+            else
+                Enqueue(new Item { Range = range, RowIdStart = rowIdStart, RowId = rowId, RowCount = rowCount,
+                    Rows = rows, ColumnOffset = columnOffset, Columns = columns, Value = value });
+        }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         private void Enqueue(Item item)
@@ -160,7 +160,7 @@ namespace ExcelMvc.Runtime
             return -1;
         }
 
-        public static bool IsCurrentThreadExcel()
+        public static bool IsExcelMainThread()
         {
             var threadName = Thread.CurrentThread.Name;
             return !string.IsNullOrEmpty(threadName) && threadName.CompareOrdinalIgnoreCase("VSTA_Main") == 0;

@@ -93,7 +93,7 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Gets the book id, defined as a Custom Document Propety named "ExcelMvc"
+        /// Gets the book id, as defined by the Custom Document Propety named "ExcelMvc"
         /// </summary>
         public override string Id
         {
