@@ -39,17 +39,28 @@ using Microsoft.Office.Interop.Excel;
 
 namespace ExcelMvc.Runtime
 {
+    /// <summary>
+    /// Encapsulates Range updating functions
+    /// </summary>
     public class RangeUpdator
     {
+        public static string NameOfAsynUpdateThread {
+            get { return "AsynUodateThread"; }
+        }
+
         private static readonly Lazy<RangeUpdator> Instane 
             = new Lazy<RangeUpdator>(() => new RangeUpdator(), true);
+
+        /// <summary>
+        /// Singleton
+        /// </summary>
         public static RangeUpdator Instance { get { return Instane.Value; } }
 
         private RangeUpdator()
         {
         }
 
-        public class Item
+        private class Item
         {
             public Range Range { get; set; }
             public int RowOffset { get; set; }
@@ -66,19 +77,19 @@ namespace ExcelMvc.Runtime
 
         public void Update(Range range, int rowOffset, int rows, int columnOffset, int columns, object value)
         {
-            if (IsExcelMainThread())
-                range.MakeRange(rowOffset, rows, columnOffset, columns).Value = value;
-            else
+            if (IsAsyncUpdateThread())
                 Enqueue(new Item { Range = range, RowOffset = rowOffset, Rows = rows, ColumnOffset = columnOffset, Columns = columns , Value = value });
+            else
+                range.MakeRange(rowOffset, rows, columnOffset, columns).Value = value;
         }
 
         public void Update(Range range, Range rowIdStart, int rowCount, string rowId, int rows, int columnOffset, int columns, object value)
         {
-            if (IsExcelMainThread())
-                range.MakeRange(RowOffsetFromRowId(rowIdStart, rowCount, rowId), rows, columnOffset, columns).Value = value;
-            else
+            if (IsAsyncUpdateThread())
                 Enqueue(new Item { Range = range, RowIdStart = rowIdStart, RowId = rowId, RowCount = rowCount,
                     Rows = rows, ColumnOffset = columnOffset, Columns = columns, Value = value });
+            else
+                range.MakeRange(RowOffsetFromRowId(rowIdStart, rowCount, rowId), rows, columnOffset, columns).Value = value;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -160,10 +171,10 @@ namespace ExcelMvc.Runtime
             return -1;
         }
 
-        public static bool IsExcelMainThread()
+        private static bool IsAsyncUpdateThread()
         {
             var threadName = Thread.CurrentThread.Name;
-            return !string.IsNullOrEmpty(threadName) && threadName.CompareOrdinalIgnoreCase("VSTA_Main") == 0;
+            return !string.IsNullOrEmpty(threadName) && threadName.CompareOrdinalIgnoreCase(NameOfAsynUpdateThread) == 0;
         }
     }
 }

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
+using ExcelMvc.Runtime;
 
 namespace Sample.Application.ViewModels
 {
@@ -87,7 +88,7 @@ namespace Sample.Application.ViewModels
         {
             if (start)
             {
-                _updateThread = new Thread(RunUpdate);
+                _updateThread = new Thread(RunUpdate) {Name = RangeUpdator.NameOfAsynUpdateThread};
                 _stopEvent = new ManualResetEvent(false);
                 _updateThread.Start();
             }
