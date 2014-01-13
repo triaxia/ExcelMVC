@@ -1,6 +1,3 @@
-ExcelMvc - Writing Excel applications in .NET using the MVC/MVVM pattern
-------------------------------------------------------------------------
-
 If you are a fan of building applications using the MVC/MVVM pattern and you love Excel as the user interface for
 your applications, then ExcelMvc is the justframework you need.
 
