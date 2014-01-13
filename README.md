@@ -1,5 +1,5 @@
 If you are a fan of building applications using the MVC/MVVM pattern and you love Excel as the user interface for
-your applications, then ExcelMvc is the justframework you need.
+your applications, then ExcelMvc is the framework you need.
 
 ExcelMvc lets you write Excel applications like Silverlight/WPF or WinForm ones using the MVC/MVVM pattern. You
 define your application's views in Excel and implement their business models and view models (controllers) in C#
