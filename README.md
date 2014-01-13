@@ -1,4 +1,9 @@
-If you are a fan of building applications using MVC designs and you love Excel as the user interface for your applications,
+ExcelMvc
+========
+Writing Excel applications in C# using MVC designs
+--------------------------------------------------
+
+If you are a fan of building applications using the MVC designs and you love Excel as the user interface for your applications,
 then ExcelMvc is the right framework for you.
 
 ExcelMvc lets you write Excel applications like Silverlight/WPF or WinForm applications using MVC designs. You define your 
