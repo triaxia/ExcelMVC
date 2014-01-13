@@ -6,4 +6,4 @@ applications' views in Excel and implement their models and view models (control
 
 Simply download the ExcelMvc source code and follow the Sample solution to get your ExcelMvc development started.
 
- More documentation will be included in the Sample solution.
+More documentation can be found within the Sample solution.
