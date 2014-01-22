@@ -51,7 +51,7 @@ namespace Sample.Application.ViewModels
 
         static void Book_Opening(object sender, ViewEventArgs args)
         {
-            // cancels out if the book being opened is not an ExcelMvc book, whose view id is
+            // cancel out if the book being opened is not "Forbes2000", whose view id is
             // defined by the Custom Document Propety named "ExcelMvc".
             if (args.View.Id != ViewName)
                 args.Cancel();
@@ -59,7 +59,7 @@ namespace Sample.Application.ViewModels
 
         static void Book_Opened(object sender, ViewEventArgs args)
         {
-            // creates the application model for the book opened
+            // create the application model for the book opened
             if (args.View.Id == ViewName)
                 Views[args.View] = new Forbes(args.View);
         }
@@ -70,7 +70,7 @@ namespace Sample.Application.ViewModels
 
         static void Book_Closed(object sender, ViewEventArgs args)
         {
-            // removes the applicaton model for the book closed
+            // remove the applicaton model for the book closed
             Views.Remove(args.View);
         }
 

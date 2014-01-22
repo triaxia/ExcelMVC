@@ -45,33 +45,36 @@ namespace Sample.Application.ViewModels
 {
     internal class Forbes
     {
-        private readonly Sheet _forbesSheet;
-        private readonly Table _companyTable;
-        private readonly Form _companyForm;
-        private readonly Table _countryTable;
-        private readonly Table _industryTable;
+        private Sheet ForbesSheet { get; set; }
+        private Table CompanyTable { get; set; }
+        private Form  CompanyForm { get; set; }
+        private Table CountryTable { get; set; }
+        private Table IndustryTable { get; set; }
+        private bool IsLoaded { get; set; }
+        private bool IsUpdating { get; set; }
 
         public Forbes(View view)
         {
             view.HookBindingFailed(_view_BindFailed, true);
 
-            _forbesSheet = (Sheet) view.Find(Binding.ViewType.Sheet, "Forbes");
-            _forbesSheet.HookClicked(LoadAllClicked, "LoadForbes", true);
-            _forbesSheet.HookClicked(ClearAllClicked, "ClearForbes", true);
-            _forbesSheet.HookClicked(StartUpdateClicked, "StartUpdate", true);
-            _forbesSheet.HookClicked(ShowColumnClicked, "ShowColumn", true);
-            _forbesSheet.HookClicked(ShowDialogClicked, "ShowDialog", true);
+            ForbesSheet = (Sheet) view.Find(Binding.ViewType.Sheet, "Forbes");
+            ForbesSheet.HookClicked(LoadAllClicked, "LoadForbes", true);
+            ForbesSheet.HookClicked(ClearAllClicked, "ClearForbes", true);
+            ForbesSheet.HookClicked(StartUpdateClicked, "StartUpdate", true);
+            ForbesSheet.HookClicked(ShowColumnClicked, "ShowColumn", true);
+            ForbesSheet.HookClicked(ShowDialogClicked, "ShowDialog", true);
 
-            _companyTable = (Table)_forbesSheet.Find(Binding.ViewType.Table, "Company");
-            _companyTable.SelectionChanged += _companyTable_SelectionChanged;
-            _companyTable.ObjectChanged += _companyTable_ObjectChanged;
-            _companyTable.Model = new CompanyList();
+            CompanyTable = (Table)ForbesSheet.Find(Binding.ViewType.Table, "Company");
+            CompanyTable.SelectionChanged += _companyTable_SelectionChanged;
+            CompanyTable.ObjectChanged += _companyTable_ObjectChanged;
+            CompanyTable.Model = new CompanyList();
 
-            _companyForm = (Form)_forbesSheet.Find(Binding.ViewType.Form, "Company");
-            _companyForm.ObjectChanged += _companyForm_ObjectChanged;
+            CompanyForm = (Form)ForbesSheet.Find(Binding.ViewType.Form, "Company");
+            CompanyForm.ObjectChanged += _companyForm_ObjectChanged;
 
-            _countryTable = (Table) view.Find(Binding.ViewType.Table, "Country");
-            _industryTable = (Table) view.Find(Binding.ViewType.Table, "Industry");
+            CountryTable = (Table) view.Find(Binding.ViewType.Table, "Country");
+            IndustryTable = (Table) view.Find(Binding.ViewType.Table, "Industry");
+            EnableControls();
         }
 
         void _companyForm_ObjectChanged(object sender, ObjectChangedArgs args)
@@ -84,13 +87,13 @@ namespace Sample.Application.ViewModels
         void _companyTable_ObjectChanged(object sender, ObjectChangedArgs args)
         {
             var model = args.Items.Last();
-            if (model == _companyForm.Model)
+            if (model == CompanyForm.Model)
                 ((Company) model).RaiseChanged();
         }
 
         void _companyTable_SelectionChanged(object sender, SelectionChangedArgs args)
         {
-            _companyForm.Model = args.Items.Last();
+            CompanyForm.Model = args.Items.Last();
         }
 
         private void _view_BindFailed(object sender, BindingFailedEventArgs args)
@@ -100,29 +103,27 @@ namespace Sample.Application.ViewModels
 
         void LoadAllClicked(object sender, CommandEventArgs args)
         {
-            var companyList =(CompanyList) _companyTable.Model;
+            var companyList =(CompanyList) CompanyTable.Model;
             companyList.Load();
             RebindReferenceLists(companyList);
             companyList.RaiseChanged();
-
-            _forbesSheet.FindCommand("LoadForbes").IsEnabled = false;
-            _forbesSheet.FindCommand("ClearForbes").IsEnabled = true;
+            IsLoaded = true;
+            EnableControls();
         }
 
         void ClearAllClicked(object sender, CommandEventArgs args)
         {
-            var companyList = (CompanyList)_companyTable.Model;
+            var companyList = (CompanyList)CompanyTable.Model;
             companyList.Unload();
             RebindReferenceLists(companyList);
-
-            _forbesSheet.FindCommand("LoadForbes").IsEnabled = true;
-            _forbesSheet.FindCommand("ClearForbes").IsEnabled = false;
+            IsLoaded = false;
+            EnableControls();
         }
 
         private void RebindReferenceLists(CompanyList clist)
         {
-            _countryTable.Model = clist.CountryList;
-            _industryTable.Model = clist.IndustryList;
+            CountryTable.Model = clist.CountryList;
+            IndustryTable.Model = clist.IndustryList;
         }
 
         void StartUpdateClicked(object sender, CommandEventArgs args)
@@ -131,24 +132,31 @@ namespace Sample.Application.ViewModels
             var update = !(bool) (cmd.Value ?? false);
             cmd.Value = update;
             cmd.Caption = update ? "Stop Update" : "Start Update";
-            var companyList = (CompanyList)_companyTable.Model;
+            var companyList = (CompanyList)CompanyTable.Model;
             companyList.Update(update);
+            IsUpdating = update;
+            EnableControls();
         }
 
         private void ShowColumnClicked(object sender, CommandEventArgs args)
         {
-            var visible =_companyTable.ToggleColumnVisibility("Industry");
+            var visible =CompanyTable.ToggleColumnVisibility("Industry");
             var cmd = (Command)sender;
             cmd.Caption = visible ? "Hide Industry" : "Show Industry";
         }
 
         private void ShowDialogClicked(object sender, CommandEventArgs args)
         {
-            //var items = _companyTable.SelecteItems;
-            //var v = new Forbes { Model = items };
-            var v = new Forbes2000 { Model = (IEnumerable)_companyTable.Model };
+            var v = new Forbes2000 { Model = (IEnumerable)CompanyTable.Model };
             var interop = new WindowInteropHelper(v) {Owner = App.Instance.Root.Handle};
-            v.ShowDialog();
+            v.ShowDialog(); // or v.Show();
+        }
+
+        private void EnableControls()
+        {
+            ForbesSheet.FindCommand("LoadForbes").IsEnabled = !IsLoaded && !IsUpdating;
+            ForbesSheet.FindCommand("ClearForbes").IsEnabled = IsLoaded && !IsUpdating; 
+            ForbesSheet.FindCommand("StartUpdate").IsEnabled = IsLoaded;
         }
     }
 }
