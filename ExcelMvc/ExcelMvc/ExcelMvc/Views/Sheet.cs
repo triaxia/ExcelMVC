@@ -204,7 +204,7 @@ namespace ExcelMvc.Views
                         cmd = new CommandButton(this, litem);
                     else if (litem is CheckBox)
                         cmd = new CommandCheckBox(this, litem);
-                    else if (litem is CommandOptionButton)
+                    else if (litem is OptionButton)
                         cmd = new CommandOptionButton(this, litem);
                     else if (litem is ListBox)
                         cmd = new CommandListBox(this, litem);
@@ -256,18 +256,6 @@ namespace ExcelMvc.Views
                 if (args.Handled)
                     return;
             }
-        }
-
-        /// <summary>
-        /// Finds the command by a command name
-        /// </summary>
-        /// <param name="name">Command name</param>
-        /// <returns>null or the command found</returns>
-        internal Command FindCommand(string name)
-        {
-            Command cmd;
-            _commands.TryGetValue(name, out cmd);
-            return cmd;
         }
     }
 }

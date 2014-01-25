@@ -52,9 +52,12 @@ namespace Sample.Application.ViewModels
         private Table IndustryTable { get; set; }
         private bool IsLoaded { get; set; }
         private bool IsUpdating { get; set; }
+        private Tests Tests { get; set; }
 
         public Forbes(View view)
         {
+            Tests = new Tests((Sheet)view.Find(Binding.ViewType.Sheet, "Test"));
+
             view.HookBindingFailed(_view_BindFailed, true);
 
             ForbesSheet = (Sheet) view.Find(Binding.ViewType.Sheet, "Forbes");
