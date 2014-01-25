@@ -47,6 +47,7 @@
     <Compile Include="Bindings\ObjectBinding.cs" />
     <Compile Include="Bindings\ErrorConverter.cs" />
     <Compile Include="Bindings\RangeConversion.cs" />
+    <Compile Include="Controls\CommandSpinner.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\RangeExtentions.cs" />
     <Compile Include="Runtime\Interface.cs" />

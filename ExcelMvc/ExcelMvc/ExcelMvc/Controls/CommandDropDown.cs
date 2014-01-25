@@ -30,6 +30,8 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using System;
+using ExcelMvc.Bindings;
 using ExcelMvc.Views;
 using Microsoft.Office.Interop.Excel;
 
@@ -60,16 +62,31 @@ namespace ExcelMvc.Controls
             set { Underlying.Enabled = value; }
         }
 
-        public override object Value
+        public object[] List
         {
             get
             {
-                return Underlying.ListIndex >= 0 ? Underlying.List[Underlying.ListIndex] : null;
+                var from = (Array)((object)Underlying.List);
+                return (object[])ObjectBinding.ChangeLBound<object>(from, 0);
+            }
+        }
+
+        public int ListIndex
+        {
+            get
+            {
+                return (int)Underlying.ListIndex - 1;
             }
             set
             {
-                
+                Underlying.ListIndex = value + 1;
             }
-       }
-   }
+        }
+
+        public override object Value
+        {
+            get { return ListIndex; }
+            set { ListIndex = Convert.ToInt32(value); }
+        }
+    }
 }

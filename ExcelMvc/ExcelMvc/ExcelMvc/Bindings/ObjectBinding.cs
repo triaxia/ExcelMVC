@@ -215,5 +215,27 @@ namespace ExcelMvc.Bindings
             }
             return parameters;
         }
+
+        /// <summary>
+        /// Changes the lower bounds of an array
+        /// </summary>
+        /// <typeparam name="T">Element type</typeparam>
+        /// <param name="value">Array to be changed</param>
+        /// <param name="lowerBound">Lower bound</param>
+        /// <returns>Changed array</returns>
+        public static Array ChangeLBound<T>(Array value, int lowerBound)
+        {
+            var lbounds = new int[value.Rank];
+            var lengths = new int[value.Rank];
+            for (var idx = 0; idx < value.Rank; idx++)
+            {
+                lbounds[idx] = lowerBound;
+                lengths[idx] = value.GetLength(idx);
+            }
+            var to = Array.CreateInstance(typeof(object), lengths, lbounds);
+            Array.Copy(value, to, value.Length);
+            return to;
+        }
+
     }
 }

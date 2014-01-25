@@ -182,6 +182,7 @@ namespace ExcelMvc.Views
             CreateCommands(sheet.OptionButtons(), names);
             CreateCommands(sheet.ListBoxes(), names);
             CreateCommands(sheet.DropDowns(), names);
+            CreateCommands(sheet.Spinners(), names);
             CreateCommands(sheet.Shapes, names);
 
             foreach (var cmd in _commands.Values)
@@ -210,6 +211,8 @@ namespace ExcelMvc.Views
                         cmd = new CommandListBox(this, litem);
                     else if (litem is DropDown)
                         cmd = new CommandDropDown(this, litem);
+                    else if (litem is Spinner)
+                        cmd = new CommandSpinner(this, litem);
                     else if (litem is GroupObject)
                     {
                         names.Insert(~idx, litem.Name);

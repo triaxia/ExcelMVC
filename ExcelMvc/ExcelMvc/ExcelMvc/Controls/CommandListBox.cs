@@ -29,6 +29,9 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
 Boston, MA 02110-1301 USA.
 */
+
+using System;
+using ExcelMvc.Bindings;
 using ExcelMvc.Views;
 using Microsoft.Office.Interop.Excel;
 
@@ -59,10 +62,52 @@ namespace ExcelMvc.Controls
             set { Underlying.Enabled = value; }
         }
 
+        public object[] Selected
+        {
+            get
+            {
+                var from = (Array) ((object)Underlying.Selected);
+                return (object[])ObjectBinding.ChangeLBound<object>(from, 0);
+            }
+            set
+            {
+                Underlying.Selected = ObjectBinding.ChangeLBound<object>(value, 1);
+            }
+        }
+
+        public object[] List
+        {
+            get
+            {
+                var from = (Array) ((object) Underlying.List);
+                return (object[])ObjectBinding.ChangeLBound<object>(from, 0);
+            }
+        }
+
+        public bool IsMultiSelect
+        {
+            get
+            {
+                return ((int)Underlying.MultiSelect) != (int)Constants.xlNone;
+            }
+        }
+
+        public int ListIndex
+        {
+            get
+            {
+                return (int) Underlying.ListIndex - 1;
+            }
+            set
+            {
+                Underlying.ListIndex = value + 1;
+            }
+        }
+
         public override object Value
         {
-            get { return Underlying.Selected; }
-            set { Underlying.Selected = value; }
+            get { return ListIndex; }
+            set { ListIndex = Convert.ToInt32(value); }
         }
     }
 }
