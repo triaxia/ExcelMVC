@@ -129,10 +129,10 @@ namespace ExcelMvc.Bindings
                 throw new Exception(string.Format(Resource.ErrorNoPropertySet, path, source.GetType().FullName));
             if (property.PropertyType == MatrixType)
             {
-                if (value.GetType() != MatrixType)
+                if (value == null || value.GetType() != MatrixType)
                     value = new[,] { { value } };
             }
-            else if (value.GetType() == MatrixType)
+            else if (value != null && value.GetType() == MatrixType)
             {
                 var matrix = (object[,])value;
                 value = matrix[matrix.GetLowerBound(0), matrix.GetLowerBound(1)];

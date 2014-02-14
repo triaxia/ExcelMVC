@@ -112,7 +112,8 @@ namespace ExcelMvc.Bindings
             var count = 0;
             if (to.Count == 1)
             {
-                var newValue = Convert.ChangeType(changed.Value, toValue.GetType());
+                object newValue = (toValue == null || changed.Value == null) ? changed.Value
+                    : Convert.ChangeType(changed.Value, toValue.GetType());
                 if (!object.Equals(toValue, newValue))
                 {
                     toValue = newValue;
