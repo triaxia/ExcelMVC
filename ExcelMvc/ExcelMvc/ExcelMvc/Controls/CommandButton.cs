@@ -37,9 +37,15 @@ namespace ExcelMvc.Controls
 {
     public class CommandButton : Command
     {
+        /// <summary>
+        /// Underlying object
+        /// </summary>
+        public Button Underlying { get; protected set; }
+
         public CommandButton(View host, Button button)
-            : base(host, button)
+            : base(host)
         {
+            Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
         }
 
@@ -61,6 +67,12 @@ namespace ExcelMvc.Controls
         }
 
         public override object Value { get; set; }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Underlying = null;
+        }
 
     }
 }

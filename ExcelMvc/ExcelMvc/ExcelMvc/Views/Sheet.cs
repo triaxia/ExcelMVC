@@ -36,6 +36,7 @@ using ExcelMvc.Bindings;
 using Microsoft.Office.Interop.Excel;
 using ExcelMvc.Controls;
 using ExcelMvc.Extensions;
+using System.Collections;
 
 namespace ExcelMvc.Views
 {
@@ -79,7 +80,7 @@ namespace ExcelMvc.Views
             get
             {
                 var list = _forms.Values.Select(x => (View)x).ToList();
-                list.AddRange(_tables.Values.ToList());
+                list.AddRange(_tables.Values.ToList() as IEnumerable<View>);
                 return list;
             }
         }
@@ -176,25 +177,67 @@ namespace ExcelMvc.Views
             var names = (from Comment item in sheet.Comments select item.Shape.Name).ToList();
             names.Sort();
 
-            CreateCommands(sheet.GroupObjects(), names);
-            CreateCommands(sheet.Buttons(), names);
-            CreateCommands(sheet.CheckBoxes(), names);
-            CreateCommands(sheet.OptionButtons(), names);
-            CreateCommands(sheet.ListBoxes(), names);
-            CreateCommands(sheet.DropDowns(), names);
-            CreateCommands(sheet.Spinners(), names);
-            CreateCommands(sheet.Shapes, names);
+            CreateCommands((GroupObjects)sheet.GroupObjects(), names);
+            CreateCommands((Buttons)sheet.Buttons(), names);
+            CreateCommands((CheckBoxes)sheet.CheckBoxes(), names);
+            CreateCommands((OptionButtons)sheet.OptionButtons(), names);
+            CreateCommands((ListBoxes)sheet.ListBoxes(), names);
+            CreateCommands((DropDowns)sheet.DropDowns(), names);
+            CreateCommands((Spinners)sheet.Spinners(), names);
+            CreateCommands((Shapes)sheet.Shapes, names);
 
             foreach (var cmd in _commands.Values)
                 cmd.Clicked += cmd_Clicked;
         }
 
-        private void CreateCommands(dynamic items, List<string> names) 
+        private void CreateCommands(IEnumerable items, List<string> names) 
         {
-            foreach (dynamic item in items)
+            foreach (object item in items)
             {
                 int idx;
-                if ((idx = names.BinarySearch(item.Name)) >= 0 || !IsCreateable(item.OnAction))
+                string name = string.Empty;
+                string onAction = string.Empty;
+                if (item is Button)
+                {
+                    name = ((Button)item).Name;
+                    onAction = ((Button)item).OnAction;
+                }
+                else if (item is CheckBox)
+                {
+                    name = ((CheckBox)item).Name;
+                    onAction = ((CheckBox)item).OnAction;
+                }
+                else if (item is OptionButton)
+                {
+                    name = ((OptionButton)item).Name;
+                    onAction = ((OptionButton)item).OnAction;
+                }
+                else if (item is ListBox)
+                {
+                    name = ((ListBox)item).Name;
+                    onAction = ((ListBox)item).OnAction;
+                }
+                else if (item is DropDown)
+                {
+                    name = ((DropDown)item).Name;
+                    onAction = ((DropDown)item).OnAction;
+                }
+                else if (item is Spinner)
+                {
+                    name = ((Spinner)item).Name;
+                    onAction = ((Spinner)item).OnAction;
+                }
+                else if (item is GroupObject)
+                {
+                    name = ((GroupObject)item).Name;
+                    onAction = ((GroupObject)item).OnAction;
+                }
+                else if (item is Shape)
+                {
+                    name = ((Shape)item).Name;
+                    onAction = ((Shape)item).OnAction;
+                }
+                if ((idx = names.BinarySearch(name)) >= 0 || !IsCreateable(onAction))
                     continue;
 
                 Command cmd = null;
@@ -202,20 +245,20 @@ namespace ExcelMvc.Views
                 ActionExtensions.Try(() =>
                 {
                     if (litem is Button)
-                        cmd = new CommandButton(this, litem);
+                        cmd = new CommandButton(this, (Button)litem);
                     else if (litem is CheckBox)
-                        cmd = new CommandCheckBox(this, litem);
+                        cmd = new CommandCheckBox(this, (CheckBox)litem);
                     else if (litem is OptionButton)
-                        cmd = new CommandOptionButton(this, litem);
+                        cmd = new CommandOptionButton(this, (OptionButton)litem);
                     else if (litem is ListBox)
-                        cmd = new CommandListBox(this, litem);
+                        cmd = new CommandListBox(this, (ListBox)litem);
                     else if (litem is DropDown)
-                        cmd = new CommandDropDown(this, litem);
+                        cmd = new CommandDropDown(this, (DropDown)litem);
                     else if (litem is Spinner)
-                        cmd = new CommandSpinner(this, litem);
+                        cmd = new CommandSpinner(this, (Spinner)litem);
                     else if (litem is GroupObject)
                     {
-                        names.Insert(~idx, litem.Name);
+                        names.Insert(~idx, ((GroupObject)litem).Name);
                         var gitem = (GroupObject)litem;
                         var shapes = (from Shape x in gitem.ShapeRange from Shape y in x.GroupItems select y).ToArray();
                         gitem.Ungroup();
@@ -228,14 +271,14 @@ namespace ExcelMvc.Views
                         GroupShapes unused = null;
                         ActionExtensions.Try(() => unused = shape.GroupItems);
                         if (unused == null)
-                            cmd = new CommandShape(this, litem);
+                            cmd = new CommandShape(this, (Shape)litem);
                     }
                 });
 
                 if (cmd != null)
                 {
-                    _commands[item.Name] = cmd;
-                    names.Insert(~idx, item.Name);
+                    _commands[name] = cmd;
+                    names.Insert(~idx, name);
                 }
             }
         }

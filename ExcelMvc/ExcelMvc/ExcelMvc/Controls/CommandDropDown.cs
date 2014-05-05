@@ -39,9 +39,15 @@ namespace ExcelMvc.Controls
 {
     public class CommandDropDown : Command
     {
+        /// <summary>
+        /// Underlying object
+        /// </summary>
+        public DropDown Underlying { get; protected set; }
+
         public CommandDropDown(View host, DropDown button)
-            : base(host, button)
+            : base(host)
         {
+            Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
         }
 
@@ -87,6 +93,12 @@ namespace ExcelMvc.Controls
         {
             get { return ListIndex; }
             set { ListIndex = Convert.ToInt32(value); }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Underlying = null;
         }
     }
 }

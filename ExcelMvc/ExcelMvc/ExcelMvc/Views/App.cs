@@ -177,6 +177,8 @@ namespace ExcelMvc.Views
 
         void Deactivate(Workbook book)
         {
+            if (Books.Count < 1)
+                return;
             OnDeactivated(new ViewEventArgs(Books[book]));
         }
 
@@ -251,7 +253,7 @@ namespace ExcelMvc.Views
                 return;
 
             var caller = Underlying.Caller as string;
-            var cmd = FindCommand(Underlying.ActiveSheet, caller);
+            var cmd = FindCommand((Worksheet)Underlying.ActiveSheet, caller);
             if (cmd != null && cmd.IsEnabled)
                 cmd.FireClicked();
         }

@@ -38,9 +38,15 @@ namespace ExcelMvc.Controls
 {
     public class CommandCheckBox : Command
     {
+        /// <summary>
+        /// Underlying object
+        /// </summary>
+        public CheckBox Underlying { get; protected set; }
+
         public CommandCheckBox(View host, CheckBox button)
-            : base(host, button)
+            : base(host)
         {
+            Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
         }
 
@@ -63,8 +69,14 @@ namespace ExcelMvc.Controls
 
         public override object Value
         {
-            get { return ((int)Underlying.Value) == (int) Constants.xlOn; }
+            get { return (int.Parse(Underlying.Value.ToString())) == (int) Constants.xlOn; }
             set { Underlying.Value = Convert.ToBoolean(value) ? Constants.xlOn : Constants.xlOff; }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Underlying = null;
         }
     }
 }

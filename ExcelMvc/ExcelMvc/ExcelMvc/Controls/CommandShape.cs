@@ -37,10 +37,16 @@ namespace ExcelMvc.Controls
 {
     public class CommandShape : Command
     {
+        /// <summary>
+        /// Underlying object
+        /// </summary>
+        public Shape Underlying { get; protected set; }
+
         private bool _enabled;
         public CommandShape(View host, Shape shape)
-            : base(host, shape)
+            : base(host)
         {
+            Underlying = shape;
             Underlying.OnAction = MacroNames.CommandActionName;
             _enabled = true;
         }
@@ -75,5 +81,11 @@ namespace ExcelMvc.Controls
         }
 
         public override object Value { get; set; }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Underlying = null;
+        }
     }
 }

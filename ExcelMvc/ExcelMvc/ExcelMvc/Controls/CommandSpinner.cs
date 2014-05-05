@@ -38,9 +38,15 @@ namespace ExcelMvc.Controls
 {
     public class CommandSpinner : Command
     {
+        /// <summary>
+        /// Underlying object
+        /// </summary>
+        public Spinner Underlying { get; protected set; }
+
         public CommandSpinner(View host, Spinner button)
-            : base(host, button)
+            : base(host)
         {
+            Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
         }
 
@@ -64,7 +70,13 @@ namespace ExcelMvc.Controls
         public override object Value
         {
             get { return (int) Underlying.Value; }
-            set { Underlying.Value = Convert.ToBoolean(value); }
+            set { Underlying.Value = Convert.ToInt32(value); }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Underlying = null;
         }
     }
 }

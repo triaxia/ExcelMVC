@@ -175,7 +175,7 @@ namespace ExcelMvc.Views
                 //for (var idx = 0; idx < rows; idx++)
                 {
                     var cell = lbinding.MakeRange(0, 1, 0, 1);
-                    Shape box = boxes.AddShape(MsoAutoShapeType.msoShapeRoundedRectangle, cell.Left + 2, cell.Top + 2, 12, 12);
+                    Shape box = boxes.AddShape(MsoAutoShapeType.msoShapeRoundedRectangle, (int)cell.Left + 2, (int)cell.Top + 2, 12, 12);
                     box.Fill.Visible = MsoTriState.msoFalse;
                     box.TextFrame2.TextRange.ParagraphFormat.Alignment = MsoParagraphAlignment.msoAlignCenter;
                     box.TextFrame2.VerticalAnchor = MsoVerticalAnchor.msoAnchorMiddle;

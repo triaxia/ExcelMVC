@@ -73,7 +73,7 @@ namespace ExcelMvc.Views
         /// </summary>
         public override IEnumerable<View> Children
         {
-            get { return _sheets.Values.ToList(); }
+            get { return _sheets.Values.ToList() as IEnumerable<View>; }
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace ExcelMvc.Views
             get
             {
                 var value = "";
-                ActionExtensions.Try(() => value = Underlying.CustomDocumentProperties[App.ExcelMvc].Value);
+                ActionExtensions.Try(() => value = ((Microsoft.Office.Core.DocumentProperties)Underlying.CustomDocumentProperties)[App.ExcelMvc].Value.ToString());
                 return value;
             }
         }

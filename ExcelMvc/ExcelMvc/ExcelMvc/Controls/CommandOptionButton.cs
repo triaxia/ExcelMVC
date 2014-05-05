@@ -38,9 +38,15 @@ namespace ExcelMvc.Controls
 {
     public class CommandOptionButton : Command
     {
+        /// <summary>
+        /// Underlying object
+        /// </summary>
+        public OptionButton Underlying { get; protected set; }
+
         public CommandOptionButton(View host, OptionButton button)
-            : base(host, button)
+            : base(host)
         {
+            Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
         }
 
@@ -63,8 +69,14 @@ namespace ExcelMvc.Controls
 
         public override object Value
         {
-            get { return ((int)Underlying.Value) == (int)Constants.xlOn; }
+            get { return (int.Parse(Underlying.Value.ToString()) == (int)Constants.xlOn); }
             set { Underlying.Value = Convert.ToBoolean(value) ? Constants.xlOn : Constants.xlOff; }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Underlying = null;
         }
     }
 }

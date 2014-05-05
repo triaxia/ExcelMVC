@@ -39,9 +39,15 @@ namespace ExcelMvc.Controls
 {
     public class CommandListBox : Command
     {
+        /// <summary>
+        /// Underlying object
+        /// </summary>
+        public ListBox Underlying { get; protected set; }
+
         public CommandListBox(View host, ListBox button)
-            : base(host, button)
+            : base(host)
         {
+            Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
         }
 
@@ -108,6 +114,12 @@ namespace ExcelMvc.Controls
         {
             get { return ListIndex; }
             set { ListIndex = Convert.ToInt32(value); }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Underlying = null;
         }
     }
 }

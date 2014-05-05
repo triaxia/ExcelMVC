@@ -60,11 +60,6 @@ namespace ExcelMvc.Controls
         public View Host { get; private set; }
 
         /// <summary>
-        /// Underlying object
-        /// </summary>
-        public dynamic Underlying { get; protected set; }
-
-        /// <summary>
         /// Name of the command
         /// </summary>
         public abstract string Name { get; }
@@ -94,10 +89,9 @@ namespace ExcelMvc.Controls
         /// </summary>
         /// <param name="host"></param>
         /// <param name="underlying"></param>
-        protected Command(View host, dynamic underlying)
+        protected Command(View host)
         {
             Host = host;
-            Underlying = underlying;
         }
 
         /// <summary>
@@ -111,7 +105,6 @@ namespace ExcelMvc.Controls
         public virtual void Dispose()
         {
             Host = null;
-            Underlying = null;
         }
     }
 }

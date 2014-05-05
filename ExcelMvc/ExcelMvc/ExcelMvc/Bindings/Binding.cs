@@ -188,7 +188,7 @@ namespace ExcelMvc.Bindings
             if (string.IsNullOrEmpty(viewName))
                 throw new Exception(string.Format(Resource.ErrorNoViewNameFound, viewName));
 
-            object[,] value = nm.RefersToRange.Value;
+            object[,] value = (object[,])nm.RefersToRange.Value;
             var indexOfCell = IndexOfHeading(value, "Data Cell");
             if (indexOfCell == -1)
                 throw new Exception(Resource.ErrorNoBindingCellFound);
@@ -256,7 +256,7 @@ namespace ExcelMvc.Bindings
                     Name = viewName,
                     Type = (ViewType)Enum.Parse(typeof(ViewType), viewType),
                     Mode = (ModeType)Enum.Parse(typeof(ModeType), modeType),
-                    Cell = range.Cells[1, 1],
+                    Cell = (Range)range.Cells[1, 1],
                     Path = bindingPath,
                     Visible = visible,
                     ValidationList = validation,

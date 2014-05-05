@@ -375,7 +375,7 @@ namespace ExcelMvc.Views
             var items = new List<object>();
             foreach (Range row in result.Intersection.Rows)
             {
-                var cell = row.Worksheet.Cells[row.Row, first.Cell.Column];
+                var cell = (Range)row.Worksheet.Cells[row.Row, first.Cell.Column];
                 items.Add(_itemsBound[int.Parse(cell.ID)]);
             }
             result.Items = items;
@@ -428,7 +428,7 @@ namespace ExcelMvc.Views
             Parent.ExecuteProtected(() =>
             {
                 for (var idx = 1; idx <= _itemsBound.Count; idx++)
-                    column.Cells[idx, 1].ID = (idx - 1).ToString(CultureInfo.InvariantCulture);
+                    ((Range)column.Cells[idx, 1]).ID = (idx - 1).ToString(CultureInfo.InvariantCulture);
             });
         }
 
@@ -442,7 +442,7 @@ namespace ExcelMvc.Views
             if (section != null)
             {
                 foreach (Range row in section.Rows)
-                    _rowIds.Add(row.Cells[1, 1].ID);
+                    _rowIds.Add(((Range)row.Cells[1, 1]).ID);
             }
             RestoreRowIds(seletion);
         }
@@ -460,7 +460,7 @@ namespace ExcelMvc.Views
                 Parent.ExecuteProtected(() =>
                 {
                     for (var idx = 1; idx <= section.Rows.Count; idx++)
-                        section.Cells[idx, 1].ID = _rowIds[idx - 1];
+                        ((Range)section.Cells[idx, 1]).ID = _rowIds[idx - 1];
                 });
             }
         }

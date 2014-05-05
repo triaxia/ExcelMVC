@@ -49,7 +49,7 @@ namespace ExcelMvc.Runtime
         }
 
         private static readonly Lazy<RangeUpdator> Instane 
-            = new Lazy<RangeUpdator>(() => new RangeUpdator(), true);
+            = new Lazy<RangeUpdator>(() => new RangeUpdator());
 
         /// <summary>
         /// Singleton
@@ -165,7 +165,7 @@ namespace ExcelMvc.Runtime
             var column = start.MakeRange(0, count, 0, 1);
             for (var idx = 0; idx < count; idx++)
             {
-                if (column.Cells[idx + 1, 1].ID == rowId)
+                if (((Range)column.Cells[idx + 1, 1]).ID == rowId)
                     return idx;
             }
             return -1;
