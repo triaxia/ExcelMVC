@@ -121,7 +121,7 @@ namespace ExcelMvc.Views
                     var value = RangeConversion.MergeChangedValue(changed, range, ObjectBinding.GetPropertyValue(Model, binding));
                     if (value.Changed)
                     {
-                        ObjectBinding.SetPropertyValue(Model, binding.Path, value.Value);
+                        ObjectBinding.SetPropertyValue(Model, binding, value.Value);
                         OnObjectChanged(new[] { Model }, new[] { binding.Path });
                     }
                 }
