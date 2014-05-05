@@ -88,8 +88,10 @@ namespace ExcelMvc.Runtime
                 var path = Path.GetDirectoryName(location);
                 var files = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
 
+                var nonDynamicAsms = asms.Where(x => !(x.ManifestModule is System.Reflection.Emit.ModuleBuilder));
+
                 // exclude files already loaded
-                files = files.Where(x => asms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0)).ToArray();
+                files = files.Where(x => nonDynamicAsms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0)).ToArray();
                 foreach (var file in files)
                     Discover(file);
             }
