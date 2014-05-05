@@ -79,9 +79,11 @@ namespace ExcelMvc.Views
         {
             get
             {
-                var list = _forms.Values.Select(x => (View)x).ToList();
-                list.AddRange(_tables.Values.ToList() as IEnumerable<View>);
-                return list;
+                var forms = from form in _forms.Values
+                            select (View)form;
+                var tables = from table in _tables.Values
+                             select (View)table;
+                return forms.Concat(tables);
             }
         }
 

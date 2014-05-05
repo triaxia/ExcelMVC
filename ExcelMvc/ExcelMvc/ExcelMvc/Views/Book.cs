@@ -73,7 +73,11 @@ namespace ExcelMvc.Views
         /// </summary>
         public override IEnumerable<View> Children
         {
-            get { return _sheets.Values.ToList() as IEnumerable<View>; }
+            get
+            {
+                foreach (var value in _sheets.Values)
+                    yield return value as View;
+            }
         }
 
         /// <summary>
