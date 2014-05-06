@@ -64,7 +64,8 @@ BOOL StartAddinClrHost()
 	while (--pos >= 0 && buffer[pos] != '\\');
 	buffer[pos] = 0;
 
-	ClrRuntimeHost::Start(L"v4.0.30319", L"ExcelMvc", buffer);
+    static LPCTSTR clrVersion = L"v2.0.50727";// L"v4.0.30319"
+    ClrRuntimeHost::Start(clrVersion, L"ExcelMvc", buffer);
 	BOOL result = ClrRuntimeHost::TestAndDisplayError();
 	if (result)
 	{
