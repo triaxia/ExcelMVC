@@ -114,7 +114,7 @@ namespace ExcelMvc.Bindings
         /// <summary>
         /// Visual cell
         /// </summary>
-        internal Range Cell { get; set; }
+        public Range Cell { get; internal set; }
 
         /// <summary>
         /// Visible
