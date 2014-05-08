@@ -61,6 +61,11 @@ namespace ExcelMvc.Bindings
             Form,
 
             /// <summary>
+            /// LandscapeTable
+            /// </summary>
+            LandscapeTable,
+
+            /// <summary>
             /// Table
             /// </summary>
             Table,
@@ -182,7 +187,8 @@ namespace ExcelMvc.Bindings
 
             var viewType = parts[1] ?? "";
             if (viewType.CompareOrdinalIgnoreCase("Form") != 0
-                && viewType.CompareOrdinalIgnoreCase("Table") != 0)
+                && viewType.CompareOrdinalIgnoreCase("Table") != 0
+                && viewType.CompareOrdinalIgnoreCase("LandscapeTable") != 0)
                 throw new Exception(string.Format(Resource.ErrorInvalidViewType, viewType));
 
             var viewName = parts[2] ?? "";

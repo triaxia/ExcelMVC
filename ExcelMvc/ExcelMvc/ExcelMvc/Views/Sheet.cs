@@ -54,6 +54,9 @@ namespace ExcelMvc.Views
         private readonly Dictionary<string, Table> _tables =
             new Dictionary<string, Table>(StringComparer.OrdinalIgnoreCase);
 
+        private readonly Dictionary<string, LandscapeTable> _landscapeTables =
+            new Dictionary<string, LandscapeTable>(StringComparer.OrdinalIgnoreCase);
+
         /// <summary>
         /// Occurs when a command is clicked
         /// </summary>
@@ -83,7 +86,9 @@ namespace ExcelMvc.Views
                             select (View)form;
                 var tables = from table in _tables.Values
                              select (View)table;
-                return forms.Concat(tables);
+                var landscapeTables = from table in _landscapeTables.Values
+                                      select (View)table;
+                return forms.Concat(tables).Concat(landscapeTables);
             }
         }
 
@@ -138,6 +143,10 @@ namespace ExcelMvc.Views
             foreach (var table in _tables.Values)
                 table.Dispose();
             _tables.Clear();
+
+            foreach (var table in _landscapeTables.Values)
+                table.Dispose();
+            _landscapeTables.Clear();
         }
 
         private void CreateViews(IEnumerable<Binding> bindings)
@@ -168,6 +177,21 @@ namespace ExcelMvc.Views
                 if (!args.IsCancelled)
                 {
                     _tables[name] = table;
+                    OnOpened(new ViewEventArgs(table));
+                }
+            }
+
+            names = bindings.Where(x => x.Type == Binding.ViewType.LandscapeTable).Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in names)
+            {
+                var name = item;
+                var rows = bindings.Where(x => x.Type == Binding.ViewType.LandscapeTable && x.Name.CompareOrdinalIgnoreCase(name) == 0);
+                var table = new LandscapeTable(this, rows);
+                var args = new ViewEventArgs(table);
+                OnOpening(args);
+                if (!args.IsCancelled)
+                {
+                    _landscapeTables[name] = table;
                     OnOpened(new ViewEventArgs(table));
                 }
             }
@@ -298,6 +322,7 @@ namespace ExcelMvc.Views
 
             var views = _forms.Values.Select(x => x as BindingView).ToList();
             views.AddRange(_tables.Values.Select(x => x as BindingView));
+            views.AddRange(_landscapeTables.Values.Select(x => x as BindingView));
             foreach (var view in views)
             {
                 view.FireClicked(sender, args);

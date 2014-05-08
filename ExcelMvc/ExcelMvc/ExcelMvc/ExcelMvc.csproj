@@ -80,6 +80,7 @@
     <Compile Include="Views\Book.cs" />
     <Compile Include="Views\BindingView.cs" />
     <Compile Include="Views\EventArgs.cs" />
+    <Compile Include="Views\LandscapeTable.cs" />
     <Compile Include="Views\View.cs" />
     <Compile Include="Views\Root.cs" />
     <Compile Include="Views\Form.cs" />

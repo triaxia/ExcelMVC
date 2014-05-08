@@ -72,6 +72,10 @@ namespace ExcelMvc.Runtime
             public Range RowIdStart { get; set; }
             public string RowId { get; set; }
             public int RowCount { get; set; }
+
+            public Range ColIdStart { get; set; }
+            public string ColId { get; set; }
+            public int ColCount { get; set; }
         }
         private readonly Queue<Item> _items = new Queue<Item>();
 
@@ -90,6 +94,24 @@ namespace ExcelMvc.Runtime
                     Rows = rows, ColumnOffset = columnOffset, Columns = columns, Value = value });
             else
                 range.MakeRange(RowOffsetFromRowId(rowIdStart, rowCount, rowId), rows, columnOffset, columns).Value = value;
+        }
+
+        public void Update(Range range, int rowOffset, int rows, Range colIdStart, int colCount, string colId, int columns, object value)
+        {
+            if (IsAsyncUpdateThread())
+                Enqueue(new Item
+                {
+                    Range = range,
+                    ColIdStart = colIdStart,
+                    ColId = colId,
+                    ColCount = colCount,
+                    Rows = rows,
+                    RowOffset = rowOffset,
+                    Columns = columns,
+                    Value = value
+                });
+            else
+                range.MakeRange(rowOffset, rows, ColOffsetFromColId(colIdStart, colCount, colId), columns).Value = value;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -142,7 +164,9 @@ namespace ExcelMvc.Runtime
             {
                 var rowOffset = item.RowIdStart == null ? item.RowOffset
                     : RowOffsetFromRowId(item.RowIdStart, item.RowCount, item.RowId);
-                item.Range.MakeRange(rowOffset, item.Rows, item.ColumnOffset, item.Columns).Value = item.Value;
+                var colOffset = item.ColIdStart == null ? item.ColumnOffset
+                    : ColOffsetFromColId(item.ColIdStart, item.ColCount, item.ColId);
+                item.Range.MakeRange(rowOffset, item.Rows, colOffset, item.Columns).Value = item.Value;
             });
 
             if (status == null)
@@ -158,6 +182,17 @@ namespace ExcelMvc.Runtime
 
             //TODO
             return false;
+        }
+
+        private static int ColOffsetFromColId(Range start, int count, string colId)
+        {
+            var row = start.MakeRange(0, 1, 0, count);
+            for (var idx = 0; idx < count; idx++)
+            {
+                if (((Range)row.Cells[1, idx + 1]).ID == colId)
+                    return idx;
+            }
+            return -1;
         }
 
         private static int RowOffsetFromRowId(Range start, int count, string rowId)
