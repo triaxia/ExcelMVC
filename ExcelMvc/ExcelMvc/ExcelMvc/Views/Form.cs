@@ -105,8 +105,8 @@ namespace ExcelMvc.Views
 
         void UpdateObject(Range target)
         {
-            var twoways = Bindings.Where(x => x.Mode == Binding.ModeType.TwoWay);
-            foreach (var binding in twoways)
+            var toSource = Bindings.Where(x => (x.Mode == Binding.ModeType.TwoWay || x.Mode == Binding.ModeType.OneWayToSource));
+            foreach (var binding in toSource)
                 UpdateObject(binding, target);
         }
 
@@ -161,6 +161,9 @@ namespace ExcelMvc.Views
 
         private void UpdateView(Binding binding)
         {
+            if (binding.Mode == Binding.ModeType.OneWayToSource)
+                return;
+
             ExcuteBinding(() =>
             {
                 var value = ObjectBinding.GetPropertyValue(Model, binding);

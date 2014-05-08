@@ -78,7 +78,7 @@ namespace ExcelMvc.Runtime
         public void Update(Range range, int rowOffset, int rows, int columnOffset, int columns, object value)
         {
             if (IsAsyncUpdateThread())
-                Enqueue(new Item { Range = range, RowOffset = rowOffset, Rows = rows, ColumnOffset = columnOffset, Columns = columns , Value = value });
+                Enqueue(new Item { Range = range, RowOffset = rowOffset, Rows = rows, ColumnOffset = columnOffset, Columns = columns, Value = value });
             else
                 range.MakeRange(rowOffset, rows, columnOffset, columns).Value = value;
         }

@@ -92,6 +92,7 @@ namespace ExcelMvc.Bindings
         public enum ModeType
         {
             OneWay,
+            OneWayToSource,
             TwoWay
         }
 

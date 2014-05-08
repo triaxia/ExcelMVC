@@ -206,22 +206,25 @@ namespace ExcelMvc.Views
         {
             Dictionary<Binding, List<object>> bindingValues = null;
             var rowsBound = _itemsBound == null ? 0  : _itemsBound.Count;
+            var toView = from binding in Bindings
+                         where binding.Mode != Binding.ModeType.OneWayToSource
+                         select binding;
 
             if (_enumerable != null)
             {
                 bindingValues = new Dictionary<Binding, List<object>>();
-                foreach (var binding in Bindings)
+                foreach (var binding in toView)
                     bindingValues[binding] = new List<object>();
 
                 _itemsBound = _enumerable.ToList();
 
                 foreach (var item in _itemsBound)
-                    foreach (var binding in Bindings)
+                    foreach (var binding in toView)
                         bindingValues[binding].Add(ObjectBinding.GetPropertyValue(item, binding));
             }
 
             var newRows = _itemsBound == null ? 0 : _itemsBound.Count;
-            var groupBindings = GroupBindings(Bindings);
+            var groupBindings = GroupBindings(toView);
             if (rowsBound != newRows)
             {
                 ClearView(groupBindings, rowsBound);
@@ -329,12 +332,12 @@ namespace ExcelMvc.Views
             var first = Bindings.First();
             var target = rangeItems.Intersection;
             var rowOffset = target.Row - first.Cell.Row;
-            var twoways = Bindings.Skip(target.Column - first.Cell.Column).Take(target.Columns.Count)
-                .Where(x => x.Mode == Binding.ModeType.TwoWay).ToList();
+            var toSource = Bindings.Skip(target.Column - first.Cell.Column).Take(target.Columns.Count)
+                .Where(x => (x.Mode == Binding.ModeType.TwoWay || x.Mode == Binding.ModeType.OneWayToSource)).ToList();
             var updated = 0;
             foreach (var model in rangeItems.Items)
             {
-                updated += twoways.Count(binding => UpdateObject(binding, rowOffset, model, rangeItems.Intersection));
+                updated += toSource.Count(binding => UpdateObject(binding, rowOffset, model, rangeItems.Intersection));
                 rowOffset++;
             }
             return updated;
