@@ -88,7 +88,6 @@ namespace ExcelMvc.Controls
         /// 
         /// </summary>
         /// <param name="host"></param>
-        /// <param name="underlying"></param>
         protected Command(View host)
         {
             Host = host;
@@ -97,7 +96,7 @@ namespace ExcelMvc.Controls
         /// <summary>
         /// Fires the Clicked event
         /// </summary>
-        public void FireClicked()
+        public virtual void FireClicked()
         {
             Clicked(this, new CommandEventArgs());
         }

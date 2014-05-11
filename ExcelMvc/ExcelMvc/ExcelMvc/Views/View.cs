@@ -39,7 +39,7 @@ using Action = System.Action;
 namespace ExcelMvc.Views
 {
     /// <summary>
-    /// Represents the base behaviour of a View
+    /// Represents the base behaviour of Views
     /// </summary>
     public abstract class View : IDisposable
     {
@@ -221,7 +221,7 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Finds the view with the name specified, starting from this and downwards
+        /// Finds the view with the name specified, starting from this instance and downwards
         /// </summary>
         /// <param name="name">Name of the view</param>
         /// <returns>View found or null</returns>
@@ -308,7 +308,7 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Hooks a binding faild handler
+        /// Hooks a binding failed handler
         /// </summary>
         /// <param name="handler">Handler to be hooked</param>
         /// <param name="isHook">Indicates if this call is to hook or unhook the handler</param>

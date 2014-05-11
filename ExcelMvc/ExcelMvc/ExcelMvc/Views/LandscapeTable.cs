@@ -45,7 +45,7 @@ using Microsoft.Office.Interop.Excel;
 namespace ExcelMvc.Views
 {
     /// <summary>
-    /// Represents a rectangular visual with rows and columns
+    /// Represents a rectangular transposed visual with rows and columns
     /// </summary>
     public class LandscapeTable : BindingView
     {

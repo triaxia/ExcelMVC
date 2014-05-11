@@ -36,7 +36,6 @@ using ExcelMvc.Bindings;
 using Microsoft.Office.Interop.Excel;
 using ExcelMvc.Controls;
 using ExcelMvc.Extensions;
-using System.Collections;
 
 namespace ExcelMvc.Views
 {
@@ -127,7 +126,9 @@ namespace ExcelMvc.Views
 
             if (bindings != null)
                 CreateViews(bindings);
-            CreateCommands();
+            CommandFactory.Create(Underlying, this, _commands);
+            foreach (var cmd in _commands.Values)
+                cmd.Clicked += cmd_Clicked;
         }
 
         public override void Dispose()
@@ -195,123 +196,6 @@ namespace ExcelMvc.Views
                     OnOpened(new ViewEventArgs(table));
                 }
             }
-        }
-
-        private void CreateCommands()
-        {
-            var sheet = Underlying;
-            var names = (from Comment item in sheet.Comments select item.Shape.Name).ToList();
-            names.Sort();
-
-            CreateCommands((GroupObjects)sheet.GroupObjects(), names);
-            CreateCommands((Buttons)sheet.Buttons(), names);
-            CreateCommands((CheckBoxes)sheet.CheckBoxes(), names);
-            CreateCommands((OptionButtons)sheet.OptionButtons(), names);
-            CreateCommands((ListBoxes)sheet.ListBoxes(), names);
-            CreateCommands((DropDowns)sheet.DropDowns(), names);
-            CreateCommands((Spinners)sheet.Spinners(), names);
-            CreateCommands((Shapes)sheet.Shapes, names);
-
-            foreach (var cmd in _commands.Values)
-                cmd.Clicked += cmd_Clicked;
-        }
-
-        private void CreateCommands(IEnumerable items, List<string> names) 
-        {
-            foreach (object item in items)
-            {
-                int idx;
-                string name = string.Empty;
-                string onAction = string.Empty;
-                if (item is Button)
-                {
-                    name = ((Button)item).Name;
-                    onAction = ((Button)item).OnAction;
-                }
-                else if (item is CheckBox)
-                {
-                    name = ((CheckBox)item).Name;
-                    onAction = ((CheckBox)item).OnAction;
-                }
-                else if (item is OptionButton)
-                {
-                    name = ((OptionButton)item).Name;
-                    onAction = ((OptionButton)item).OnAction;
-                }
-                else if (item is ListBox)
-                {
-                    name = ((ListBox)item).Name;
-                    onAction = ((ListBox)item).OnAction;
-                }
-                else if (item is DropDown)
-                {
-                    name = ((DropDown)item).Name;
-                    onAction = ((DropDown)item).OnAction;
-                }
-                else if (item is Spinner)
-                {
-                    name = ((Spinner)item).Name;
-                    onAction = ((Spinner)item).OnAction;
-                }
-                else if (item is GroupObject)
-                {
-                    name = ((GroupObject)item).Name;
-                    onAction = ((GroupObject)item).OnAction;
-                }
-                else if (item is Shape)
-                {
-                    name = ((Shape)item).Name;
-                    onAction = ((Shape)item).OnAction;
-                }
-                if ((idx = names.BinarySearch(name)) >= 0 || !IsCreateable(onAction))
-                    continue;
-
-                Command cmd = null;
-                var litem = item;
-                ActionExtensions.Try(() =>
-                {
-                    if (litem is Button)
-                        cmd = new CommandButton(this, (Button)litem);
-                    else if (litem is CheckBox)
-                        cmd = new CommandCheckBox(this, (CheckBox)litem);
-                    else if (litem is OptionButton)
-                        cmd = new CommandOptionButton(this, (OptionButton)litem);
-                    else if (litem is ListBox)
-                        cmd = new CommandListBox(this, (ListBox)litem);
-                    else if (litem is DropDown)
-                        cmd = new CommandDropDown(this, (DropDown)litem);
-                    else if (litem is Spinner)
-                        cmd = new CommandSpinner(this, (Spinner)litem);
-                    else if (litem is GroupObject)
-                    {
-                        names.Insert(~idx, ((GroupObject)litem).Name);
-                        var gitem = (GroupObject)litem;
-                        var shapes = (from Shape x in gitem.ShapeRange from Shape y in x.GroupItems select y).ToArray();
-                        gitem.Ungroup();
-                        CreateCommands(shapes, names);
-                        Underlying.Shapes.Range[(from Shape x in shapes select x.Name).ToArray()].Regroup();
-                    }
-                    else if (litem is Shape)
-                    {
-                        var shape = litem as Shape;
-                        GroupShapes unused = null;
-                        ActionExtensions.Try(() => unused = shape.GroupItems);
-                        if (unused == null)
-                            cmd = new CommandShape(this, (Shape)litem);
-                    }
-                });
-
-                if (cmd != null)
-                {
-                    _commands[name] = cmd;
-                    names.Insert(~idx, name);
-                }
-            }
-        }
-
-        private static bool IsCreateable(string action)
-        {
-            return string.IsNullOrEmpty(action) || action == MacroNames.CommandActionName;
         }
 
         void cmd_Clicked(object sender, CommandEventArgs args)
