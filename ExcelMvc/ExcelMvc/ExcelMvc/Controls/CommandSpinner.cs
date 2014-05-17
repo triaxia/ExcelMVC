@@ -1,6 +1,8 @@
 ﻿/*
-Copyright (c) 2013 Peter Gu or otherwise indicated by the license information contained within
-the source files.
+Copyright (C) 2013 =>
+
+Creator:           Peter Gu, Australia
+Developer:         Wolfgang Stamm, Germany
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -29,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
 Boston, MA 02110-1301 USA.
 */
-
 using System;
 using ExcelMvc.Views;
 using Microsoft.Office.Interop.Excel;
@@ -43,16 +44,11 @@ namespace ExcelMvc.Controls
         /// </summary>
         public Spinner Underlying { get; protected set; }
 
-        public CommandSpinner(View host, Spinner button)
-            : base(host)
+        public CommandSpinner(View host, Spinner button, string name)
+            : base(host, name)
         {
             Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
-        }
-
-        public override string Name
-        {
-            get { return Underlying.Name; }
         }
 
         public override string Caption

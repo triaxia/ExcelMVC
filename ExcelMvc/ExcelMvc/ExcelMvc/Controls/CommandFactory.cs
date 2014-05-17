@@ -1,6 +1,8 @@
 ﻿/*
-Copyright (c) 2013 Peter Gu or otherwise indicated by the license information contained within
-the source files.
+Copyright (C) 2013 =>
+
+Creator:           Peter Gu, Australia
+Developer:         Wolfgang Stamm, Germany
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -65,27 +67,27 @@ namespace ExcelMvc.Controls
             foreach (var item in items)
             {
                var button = item as Button;
-               if (Create(host, button, () => button.Name, () => button.OnAction, () => new CommandButton(host, button), commands, names))
+               if (Create(button, () => button.Name, () => new CommandButton(host, button, RemovePrefix(button.Name)), commands, names))
                    continue;
 
                var cbox = item as CheckBox;
-               if (Create(host, cbox, () => cbox.Name, () => cbox.OnAction, () => new CommandCheckBox(host, cbox), commands, names))
+               if (Create(cbox, () => cbox.Name, () => new CommandCheckBox(host, cbox, RemovePrefix(cbox.Name)), commands, names))
                    continue;
 
                var option = item as OptionButton;
-               if (Create(host, option, () => option.Name, () => option.OnAction, () => new CommandOptionButton(host, option), commands, names))
+               if (Create(option, () => option.Name, () => new CommandOptionButton(host, option, RemovePrefix(option.Name)), commands, names))
                    continue;
 
                var lbox = item as ListBox;
-               if (Create(host, lbox, () => lbox.Name, () => lbox.OnAction, () => new CommandListBox(host, lbox), commands, names))
+               if (Create(lbox, () => lbox.Name, () => new CommandListBox(host, lbox, RemovePrefix(lbox.Name)), commands, names))
                    continue;
 
                var dbox = item as DropDown;
-               if (Create(host, dbox, () => dbox.Name, () => dbox.OnAction, () => new CommandDropDown(host, dbox), commands, names))
+               if (Create(dbox, () => dbox.Name, () => new CommandDropDown(host, dbox, RemovePrefix(dbox.Name)), commands, names))
                    continue;
 
                var spin = item as Spinner;
-               if (Create(host, spin, () => spin.Name, () => spin.OnAction, () => new CommandSpinner(host, spin), commands, names))
+               if (Create(spin, () => spin.Name, () => new CommandSpinner(host, spin, RemovePrefix(spin.Name)), commands, names))
                    continue;
 
                if (Create(sheet, host, item as GroupObject, commands, names))
@@ -98,17 +100,14 @@ namespace ExcelMvc.Controls
             }
         }
 
-        private static bool Create(View host, object item, Func<string> getName, Func<string> getAction,
-            Func<Command> createCmd, Dictionary<string, Command> commands, 
-            List<string> names)
+        private static bool Create(object item, Func<string> getName, Func<Command> createCmd, Dictionary<string, Command> commands, List<string> names)
         {
             if (item == null)
                 return false;
 
             var name = getName();
-            var onAction = getAction();
-            int idx;
-            if ((idx = names.BinarySearch(name)) >= 0 || !IsCreateable(host, onAction))
+             int idx;
+            if ((idx = names.BinarySearch(name)) >= 0 || !IsCreateable(name))
                 return true;
 
             ActionExtensions.Try(() =>
@@ -127,7 +126,7 @@ namespace ExcelMvc.Controls
 
             var name = item.Name;
             int idx;
-            if ((idx = names.BinarySearch(name)) >= 0 || !IsCreateable(host, null))
+            if ((idx = names.BinarySearch(name)) >= 0) //  || !IsCreateable(name)
                 return true;
 
             ActionExtensions.Try(() =>
@@ -148,7 +147,7 @@ namespace ExcelMvc.Controls
 
             var name = item.Name;
             int idx;
-            if ((idx = names.BinarySearch(name)) >= 0 || !IsCreateable(host, null))
+            if ((idx = names.BinarySearch(name)) >= 0 || !IsCreateable(name))
                 return true;
 
             ActionExtensions.Try(() =>
@@ -157,15 +156,21 @@ namespace ExcelMvc.Controls
                 GroupShapes unused = null;
                 ActionExtensions.Try(() => unused = item.GroupItems);
                 if (unused == null)
-                    commands[name] = new CommandShape(host, item);
+                    commands[name] = new CommandShape(host, item, RemovePrefix(name));
             });
 
             return true;
         }
 
-        private static bool IsCreateable(View host, string action)
+        private const string CommandPrefix = "ExcelMVC.";
+        public static string RemovePrefix(string name)
         {
-            return string.IsNullOrEmpty(action) || action == MacroNames.CommandActionName;
+            return IsCreateable(name) ? name.Substring(CommandPrefix.Length) : name;
+        }
+
+        private static bool IsCreateable(string name)
+        {
+            return name.StartsWith(CommandPrefix, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

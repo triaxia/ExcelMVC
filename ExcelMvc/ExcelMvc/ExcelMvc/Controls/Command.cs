@@ -1,6 +1,8 @@
 ﻿/*
-Copyright (c) 2013 Peter Gu or otherwise indicated by the license information contained within
-the source files.
+Copyright (C) 2013 =>
+
+Creator:           Peter Gu, Australia
+Developer:         Wolfgang Stamm, Germany
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -62,7 +64,7 @@ namespace ExcelMvc.Controls
         /// <summary>
         /// Name of the command
         /// </summary>
-        public abstract string Name { get; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Caption of the command
@@ -85,12 +87,14 @@ namespace ExcelMvc.Controls
         public event ClickedHandler Clicked = delegate { };
 
         /// <summary>
-        /// 
+        /// Constructs an instance
         /// </summary>
-        /// <param name="host"></param>
-        protected Command(View host)
+        /// <param name="host">Command host</param>
+        /// <param name="name">Command name</param>
+        protected Command(View host, string name)
         {
             Host = host;
+            Name = name;
         }
 
         /// <summary>

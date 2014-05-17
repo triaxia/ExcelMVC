@@ -1,6 +1,8 @@
 ﻿/*
-Copyright (c) 2013 Peter Gu or otherwise indicated by the license information contained within
-the source files.
+Copyright (C) 2013 =>
+
+Creator:           Peter Gu, Australia
+Developer:         Wolfgang Stamm, Germany
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -42,16 +44,11 @@ namespace ExcelMvc.Controls
         /// </summary>
         public Button Underlying { get; protected set; }
 
-        public CommandButton(View host, Button button)
-            : base(host)
+        public CommandButton(View host, Button button, string name)
+            : base(host, name)
         {
             Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
-        }
-
-        public override string Name
-        {
-            get { return Underlying.Name; }
         }
 
         public override string Caption
