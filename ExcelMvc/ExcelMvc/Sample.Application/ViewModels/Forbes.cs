@@ -145,7 +145,7 @@ namespace Sample.Application.ViewModels
 
         private void ShowColumnClicked(object sender, CommandEventArgs args)
         {
-            var visible =CompanyTable.ToggleColumnVisibility("Industry");
+            var visible =CompanyTable.ToggleCategoryVisibility("Industry");
             var cmd = (Command)sender;
             cmd.Caption = visible ? "Hide Industry" : "Show Industry";
         }

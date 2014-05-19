@@ -55,6 +55,7 @@ namespace ExcelMvc.Views
         private IEnumerable _enumerable;
         private INotifyPropertyChanged _notifyPropertyChanged;
         private INotifyCollectionChanged _notifyCollectionChanged;
+        private TableOrientation _orientation;
 
         public override Binding.ViewType Type
         {
@@ -84,17 +85,24 @@ namespace ExcelMvc.Views
             }
         }
 
+        public enum TableOrientation
+        {
+            Portrait,
+            Landscape
+        }
+
         /// <summary>
         /// Initialises an instances of ExcelMvc.Views.Panel
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="bindings">Bindings for the view</param>
-        internal Table(View parent, IEnumerable<Binding> bindings)
+        internal Table(View parent, IEnumerable<Binding> bindings, TableOrientation orientation)
             : base(parent, bindings)
         {
+            _orientation = orientation;
             SelectedItems = new List<object>();
             SelectedBindings = new List<Binding>();
-            SetColumnVisibility();
+            SetCategoryVisibility();
         }
 
         private void HookViewEvents(bool isHook)
@@ -114,13 +122,13 @@ namespace ExcelMvc.Views
 
         void Underlying_Change(Range target)
         {
-            RestoreRowIds(target);
+            RestoreCategoryIds(target);
             UpdateRangeObjects(target);
         }
 
         void Underlying_SelectionChange(Range target)
         {
-            SaveRowIds(target);
+            SaveCategoryIds(target);
             var rangeObjs = GetRangeObjects(target);
             SelectedItems.Clear();
             SelectedBindings.Clear();
@@ -207,7 +215,7 @@ namespace ExcelMvc.Views
         private void UpdateViewEx()
         {
             Dictionary<Binding, List<object>> bindingValues = null;
-            var rowsBound = _itemsBound == null ? 0  : _itemsBound.Count;
+            var numberItemsBound = _itemsBound == null ? 0  : _itemsBound.Count;
             var toView = from binding in Bindings
                          where binding.Mode != Binding.ModeType.OneWayToSource
                          select binding;
@@ -225,33 +233,35 @@ namespace ExcelMvc.Views
                         bindingValues[binding].Add(ObjectBinding.GetPropertyValue(item, binding));
             }
 
-            var newRows = _itemsBound == null ? 0 : _itemsBound.Count;
-            var groupBindings = GroupBindings(toView);
-            if (rowsBound != newRows)
+            var newItems = _itemsBound == null ? 0 : _itemsBound.Count;
+            var groupBindings = GroupBindings(toView, _orientation);
+            if (numberItemsBound != newItems)
             {
-                ClearView(groupBindings, rowsBound);
-                if (rowsBound > 0)
-                    UnbindValidationLists(rowsBound);
+                ClearView(groupBindings, numberItemsBound, _orientation);
+                if (numberItemsBound > 0)
+                    UnbindValidationLists(numberItemsBound);
             }
 
-            if (newRows > 0)
+            if (newItems > 0)
             {
-                AssignRowIds();
-                UpdateView(groupBindings, bindingValues, newRows);
-                BindValidationLists(newRows);
+                AssignItemIds();
+                UpdateView(groupBindings, bindingValues, newItems, _orientation);
+                BindValidationLists(newItems);
             }
         }
 
-        private static List<List<Binding>> GroupBindings(IEnumerable<Binding> bindings)
+        private static List<List<Binding>> GroupBindings(IEnumerable<Binding> bindings, TableOrientation orientation)
         {
             var groups = new List<List<Binding>>();
-            var ordered = (from x in bindings orderby x.Cell.Column select x).ToList();
+            var ordered = (from x in bindings orderby orientation == TableOrientation.Portrait ? x.Cell.Column : x.Cell.Row select x).ToList();
             while (ordered.Count > 0)
             {
                 int idx;
                 for (idx = 1; idx < ordered.Count; idx++)
                 {
-                    if (ordered[idx].Cell.Column != ordered[idx - 1].Cell.Column + 1)
+                    var currentBindingCell = orientation == TableOrientation.Portrait ? ordered[idx].Cell.Column : ordered[idx].Cell.Row;
+                    var successorOfPreviousBindingCell = orientation == TableOrientation.Portrait ? ordered[idx - 1].Cell.Column + 1 : ordered[idx - 1].Cell.Row + 1;
+                    if (currentBindingCell != successorOfPreviousBindingCell)
                         break;
                 }
                 groups.Add(ordered.Take(idx).ToList());
@@ -260,38 +270,46 @@ namespace ExcelMvc.Views
             return groups;
         }
 
-        private static void UpdateView(IEnumerable<List<Binding>> groups, IDictionary<Binding, List<object>> bindingValues, int rows)
+        private static void UpdateView(IEnumerable<List<Binding>> groups, IDictionary<Binding, List<object>> bindingValues, int numberItems, TableOrientation orientation)
         {
             foreach (var group in groups)
-                UpdateRange(group, bindingValues, rows);
+                UpdateRange(group, bindingValues, numberItems, orientation);
         }
 
-        private static void ClearView(IEnumerable<List<Binding>> groups, int rows)
+        private static void ClearView(IEnumerable<List<Binding>> groups, int numberItems, TableOrientation orientation)
         {
             foreach (var group in groups)
-                ClearRange(group, rows);
+                ClearRange(group, numberItems, orientation);
         }
 
-        private static void UpdateRange(List<Binding> bindings, IDictionary<Binding, List<object>> bindingValues, int rows)
+        private static void UpdateRange(List<Binding> bindings, IDictionary<Binding, List<object>> bindingValues, int numberItems, TableOrientation orientation)
         {
             var first = bindings[0];
-            var cols = bindings.Count;
-            var cells = new object[rows, cols];
-            for (var idx = 0; idx < bindings.Count; idx++)
+            var numberCategories = bindings.Count;
+            var numberRows = orientation == TableOrientation.Portrait ? numberItems : numberCategories;
+            var numberCols = orientation == TableOrientation.Portrait ? numberCategories : numberItems;
+            var cells = new object[numberRows, numberCols];
+            for (var categoryIndex = 0; categoryIndex < bindings.Count; categoryIndex++)
             {
-                var values = bindingValues[bindings[idx]];
-                for (var jdx = 0; jdx < rows; jdx++)
-                    cells[jdx, idx] = values[jdx];
+                var values = bindingValues[bindings[categoryIndex]];
+                for (var itemIndex = 0; itemIndex < numberItems; itemIndex++)
+                {
+                    var idx = orientation == TableOrientation.Portrait ? itemIndex : categoryIndex;
+                    var jdx = orientation == TableOrientation.Portrait ? categoryIndex : itemIndex;
+                    cells[idx, jdx] = values[itemIndex];
+                }
             }
-            RangeUpdator.Instance.Update(first.Cell, 0, rows, 0, cols, cells);
+            RangeUpdator.Instance.Update(first.Cell, 0, numberRows, 0, numberCols, cells);
         }
 
-        private static void ClearRange(List<Binding> bindings, int rows)
+        private static void ClearRange(List<Binding> bindings, int numberItems, TableOrientation orientation)
         {
             var first = bindings[0];
-            var cols = bindings.Count;
-            var cells = new object[rows, cols];
-            RangeUpdator.Instance.Update(first.Cell, 0, rows, 0, cols, cells);
+            var numberCategories = bindings.Count;
+            var numberRows = orientation == TableOrientation.Portrait ? numberItems : numberCategories;
+            var numberCols = orientation == TableOrientation.Portrait ? numberCategories : numberItems;
+            var cells = new object[numberRows, numberCols];
+            RangeUpdator.Instance.Update(first.Cell, 0, numberRows, 0, numberCols, cells);
         }
 
         void UpdateRangeObjects(Range target)
@@ -333,21 +351,23 @@ namespace ExcelMvc.Views
         {
             var first = Bindings.First();
             var target = rangeItems.Intersection;
-            var rowOffset = target.Row - first.Cell.Row;
-            var toSource = Bindings.Skip(target.Column - first.Cell.Column).Take(target.Columns.Count)
+            var itemOffset = _orientation == TableOrientation.Portrait ? target.Row - first.Cell.Row : target.Column - first.Cell.Column;
+            var skipCategories = _orientation == TableOrientation.Portrait ? target.Column - first.Cell.Column : target.Row - first.Cell.Row;
+            var takeCategories = _orientation == TableOrientation.Portrait ? target.Columns.Count : target.Rows.Count;
+            var toSource = Bindings.Skip(skipCategories).Take(takeCategories)
                 .Where(x => (x.Mode == Binding.ModeType.TwoWay || x.Mode == Binding.ModeType.OneWayToSource)).ToList();
             var updated = 0;
             foreach (var model in rangeItems.Items)
             {
-                updated += toSource.Count(binding => UpdateObject(binding, rowOffset, model, rangeItems.Intersection));
-                rowOffset++;
+                updated += toSource.Count(binding => UpdateObject(binding, itemOffset, model, rangeItems.Intersection, _orientation));
+                itemOffset++;
             }
             return updated;
         }
 
-        private static bool UpdateObject(Binding binding, int rowOffset, object model, Range target)
+        private static bool UpdateObject(Binding binding, int itemOffset, object model, Range target, TableOrientation orientation)
         {
-            var range = binding.MakeRange(rowOffset, 1, 0, 1);
+            var range = orientation == TableOrientation.Portrait ? binding.MakeRange(itemOffset, 1, 0, 1) : binding.MakeRange(0, 1, itemOffset, 1);
             var changed = range.Application.Intersect(range, target);
             var value = RangeConversion.MergeChangedValue(changed, range, ObjectBinding.GetPropertyValue(model, binding));
             if (value.Changed)
@@ -372,21 +392,37 @@ namespace ExcelMvc.Views
                 return result;
 
             var first = Bindings.First();
-            var whole = first.MakeRange(0, _itemsBound.Count, 0, Bindings.Count());
+            var whole = GetWholeRange(first);
             result.Intersection = target.Application.Intersect(whole, target);
             if (result.Intersection == null)
                 return result;
 
             var items = new List<object>();
-            foreach (Range row in result.Intersection.Rows)
+            foreach (Range item in _orientation == TableOrientation.Portrait ? result.Intersection.Rows : result.Intersection.Columns)
             {
-                var cell = (Range)row.Worksheet.Cells[row.Row, first.Cell.Column];
+                var idx = _orientation == TableOrientation.Portrait ? item.Row : first.Cell.Row;
+                var jdx = _orientation == TableOrientation.Portrait ? first.Cell.Column : item.Column;
+                var cell = (Range)item.Worksheet.Cells[idx, jdx];
                 items.Add(_itemsBound[int.Parse(cell.ID)]);
             }
             result.Items = items;
-            result.Bindings = Bindings.Skip(result.Intersection.Column - first.Cell.Column).Take(result.Intersection.Columns.Count).ToList();
+            var skipItems = _orientation == TableOrientation.Portrait ? result.Intersection.Column - first.Cell.Column : result.Intersection.Row - first.Cell.Row;
+            var takeItems = _orientation == TableOrientation.Portrait ? result.Intersection.Columns.Count : result.Intersection.Rows.Count;
+            result.Bindings = Bindings.Skip(skipItems).Take(takeItems).ToList();
 
             return result;
+        }
+
+        private Range GetWholeRange(Binding binding)
+        {
+            switch (_orientation)
+            {
+                case TableOrientation.Portrait:
+                    return binding.MakeRange(0, _itemsBound.Count, 0, Bindings.Count());
+                case TableOrientation.Landscape:
+                    return binding.MakeRange(0, Bindings.Count(), 0, _itemsBound.Count);
+            }
+            return null;
         }
 
         private void UpdateCell(object model, string propertyName)
@@ -412,8 +448,18 @@ namespace ExcelMvc.Views
             ExcuteBinding(() =>
             {
                 var value = ObjectBinding.GetPropertyValue(model, binding);
-                RangeUpdator.Instance.Update(binding.Cell, Bindings.First().Cell, _itemsBound.Count,
+                switch (_orientation)
+                {
+                    case TableOrientation.Portrait:
+                        RangeUpdator.Instance.Update(binding.Cell, Bindings.First().Cell, _itemsBound.Count,
                     objectId.ToString(CultureInfo.InvariantCulture), 1, 0, 1, value);
+                        break;
+                    case TableOrientation.Landscape:
+                        RangeUpdator.Instance.Update(binding.Cell, 0, 1, Bindings.First().Cell, _itemsBound.Count,
+                    objectId.ToString(CultureInfo.InvariantCulture), 1, value);
+                        break;
+                }
+                
             });
         }
 
@@ -426,74 +472,118 @@ namespace ExcelMvc.Views
             UnhookModelEvents();
         }
 
-        private void AssignRowIds()
+        private void AssignItemIds()
         {
             var first = Bindings.First();
-            var column = first.MakeRange(0, _itemsBound.Count, 0, 1);
+            var categoryRange = GetCategoryRange(first);
             Parent.ExecuteProtected(() =>
             {
-                for (var idx = 1; idx <= _itemsBound.Count; idx++)
-                    ((Range)column.Cells[idx, 1]).ID = (idx - 1).ToString(CultureInfo.InvariantCulture);
+                for (var itemIndex = 1; itemIndex <= _itemsBound.Count; itemIndex++)
+                {
+                    var idx = _orientation == TableOrientation.Portrait ? itemIndex : 1;
+                    var jdx = _orientation == TableOrientation.Portrait ? 1 : itemIndex;
+                    ((Range)categoryRange.Cells[idx, jdx]).ID = (itemIndex - 1).ToString(CultureInfo.InvariantCulture);
+                }
             });
         }
 
-        private readonly List<string> _rowIds  = new List<string>();
-        private void SaveRowIds(Range seletion)
+        private readonly List<string> _categoryIds  = new List<string>();
+        private void SaveCategoryIds(Range selection)
         {
-            _rowIds.Clear();
+            _categoryIds.Clear();
             var first = Bindings.First();
-            var column = first.MakeRange(0, _itemsBound.Count, 0, 1);
-            var section = seletion.Application.Intersect(column, seletion);
+            var categoryRange = GetCategoryRange(first);
+            var section = selection.Application.Intersect(categoryRange, selection);
             if (section != null)
             {
-                foreach (Range row in section.Rows)
-                    _rowIds.Add(((Range)row.Cells[1, 1]).ID);
+                foreach (Range item in _orientation == TableOrientation.Portrait ? section.Rows : section.Columns)
+                    _categoryIds.Add(((Range)item.Cells[1, 1]).ID);
             }
-            RestoreRowIds(seletion);
+            RestoreCategoryIds(selection);
         }
 
-        private void RestoreRowIds(Range seletion)
+        private Range GetCategoryRange(Binding binding)
         {
-            if (_rowIds.Count == 0)
+            switch (_orientation)
+            {
+                case TableOrientation.Portrait:
+                    return binding.MakeRange(0, _itemsBound.Count, 0, 1);
+                case TableOrientation.Landscape:
+                    return binding.MakeRange(0, 1, 0, _itemsBound.Count);
+            }
+            return null;
+        }
+
+        private void RestoreCategoryIds(Range selection)
+        {
+            if (_categoryIds.Count == 0)
                 return;
 
             var first = Bindings.First();
-            var column = first.MakeRange(0, _itemsBound.Count, 0, 1);
-            var section = seletion.Application.Intersect(column, seletion);
+            var categoryRange = GetCategoryRange(first);
+            var section = selection.Application.Intersect(categoryRange, selection);
             if (section != null)
             {
                 Parent.ExecuteProtected(() =>
                 {
-                    for (var idx = 1; idx <= section.Rows.Count; idx++)
-                        ((Range)section.Cells[idx, 1]).ID = _rowIds[idx - 1];
+                    for (var itemIndex = 1; itemIndex <= (_orientation == TableOrientation.Portrait ? section.Rows.Count : section.Columns.Count); itemIndex++)
+                    {
+                        var idx = _orientation == TableOrientation.Portrait ? itemIndex : 1;
+                        var jdx = _orientation == TableOrientation.Portrait ? 1 : itemIndex;
+                        ((Range)section.Cells[idx, jdx]).ID = _categoryIds[itemIndex - 1];
+                    }
                 });
             }
         }
 
         /// <summary>
-        /// Sets visibiliy for all columns
+        /// Sets visibiliy for all columns (portrait table) or for all rows (landscape table)
         /// </summary>
-        public void SetColumnVisibility()
+        public void SetCategoryVisibility()
         {
             Parent.ExecuteProtected(() =>
             {
                 foreach (var binding in Bindings)
-                    binding.Cell.EntireColumn.Hidden = !binding.Visible;
+                    SetCategoryVisibility(binding);
             });
         }
 
         /// <summary>
-        /// Toggles the visibility of a column
+        /// Sets visibiliy for a single column (portrait table) or for a single row (landscape table)
         /// </summary>
-        /// <param name="path">Binding path of the column</param>
+        private void SetCategoryVisibility(Binding binding)
+        {
+            switch (_orientation)
+            {
+                case TableOrientation.Portrait:
+                    binding.Cell.EntireColumn.Hidden = !binding.Visible;
+                    break;
+                case TableOrientation.Landscape:
+                    binding.Cell.EntireRow.Hidden = !binding.Visible;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Toggles the visibility of a column (portrait table) or row (landscape table)
+        /// </summary>
+        /// <param name="path">Binding path of the column or row</param>
         /// <returns>true if visible, false otherwise</returns>
-        public bool ToggleColumnVisibility(string path)
+        public bool ToggleCategoryVisibility(string path)
         {
             var binding = Bindings.FirstOrDefault(x => x.Path == path);
             if (binding != null)
             {
                 binding.Visible = !binding.Visible;
-                Parent.ExecuteProtected(() => binding.Cell.EntireColumn.Hidden = !binding.Visible);
+                switch (_orientation)
+                {
+                    case TableOrientation.Portrait:
+                        Parent.ExecuteProtected(() => binding.Cell.EntireColumn.Hidden = !binding.Visible);
+                        break;
+                    case TableOrientation.Landscape:
+                        Parent.ExecuteProtected(() => binding.Cell.EntireRow.Hidden = !binding.Visible);
+                        break;
+                }
             }
             return binding != null && binding.Visible;
         }
