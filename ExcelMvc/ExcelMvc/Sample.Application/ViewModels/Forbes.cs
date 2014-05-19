@@ -48,12 +48,17 @@ namespace Sample.Application.ViewModels
     internal class Forbes
     {
         private Sheet ForbesSheet { get; set; }
+        private Sheet ForbesTransposedSheet { get; set; }
         private Table CompanyTable { get; set; }
+        private Table CompanyTransposedTable { get; set; }
         private Form  CompanyForm { get; set; }
+        private Form  CompanyTransposedForm { get; set; }
         private Table CountryTable { get; set; }
         private Table IndustryTable { get; set; }
         private bool IsLoaded { get; set; }
         private bool IsUpdating { get; set; }
+        private bool IsLoadedTransposed { get; set; }
+        private bool IsUpdatingTransposed { get; set; }
         private CommandTests Tests { get; set; }
 
         public Forbes(View view)
@@ -77,12 +82,34 @@ namespace Sample.Application.ViewModels
             CompanyForm = (Form)ForbesSheet.Find(Binding.ViewType.Form, "Company");
             CompanyForm.ObjectChanged += _companyForm_ObjectChanged;
 
+            ForbesTransposedSheet = (Sheet)view.Find(Binding.ViewType.Sheet, "Forbes_transposed");
+            ForbesTransposedSheet.HookClicked(LoadAllClickedTransposed, "TransposedLoadForbes", true);
+            ForbesTransposedSheet.HookClicked(ClearAllClickedTransposed, "TransposedClearForbes", true);
+            ForbesTransposedSheet.HookClicked(StartUpdateClickedTransposed, "TransposedStartUpdate", true);
+            ForbesTransposedSheet.HookClicked(ShowRowClicked, "TransposedShowRow", true);
+            ForbesTransposedSheet.HookClicked(ShowDialogClickedTransposed, "TransposedShowDialog", true);
+
+            CompanyTransposedTable = (Table)ForbesTransposedSheet.Find(Binding.ViewType.Table, "CompanyTransposed");
+            CompanyTransposedTable.SelectionChanged += _companyTransposedTable_SelectionChanged;
+            CompanyTransposedTable.ObjectChanged += _companyTransposedTable_ObjectChanged;
+            CompanyTransposedTable.Model = new CompanyList();
+
+            CompanyTransposedForm = (Form)ForbesTransposedSheet.Find(Binding.ViewType.Form, "CompanyTransposed");
+            CompanyTransposedForm.ObjectChanged += _companyTransposedForm_ObjectChanged;
+
             CountryTable = (Table) view.Find(Binding.ViewType.Table, "Country");
             IndustryTable = (Table) view.Find(Binding.ViewType.Table, "Industry");
             EnableControls();
         }
 
         void _companyForm_ObjectChanged(object sender, ObjectChangedArgs args)
+        {
+            // this is just for demo purpose, just to get the table to update, careful with 
+            // recursive update
+            (args.Items.First() as Company).RaiseChanged();
+        }
+
+        void _companyTransposedForm_ObjectChanged(object sender, ObjectChangedArgs args)
         {
             // this is just for demo purpose, just to get the table to update, careful with 
             // recursive update
@@ -101,6 +128,18 @@ namespace Sample.Application.ViewModels
             CompanyForm.Model = args.Items.Last();
         }
 
+        void _companyTransposedTable_ObjectChanged(object sender, ObjectChangedArgs args)
+        {
+            var model = args.Items.Last();
+            if (model == CompanyTransposedForm.Model)
+                ((Company)model).RaiseChanged();
+        }
+
+        void _companyTransposedTable_SelectionChanged(object sender, SelectionChangedArgs args)
+        {
+            CompanyTransposedForm.Model = args.Items.Last();
+        }
+
         private void _view_BindFailed(object sender, BindingFailedEventArgs args)
         {
             MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -116,12 +155,31 @@ namespace Sample.Application.ViewModels
             EnableControls();
         }
 
+        void LoadAllClickedTransposed(object sender, CommandEventArgs args)
+        {
+            var companyList = (CompanyList)CompanyTransposedTable.Model;
+            companyList.Load();
+            RebindReferenceLists(companyList);
+            companyList.RaiseChanged();
+            IsLoadedTransposed = true;
+            EnableControls();
+        }
+
         void ClearAllClicked(object sender, CommandEventArgs args)
         {
             var companyList = (CompanyList)CompanyTable.Model;
             companyList.Unload();
             RebindReferenceLists(companyList);
             IsLoaded = false;
+            EnableControls();
+        }
+
+        void ClearAllClickedTransposed(object sender, CommandEventArgs args)
+        {
+            var companyList = (CompanyList)CompanyTransposedTable.Model;
+            companyList.Unload();
+            RebindReferenceLists(companyList);
+            IsLoadedTransposed = false;
             EnableControls();
         }
 
@@ -143,9 +201,28 @@ namespace Sample.Application.ViewModels
             EnableControls();
         }
 
+        void StartUpdateClickedTransposed(object sender, CommandEventArgs args)
+        {
+            var cmd = (Command)sender;
+            var update = !(bool)(cmd.Value ?? false);
+            cmd.Value = update;
+            cmd.Caption = update ? "Stop Update" : "Start Update";
+            var companyList = (CompanyList)CompanyTransposedTable.Model;
+            companyList.Update(update);
+            IsUpdatingTransposed = update;
+            EnableControls();
+        }
+
         private void ShowColumnClicked(object sender, CommandEventArgs args)
         {
             var visible =CompanyTable.ToggleCategoryVisibility("Industry");
+            var cmd = (Command)sender;
+            cmd.Caption = visible ? "Hide Industry" : "Show Industry";
+        }
+
+        private void ShowRowClicked(object sender, CommandEventArgs args)
+        {
+            var visible = CompanyTransposedTable.ToggleCategoryVisibility("Industry");
             var cmd = (Command)sender;
             cmd.Caption = visible ? "Hide Industry" : "Show Industry";
         }
@@ -157,11 +234,21 @@ namespace Sample.Application.ViewModels
             v.ShowDialog(); // or v.Show();
         }
 
+        private void ShowDialogClickedTransposed(object sender, CommandEventArgs args)
+        {
+            var v = new Forbes2000 { Model = (IEnumerable)CompanyTransposedTable.Model };
+            var interop = new WindowInteropHelper(v) { Owner = App.Instance.Root.Handle };
+            v.ShowDialog(); // or v.Show();
+        }
+
         private void EnableControls()
         {
             ForbesSheet.FindCommand("LoadForbes").IsEnabled = !IsLoaded && !IsUpdating;
             ForbesSheet.FindCommand("ClearForbes").IsEnabled = IsLoaded && !IsUpdating; 
             ForbesSheet.FindCommand("StartUpdate").IsEnabled = IsLoaded;
+            ForbesTransposedSheet.FindCommand("TransposedLoadForbes").IsEnabled = !IsLoadedTransposed && !IsUpdatingTransposed;
+            ForbesTransposedSheet.FindCommand("TransposedClearForbes").IsEnabled = IsLoadedTransposed && !IsUpdatingTransposed;
+            ForbesTransposedSheet.FindCommand("TransposedStartUpdate").IsEnabled = IsLoadedTransposed;
         }
     }
 }

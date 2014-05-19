@@ -90,29 +90,29 @@ namespace ExcelMvc.Views
         /// <summary>
         /// Unbinds validation lists
         /// </summary>
-        /// <param name="rows">Number of rows to unbind</param>
-        protected void UnbindValidationLists(int rows)
+        /// <param name="numberItems">Number of rows to unbind</param>
+        protected void UnbindValidationLists(int numberItems, Table.TableOrientation orientation)
         {
             foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
             {
                 if (IsBoolValidationList(binding.ValidationList))
-                    UnbindCheckBoxes(binding, rows);
+                    UnbindCheckBoxes(binding, numberItems, orientation);
                 else
-                    UnbindValidationLists(binding, rows);
+                    UnbindValidationLists(binding, numberItems, orientation);
             }
         }
 
-        private void UnbindValidationLists(Binding binding, int rows)
+        private void UnbindValidationLists(Binding binding, int numberItems, Table.TableOrientation orientation)
         {
             var lbinding = binding;
             Parent.ExecuteProtected(() =>
             {
-                var column = lbinding.MakeRange(0, rows, 0, 1);
-                column.Validation.Delete();
+                var rangeCategory = orientation == Table.TableOrientation.Portrait ? lbinding.MakeRange(0, numberItems, 0, 1) : lbinding.MakeRange(0, 1, 0, numberItems);
+                rangeCategory.Validation.Delete();
             });
         }
 
-        private void UnbindCheckBoxes(Binding binding, int rows)
+        private void UnbindCheckBoxes(Binding binding, int rows, Table.TableOrientation orientation)
         {
             /*
             var worksheet = ((Sheet)Parent).Underlying;
@@ -135,39 +135,39 @@ namespace ExcelMvc.Views
         /// <summary>
         /// Unbinds validation lists
         /// </summary>
-        /// <param name="rows">Number of rows to unbind</param>
-        protected void BindValidationLists(int rows)
+        /// <param name="numberItems">Number of rows to unbind</param>
+        protected void BindValidationLists(int numberItems, Table.TableOrientation orientation)
         {
             foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
             {
                 if (IsBoolValidationList(binding.ValidationList))
-                    BindCheckBoxes(binding, rows);
+                    BindCheckBoxes(binding, numberItems, orientation);
                 else
-                    BindValidationLists(binding, rows);
+                    BindValidationLists(binding, numberItems, orientation);
             }
         }
 
-        private void BindValidationLists(Binding binding, int rows)
+        private void BindValidationLists(Binding binding, int numberItems, Table.TableOrientation orientation)
         {
             var lbinding = binding;
             Parent.ExecuteProtected(() =>
             {
-                var column = lbinding.MakeRange(0, rows, 0, 1);
-                column.Validation.Delete();
-                column.Validation.Add(XlDVType.xlValidateList, XlDVAlertStyle.xlValidAlertStop,
-                    XlFormatConditionOperator.xlBetween, MarkValidationListFormula(lbinding.ValidationList));
-                column.Validation.IgnoreBlank = true;
-                column.Validation.InCellDropdown = true;
-                column.Validation.InputTitle = "";
-                column.Validation.ErrorTitle = "";
-                column.Validation.InputMessage = "";
-                column.Validation.ErrorMessage = "";
-                column.Validation.ShowInput = true;
-                column.Validation.ShowError = true;
+                var rangeCategory = orientation == Table.TableOrientation.Portrait ? lbinding.MakeRange(0, numberItems, 0, 1) : lbinding.MakeRange(0, 1, 0, numberItems);
+                rangeCategory.Validation.Delete();
+                rangeCategory.Validation.Add(XlDVType.xlValidateList, XlDVAlertStyle.xlValidAlertStop,
+                    XlFormatConditionOperator.xlBetween, MarkValidationListFormula(lbinding.ValidationList, orientation));
+                rangeCategory.Validation.IgnoreBlank = true;
+                rangeCategory.Validation.InCellDropdown = true;
+                rangeCategory.Validation.InputTitle = "";
+                rangeCategory.Validation.ErrorTitle = "";
+                rangeCategory.Validation.InputMessage = "";
+                rangeCategory.Validation.ErrorMessage = "";
+                rangeCategory.Validation.ShowInput = true;
+                rangeCategory.Validation.ShowError = true;
             });
         }
 
-        private void BindCheckBoxes(Binding binding, int rows)
+        private void BindCheckBoxes(Binding binding, int numberItems, Table.TableOrientation orientation)
         {
             var worksheet = ((Sheet)Parent).Underlying;
             var boxes = worksheet.Shapes;
@@ -186,7 +186,7 @@ namespace ExcelMvc.Views
                     box.Line.Weight = 1;
                     cell.Select();
                    
-                    var range = lbinding.MakeRange(0, 1000, 0, 1);
+                    var range = orientation == Table.TableOrientation.Portrait ? lbinding.MakeRange(0, 1000, 0, 1) : lbinding.MakeRange(0, 1, 0, 1000);
                     cell.AutoFill(range);
                     //range.FillDown();
                 }
@@ -198,7 +198,7 @@ namespace ExcelMvc.Views
             return list.CompareOrdinalIgnoreCase("True/False") == 0;
         }
 
-        private string MarkValidationListFormula(string list)
+        private string MarkValidationListFormula(string list, Table.TableOrientation orientation)
         {
             Range range;
             if (list.Contains("["))
@@ -215,7 +215,7 @@ namespace ExcelMvc.Views
                 range = ((Sheet)Parent).Underlying.Range[list];
             }
 
-            // exclude trailing blank rows
+            // exclude trailing blank rows or trailing blank columns
             var value = (object[,])range.Value;
             for (var idx = value.GetUpperBound(0); idx >= value.GetLowerBound(0); idx--)
             {

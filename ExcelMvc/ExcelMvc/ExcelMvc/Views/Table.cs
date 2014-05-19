@@ -239,14 +239,14 @@ namespace ExcelMvc.Views
             {
                 ClearView(groupBindings, numberItemsBound, _orientation);
                 if (numberItemsBound > 0)
-                    UnbindValidationLists(numberItemsBound);
+                    UnbindValidationLists(numberItemsBound, _orientation);
             }
 
             if (newItems > 0)
             {
                 AssignItemIds();
                 UpdateView(groupBindings, bindingValues, newItems, _orientation);
-                BindValidationLists(newItems);
+                BindValidationLists(newItems, _orientation);
             }
         }
 
