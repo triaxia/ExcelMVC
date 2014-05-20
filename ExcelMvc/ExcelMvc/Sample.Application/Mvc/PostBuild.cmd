@@ -4,7 +4,8 @@ REM the Addin automatically.
 
 REM %1 "$(TargetDir)"
 REM %2 "$(TargetName)"
-REM %3 $(ConfigurationName)
+REM %3 $(OutDir)
+REM %4 "$(ConfigurationName)"
 
 pushd "%~dp0"
 
@@ -16,12 +17,12 @@ mkdir "%out%"
 
 copy "Start.cmd" "%out%"
 
-copy "..\..\ExcelMvc\bin\%~3\ExcelMvc.dll" "%out%"
-copy "..\..\ExcelMvc.Addin\bin\%~3\ExcelMvc.Addin.dll" "%out%ExcelMvc.Addin.xll"
+copy "..\..\ExcelMvc\%~3ExcelMvc.dll" "%out%"
+copy "..\..\ExcelMvc.Addin\bin\%~4\ExcelMvc.Addin.dll" "%out%ExcelMvc.Addin.xll"
 
-copy "..\..\Sample.Models\bin\%~3\Sample.Models.dll" "%out%"
-copy "..\..\Sample.Views\bin\%~3\Sample.Views.dll" "%out%"
-copy "..\..\Sample.Application\bin\%~3\Sample.Application.dll" "%out%"
+copy "..\..\Sample.Models\%~3Sample.Models.dll" "%out%"
+copy "..\..\Sample.Views\%~3Sample.Views.dll" "%out%"
+copy "..\..\Sample.Application\%~3Sample.Application.dll" "%out%"
 
 copy "..\..\Sample.Models\Forbes.csv" "%out%"
 copy "..\..\Sample.Views\Forbes2000.xlsx" "%out%"

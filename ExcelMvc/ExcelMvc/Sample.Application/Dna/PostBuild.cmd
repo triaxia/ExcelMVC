@@ -3,7 +3,7 @@ REM to where the xll is and then packs the lot into a DNA xll.
 
 REM %1 "$(TargetDir)"
 REM %2 "$(TargetName)"
-REM %3 $(ConfigurationName)
+REM %3 $(OutDir)
 
 pushd "%~dp0"
 
@@ -20,13 +20,13 @@ rem copy "..\..\..\ExcelDna\ExcelDna64.xll" "%out%ExcelMvc.AddinDna.xll"
 copy "Start.cmd" "%out%"
 copy "ExcelMvc.AddinDna.dna" "%out%"
 
-copy "..\..\ExcelMvc\bin\%~3\ExcelMvc.dll" "%out%"
-copy "..\..\ExcelMvc.AddinDna\bin\%~3\ExcelMvc.AddinDna.dll" "%out%"
-copy "..\..\ExcelMvc.AddinDna\bin\%~3\ExcelDna.Integration.dll" "%out%"
+copy "..\..\ExcelMvc\%~3ExcelMvc.dll" "%out%"
+copy "..\..\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna.dll" "%out%"
+copy "..\..\ExcelMvc.AddinDna\%~3ExcelDna.Integration.dll" "%out%"
 
-copy "..\..\Sample.Models\bin\%~3\Sample.Models.dll" "%out%"
-copy "..\..\Sample.Views\bin\%~3\Sample.Views.dll" "%out%"
-copy "..\..\Sample.Application\bin\%~3\Sample.Application.dll" "%out%"
+copy "..\..\Sample.Models\%~3Sample.Models.dll" "%out%"
+copy "..\..\Sample.Views\%~3Sample.Views.dll" "%out%"
+copy "..\..\Sample.Application\%~3Sample.Application.dll" "%out%"
 
 copy "..\..\Sample.Models\Forbes.csv" "%out%"
 copy "..\..\Sample.Views\Forbes2000.xlsx" "%out%"
