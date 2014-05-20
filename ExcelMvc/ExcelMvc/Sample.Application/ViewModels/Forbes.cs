@@ -99,7 +99,9 @@ namespace Sample.Application.ViewModels
 
             CountryTable = (Table) view.Find(Binding.ViewType.Table, "Country");
             IndustryTable = (Table) view.Find(Binding.ViewType.Table, "Industry");
+
             EnableControls();
+            EnableTransposedControls();
         }
 
         void _companyForm_ObjectChanged(object sender, ObjectChangedArgs args)
@@ -162,7 +164,7 @@ namespace Sample.Application.ViewModels
             RebindReferenceLists(companyList);
             companyList.RaiseChanged();
             IsLoadedTransposed = true;
-            EnableControls();
+            EnableTransposedControls();
         }
 
         void ClearAllClicked(object sender, CommandEventArgs args)
@@ -180,7 +182,7 @@ namespace Sample.Application.ViewModels
             companyList.Unload();
             RebindReferenceLists(companyList);
             IsLoadedTransposed = false;
-            EnableControls();
+            EnableTransposedControls();
         }
 
         private void RebindReferenceLists(CompanyList clist)
@@ -210,7 +212,7 @@ namespace Sample.Application.ViewModels
             var companyList = (CompanyList)CompanyTransposedTable.Model;
             companyList.Update(update);
             IsUpdatingTransposed = update;
-            EnableControls();
+            EnableTransposedControls();
         }
 
         private void ShowColumnClicked(object sender, CommandEventArgs args)
@@ -246,6 +248,10 @@ namespace Sample.Application.ViewModels
             ForbesSheet.FindCommand("LoadForbes").IsEnabled = !IsLoaded && !IsUpdating;
             ForbesSheet.FindCommand("ClearForbes").IsEnabled = IsLoaded && !IsUpdating; 
             ForbesSheet.FindCommand("StartUpdate").IsEnabled = IsLoaded;
+        }
+
+        private void EnableTransposedControls()
+        {
             ForbesTransposedSheet.FindCommand("TransposedLoadForbes").IsEnabled = !IsLoadedTransposed && !IsUpdatingTransposed;
             ForbesTransposedSheet.FindCommand("TransposedClearForbes").IsEnabled = IsLoadedTransposed && !IsUpdatingTransposed;
             ForbesTransposedSheet.FindCommand("TransposedStartUpdate").IsEnabled = IsLoadedTransposed;
