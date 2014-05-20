@@ -10,17 +10,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,58 +28,65 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Threading;
-using ExcelMvc.Extensions;
-using Microsoft.Office.Interop.Excel;
-
 namespace ExcelMvc.Runtime
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
+    using System.Threading;
+
+    using ExcelMvc.Extensions;
+
+    using Microsoft.Office.Interop.Excel;
+
     /// <summary>
     /// Encapsulates Range updating functions
     /// </summary>
     public class RangeUpdator
     {
-        public static string NameOfAsynUpdateThread {
-            get { return "AsynUodateThread"; }
-        }
+        #region Fields
 
-        private static readonly Lazy<RangeUpdator> Instane 
-            = new Lazy<RangeUpdator>(() => new RangeUpdator());
+        private static readonly Lazy<RangeUpdator> Instane = new Lazy<RangeUpdator>(() => new RangeUpdator());
 
-        /// <summary>
-        /// Singleton
-        /// </summary>
-        public static RangeUpdator Instance { get { return Instane.Value; } }
+        private readonly Queue<Item> items = new Queue<Item>();
+
+        #endregion Fields
+
+        #region Constructors
 
         private RangeUpdator()
         {
         }
 
-        private class Item
+        #endregion Constructors
+
+        #region Properties
+
+        /// <summary>
+        /// Singleton
+        /// </summary>
+        public static RangeUpdator Instance
         {
-            public Range Range { get; set; }
-            public int RowOffset { get; set; }
-            public int Rows { get; set; }
-            public int ColumnOffset { get; set; }
-            public int Columns { get; set; }
-            public object Value { get; set; }
-
-            public Range RowIdStart { get; set; }
-            public string RowId { get; set; }
-            public int RowCount { get; set; }
-
-            public Range ColIdStart { get; set; }
-            public string ColId { get; set; }
-            public int ColCount { get; set; }
+            get { return Instane.Value; }
         }
-        private readonly Queue<Item> _items = new Queue<Item>();
+
+        public static string NameOfAsynUpdateThread
+        {
+            get { return "AsynUodateThread"; }
+        }
+
+        private Thread Worker
+        {
+            get; set;
+        }
+
+        #endregion Properties
+
+        #region Methods
 
         public void Update(Range range, int rowOffset, int rows, int columnOffset, int columns, object value)
         {
@@ -92,8 +99,17 @@ namespace ExcelMvc.Runtime
         public void Update(Range range, Range rowIdStart, int rowCount, string rowId, int rows, int columnOffset, int columns, object value)
         {
             if (IsAsyncUpdateThread())
-                Enqueue(new Item { Range = range, RowIdStart = rowIdStart, RowId = rowId, RowCount = rowCount,
-                    Rows = rows, ColumnOffset = columnOffset, Columns = columns, Value = value });
+                Enqueue(new Item
+                {
+                    Range = range,
+                    RowIdStart = rowIdStart,
+                    RowId = rowId,
+                    RowCount = rowCount,
+                    Rows = rows,
+                    ColumnOffset = columnOffset,
+                    Columns = columns,
+                    Value = value
+                });
             else
                 range.MakeRange(RowOffsetFromRowId(rowIdStart, rowCount, rowId), rows, columnOffset, columns).Value = value;
         }
@@ -116,48 +132,34 @@ namespace ExcelMvc.Runtime
                 range.MakeRange(rowOffset, rows, ColOffsetFromColId(colIdStart, colCount, colId), columns).Value = value;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private void Enqueue(Item item)
+        private static int ColOffsetFromColId(Range start, int count, string colId)
         {
-            _items.Enqueue(item);
-            Start();
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private Item Dequeue()
-        {
-            return _items.Count == 0 ? null : _items.Dequeue();
-        }
-
-        private Thread Worker { get; set; }
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private void Start()
-        {
-            if (Worker == null)
+            var row = start.MakeRange(0, 1, 0, count);
+            for (var idx = 0; idx < count; idx++)
             {
-                Worker = new Thread(Process) {IsBackground = true};
-                Worker.Start();
+                if (((Range)row.Cells[1, idx + 1]).ID == colId)
+                    return idx;
             }
+
+            return -1;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private void Stop()
+        private static bool IsAsyncUpdateThread()
         {
-            Worker = null;
+            var threadName = Thread.CurrentThread.Name;
+            return !string.IsNullOrEmpty(threadName) && threadName.CompareOrdinalIgnoreCase(NameOfAsynUpdateThread) == 0;
         }
 
-        private void Process()
+        private static int RowOffsetFromRowId(Range start, int count, string rowId)
         {
-            Item item;
-            while ((item = Dequeue()) != null)
+            var column = start.MakeRange(0, count, 0, 1);
+            for (var idx = 0; idx < count; idx++)
             {
-                if (!Update(item))
-                {
-                    Enqueue(item);
-                    Thread.Sleep(100);
-                }
+                if (((Range)column.Cells[idx + 1, 1]).ID == rowId)
+                    return idx;
             }
-            Stop();
+
+            return -1;
         }
 
         private static bool Update(Item item)
@@ -177,41 +179,130 @@ namespace ExcelMvc.Runtime
             var exp = status as COMException;
             if (exp != null)
             {
-                var errorCode = (uint) exp.ErrorCode;
+                var errorCode = (uint)exp.ErrorCode;
                 if (errorCode == 0x8001010A || errorCode == 0x800AC472)
                     return false;
             }
 
-            //TODO
+            // TODO
             return false;
         }
 
-        private static int ColOffsetFromColId(Range start, int count, string colId)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private Item Dequeue()
         {
-            var row = start.MakeRange(0, 1, 0, count);
-            for (var idx = 0; idx < count; idx++)
-            {
-                if (((Range)row.Cells[1, idx + 1]).ID == colId)
-                    return idx;
-            }
-            return -1;
+            return items.Count == 0 ? null : items.Dequeue();
         }
 
-        private static int RowOffsetFromRowId(Range start, int count, string rowId)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void Enqueue(Item item)
         {
-            var column = start.MakeRange(0, count, 0, 1);
-            for (var idx = 0; idx < count; idx++)
-            {
-                if (((Range)column.Cells[idx + 1, 1]).ID == rowId)
-                    return idx;
-            }
-            return -1;
+            items.Enqueue(item);
+            Start();
         }
 
-        private static bool IsAsyncUpdateThread()
+        private void Process()
         {
-            var threadName = Thread.CurrentThread.Name;
-            return !string.IsNullOrEmpty(threadName) && threadName.CompareOrdinalIgnoreCase(NameOfAsynUpdateThread) == 0;
+            Item item;
+            while ((item = Dequeue()) != null)
+            {
+                if (!Update(item))
+                {
+                    Enqueue(item);
+                    Thread.Sleep(100);
+                }
+            }
+
+            Stop();
         }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void Start()
+        {
+            if (Worker == null)
+            {
+                Worker = new Thread(Process) { IsBackground = true };
+                Worker.Start();
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void Stop()
+        {
+            Worker = null;
+        }
+
+        #endregion Methods
+
+        #region Nested Types
+
+        private class Item
+        {
+            #region Properties
+
+            public int ColCount
+            {
+                get; set;
+            }
+
+            public string ColId
+            {
+                get; set;
+            }
+
+            public Range ColIdStart
+            {
+                get; set;
+            }
+
+            public int ColumnOffset
+            {
+                get; set;
+            }
+
+            public int Columns
+            {
+                get; set;
+            }
+
+            public Range Range
+            {
+                get; set;
+            }
+
+            public int RowCount
+            {
+                get; set;
+            }
+
+            public string RowId
+            {
+                get; set;
+            }
+
+            public Range RowIdStart
+            {
+                get; set;
+            }
+
+            public int RowOffset
+            {
+                get; set;
+            }
+
+            public int Rows
+            {
+                get; set;
+            }
+
+            public object Value
+            {
+                get; set;
+            }
+
+            #endregion Properties
+        }
+
+        #endregion Nested Types
     }
 }

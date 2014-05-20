@@ -1,4 +1,6 @@
-﻿/*
+﻿#region Header
+
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +12,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,25 +30,37 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using ExcelMvc.Extensions;
-using ExcelMvc.Views;
-using Microsoft.Office.Interop.Excel;
+#endregion Header
 
 namespace ExcelMvc.Controls
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using ExcelMvc.Extensions;
+    using ExcelMvc.Views;
+
+    using Microsoft.Office.Interop.Excel;
+
     /// <summary>
     /// Creates command on a sheet
     /// </summary>
     internal static class CommandFactory
     {
+        #region Fields
+
+        private const string CommandPrefix = "ExcelMVC.";
+
+        #endregion Fields
+
+        #region Methods
+
         public static void Create(Worksheet sheet, View host, Dictionary<string, Command> commands)
         {
             var names = (from Comment item in sheet.Comments select item.Shape.Name).ToList();
@@ -60,6 +74,11 @@ namespace ExcelMvc.Controls
             Create(sheet, host, (DropDowns)sheet.DropDowns(), names, commands);
             Create(sheet, host, (Spinners)sheet.Spinners(), names, commands);
             Create(sheet, host, sheet.Shapes, names, commands);
+        }
+
+        public static string RemovePrefix(string name)
+        {
+            return IsCreateable(name) ? name.Substring(CommandPrefix.Length) : name;
         }
 
         private static void Create(Worksheet sheet, View host, IEnumerable items, List<string> names, Dictionary<string, Command> commands)
@@ -95,7 +114,6 @@ namespace ExcelMvc.Controls
 
                 if (Create(host, item as Shape, commands, names))
                 {
-
                 }
             }
         }
@@ -126,7 +144,7 @@ namespace ExcelMvc.Controls
 
             var name = item.Name;
             int idx;
-            if ((idx = names.BinarySearch(name)) >= 0) //  || !IsCreateable(name)
+            if ((idx = names.BinarySearch(name)) >= 0) // || !IsCreateable(name)
                 return true;
 
             ActionExtensions.Try(() =>
@@ -162,15 +180,11 @@ namespace ExcelMvc.Controls
             return true;
         }
 
-        private const string CommandPrefix = "ExcelMVC.";
-        public static string RemovePrefix(string name)
-        {
-            return IsCreateable(name) ? name.Substring(CommandPrefix.Length) : name;
-        }
-
         private static bool IsCreateable(string name)
         {
             return name.StartsWith(CommandPrefix, StringComparison.OrdinalIgnoreCase);
         }
+
+        #endregion Methods
     }
 }

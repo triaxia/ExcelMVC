@@ -1,4 +1,5 @@
-﻿/*
+﻿#region Header
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +11,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,19 +29,29 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using System.Collections.Generic;
-using ExcelMvc.Runtime;
-using ExcelMvc.Views;
+#endregion Header
 
 namespace Sample.Application.ViewModels
 {
+    using System.Collections.Generic;
+
+    using ExcelMvc.Runtime;
+    using ExcelMvc.Views;
+
     public class Session : ISession
     {
-        private static readonly Dictionary<View, object> Views = new Dictionary<View, object>();
+        #region Fields
+
         private const string ViewName = "Forbes2000";
+
+        private static readonly Dictionary<View, object> Views = new Dictionary<View, object>();
+
+        #endregion Fields
+
+        #region Constructors
 
         static Session()
         {
@@ -51,7 +62,32 @@ namespace Sample.Application.ViewModels
             App.Instance.Closed += Book_Closed;
         }
 
-        static void Book_Opening(object sender, ViewEventArgs args)
+        #endregion Constructors
+
+        #region Methods
+
+        public void Dispose()
+        {
+        }
+
+        private static void Book_Closed(object sender, ViewEventArgs args)
+        {
+            // remove the applicaton model for the book closed
+            Views.Remove(args.View);
+        }
+
+        private static void Book_Closing(object sender, ViewEventArgs args)
+        {
+        }
+
+        private static void Book_Opened(object sender, ViewEventArgs args)
+        {
+            // create the application model for the book opened
+            if (args.View.Id == ViewName)
+                Views[args.View] = new Forbes(args.View);
+        }
+
+        private static void Book_Opening(object sender, ViewEventArgs args)
         {
             // cancel out if the book being opened is not "Forbes2000", whose view id is
             // defined by the Custom Document Propety named "ExcelMvc".
@@ -59,25 +95,6 @@ namespace Sample.Application.ViewModels
                 args.Cancel();
         }
 
-        static void Book_Opened(object sender, ViewEventArgs args)
-        {
-            // create the application model for the book opened
-            if (args.View.Id == ViewName)
-                Views[args.View] = new Forbes(args.View);
-        }
-
-        static void Book_Closing(object sender, ViewEventArgs args)
-        {
-        }
-
-        static void Book_Closed(object sender, ViewEventArgs args)
-        {
-            // remove the applicaton model for the book closed
-            Views.Remove(args.View);
-        }
-
-        public void Dispose()
-        {
-        }
+        #endregion Methods
     }
 }

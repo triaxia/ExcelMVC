@@ -204,6 +204,10 @@
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Settings.StyleCop" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

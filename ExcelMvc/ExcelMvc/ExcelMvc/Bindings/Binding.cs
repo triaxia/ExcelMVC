@@ -1,4 +1,5 @@
-﻿/*
+﻿#region Header
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +11,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,25 +29,56 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-
-using System;
-using System.Collections.Generic;
-using System.Windows.Data;
-using ExcelMvc.Extensions;
-using ExcelMvc.Runtime;
-using Microsoft.Office.Interop.Excel;
+#endregion Header
 
 namespace ExcelMvc.Bindings
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows.Data;
+
+    using ExcelMvc.Extensions;
+    using ExcelMvc.Runtime;
+
+    using Microsoft.Office.Interop.Excel;
+
     /// <summary>
     /// Represents either a form field binding or a table column binding between 
     /// the View (Excel) and its view model
     /// </summary>
     public class Binding
     {
+        #region Constructors
+
+        /// <summary>
+        /// Initialises an instance of ExcelMvc.Binding
+        /// </summary>
+        public Binding()
+        {
+            Type = ViewType.None;
+            Mode = ModeType.OneWay;
+            Name = string.Empty;
+            Path = string.Empty;
+            Visible = true;
+        }
+
+        #endregion Constructors
+
+        #region Enumerations
+
+        /// <summary>
+        /// Binding mode types
+        /// </summary>
+        public enum ModeType
+        {
+            OneWay,
+            OneWayToSource,
+            TwoWay
+        }
+
         /// <summary>
         /// View types
         /// </summary>
@@ -83,67 +115,77 @@ namespace ExcelMvc.Bindings
             App
         }
 
-        /// <summary>
-        /// Gets and sets the View Type
-        /// </summary>
-        public ViewType Type { get; set; }
+        #endregion Enumerations
+
+        #region Properties
 
         /// <summary>
-        /// Binding mode types
+        /// Visual cell
         /// </summary>
-        public enum ModeType
+        public Range Cell
         {
-            OneWay,
-            OneWayToSource,
-            TwoWay
+            get; internal set;
+        }
+
+        /// <summary>
+        /// Value converter
+        /// </summary>
+        public IValueConverter Converter
+        {
+            get; set;
         }
 
         /// <summary>
         /// Gets and sets the mode Type
         /// </summary>
-        public ModeType Mode { get; set; }
-
-        /// <summary>
-        /// View name
-        /// </summary>
-        internal string Name { get; set; }
+        public ModeType Mode
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Property path
         /// </summary>
-        public string Path { get; set; }
+        public string Path
+        {
+            get; set;
+        }
 
         /// <summary>
-        /// Visual cell
+        /// Gets and sets the View Type
         /// </summary>
-        public Range Cell { get; internal set; }
-
-        /// <summary>
-        /// Visible
-        /// </summary>
-        public bool Visible { get; set; }
+        public ViewType Type
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Validation list address
         /// </summary>
-        public string ValidationList { get; set; }
-
-        /// <summary>
-        /// Value converter
-        /// </summary>
-        public IValueConverter Converter { get; set; }
-
-        /// <summary>
-        /// Initialises an instance of ExcelMvc.Binding
-        /// </summary>
-        public Binding()
+        public string ValidationList
         {
-            Type = ViewType.None;
-            Mode = ModeType.OneWay;
-            Name = "";
-            Path = "";
-            Visible = true;
+            get; set;
         }
+
+        /// <summary>
+        /// Visible
+        /// </summary>
+        public bool Visible
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// View name
+        /// </summary>
+        internal string Name
+        {
+            get; set;
+        }
+
+        #endregion Properties
+
+        #region Methods
 
         /// <summary>
         /// Makes a range from the binding cell
@@ -172,6 +214,7 @@ namespace ExcelMvc.Bindings
                 foreach (Name nm in item.Names)
                     Collect(nm, book, bindings);
             }
+
             return bindings;
         }
 
@@ -182,12 +225,12 @@ namespace ExcelMvc.Bindings
             if (parts.Length != 3 || parts[0].CompareOrdinalIgnoreCase("ExcelMvc") != 0)
                 return;
 
-            var viewType = parts[1] ?? "";
+            var viewType = parts[1] ?? string.Empty;
             if (viewType.CompareOrdinalIgnoreCase("Form") != 0
                 && viewType.CompareOrdinalIgnoreCase("Table") != 0)
                 throw new Exception(string.Format(Resource.ErrorInvalidViewType, viewType));
 
-            var viewName = parts[2] ?? "";
+            var viewName = parts[2] ?? string.Empty;
             if (string.IsNullOrEmpty(viewName))
                 throw new Exception(string.Format(Resource.ErrorNoViewNameFound, viewName));
 
@@ -210,9 +253,9 @@ namespace ExcelMvc.Bindings
 
             for (var idx = value.GetLowerBound(0) + 1; idx <= value.GetUpperBound(0); idx++)
             {
-                var dataCell = ((value[idx, indexOfCell] as string) ?? "").Trim();
-                var bindingPath = ((value[idx, indexOfPath] as string) ?? "").Trim();
-                if (dataCell == "" || bindingPath == "")
+                var dataCell = ((value[idx, indexOfCell] as string) ?? string.Empty).Trim();
+                var bindingPath = ((value[idx, indexOfPath] as string) ?? string.Empty).Trim();
+                if (dataCell == string.Empty || bindingPath == string.Empty)
                     continue;
 
                 Range range = null;
@@ -235,16 +278,17 @@ namespace ExcelMvc.Bindings
                 if (range == null)
                     throw new Exception(string.Format(Resource.ErrorNoDataCellRange, dataCell));
 
-                var modeType = ((value[idx, indexOfMode] as string) ?? "").Trim();
+                var modeType = ((value[idx, indexOfMode] as string) ?? string.Empty).Trim();
                 var visible = true;
                 if (indexOfVisibility >= 0)
                 {
-                    var cell = (value[idx, indexOfVisibility] as string) ?? "";
+                    var cell = (value[idx, indexOfVisibility] as string) ?? string.Empty;
                     visible = cell.CompareOrdinalIgnoreCase("Visible") == 0 || cell.CompareOrdinalIgnoreCase("True") == 0;
                 }
+
                 string validation = null;
                 if (indexOfValidation >= 0)
-                    validation = (value[idx, indexOfValidation] as string);
+                    validation = value[idx, indexOfValidation] as string;
 
                 IValueConverter converter = null;
                 if (indexOfConverter >= 0)
@@ -282,7 +326,10 @@ namespace ExcelMvc.Bindings
                 if (cell != null && cell.CompareOrdinalIgnoreCase(heading) == 0)
                     return jdx;
             }
+
             return -1;
         }
+
+        #endregion Methods
     }
 }

@@ -1,4 +1,5 @@
-﻿/*
+﻿#region Header
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +11,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,27 +29,49 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using ExcelMvc.Bindings;
-using ExcelMvc.Runtime;
-using Microsoft.Office.Interop.Excel;
+#endregion Header
 
 namespace ExcelMvc.Views
 {
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+
+    using ExcelMvc.Bindings;
+    using ExcelMvc.Runtime;
+
+    using Microsoft.Office.Interop.Excel;
+
     /// <summary>
     /// Represents a visual consists with scattered fields
     /// </summary>
     public class Form : BindingView
     {
-        public override Binding.ViewType Type
+        #region Fields
+
+        private INotifyPropertyChanged notifyPropertyChanged;
+
+        #endregion Fields
+
+        #region Constructors
+
+        /// <summary>
+        /// Initialises an instances of ExcelMvc.Views.Panel
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="bindings">Bindings for the view</param>
+        internal Form(View parent, IEnumerable<Binding> bindings)
+            : base(parent, bindings)
         {
-            get { return Binding.ViewType.Form; }
+            SelectedBindings = new List<Binding>();
         }
+
+        #endregion Constructors
+
+        #region Properties
 
         public override object Model
         {
@@ -63,18 +86,33 @@ namespace ExcelMvc.Views
         /// <summary>
         /// Gets the selected bindings.
         /// </summary>
-        public List<Binding> SelectedBindings { get; private set; }
-
-
-        /// <summary>
-        /// Initialises an instances of ExcelMvc.Views.Panel
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="bindings">Bindings for the view</param>
-        internal Form(View parent, IEnumerable<Binding> bindings)
-            : base(parent, bindings)
+        public List<Binding> SelectedBindings
         {
-            SelectedBindings = new List<Binding>();
+            get; private set;
+        }
+
+        public override Binding.ViewType Type
+        {
+            get { return Binding.ViewType.Form; }
+        }
+
+        #endregion Properties
+
+        #region Methods
+
+        public override void Dispose()
+        {
+            base.Model = null;
+            UnhookModelEvents();
+            UnhookViewEvents();
+        }
+
+        private void HookModelEvents()
+        {
+            UnhookModelEvents();
+            notifyPropertyChanged = Model as INotifyPropertyChanged;
+            if (notifyPropertyChanged != null)
+                notifyPropertyChanged.PropertyChanged += Notify_PropertyChanged;
         }
 
         private void HookViewEvents()
@@ -84,14 +122,12 @@ namespace ExcelMvc.Views
             sheet.Underlying.SelectionChange += Underlying_SelectionChange;
         }
 
-        private void UnhookViewEvents()
+        private void Notify_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var sheet = (Sheet)Parent;
-            sheet.Underlying.Change -= Underlying_Change;
-            sheet.Underlying.SelectionChange -= Underlying_SelectionChange;
+            UpdateView(e.PropertyName);
         }
 
-        void Underlying_Change(Range target)
+        private void Underlying_Change(Range target)
         {
             UpdateObject(target);
         }
@@ -102,10 +138,23 @@ namespace ExcelMvc.Views
             SelectedBindings.Clear();
             SelectedBindings.AddRange(Bindings.Where(binding => target.Application.Intersect(binding.Cell, target) != null));
             if (count != 0 || SelectedBindings.Count != 0)
-                OnSelectionChanged(new [] { Model }, SelectedBindings);
+                OnSelectionChanged(new[] { Model }, SelectedBindings);
         }
 
-        void UpdateObject(Range target)
+        private void UnhookModelEvents()
+        {
+            if (notifyPropertyChanged != null)
+                notifyPropertyChanged.PropertyChanged -= Notify_PropertyChanged;
+        }
+
+        private void UnhookViewEvents()
+        {
+            var sheet = (Sheet)Parent;
+            sheet.Underlying.Change -= Underlying_Change;
+            sheet.Underlying.SelectionChange -= Underlying_SelectionChange;
+        }
+
+        private void UpdateObject(Range target)
         {
             var toSource = Bindings.Where(x => (x.Mode == Binding.ModeType.TwoWay || x.Mode == Binding.ModeType.OneWayToSource));
             foreach (var binding in toSource)
@@ -135,7 +184,7 @@ namespace ExcelMvc.Views
             try
             {
                 UnhookViewEvents();
-                UpdateView("");
+                UpdateView(string.Empty);
                 BindValidationLists(1, Table.TableOrientation.Portrait);
             }
             finally
@@ -148,7 +197,7 @@ namespace ExcelMvc.Views
         {
             ExcuteBinding(() =>
             {
-                var  match = string.IsNullOrEmpty(path)  ? null : Bindings.FirstOrDefault(x => x.Path == path);
+                var match = string.IsNullOrEmpty(path)  ? null : Bindings.FirstOrDefault(x => x.Path == path);
                 if (match != null)
                 {
                     UpdateView(match);
@@ -173,31 +222,6 @@ namespace ExcelMvc.Views
             });
         }
 
-        private INotifyPropertyChanged _notifyPropertyChanged;
-        private void HookModelEvents()
-        {
-            UnhookModelEvents();
-            _notifyPropertyChanged = Model as INotifyPropertyChanged;
-            if (_notifyPropertyChanged != null)
-                _notifyPropertyChanged.PropertyChanged += notify_PropertyChanged;
-        }
-
-        private void UnhookModelEvents()
-        {
-            if (_notifyPropertyChanged != null)
-                _notifyPropertyChanged.PropertyChanged -= notify_PropertyChanged;
-        }
-
-        void notify_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            UpdateView(e.PropertyName);
-        }
-
-        public override void Dispose()
-        {
-            base.Model = null;
-            UnhookModelEvents();
-            UnhookViewEvents();
-        }
+        #endregion Methods
     }
 }

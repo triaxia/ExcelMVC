@@ -1,4 +1,5 @@
-﻿/*
+﻿#region Header
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +11,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,39 +29,30 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using System;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
+#endregion Header
 
 namespace ExcelMvc.Views
 {
+    using System;
+    using System.Runtime.InteropServices;
+    using System.Windows.Forms;
+
     /// <summary>
     /// Wraps an native window
     /// </summary>
     public class Root : NativeWindow
     {
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        static extern uint RegisterWindowMessage(string lpProcName);
-
-        [DllImport("user32.dll")]
-        private static extern int PostMessage(IntPtr hwnd, int msg, int wParam, int lParam);
-
-        /// <summary>
-        /// Handler for a Destroyed event
-        /// </summary>
-        /// <param name="sender">Event sender</param>
-        /// <param name="args">EventArgs</param>
-        public delegate void DestroyedHandler(object sender, EventArgs args);
-
-        /// <summary>
-        /// Occurs when a Window has been destroyed
-        /// </summary>
-        public event DestroyedHandler Destroyed = delegate { };
+        #region Fields
 
         private static readonly uint AsyncUpdateMsg;
+
+        #endregion Fields
+
+        #region Constructors
+
         static Root()
         {
             AsyncUpdateMsg = RegisterWindowMessage("__ExcelMvcAsyncUpdate__");
@@ -75,10 +67,42 @@ namespace ExcelMvc.Views
             AssignHandle(new IntPtr(hwnd));
         }
 
+        #endregion Constructors
+
+        #region Delegates
+
+        /// <summary>
+        /// Handler for a Destroyed event
+        /// </summary>
+        /// <param name="sender">Event sender</param>
+        /// <param name="args">EventArgs</param>
+        public delegate void DestroyedHandler(object sender, EventArgs args);
+
+        #endregion Delegates
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when a Window has been destroyed
+        /// </summary>
+        public event DestroyedHandler Destroyed = delegate { };
+
+        #endregion Events
+
+        #region Methods
+
+        /// <summary>
+        /// Posts an async update message
+        /// </summary>
+        public void PostAsyncUpdate()
+        {
+            PostMessage(Handle, (int)AsyncUpdateMsg, 0, 0);
+        }
+
         protected override void WndProc(ref Message m)
         {
-            const int wmDestroy = 0x0002;
-            if (m.Msg == wmDestroy)
+            const int WmDestroy = 0x0002;
+            if (m.Msg == WmDestroy)
             {
                 Destroyed(this, new EventArgs());
             }
@@ -86,16 +110,16 @@ namespace ExcelMvc.Views
             {
                 return;
             }
+
             base.WndProc(ref m);
         }
 
+        [DllImport("user32.dll")]
+        private static extern int PostMessage(IntPtr hwnd, int msg, int wParam, int lParam);
 
-        /// <summary>
-        /// Posts an async update message
-        /// </summary>
-        public void PostAsyncUpdate()
-        {
-            PostMessage(Handle, (int) AsyncUpdateMsg, 0, 0);
-        }
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern uint RegisterWindowMessage(string lpProcName);
+
+        #endregion Methods
     }
 }

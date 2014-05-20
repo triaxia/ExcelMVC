@@ -1,4 +1,5 @@
-﻿/*
+﻿#region Header
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +11,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,50 +29,66 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ExcelMvc.Bindings;
-using Microsoft.Office.Interop.Excel;
-using ExcelMvc.Controls;
-using ExcelMvc.Extensions;
+#endregion Header
 
 namespace ExcelMvc.Views
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using ExcelMvc.Bindings;
+    using ExcelMvc.Controls;
+    using ExcelMvc.Extensions;
+
+    using Microsoft.Office.Interop.Excel;
+
     /// <summary>
     /// Represents a visual over an Excel worksheet
     /// </summary>
     public class Sheet : View
     {
-        private readonly Dictionary<string, Command> _commands =
+        #region Fields
+
+        private readonly Dictionary<string, Command> commands = 
             new Dictionary<string, Command>(StringComparer.OrdinalIgnoreCase);
 
-        private readonly Dictionary<string, Form> _forms =
+        private readonly Dictionary<string, Form> forms = 
             new Dictionary<string, Form>(StringComparer.OrdinalIgnoreCase);
-
-        private readonly Dictionary<string, Table> _tables =
+        
+        private readonly Dictionary<string, Table> tables = 
             new Dictionary<string, Table>(StringComparer.OrdinalIgnoreCase);
+
+        #endregion Fields
+
+        #region Constructors
+
+        /// <summary>
+        /// Initiaalises an instance of ExcelMvc.Views.Workspace
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="sheet">The underlying Excel Worksheet</param>
+        internal Sheet(View parent, Worksheet sheet)
+        {
+            Parent = parent;
+            Underlying = sheet;
+        }
+
+        #endregion Constructors
+
+        #region Events
 
         /// <summary>
         /// Occurs when a command is clicked
         /// </summary>
         public event ClickedHandler Clicked = delegate { };
 
-        /// <summary>
-        /// The underlying Excel sheet
-        /// </summary>
-        public Worksheet Underlying { get; private set; }
+        #endregion Events
 
-        /// <summary>
-        /// Gets the Commands on the sheet
-        /// </summary>
-        public override IEnumerable<Command> Commands
-        {
-            get { return _commands.Values.ToList(); }
-        }
+        #region Properties
 
         /// <summary>
         /// Gets the child views
@@ -80,12 +97,20 @@ namespace ExcelMvc.Views
         {
             get
             {
-                var forms = from form in _forms.Values
-                            select (View)form;
-                var tables = from table in _tables.Values
-                             select (View)table;
-                return forms.Concat(tables);
+                var lforms = from form in forms.Values
+                             select (View)form;
+                var ltables = from table in tables.Values
+                              select (View)table;
+                return lforms.Concat(ltables);
             }
+        }
+
+        /// <summary>
+        /// Gets the Commands on the sheet
+        /// </summary>
+        public override IEnumerable<Command> Commands
+        {
+            get { return commands.Values.ToList(); }
         }
 
         public override string Id
@@ -107,14 +132,30 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Initiaalises an instance of ExcelMvc.Views.Workspace
+        /// The underlying Excel sheet
         /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="sheet">The underlying Excel Worksheet</param>
-        internal Sheet(View parent, Worksheet sheet)
+        public Worksheet Underlying
         {
-            Parent = parent;
-            Underlying = sheet;
+            get; private set;
+        }
+
+        #endregion Properties
+
+        #region Methods
+
+        public override void Dispose()
+        {
+            foreach (var cmd in commands.Values)
+                cmd.Dispose();
+            commands.Clear();
+
+            foreach (var form in forms.Values)
+                form.Dispose();
+            forms.Clear();
+
+            foreach (var table in tables.Values)
+                table.Dispose();
+            tables.Clear();
         }
 
         internal void Initialise(IEnumerable<Binding> bindings)
@@ -123,24 +164,25 @@ namespace ExcelMvc.Views
 
             if (bindings != null)
                 CreateViews(bindings);
-            CommandFactory.Create(Underlying, this, _commands);
-            foreach (var cmd in _commands.Values)
-                cmd.Clicked += cmd_Clicked;
+            CommandFactory.Create(Underlying, this, commands);
+            foreach (var cmd in commands.Values)
+                cmd.Clicked += Cmd_Clicked;
         }
 
-        public override void Dispose()
+        private void Cmd_Clicked(object sender, CommandEventArgs args)
         {
-            foreach (var cmd in _commands.Values)
-                cmd.Dispose();
-            _commands.Clear();
+            Clicked(sender, args);
+            if (args.Handled)
+                return;
 
-            foreach (var form in _forms.Values)
-                form.Dispose();
-            _forms.Clear();
-
-            foreach (var table in _tables.Values)
-                table.Dispose();
-            _tables.Clear();
+            var views = forms.Values.Select(x => x as BindingView).ToList();
+            views.AddRange(tables.Values.Select(x => x as BindingView));
+            foreach (var view in views)
+            {
+                view.FireClicked(sender, args);
+                if (args.Handled)
+                    return;
+            }
         }
 
         private void CreateViews(IEnumerable<Binding> bindings)
@@ -155,7 +197,7 @@ namespace ExcelMvc.Views
                 OnOpening(args);
                 if (!args.IsCancelled)
                 {
-                    _forms[name] = form;
+                    forms[name] = form;
                     OnOpened(args);
                 }
             }
@@ -172,26 +214,12 @@ namespace ExcelMvc.Views
                 OnOpening(args);
                 if (!args.IsCancelled)
                 {
-                    _tables[name] = table;
+                    tables[name] = table;
                     OnOpened(new ViewEventArgs(table));
                 }
             }
         }
 
-        void cmd_Clicked(object sender, CommandEventArgs args)
-        {
-            Clicked(sender, args);
-            if (args.Handled)
-                return;
-
-            var views = _forms.Values.Select(x => x as BindingView).ToList();
-            views.AddRange(_tables.Values.Select(x => x as BindingView));
-            foreach (var view in views)
-            {
-                view.FireClicked(sender, args);
-                if (args.Handled)
-                    return;
-            }
-        }
+        #endregion Methods
     }
 }

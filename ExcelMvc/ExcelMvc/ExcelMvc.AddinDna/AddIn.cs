@@ -1,4 +1,6 @@
-﻿/*
+﻿#region Header
+
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +12,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,17 +30,23 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using ExcelDna.Integration;
-using ExcelMvc.Extensions;
-using ExcelMvc.Runtime;
+
+#endregion Header
 
 namespace ExcelMvc.AddinDna
 {
+    using ExcelDna.Integration;
+
+    using ExcelMvc.Extensions;
+    using ExcelMvc.Runtime;
+
     public class AddIn : IExcelAddIn
     {
+        #region Methods
+
         public void AutoClose()
         {
             Interface.Detach();
@@ -48,32 +56,7 @@ namespace ExcelMvc.AddinDna
         {
             Interface.Attach(ExcelDnaUtil.Application);
         }
+
+        #endregion Methods
     }
-
-    public static class Functions
-    {
-        [ExcelFunction(Description = "Called by a command",
-            Category = "ExcelMvc",
-            IsVolatile = false,
-            Name = "ExcelMvcRunCommandAction",
-            IsHidden = true)
-        ]
-        public static void ExcelMvcRunCommandAction()
-        {
-            Interface.FireClicked();
-        }
-
-        [ExcelFunction(Description = "Attach Excel to ExcelMvc", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcAttach")]
-        public static object ExcelMvcAttach([ExcelArgument] string name)
-        {
-            return ActionExtensions.Wrap(() => Interface.Attach(null)) ?? (object)true;
-        }
-
-        [ExcelFunction(Description = "Detach Excel from ExcelMvc", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcDetach")]
-        public static object ExcelMvcDetach([ExcelArgument] string name)
-        {
-            return ActionExtensions.Wrap(() => Interface.Detach()) ?? (object)true;
-        }
-    }
-
 }

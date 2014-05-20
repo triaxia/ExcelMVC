@@ -1,4 +1,5 @@
-﻿/*
+﻿#region Header
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +11,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,63 +29,23 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using System;
-using ExcelMvc.Views;
+#endregion Header
 
 namespace ExcelMvc.Controls
 {
-    /// <summary>
-    /// Represents EventArgs for a Command event
-    /// </summary>
-    public class CommandEventArgs : EventArgs
-    {
-        public bool Handled { get; set; }
-    }
+    using System;
 
-    /// <summary>
-    /// Defines the handler for a clicked event
-    /// </summary>
-    /// <param name="sender">Objects created the Clicked event </param>
-    /// <param name="args">Commard argument</param>
-    public delegate void ClickedHandler(object sender, CommandEventArgs args);
+    using ExcelMvc.Views;
 
     /// <summary>
     /// Defines an abstract base class for Commands
     /// </summary>
     public abstract class Command : IDisposable
     {
-        /// <summary>
-        /// Gets the host view 
-        /// </summary>
-        public View Host { get; private set; }
-
-        /// <summary>
-        /// Name of the command
-        /// </summary>
-        public string Name { get; private set; }
-
-        /// <summary>
-        /// Caption of the command
-        /// </summary>
-        public abstract string Caption { get; set; }
-
-        /// <summary>
-        /// Gets and sets the Enabled state
-        /// </summary>
-        public abstract bool IsEnabled { get; set; }
-
-        /// <summary>
-        /// Gets and sets the command value
-        /// </summary>
-        public abstract object Value { get; set; }
-
-        /// <summary>
-        /// Occurs when the command is clicked
-        /// </summary>
-        public event ClickedHandler Clicked = delegate { };
+        #region Constructors
 
         /// <summary>
         /// Constructs an instance
@@ -97,6 +58,68 @@ namespace ExcelMvc.Controls
             Name = name;
         }
 
+        #endregion Constructors
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when the command is clicked
+        /// </summary>
+        public event ClickedHandler Clicked = delegate { };
+
+        #endregion Events
+
+        #region Properties
+
+        /// <summary>
+        /// Caption of the command
+        /// </summary>
+        public abstract string Caption
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Gets the host view 
+        /// </summary>
+        public View Host
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets and sets the Enabled state
+        /// </summary>
+        public abstract bool IsEnabled
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Name of the command
+        /// </summary>
+        public string Name
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets and sets the command value
+        /// </summary>
+        public abstract object Value
+        {
+            get; set;
+        }
+
+        #endregion Properties
+
+        #region Methods
+
+        public virtual void Dispose()
+        {
+            Host = null;
+        }
+
         /// <summary>
         /// Fires the Clicked event
         /// </summary>
@@ -105,9 +128,6 @@ namespace ExcelMvc.Controls
             Clicked(this, new CommandEventArgs());
         }
 
-        public virtual void Dispose()
-        {
-            Host = null;
-        }
+        #endregion Methods
     }
 }

@@ -1,4 +1,5 @@
-﻿/*
+﻿#region Header
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +11,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,32 +29,96 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using System.ComponentModel;
+#endregion Header
 
 namespace Sample.Application.ViewModels
 {
+    using System.ComponentModel;
+
     public class Company : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        public Models.Company Model { get; set; }
-
-        public string Name { get { return Model.Name; } set { Model.Name = value; } }
-        public string Industry { get { return Model.Industry; } set { Model.Industry = value; } }
-        public string Country { get { return Model.Country; } set { Model.Country = value; } }
-        public double MarketValue { get { return Model.MarketValue; } set { Model.MarketValue = value; } }
-        public double Profits { get { return Model.Profits; } set { Model.Profits = value; } }
-        public double Sales { get { return Model.Sales; } set { Model.Sales = value; } }
-        public double Assets { get { return Model.Assets; } set { Model.Assets = value; } }
-        public int Rank { get { return Model.Rank; } set { Model.Rank = value; } }
-        public bool Listed { get { return Model.Listed; } set { Model.Listed = value; } }
+        #region Constructors
 
         public Company()
         {
             Model = new Models.Company();
         }
+
+        #endregion Constructors
+
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        #endregion Events
+
+        #region Properties
+
+        public double Assets
+        {
+            get { return Model.Assets; }
+            set { Model.Assets = value; }
+        }
+
+        public string Country
+        {
+            get { return Model.Country; }
+            set { Model.Country = value; }
+        }
+
+        public string Industry
+        {
+            get { return Model.Industry; }
+            set { Model.Industry = value; }
+        }
+
+        public bool Listed
+        {
+            get { return Model.Listed; }
+            set { Model.Listed = value; }
+        }
+
+        public double MarketValue
+        {
+            get { return Model.MarketValue; }
+            set { Model.MarketValue = value; }
+        }
+
+        public Models.Company Model
+        {
+            get; set;
+        }
+
+        public string Name
+        {
+            get { return Model.Name; }
+            set { Model.Name = value; }
+        }
+
+        public double Profits
+        {
+            get { return Model.Profits; }
+            set { Model.Profits = value; }
+        }
+
+        public int Rank
+        {
+            get { return Model.Rank; }
+            set { Model.Rank = value; }
+        }
+
+        public double Sales
+        {
+            get { return Model.Sales; }
+            set { Model.Sales = value; }
+        }
+
+        #endregion Properties
+
+        #region Methods
 
         public void RaiseChanged(string propertyName)
         {
@@ -72,5 +137,7 @@ namespace Sample.Application.ViewModels
             RaiseChanged("Rank");
             RaiseChanged("Listed");
         }
+
+        #endregion Methods
     }
 }

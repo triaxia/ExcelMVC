@@ -1,4 +1,5 @@
-﻿/*
+﻿#region Header
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -10,17 +11,17 @@ including without limitation the rights to use, copy, modify, merge, publish, di
 sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation; either version 2 of 
+This program is free software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
@@ -28,45 +29,72 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program;
-if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using ExcelMvc.Views;
+#endregion Header
 
 namespace ExcelMvc.Bindings
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class BindingFailedEventArgs : EventArgs
-    {
-        public View View { get; private set; }
-        public Exception Exception { get; private set; }
-        public BindingFailedEventArgs(View view, Exception exception)
-        {
-            View = view;
-            Exception = exception;
-        }
-    }
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text.RegularExpressions;
+
+    using ExcelMvc.Views;
+
+    #region Delegates
+
     public delegate void BindingFailedHandler(object sender, BindingFailedEventArgs args);
+
+    #endregion Delegates
 
     /// <summary>
     /// Encapsulates binding functions between View models and Views
     /// </summary>
     public static class ObjectBinding
     {
-        public static IEnumerable<string> GetGetPropertyNames(object value)
+        #region Fields
+
+        private const string NoQuoteCommaPattern = "[^\",]*";
+        private const string QuotedStringPattern = "\"([^\"]*|\"\")*\"";
+
+        private static readonly Regex IndexerPattern = new Regex(string.Format("({0}|{1})(,({0}|{1}))*", QuotedStringPattern, NoQuoteCommaPattern));
+        private static readonly Type MatrixType = typeof(object[,]);
+        private static readonly char[] PathSeparators = { '.', '[' };
+
+        #endregion Fields
+
+        #region Methods
+
+        /// <summary>
+        /// Changes the lower bounds of an array
+        /// </summary>
+        /// <typeparam name="T">Element type</typeparam>
+        /// <param name="value">Array to be changed</param>
+        /// <param name="lowerBound">Lower bound</param>
+        /// <returns>Changed array</returns>
+        public static Array ChangeLBound<T>(Array value, int lowerBound)
         {
-            const BindingFlags flags = BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.Public;
-            return value.GetType().GetProperties(flags).Select((x => x.Name));
+            var lbounds = new int[value.Rank];
+            var lengths = new int[value.Rank];
+            for (var idx = 0; idx < value.Rank; idx++)
+            {
+                lbounds[idx] = lowerBound;
+                lengths[idx] = value.GetLength(idx);
+            }
+
+            var to = Array.CreateInstance(typeof(object), lengths, lbounds);
+            Array.Copy(value, to, value.Length);
+            return to;
         }
 
-        private static readonly Type MatrixType = typeof (object[,]);
+        public static IEnumerable<string> GetGetPropertyNames(object value)
+        {
+            const BindingFlags Flags = BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.Public;
+            return value.GetType().GetProperties(Flags).Select(x => x.Name);
+        }
 
         /// <summary>
         /// Gets the property value by Binding
@@ -91,10 +119,11 @@ namespace ExcelMvc.Bindings
         public static object GetPropertyValue(object source, string path)
         {
             ReducePath(ref source, ref path);
-            if (path == "")
+            if (path == string.Empty)
             {
                 return source;
             }
+
             var parameters = ParseIndexerParams(path);
             var property = GetProperty(BindingFlags.GetProperty, source, path, parameters);
             if (property == null)
@@ -139,6 +168,7 @@ namespace ExcelMvc.Bindings
                 var matrix = (object[,])value;
                 value = matrix[matrix.GetLowerBound(0), matrix.GetLowerBound(1)];
             }
+
             if (value != null)
                 value = Convert.ChangeType(value, property.PropertyType);
             property.SetValue(source, value, parameters.Count > 0 ? parameters.ToArray() : null);
@@ -156,7 +186,33 @@ namespace ExcelMvc.Bindings
             return source.GetType().GetProperty(path, flags);
         }
 
-        private static readonly char[] PathSeparators = { '.', '[' };
+        private static List<object> ParseIndexerParams(string path)
+        {
+            var parameters = new List<object>();
+            if (!path.StartsWith("[") || !path.EndsWith("]"))
+                return parameters;
+
+            var matches = IndexerPattern.Matches(path.Substring(1, path.Length - 2));
+            foreach (Match match in matches)
+            {
+                var value = match.Value.Trim();
+                if (value == string.Empty)
+                    continue;
+                if (value.StartsWith(","))
+                    value = value.Substring(1);
+
+                if (value.StartsWith("\"") && value.EndsWith("\""))
+                    value = value.Substring(1, value.Length).Replace("\"\"", "\"");
+                int ivalue;
+                if (int.TryParse(value, out ivalue))
+                    parameters.Add(value);
+                else
+                    parameters.Add(value);
+            }
+
+            return parameters;
+        }
+
         private static void ReducePath(ref object source, ref string path)
         {
             var pos = path.IndexOfAny(PathSeparators);
@@ -184,60 +240,11 @@ namespace ExcelMvc.Bindings
                     // skip .
                     path = path.Substring(1);
                 }
+
                 pos = path.IndexOfAny(PathSeparators);
             }
         }
 
-        private const string QuotedStringPattern = "\"([^\"]*|\"\")*\"";
-        private const string NoQuoteCommaPattern = "[^\",]*";
-
-        private static readonly Regex IndexerPattern = new Regex(string.Format("({0}|{1})(,({0}|{1}))*", QuotedStringPattern, NoQuoteCommaPattern));
-        private static List<object> ParseIndexerParams(string path)
-        {
-            var parameters = new List<object>();
-            if (!path.StartsWith("[") || !path.EndsWith("]"))
-                return parameters;
-
-            var matches = IndexerPattern.Matches(path.Substring(1, path.Length - 2));
-            foreach (Match match in matches)
-            {
-                var value = match.Value.Trim();
-                if (value == "")
-                    continue;
-                if (value.StartsWith(","))
-                    value = value.Substring(1);
-
-                if (value.StartsWith("\"") && value.EndsWith("\""))
-                    value = value.Substring(1, value.Length).Replace("\"\"", "\"");
-                int ivalue;
-                if (int.TryParse(value, out ivalue))
-                    parameters.Add(value);
-                else
-                    parameters.Add(value);
-            }
-            return parameters;
-        }
-
-        /// <summary>
-        /// Changes the lower bounds of an array
-        /// </summary>
-        /// <typeparam name="T">Element type</typeparam>
-        /// <param name="value">Array to be changed</param>
-        /// <param name="lowerBound">Lower bound</param>
-        /// <returns>Changed array</returns>
-        public static Array ChangeLBound<T>(Array value, int lowerBound)
-        {
-            var lbounds = new int[value.Rank];
-            var lengths = new int[value.Rank];
-            for (var idx = 0; idx < value.Rank; idx++)
-            {
-                lbounds[idx] = lowerBound;
-                lengths[idx] = value.GetLength(idx);
-            }
-            var to = Array.CreateInstance(typeof(object), lengths, lbounds);
-            Array.Copy(value, to, value.Length);
-            return to;
-        }
-
+        #endregion Methods
     }
 }
