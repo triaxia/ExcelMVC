@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ExcelMvc")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Writing Excel applications in .NET using the MVC/MVVM pattern")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ExcelMvc")]

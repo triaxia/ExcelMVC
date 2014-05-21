@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>ExcelMvc</id>
+        <version>1.4</version>
+        <title>ExcelMvc</title>
+        <authors>triaxia@users.sf.net, wstamm@users.sf.net</authors>
+        <owners>triaxia@users.sf.net</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Writing Excel applications in .NET using the MVC/MVVM pattern</description>
+        <copyright>Copyright ©  2013</copyright>
+        <dependencies>
+        </dependencies>
+    </metadata>
+</package>
