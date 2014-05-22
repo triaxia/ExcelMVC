@@ -171,6 +171,7 @@
     <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.5&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>..\.nuget\NuGet.exe restore "$(SolutionDir)$(SolutionFileName)"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
