@@ -46,5 +46,9 @@ bin
 obj
 *.vsmdi
 ~$*
+#The solution uses NuGet package restore, therefore
+#package binaries and NuGet.exe itself don't need to
+#be committed to source control
 NuGet.exe
-
+packages/
+!packages/repositories.config

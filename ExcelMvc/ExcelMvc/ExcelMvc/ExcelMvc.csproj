@@ -70,11 +70,23 @@
     <BuildPackage>true</BuildPackage>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Microsoft.CSharp" Condition="'$(Configuration)' == 'Release 4.0'" />
     <Reference Include="Microsoft.CSharp" Condition="'$(Configuration)' == 'Release 4.5'" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <Private>True</Private>
+      <HintPath>..\packages\Excel-DNA.Interop.14.0.1\lib\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Vbe.Interop, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <Private>True</Private>
+      <HintPath>..\packages\Excel-DNA.Interop.14.0.1\lib\Microsoft.Vbe.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <Private>True</Private>
+      <HintPath>..\packages\Excel-DNA.Interop.14.0.1\lib\Office.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -131,17 +143,6 @@
     <Compile Include="Views\ViewEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="Microsoft.Office.Interop.Excel">
-      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>7</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
@@ -166,7 +167,7 @@
   </Target>
   -->
   <Target Name="BeforeBuild">
-    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.0&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)"/>
-    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.5&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)"/>
+    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.0&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.5&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
   </Target>
 </Project>
