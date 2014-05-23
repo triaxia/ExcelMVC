@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelMvc.AddinDna", "ExcelMvc.AddinDna\ExcelMvc.AddinDna.csproj", "{5F852A89-6A1A-4429-9F53-092406F06835}"
 EndProject
@@ -20,14 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Application", "Sampl
 	ProjectSection(ProjectDependencies) = postProject
 		{9D7D2566-5F8F-4042-B8FE-32E8B1FCE183} = {9D7D2566-5F8F-4042-B8FE-32E8B1FCE183}
 		{5F852A89-6A1A-4429-9F53-092406F06835} = {5F852A89-6A1A-4429-9F53-092406F06835}
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D2664CAD-F8E4-4AD7-A07E-F20BCA8EC9D8}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
 Global

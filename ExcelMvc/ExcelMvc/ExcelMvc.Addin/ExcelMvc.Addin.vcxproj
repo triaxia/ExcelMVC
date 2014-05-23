@@ -484,9 +484,6 @@
     <None Include="Settings.StyleCop" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  </ImportGroup>
   <Target Name="BeforeBuild" BeforeTargets="PrepareForBuild">
     <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.0&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
     <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.5&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
