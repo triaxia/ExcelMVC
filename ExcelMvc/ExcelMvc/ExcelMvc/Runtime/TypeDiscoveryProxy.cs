@@ -40,10 +40,7 @@ namespace ExcelMvc.Runtime
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Reflection;
-
-    using ExcelMvc.Extensions;
 
     internal class TypeDiscoveryProxy : MarshalByRefObject
     {

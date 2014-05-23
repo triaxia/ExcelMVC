@@ -37,10 +37,6 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Bindings
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     using ExcelMvc.Views;
 
     /// <summary>

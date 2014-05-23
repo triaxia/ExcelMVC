@@ -42,8 +42,6 @@ namespace ExcelMvc.Bindings
     using System.Reflection;
     using System.Text.RegularExpressions;
 
-    using ExcelMvc.Views;
-
     #region Delegates
 
     public delegate void BindingFailedHandler(object sender, BindingFailedEventArgs args);

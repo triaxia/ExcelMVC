@@ -41,8 +41,6 @@ namespace ExcelMvc.Views
     using System;
     using System.Collections.Generic;
 
-    using ExcelMvc.Bindings;
-
     #region Delegates
 
     /// <summary>

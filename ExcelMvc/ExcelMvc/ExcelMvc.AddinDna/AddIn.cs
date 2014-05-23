@@ -39,8 +39,6 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.AddinDna
 {
     using ExcelDna.Integration;
-
-    using ExcelMvc.Extensions;
     using ExcelMvc.Runtime;
 
     public class AddIn : IExcelAddIn

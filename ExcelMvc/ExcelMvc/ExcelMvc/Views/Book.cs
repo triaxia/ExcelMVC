@@ -39,8 +39,6 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Views
 {
     using System.Collections.Generic;
-    using System.Linq;
-
     using ExcelMvc.Bindings;
     using ExcelMvc.Controls;
     using ExcelMvc.Extensions;
