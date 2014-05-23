@@ -31,8 +31,8 @@
 using namespace mscorlib;
 #pragma endregion
 
-WCHAR
-ClrRuntimeHost::LastError[256] = {};
+WCHAR ClrRuntimeHost::LastError[256] = {};
+size_t ClrRuntimeHost::LastErrorCount = sizeof(ClrRuntimeHost::LastError) / sizeof(WCHAR);
 
 static ICLRMetaHost *pMetaHost = NULL;
 static ICLRRuntimeInfo *pRuntimeInfo = NULL;
@@ -67,7 +67,7 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 	hr = CLRCreateInstance(CLSID_CLRMetaHost, IID_PPV_ARGS(&pMetaHost));
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"CLRCreateInstance failed w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"CLRCreateInstance failed w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
@@ -76,7 +76,7 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 	hr = pMetaHost->GetRuntime(pszVersion, IID_PPV_ARGS(&pRuntimeInfo));
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"ICLRMetaHost::GetRuntime (%s) failed w/hr 0x%08lx\n", pszVersion, hr);
+        swprintf(LastError, LastErrorCount, L"ICLRMetaHost::GetRuntime (%s) failed w/hr 0x%08lx\n", pszVersion, hr);
 		goto Cleanup;
 	}
 
@@ -88,13 +88,13 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 	hr = pRuntimeInfo->IsLoadable(&fLoadable);
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"ICLRRuntimeInfo::IsLoadable failed w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"ICLRRuntimeInfo::IsLoadable failed w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
 	if (!fLoadable)
 	{
-		swprintf(LastError, L".NET runtime %s cannot be loaded\n", pszVersion);
+        swprintf(LastError, LastErrorCount, L".NET runtime %s cannot be loaded\n", pszVersion);
 		goto Cleanup;
 	}
 
@@ -107,7 +107,7 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 	hr = pRuntimeInfo->GetInterface(CLSID_CorRuntimeHost, IID_PPV_ARGS(&pCorRuntimeHost));
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"ICLRRuntimeInfo::GetInterface failed w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"ICLRRuntimeInfo::GetInterface failed w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
@@ -133,26 +133,26 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 	hr = pCorRuntimeHost->Start();
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"CLR failed to start w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"CLR failed to start w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
 	hr = pCorRuntimeHost->CreateDomainSetup(&pAppDomainSetupThunk);
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"ICorRuntimeHost::CreateDomainSetup failed w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"ICorRuntimeHost::CreateDomainSetup failed w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 	hr = pAppDomainSetupThunk->QueryInterface(IID_PPV_ARGS(&pAppDomainSetup));
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"Failed to get AppDomainSetup w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"Failed to get AppDomainSetup w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 	hr = pAppDomainSetup->put_ApplicationBase(bstrBasePath);
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"Failed to AppDomainSetup.ApplicationBase w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"Failed to AppDomainSetup.ApplicationBase w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
@@ -161,21 +161,21 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 	hr = pCorRuntimeHost->CreateDomainEx(L"ExcelMvc", pAppDomainSetup, NULL, &pAppDomainThunk);
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"ICorRuntimeHost::GetDefaultDomain failed w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"ICorRuntimeHost::GetDefaultDomain failed w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
 	hr = pAppDomainThunk->QueryInterface(IID_PPV_ARGS(&pAppDomain));
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"Failed to get AppDomain w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"Failed to get AppDomain w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
 	hr = pAppDomain->Load_2(bstrAssemblyName, &pAssembly);
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"Failed to load the assembly w/hr 0x%08lx\n", hr);
+        swprintf(LastError, LastErrorCount, L"Failed to load the assembly w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
@@ -200,7 +200,7 @@ ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName)
 	HRESULT hr = pAssembly->GetType_2(bstrClassName, &spType);
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"Failed to get the type %s w/hr 0x%08lx\n", pszClassName, hr);
+        swprintf(LastError, LastErrorCount, L"Failed to get the type %s w/hr 0x%08lx\n", pszClassName, hr);
 		goto Cleanup;
 	}
 
@@ -214,7 +214,7 @@ ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName)
 		&vtReturn);
 	if (FAILED(hr))
 	{
-		swprintf(LastError, L"Failed to invoke %s w/hr 0x%08lx\n", pszMethodName, hr);
+        swprintf(LastError, LastErrorCount, L"Failed to invoke %s w/hr 0x%08lx\n", pszMethodName, hr);
 		goto Cleanup;
 	}
 

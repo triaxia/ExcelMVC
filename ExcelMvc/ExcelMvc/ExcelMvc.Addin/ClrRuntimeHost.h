@@ -39,7 +39,8 @@ public:
 	static void CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName);
 	static void Stop();
 	static WCHAR LastError[256];
-	static BOOL TestAndDisplayError();
+    static size_t LastErrorCount;
+    static BOOL TestAndDisplayError();
 
 private:
 	ClrRuntimeHost();
