@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release 3.5</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5F852A89-6A1A-4429-9F53-092406F06835}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -13,6 +13,8 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <NuGetPackageImportStamp>6adf6771</NuGetPackageImportStamp>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 3.5|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -48,6 +52,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release 4.5|AnyCPU'">
     <OutputPath>bin\Release\net45</OutputPath>
@@ -58,6 +63,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Package|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -67,6 +73,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <BuildNuGetPackage>true</BuildNuGetPackage>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ExcelDna.Integration, Version=0.30.4718.347, Culture=neutral, processorArchitecture=MSIL">
@@ -91,6 +98,9 @@
     <Content Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ExcelMvc.AddinDna.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Settings.StyleCop" />
   </ItemGroup>
@@ -104,7 +114,14 @@
     <Error Text="BuildTools_StyleCop - the BuildTools_StyleCop package has not been restored.&#xD;&#xA;If you are running this from an IDE, make sure NuGet Package Restore has been enabled, then reload the solution and re-run the build.&#xD;&#xA;If you are running this from the command line, run the build again.&#xD;&#xA;If this is a CI server, you may want to make sure NuGet Package Restore runs before your build with:&#xD;&#xA;	msbuild solution.sln /t:restorepackages" />
   </Target>
   <Target Name="BeforeBuild">
-    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.0&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)"/>
-    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.5&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)"/>
+    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.0&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.5&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
+  </Target>
+  <Import Project="..\packages\NuGet.for.MSBuild.1.4.1\build\NuGet.for.MSBuild.targets" Condition="Exists('..\packages\NuGet.for.MSBuild.1.4.1\build\NuGet.for.MSBuild.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\NuGet.for.MSBuild.1.4.1\build\NuGet.for.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NuGet.for.MSBuild.1.4.1\build\NuGet.for.MSBuild.targets'))" />
   </Target>
 </Project>
