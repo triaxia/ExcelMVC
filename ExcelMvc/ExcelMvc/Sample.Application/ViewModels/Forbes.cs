@@ -36,18 +36,10 @@ Boston, MA 02110-1301 USA.
 
 namespace Sample.Application.ViewModels
 {
-    using System.Collections;
-    using System.Linq;
     using System.Windows.Forms;
-    using System.Windows.Interop;
-
     using ExcelMvc.Bindings;
-    using ExcelMvc.Controls;
     using ExcelMvc.Views;
-
-    using Sample.Views;
     using Binding = ExcelMvc.Bindings.Binding;
-    using Form = ExcelMvc.Views.Form;
     using View = ExcelMvc.Views.View;
 
     internal class Forbes
@@ -56,107 +48,30 @@ namespace Sample.Application.ViewModels
 
         public Forbes(View view)
         {
+            view.HookBindingFailed(View_BindingFailed, true);
+
             Tests = new CommandTests((Sheet)view.Find(Binding.ViewType.Sheet, "Tests"));
 
-            view.HookBindingFailed(View_BindFailed, true);
+            // portrait
+            var parent = view.Find(Binding.ViewType.Sheet, "Forbes");
+            ForbesTest = new Forbes2000(view, parent, "Company", "Company");
 
-            ForbesSheet = (Sheet)view.Find(Binding.ViewType.Sheet, "Forbes");
-            ForbesSheet.HookClicked(LoadAllClicked, "LoadForbes", true);
-            ForbesSheet.HookClicked(ClearAllClicked, "ClearForbes", true);
-            ForbesSheet.HookClicked(StartUpdateClicked, "StartUpdate", true);
-            ForbesSheet.HookClicked(ShowColumnClicked, "ShowColumn", true);
-            ForbesSheet.HookClicked(ShowDialogClicked, "ShowDialog", true);
-
-            CompanyTable = (Table)ForbesSheet.Find(Binding.ViewType.Table, "Company");
-            CompanyTable.SelectionChanged += CompanyTable_SelectionChanged;
-            CompanyTable.ObjectChanged += CompanyTable_ObjectChanged;
-            CompanyTable.Model = new CompanyList();
-
-            CompanyForm = (Form)ForbesSheet.Find(Binding.ViewType.Form, "Company");
-            CompanyForm.ObjectChanged += CompanyForm_ObjectChanged;
-
-            ForbesTransposedSheet = (Sheet)view.Find(Binding.ViewType.Sheet, "Forbes_transposed");
-            ForbesTransposedSheet.HookClicked(LoadAllClickedTransposed, "TransposedLoadForbes", true);
-            ForbesTransposedSheet.HookClicked(ClearAllClickedTransposed, "TransposedClearForbes", true);
-            ForbesTransposedSheet.HookClicked(StartUpdateClickedTransposed, "TransposedStartUpdate", true);
-            ForbesTransposedSheet.HookClicked(ShowRowClicked, "TransposedShowRow", true);
-            ForbesTransposedSheet.HookClicked(ShowDialogClickedTransposed, "TransposedShowDialog", true);
-
-            CompanyTransposedTable = (Table)ForbesTransposedSheet.Find(Binding.ViewType.Table, "CompanyTransposed");
-            CompanyTransposedTable.SelectionChanged += CompanyTransposedTable_SelectionChanged;
-            CompanyTransposedTable.ObjectChanged += CompanyTransposedTable_ObjectChanged;
-            CompanyTransposedTable.Model = new CompanyList();
-
-            CompanyTransposedForm = (Form)ForbesTransposedSheet.Find(Binding.ViewType.Form, "CompanyTransposed");
-            CompanyTransposedForm.ObjectChanged += CompanyTransposedForm_ObjectChanged;
-
-            CountryTable = (Table)view.Find(Binding.ViewType.Table, "Country");
-            IndustryTable = (Table)view.Find(Binding.ViewType.Table, "Industry");
-
-            EnableControls();
-            EnableTransposedControls();
+            // landscape/transposed
+            parent = view.Find(Binding.ViewType.Sheet, "Forbes_transposed");
+            ForbesTestTransposed = new Forbes2000(view, parent, "CompanyTransposed", "CompanyTransposed");
         }
 
         #endregion Constructors
 
         #region Properties
 
-        private Form CompanyForm
+
+        private Forbes2000 ForbesTest
         {
             get; set;
         }
 
-        private Table CompanyTable
-        {
-            get; set;
-        }
-
-        private Form CompanyTransposedForm
-        {
-            get; set;
-        }
-
-        private Table CompanyTransposedTable
-        {
-            get; set;
-        }
-
-        private Table CountryTable
-        {
-            get; set;
-        }
-
-        private Sheet ForbesSheet
-        {
-            get; set;
-        }
-
-        private Sheet ForbesTransposedSheet
-        {
-            get; set;
-        }
-
-        private Table IndustryTable
-        {
-            get; set;
-        }
-
-        private bool IsLoaded
-        {
-            get; set;
-        }
-
-        private bool IsLoadedTransposed
-        {
-            get; set;
-        }
-
-        private bool IsUpdating
-        {
-            get; set;
-        }
-
-        private bool IsUpdatingTransposed
+        private Forbes2000 ForbesTestTransposed
         {
             get; set;
         }
@@ -170,155 +85,7 @@ namespace Sample.Application.ViewModels
 
         #region Methods
 
-        private void ClearAllClicked(object sender, CommandEventArgs args)
-        {
-            var companyList = (CompanyList)CompanyTable.Model;
-            companyList.Unload();
-            RebindReferenceLists(companyList);
-            IsLoaded = false;
-            EnableControls();
-        }
-
-        private void ClearAllClickedTransposed(object sender, CommandEventArgs args)
-        {
-            var companyList = (CompanyList)CompanyTransposedTable.Model;
-            companyList.Unload();
-            RebindReferenceLists(companyList);
-            IsLoadedTransposed = false;
-            EnableTransposedControls();
-        }
-
-        private void CompanyForm_ObjectChanged(object sender, ObjectChangedArgs args)
-        {
-            // this is just for demo purpose, just to get the table to update, careful with
-            // recursive update
-            (args.Items.First() as Company).RaiseChanged();
-        }
-
-        private void CompanyTable_ObjectChanged(object sender, ObjectChangedArgs args)
-        {
-            var model = args.Items.Last();
-            if (model == CompanyForm.Model)
-                ((Company)model).RaiseChanged();
-        }
-
-        private void CompanyTable_SelectionChanged(object sender, SelectionChangedArgs args)
-        {
-            CompanyForm.Model = args.Items.Last();
-        }
-
-        private void CompanyTransposedForm_ObjectChanged(object sender, ObjectChangedArgs args)
-        {
-            // this is just for demo purpose, just to get the table to update, careful with
-            // recursive update
-            (args.Items.First() as Company).RaiseChanged();
-        }
-
-        private void CompanyTransposedTable_ObjectChanged(object sender, ObjectChangedArgs args)
-        {
-            var model = args.Items.Last();
-            if (model == CompanyTransposedForm.Model)
-                ((Company)model).RaiseChanged();
-        }
-
-        private void CompanyTransposedTable_SelectionChanged(object sender, SelectionChangedArgs args)
-        {
-            CompanyTransposedForm.Model = args.Items.Last();
-        }
-
-        private void EnableControls()
-        {
-            ForbesSheet.FindCommand("LoadForbes").IsEnabled = !IsLoaded && !IsUpdating;
-            ForbesSheet.FindCommand("ClearForbes").IsEnabled = IsLoaded && !IsUpdating;
-            ForbesSheet.FindCommand("StartUpdate").IsEnabled = IsLoaded;
-        }
-
-        private void EnableTransposedControls()
-        {
-            ForbesTransposedSheet.FindCommand("TransposedLoadForbes").IsEnabled = !IsLoadedTransposed && !IsUpdatingTransposed;
-            ForbesTransposedSheet.FindCommand("TransposedClearForbes").IsEnabled = IsLoadedTransposed && !IsUpdatingTransposed;
-            ForbesTransposedSheet.FindCommand("TransposedStartUpdate").IsEnabled = IsLoadedTransposed;
-        }
-
-        private void LoadAllClicked(object sender, CommandEventArgs args)
-        {
-            var companyList = (CompanyList)CompanyTable.Model;
-            companyList.Load();
-            RebindReferenceLists(companyList);
-            companyList.RaiseChanged();
-            IsLoaded = true;
-            EnableControls();
-        }
-
-        private void LoadAllClickedTransposed(object sender, CommandEventArgs args)
-        {
-            var companyList = (CompanyList)CompanyTransposedTable.Model;
-            companyList.Load();
-            RebindReferenceLists(companyList);
-            companyList.RaiseChanged();
-            IsLoadedTransposed = true;
-            EnableTransposedControls();
-        }
-
-        private void RebindReferenceLists(CompanyList clist)
-        {
-            CountryTable.Model = clist.CountryList;
-            IndustryTable.Model = clist.IndustryList;
-        }
-
-        private void ShowColumnClicked(object sender, CommandEventArgs args)
-        {
-            var visible = CompanyTable.ToggleCategoryVisibility("Industry");
-            var cmd = (Command)sender;
-            cmd.Caption = visible ? "Hide Industry" : "Show Industry";
-        }
-
-        private void ShowDialogClicked(object sender, CommandEventArgs args)
-        {
-            var v = new Forbes2000 { Model = (IEnumerable)CompanyTable.Model };
-            var interop = new WindowInteropHelper(v) { Owner = App.Instance.Root.Handle };
-            v.ShowDialog(); // or v.Show();
-        }
-
-        private void ShowDialogClickedTransposed(object sender, CommandEventArgs args)
-        {
-            var v = new Forbes2000 { Model = (IEnumerable)CompanyTransposedTable.Model };
-            var interop = new WindowInteropHelper(v) { Owner = App.Instance.Root.Handle };
-            v.ShowDialog(); // or v.Show();
-        }
-
-        private void ShowRowClicked(object sender, CommandEventArgs args)
-        {
-            var visible = CompanyTransposedTable.ToggleCategoryVisibility("Industry");
-            var cmd = (Command)sender;
-            cmd.Caption = visible ? "Hide Industry" : "Show Industry";
-        }
-
-        private void StartUpdateClicked(object sender, CommandEventArgs args)
-        {
-            var cmd = (Command)sender;
-            var update = !(bool)(cmd.Value ?? false);
-            cmd.Value = update;
-            cmd.Caption = update ? "Stop Update" : "Start Update";
-            var companyList = (CompanyList)CompanyTable.Model;
-            companyList.Update(update);
-            IsUpdating = update;
-            EnableControls();
-        }
-
-        private void StartUpdateClickedTransposed(object sender, CommandEventArgs args)
-        {
-            var cmd = (Command)sender;
-            var update = !(bool)(cmd.Value ?? false);
-            cmd.Value = update;
-            cmd.Caption = update ? "Stop Update" : "Start Update";
-            var companyList = (CompanyList)CompanyTransposedTable.Model;
-            companyList.Update(update);
-            IsUpdatingTransposed = update;
-            EnableTransposedControls();
-        }
-
-        private void View_BindFailed(object sender, BindingFailedEventArgs args)
+        private void View_BindingFailed(object sender, BindingFailedEventArgs args)
         {
             MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
