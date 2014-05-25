@@ -85,12 +85,12 @@ namespace Sample.Application.ViewModels
 
         #region Methods
 
-        public void Load()
+        public void Load(IEnumerable<CompanyFilter> filters)
         {
             Clear();
 
             var lists = new Models.CompanyList();
-            lists.Load();
+            lists.Load(filters.Select(x => x.Model));
             foreach (var item in lists)
                 Add(new Company { Model = item });
 

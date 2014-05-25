@@ -36,57 +36,36 @@ Boston, MA 02110-1301 USA.
 
 namespace Sample.Application.ViewModels
 {
-    using System.Windows.Forms;
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Views;
-    using Binding = ExcelMvc.Bindings.Binding;
-    using View = ExcelMvc.Views.View;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Linq;
 
-    internal class Forbes
+    public class CompanyFilterList : List<CompanyFilter>, INotifyCollectionChanged
     {
         #region Constructors
-
-        public Forbes(View view)
+        public CompanyFilterList()
         {
-            view.HookBindingFailed(View_BindingFailed, true);
-
-            Tests = new CommandTests((Sheet)view.Find(Binding.ViewType.Sheet, "Tests"));
-
-            // portrait
-            var parent = view.Find(Binding.ViewType.Sheet, "Forbes");
-            ForbesTest = new Forbes2000(view, parent, "Company", "Company");
-
-            // landscape/transposed
-            parent = view.Find(Binding.ViewType.Sheet, "Forbes_transposed");
-            ForbesTestTransposed = new Forbes2000(view, parent, "CompanyTransposed", "CompanyTransposed");
+            Load(10);
         }
 
         #endregion Constructors
+        #region Events
 
-        #region Properties
+        public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };
 
-        private Forbes2000 ForbesTest
-        {
-            get; set;
-        }
-
-        private Forbes2000 ForbesTestTransposed
-        {
-            get; set;
-        }
-
-        private CommandTests Tests
-        {
-            get; set;
-        }
-
-        #endregion Properties
+        #endregion Events
 
         #region Methods
 
-        private void View_BindingFailed(object sender, BindingFailedEventArgs args)
+        public void Load(int count)
         {
-            MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Clear();
+            AddRange(Enumerable.Range(0, count).Select(x => new CompanyFilter()));
+        }
+
+        public void RaiseChanged()
+        {
+            CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         #endregion Methods

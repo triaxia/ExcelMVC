@@ -69,6 +69,9 @@ namespace Sample.Application.ViewModels
             CountryTable = (Table)grandparent.Find(Binding.ViewType.Table, "Country");
             IndustryTable = (Table)grandparent.Find(Binding.ViewType.Table, "Industry");
 
+            CompanyFilterTable = (Table)grandparent.Find(Binding.ViewType.Table, "CompanyFilters");
+            CompanyFilterTable.Model = new CompanyFilterList();
+
             EnableControls();
         }
 
@@ -111,6 +114,11 @@ namespace Sample.Application.ViewModels
             get; set;
         }
 
+        private Table CompanyFilterTable
+        {
+            get; set;
+        }
+
         #endregion Properties
 
         #region Methods
@@ -143,7 +151,6 @@ namespace Sample.Application.ViewModels
             CompanyForm.Model = args.Items.Last();
         }
 
-
         private void EnableControls()
         {
             ParentView.FindCommand("LoadForbes").IsEnabled = !IsLoaded && !IsUpdating;
@@ -154,7 +161,8 @@ namespace Sample.Application.ViewModels
         private void LoadAllClicked(object sender, CommandEventArgs args)
         {
             var companyList = (CompanyList)CompanyTable.Model;
-            companyList.Load();
+            var filters = (CompanyFilterList)CompanyFilterTable.Model;
+            companyList.Load(filters);
             RebindReferenceLists(companyList);
             companyList.RaiseChanged();
             IsLoaded = true;

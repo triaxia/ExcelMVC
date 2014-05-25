@@ -36,57 +36,51 @@ Boston, MA 02110-1301 USA.
 
 namespace Sample.Application.ViewModels
 {
-    using System.Windows.Forms;
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Views;
-    using Binding = ExcelMvc.Bindings.Binding;
-    using View = ExcelMvc.Views.View;
+    using System.ComponentModel;
 
-    internal class Forbes
+    public class CompanyFilter : INotifyPropertyChanged
     {
         #region Constructors
 
-        public Forbes(View view)
+        public CompanyFilter()
         {
-            view.HookBindingFailed(View_BindingFailed, true);
-
-            Tests = new CommandTests((Sheet)view.Find(Binding.ViewType.Sheet, "Tests"));
-
-            // portrait
-            var parent = view.Find(Binding.ViewType.Sheet, "Forbes");
-            ForbesTest = new Forbes2000(view, parent, "Company", "Company");
-
-            // landscape/transposed
-            parent = view.Find(Binding.ViewType.Sheet, "Forbes_transposed");
-            ForbesTestTransposed = new Forbes2000(view, parent, "CompanyTransposed", "CompanyTransposed");
+            Model = new Models.CompanyFilter();
         }
 
         #endregion Constructors
 
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        #endregion Events
+
         #region Properties
 
-        private Forbes2000 ForbesTest
+        public string NameLike
         {
-            get; set;
+            get { return Model.NameLike; }
+            set { Model.NameLike = value; }
         }
 
-        private Forbes2000 ForbesTestTransposed
+        public Models.CompanyFilter Model
         {
-            get; set;
-        }
-
-        private CommandTests Tests
-        {
-            get; set;
+            get;
+            set;
         }
 
         #endregion Properties
 
         #region Methods
 
-        private void View_BindingFailed(object sender, BindingFailedEventArgs args)
+        public void RaiseChanged(string propertyName)
         {
-            MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void RaiseChanged()
+        {
+            RaiseChanged("NameLike");
         }
 
         #endregion Methods

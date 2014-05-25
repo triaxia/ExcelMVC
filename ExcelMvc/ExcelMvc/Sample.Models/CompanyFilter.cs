@@ -34,61 +34,33 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-namespace Sample.Application.ViewModels
-{
-    using System.Windows.Forms;
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Views;
-    using Binding = ExcelMvc.Bindings.Binding;
-    using View = ExcelMvc.Views.View;
+using System;
 
-    internal class Forbes
+namespace Sample.Models
+{
+    public class CompanyFilter
     {
         #region Constructors
-
-        public Forbes(View view)
+        public CompanyFilter()
         {
-            view.HookBindingFailed(View_BindingFailed, true);
-
-            Tests = new CommandTests((Sheet)view.Find(Binding.ViewType.Sheet, "Tests"));
-
-            // portrait
-            var parent = view.Find(Binding.ViewType.Sheet, "Forbes");
-            ForbesTest = new Forbes2000(view, parent, "Company", "Company");
-
-            // landscape/transposed
-            parent = view.Find(Binding.ViewType.Sheet, "Forbes_transposed");
-            ForbesTestTransposed = new Forbes2000(view, parent, "CompanyTransposed", "CompanyTransposed");
+            NameLike = "*";
         }
 
         #endregion Constructors
-
         #region Properties
 
-        private Forbes2000 ForbesTest
-        {
-            get; set;
-        }
-
-        private Forbes2000 ForbesTestTransposed
-        {
-            get; set;
-        }
-
-        private CommandTests Tests
-        {
-            get; set;
-        }
+        public string NameLike { get; set; }
 
         #endregion Properties
 
         #region Methods
 
-        private void View_BindingFailed(object sender, BindingFailedEventArgs args)
+        public bool IsSelected(Company company)
         {
-            MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return !string.IsNullOrEmpty(NameLike)
+                && (NameLike == "*" || company.Name.IndexOf(NameLike, StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
-        #endregion Methods
+        #endregion 
     }
 }

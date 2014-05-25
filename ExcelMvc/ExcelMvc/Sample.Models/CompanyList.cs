@@ -34,8 +34,10 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+
 namespace Sample.Models
 {
+    using System.Linq;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -52,7 +54,7 @@ namespace Sample.Models
 
         #region Methods
 
-        public void Load()
+        public void Load(IEnumerable<CompanyFilter> filters)
         {
             Clear();
             var path = Assembly.GetExecutingAssembly().Location;
@@ -60,11 +62,12 @@ namespace Sample.Models
             path = Path.Combine(path, "Forbes.csv");
             var lines = File.ReadAllLines(path);
             var indices = ToIndices(ParseLine(lines[0]));
+            var filterArray = filters.ToArray();
             for (var idx = 1; idx < lines.Length; idx++)
             {
                 var cells = ParseLine(lines[idx]);
                 var company = ToCompany(cells, indices);
-                if (company != null)
+                if (company != null && filterArray.Any(x => x.IsSelected(company)))
                     Add(company);
             }
         }

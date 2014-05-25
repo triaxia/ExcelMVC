@@ -81,6 +81,8 @@
   <ItemGroup>
     <Compile Include="Converters\BoolToYesOrNo.cs" />
     <Compile Include="ViewModels\Company.cs" />
+    <Compile Include="ViewModels\CompanyFilter.cs" />
+    <Compile Include="ViewModels\CompanyFilterList.cs" />
     <Compile Include="ViewModels\CompanyList.cs" />
     <Compile Include="ViewModels\Forbes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
