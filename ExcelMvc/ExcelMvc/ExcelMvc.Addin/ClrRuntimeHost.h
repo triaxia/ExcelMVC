@@ -38,11 +38,14 @@ public:
 	static BOOL Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath);
 	static void CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName);
 	static void Stop();
-	static WCHAR LastError[256];
-    static size_t LastErrorCount;
     static BOOL TestAndDisplayError();
 
 private:
-	ClrRuntimeHost();
+    static WCHAR ErrorBuffer[1024];
+    static void FormatError(PCWSTR format, HRESULT hr);
+    static void FormatError(PCWSTR format, PCWSTR arg, HRESULT hr);
+    static void FormatError(PCWSTR format, PCWSTR arg);
+
+    ClrRuntimeHost();
 	~ClrRuntimeHost();
 };
