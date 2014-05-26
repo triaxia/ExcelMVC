@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bindings\BindingFailedEventArgs.cs" />
+    <Compile Include="Bindings\CollectBindings.cs" />
     <Compile Include="Bindings\MergeResult.cs" />
     <Compile Include="Bindings\ModeType.cs" />
     <Compile Include="Bindings\ObjectBinding.cs" />

@@ -36,12 +36,8 @@ Boston, MA 02110-1301 USA.
 
 namespace ExcelMvc.Bindings
 {
-    using System;
-    using System.Collections.Generic;
     using System.Windows.Data;
 
-    using ExcelMvc.Extensions;
-    using ExcelMvc.Runtime;
 
     using Microsoft.Office.Interop.Excel;
 
@@ -150,134 +146,6 @@ namespace ExcelMvc.Bindings
             var start = Cell.Worksheet.Cells[Cell.Row + rowOffset, Cell.Column + columnOffset];
             var end = Cell.Worksheet.Cells[Cell.Row + rowOffset + rows - 1, Cell.Column + +columnOffset + cols - 1];
             return Cell.Worksheet.Range[start, end];
-        }
-
-        internal static Dictionary<Worksheet, List<Binding>> Collect(Workbook book)
-        {
-            var bindings = new Dictionary<Worksheet, List<Binding>>();
-
-            foreach (Name nm in book.Names)
-                Collect(nm, book, bindings);
-
-            foreach (Worksheet item in book.Worksheets)
-            {
-                foreach (Name nm in item.Names)
-                    Collect(nm, book, bindings);
-            }
-
-            return bindings;
-        }
-
-        private static void Collect(Name nm, Workbook book, Dictionary<Worksheet, List<Binding>> bindings)
-        {
-            var parts = nm.Name.Split('.');
-
-            if (parts.Length != 3 || parts[0].CompareOrdinalIgnoreCase("ExcelMvc") != 0)
-                return;
-
-            var viewType = parts[1] ?? string.Empty;
-            if (viewType.CompareOrdinalIgnoreCase("Form") != 0
-                && viewType.CompareOrdinalIgnoreCase("Table") != 0)
-                throw new Exception(string.Format(Resource.ErrorInvalidViewType, viewType));
-
-            var viewName = parts[2] ?? string.Empty;
-            if (string.IsNullOrEmpty(viewName))
-                throw new Exception(string.Format(Resource.ErrorNoViewNameFound, viewName));
-
-            object[,] value = (object[,])nm.RefersToRange.Value;
-            var indexOfCell = IndexOfHeading(value, "Data Cell");
-            if (indexOfCell == -1)
-                throw new Exception(Resource.ErrorNoBindingCellFound);
-
-            var indexOfPath = IndexOfHeading(value, "Binding Path");
-            if (indexOfPath == -1)
-                throw new Exception(Resource.ErrorNoBindingPathFound);
-
-            var indexOfMode = IndexOfHeading(value, "Binding Mode");
-            if (indexOfMode == -1)
-                throw new Exception(Resource.ErrorNoBindingModeFound);
-
-            var indexOfVisibility = IndexOfHeading(value, "Visibility");
-            var indexOfValidation = IndexOfHeading(value, "Validation");
-            var indexOfConverter = IndexOfHeading(value, "Converter");
-
-            for (var idx = value.GetLowerBound(0) + 1; idx <= value.GetUpperBound(0); idx++)
-            {
-                var dataCell = ((value[idx, indexOfCell] as string) ?? string.Empty).Trim();
-                var bindingPath = ((value[idx, indexOfPath] as string) ?? string.Empty).Trim();
-                if (dataCell == string.Empty || bindingPath == string.Empty)
-                    continue;
-
-                Range range = null;
-                ActionExtensions.Try(() =>
-                {
-                    if (dataCell.Contains("["))
-                    {
-                        range = book.Application.Range[dataCell];
-                    }
-                    else if (dataCell.Contains("!"))
-                    {
-                        var names = dataCell.Split('!');
-                        range = (book.Sheets[names[0]] as Worksheet).Range[names[1]];
-                    }
-                    else
-                    {
-                        range = nm.RefersToRange.Worksheet.Range[dataCell];
-                    }
-                });
-                if (range == null)
-                    throw new Exception(string.Format(Resource.ErrorNoDataCellRange, dataCell));
-
-                var modeType = ((value[idx, indexOfMode] as string) ?? string.Empty).Trim();
-                var visible = true;
-                if (indexOfVisibility >= 0)
-                {
-                    var cell = (value[idx, indexOfVisibility] as string) ?? string.Empty;
-                    visible = cell.CompareOrdinalIgnoreCase("Visible") == 0 || cell.CompareOrdinalIgnoreCase("True") == 0;
-                }
-
-                string validation = null;
-                if (indexOfValidation >= 0)
-                    validation = value[idx, indexOfValidation] as string;
-
-                IValueConverter converter = null;
-                if (indexOfConverter >= 0)
-                {
-                    var typeName = value[idx, indexOfConverter] as string;
-                    if (!string.IsNullOrEmpty(typeName))
-                        converter = ObjectFactory<IValueConverter>.Find(typeName);
-                }
-
-                var binding = new Binding
-                {
-                    Name = viewName,
-                    Type = (ViewType)Enum.Parse(typeof(ViewType), viewType),
-                    Mode = (ModeType)Enum.Parse(typeof(ModeType), modeType),
-                    Cell = (Range)range.Cells[1, 1],
-                    Path = bindingPath,
-                    Visible = visible,
-                    ValidationList = validation,
-                    Converter = converter
-                };
-
-                List<Binding> sheetBindings;
-                if (!bindings.TryGetValue(range.Worksheet, out sheetBindings))
-                    bindings[range.Worksheet] = sheetBindings = new List<Binding>();
-                sheetBindings.Add(binding);
-            }
-        }
-
-        private static int IndexOfHeading(object[,] value, string heading)
-        {
-            var idx = value.GetLowerBound(0);
-            for (var jdx = value.GetLowerBound(1); jdx <= value.GetUpperBound(1); jdx++)
-            {
-                var cell = value[idx, jdx] as string;
-                if (cell != null && cell.CompareOrdinalIgnoreCase(heading) == 0)
-                    return jdx;
-            }
-
-            return -1;
         }
 
         #endregion Methods
