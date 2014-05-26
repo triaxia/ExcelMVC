@@ -38,7 +38,6 @@ namespace ExcelMvc.Bindings
 {
     using System.Windows.Data;
 
-
     using Microsoft.Office.Interop.Excel;
 
     /// <summary>

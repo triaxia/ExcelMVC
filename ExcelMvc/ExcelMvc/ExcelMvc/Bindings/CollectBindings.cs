@@ -107,6 +107,24 @@
             return Bindings;
         }
 
+        private static int IndexOfHeading(object[,] value, string heading)
+        {
+            var idx = value.GetLowerBound(0);
+            for (var jdx = value.GetLowerBound(1); jdx <= value.GetUpperBound(1); jdx++)
+            {
+                var cell = value[idx, jdx] as string;
+                if (cell != null && cell.CompareOrdinalIgnoreCase(heading) == 0)
+                    return jdx;
+            }
+
+            return -1;
+        }
+
+        private static bool IsNotValidExcelMvcName(string[] parts)
+        {
+            return parts.Length != 3 || parts[0].CompareOrdinalIgnoreCase("ExcelMvc") != 0;
+        }
+
         private void Collect(Name nm)
         {
             var parts = nm.Name.Split('.');
@@ -176,6 +194,7 @@
                 if (!string.IsNullOrEmpty(typeName))
                     return ObjectFactory<IValueConverter>.Find(typeName);
             }
+
             return null;
         }
 
@@ -217,6 +236,7 @@
                 var cell = (value[idx, indices.IndexOfVisibility] as string) ?? string.Empty;
                 return cell.CompareOrdinalIgnoreCase("Visible") == 0 || cell.CompareOrdinalIgnoreCase("True") == 0;
             }
+
             return true;
         }
 
@@ -255,24 +275,6 @@
             ind.IndexOfConverter = IndexOfHeading(value, "Converter");
 
             return ind;
-        }
-
-        private static bool IsNotValidExcelMvcName(String[] parts)
-        {
-            return parts.Length != 3 || parts[0].CompareOrdinalIgnoreCase("ExcelMvc") != 0;
-        }
-
-        private static int IndexOfHeading(object[,] value, string heading)
-        {
-            var idx = value.GetLowerBound(0);
-            for (var jdx = value.GetLowerBound(1); jdx <= value.GetUpperBound(1); jdx++)
-            {
-                var cell = value[idx, jdx] as string;
-                if (cell != null && cell.CompareOrdinalIgnoreCase(heading) == 0)
-                    return jdx;
-            }
-
-            return -1;
         }
 
         #endregion Methods

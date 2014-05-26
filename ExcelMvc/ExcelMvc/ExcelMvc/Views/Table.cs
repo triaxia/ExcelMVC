@@ -52,8 +52,6 @@ namespace ExcelMvc.Views
 
     using Microsoft.Office.Interop.Excel;
 
-    using Binding = ExcelMvc.Bindings.Binding;
-
     /// <summary>
     /// Represents a rectangular visual with rows and columns
     /// </summary>
