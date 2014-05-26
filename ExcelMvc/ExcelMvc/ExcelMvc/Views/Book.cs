@@ -109,9 +109,9 @@ namespace ExcelMvc.Views
             get { return Underlying.Name; }
         }
 
-        public override Binding.ViewType Type
+        public override ViewType Type
         {
-            get { return Binding.ViewType.Book; }
+            get { return ViewType.Book; }
         }
 
         /// <summary>

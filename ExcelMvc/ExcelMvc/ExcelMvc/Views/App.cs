@@ -44,14 +44,13 @@ namespace ExcelMvc.Views
     using System.Runtime.InteropServices.ComTypes;
     using System.Windows.Data;
 
+    using ExcelMvc.Bindings;
     using ExcelMvc.Controls;
     using ExcelMvc.Runtime;
 
     using Microsoft.Office.Interop.Excel;
 
     using Application = Microsoft.Office.Interop.Excel.Application;
-
-    using Binding = ExcelMvc.Bindings.Binding;
 
     /// <summary>
     /// Represents a visual over the Excel Application
@@ -123,9 +122,9 @@ namespace ExcelMvc.Views
             get; private set;
         }
 
-        public override Binding.ViewType Type
+        public override ViewType Type
         {
-            get { return Binding.ViewType.App; }
+            get { return ViewType.App; }
         }
 
         /// <summary>

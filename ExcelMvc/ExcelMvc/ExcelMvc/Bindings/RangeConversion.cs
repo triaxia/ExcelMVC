@@ -62,7 +62,7 @@ namespace ExcelMvc.Bindings
         /// <param name="to">Range being merged</param>
         /// <param name="toValue">Value of the To range</param>
         /// <returns>Merge result</returns>
-        public static Result MergeChangedValue(Range changed, Range to, object toValue)
+        public static MergeResult MergeChangedValue(Range changed, Range to, object toValue)
         {
             var count = 0;
             if (to.Count == 1)
@@ -104,7 +104,7 @@ namespace ExcelMvc.Bindings
                 }
             }
 
-            Result result;
+            MergeResult result;
             result.Value = toValue;
             result.Changed = count > 0;
             return result;
@@ -118,7 +118,7 @@ namespace ExcelMvc.Bindings
         /// <param name="isErrorFilled">Indicates if Excel errors are filed</param>
         /// <param name="errorFiller">Error filler</param>
         /// <returns>Matrix instance</returns>
-        public static Matrix RangeToMatrix(Range range, bool isErrorChecked, bool isErrorFilled, object errorFiller)
+        private static Matrix RangeToMatrix(Range range, bool isErrorChecked, bool isErrorFilled, object errorFiller)
         {
             Matrix result;
             if (range.Count == 1)
@@ -162,22 +162,12 @@ namespace ExcelMvc.Bindings
         /// <summary>
         /// Struct that captures range values and error codes
         /// </summary>
-        public struct Matrix
+        private struct Matrix
         {
             #region Fields
 
             public ErrorCode?[,] Error;
             public object[,] Value;
-
-            #endregion Fields
-        }
-
-        public struct Result
-        {
-            #region Fields
-
-            public bool Changed;
-            public object Value;
 
             #endregion Fields
         }

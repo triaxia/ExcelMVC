@@ -39,10 +39,10 @@ namespace Sample.Application.ViewModels
     using System.Collections;
     using System.Linq;
     using System.Windows.Interop;
+
+    using ExcelMvc.Bindings;
     using ExcelMvc.Controls;
     using ExcelMvc.Views;
-    using Binding = ExcelMvc.Bindings.Binding;
-    using Form = ExcelMvc.Views.Form;
 
     internal class Forbes2000
     {
@@ -58,18 +58,18 @@ namespace Sample.Application.ViewModels
             ParentView.HookClicked(ShowColumnClicked, "ShowIndustry", true);
             ParentView.HookClicked(ShowDialogClicked, "ShowDialog", true);
 
-            CompanyTable = (Table)ParentView.Find(Binding.ViewType.Table, companyTableName);
+            CompanyTable = (Table)ParentView.Find(ViewType.Table, companyTableName);
             CompanyTable.SelectionChanged += CompanyTable_SelectionChanged;
             CompanyTable.ObjectChanged += CompanyTable_ObjectChanged;
             CompanyTable.Model = new CompanyList();
 
-            CompanyForm = (Form)ParentView.Find(Binding.ViewType.Form, companyFormName);
+            CompanyForm = (Form)ParentView.Find(ViewType.Form, companyFormName);
             CompanyForm.ObjectChanged += CompanyForm_ObjectChanged;
 
-            CountryTable = (Table)grandparent.Find(Binding.ViewType.Table, "Country");
-            IndustryTable = (Table)grandparent.Find(Binding.ViewType.Table, "Industry");
+            CountryTable = (Table)grandparent.Find(ViewType.Table, "Country");
+            IndustryTable = (Table)grandparent.Find(ViewType.Table, "Industry");
 
-            CompanyFilterTable = (Table)grandparent.Find(Binding.ViewType.Table, "CompanyFilters");
+            CompanyFilterTable = (Table)grandparent.Find(ViewType.Table, "CompanyFilters");
             CompanyFilterTable.Model = new CompanyFilterList();
 
             EnableControls();

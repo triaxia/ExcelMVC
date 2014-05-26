@@ -163,7 +163,7 @@ namespace ExcelMvc.Views
         /// <summary>
         /// Gets the view type
         /// </summary>
-        public abstract Binding.ViewType Type
+        public abstract ViewType Type
         {
             get;
         }
@@ -181,7 +181,7 @@ namespace ExcelMvc.Views
         /// <returns>View found or null</returns>
         public View Find(string name)
         {
-            return Find(Binding.ViewType.None, name);
+            return Find(ViewType.None, name);
         }
 
         /// <summary>
@@ -190,9 +190,9 @@ namespace ExcelMvc.Views
         /// <param name="type">View type</param>
         /// <param name="name">Name of the view</param>
         /// <returns>View found or null</returns>
-        public View Find(Binding.ViewType type, string name)
+        public View Find(ViewType type, string name)
         {
-            if ((type == Binding.ViewType.None || type == Type)
+            if ((type == ViewType.None || type == Type)
                 && Name.CompareOrdinalIgnoreCase(name) == 0)
                 return this;
 

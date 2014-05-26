@@ -39,7 +39,6 @@ namespace Sample.Application.ViewModels
     using System.Windows.Forms;
     using ExcelMvc.Bindings;
     using ExcelMvc.Views;
-    using Binding = ExcelMvc.Bindings.Binding;
     using View = ExcelMvc.Views.View;
 
     internal class Forbes
@@ -50,14 +49,14 @@ namespace Sample.Application.ViewModels
         {
             view.HookBindingFailed(View_BindingFailed, true);
 
-            Tests = new CommandTests((Sheet)view.Find(Binding.ViewType.Sheet, "Tests"));
+            Tests = new CommandTests((Sheet)view.Find(ViewType.Sheet, "Tests"));
 
             // portrait
-            var parent = view.Find(Binding.ViewType.Sheet, "Forbes");
+            var parent = view.Find(ViewType.Sheet, "Forbes");
             ForbesTest = new Forbes2000(view, parent, "Company", "Company");
 
             // landscape/transposed
-            parent = view.Find(Binding.ViewType.Sheet, "Forbes_transposed");
+            parent = view.Find(ViewType.Sheet, "Forbes_transposed");
             ForbesTestTransposed = new Forbes2000(view, parent, "CompanyTransposed", "CompanyTransposed");
         }
 

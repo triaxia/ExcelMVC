@@ -49,7 +49,7 @@ namespace ExcelMvc.Runtime
     {
         #region Fields
 
-        private static readonly Lazy<RangeUpdator> Instane = new Lazy<RangeUpdator>(() => new RangeUpdator());
+        private static readonly Lazy<RangeUpdator> LazyInstance = new Lazy<RangeUpdator>(() => new RangeUpdator());
 
         private readonly Queue<Item> items = new Queue<Item>();
 
@@ -70,7 +70,7 @@ namespace ExcelMvc.Runtime
         /// </summary>
         public static RangeUpdator Instance
         {
-            get { return Instane.Value; }
+            get { return LazyInstance.Value; }
         }
 
         public static string NameOfAsynUpdateThread

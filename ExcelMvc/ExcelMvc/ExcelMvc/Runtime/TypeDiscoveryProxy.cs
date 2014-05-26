@@ -82,29 +82,5 @@ namespace ExcelMvc.Runtime
         }
 
         #endregion Methods
-
-        #region Nested Types
-
-        [Serializable]
-        public class Result
-        {
-            #region Properties
-
-            public Exception Error
-            {
-                get;
-                set;
-            }
-
-            public List<string> Types
-            {
-                get;
-                set;
-            }
-
-            #endregion Properties
-        }
-
-        #endregion Nested Types
     }
 }

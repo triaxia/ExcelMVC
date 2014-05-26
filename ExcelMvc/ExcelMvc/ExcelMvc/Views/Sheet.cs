@@ -126,9 +126,9 @@ namespace ExcelMvc.Views
             get { return Underlying.Name; }
         }
 
-        public override Binding.ViewType Type
+        public override ViewType Type
         {
-            get { return Binding.ViewType.Sheet; }
+            get { return ViewType.Sheet; }
         }
 
         /// <summary>
@@ -187,11 +187,11 @@ namespace ExcelMvc.Views
 
         private void CreateViews(IEnumerable<Binding> bindings)
         {
-            var names = bindings.Where(x => x.Type == Binding.ViewType.Form).Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase);
+            var names = bindings.Where(x => x.Type == ViewType.Form).Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase);
             foreach (var item in names)
             {
                 var name = item;
-                var fields = bindings.Where(x => x.Type == Binding.ViewType.Form && x.Name.CompareOrdinalIgnoreCase(name) == 0);
+                var fields = bindings.Where(x => x.Type == ViewType.Form && x.Name.CompareOrdinalIgnoreCase(name) == 0);
                 var form = new Form(this, fields);
                 var args = new ViewEventArgs(form);
                 OnOpening(args);
@@ -202,14 +202,14 @@ namespace ExcelMvc.Views
                 }
             }
 
-            names = bindings.Where(x => x.Type == Binding.ViewType.Table).Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase);
+            names = bindings.Where(x => x.Type == ViewType.Table).Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase);
             foreach (var item in names)
             {
                 var name = item;
-                var categories = bindings.Where(x => x.Type == Binding.ViewType.Table && x.Name.CompareOrdinalIgnoreCase(name) == 0);
+                var categories = bindings.Where(x => x.Type == ViewType.Table && x.Name.CompareOrdinalIgnoreCase(name) == 0);
                 var origin = categories.First().Cell;
                 bool isPortraitTable = categories.All(x => x.Cell.Row == origin.Row);
-                var table = new Table(this, categories, isPortraitTable ? BindingView.ViewOrientation.Portrait : BindingView.ViewOrientation.Landscape);
+                var table = new Table(this, categories, isPortraitTable ? ViewOrientation.Portrait : ViewOrientation.Landscape);
                 var args = new ViewEventArgs(table);
                 OnOpening(args);
                 if (!args.IsCancelled)

@@ -93,9 +93,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bindings\BindingFailedEventArgs.cs" />
+    <Compile Include="Bindings\MergeResult.cs" />
+    <Compile Include="Bindings\ModeType.cs" />
     <Compile Include="Bindings\ObjectBinding.cs" />
     <Compile Include="Bindings\ErrorConverter.cs" />
     <Compile Include="Bindings\RangeConversion.cs" />
+    <Compile Include="Bindings\ViewType.cs" />
     <Compile Include="Controls\CommandEventArgs.cs" />
     <Compile Include="Controls\CommandFactory.cs" />
     <Compile Include="Controls\CommandSpinner.cs" />
@@ -109,6 +112,7 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="Runtime\Lazy.cs" />
+    <Compile Include="Runtime\Result.cs" />
     <Compile Include="Runtime\TypeDiscoveryDomains.cs" />
     <Compile Include="Runtime\ObjectFactory.cs" />
     <Compile Include="Runtime\ISession.cs" />
@@ -139,6 +143,7 @@
     <Compile Include="Views\Sheet.cs" />
     <Compile Include="Views\App.cs" />
     <Compile Include="Views\ViewEventArgs.cs" />
+    <Compile Include="Views\ViewOrientation.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resource.resx">

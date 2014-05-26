@@ -91,9 +91,9 @@ namespace ExcelMvc.Views
             get; private set;
         }
 
-        public override Binding.ViewType Type
+        public override ViewType Type
         {
-            get { return Binding.ViewType.Form; }
+            get { return ViewType.Form; }
         }
 
         #endregion Properties
@@ -156,7 +156,7 @@ namespace ExcelMvc.Views
 
         private void UpdateObject(Range target)
         {
-            var toSource = Bindings.Where(x => (x.Mode == Binding.ModeType.TwoWay || x.Mode == Binding.ModeType.OneWayToSource));
+            var toSource = Bindings.Where(x => (x.Mode == ModeType.TwoWay || x.Mode == ModeType.OneWayToSource));
             foreach (var binding in toSource)
                 UpdateObject(binding, target);
         }
@@ -185,7 +185,7 @@ namespace ExcelMvc.Views
             {
                 UnhookViewEvents();
                 UpdateView(string.Empty);
-                BindValidationLists(1, BindingView.ViewOrientation.Portrait);
+                BindValidationLists(1, ViewOrientation.Portrait);
             }
             finally
             {
@@ -212,7 +212,7 @@ namespace ExcelMvc.Views
 
         private void UpdateView(Binding binding)
         {
-            if (binding.Mode == Binding.ModeType.OneWayToSource)
+            if (binding.Mode == ModeType.OneWayToSource)
                 return;
 
             ExcuteBinding(() =>

@@ -119,9 +119,9 @@ namespace ExcelMvc.Views
             get; private set;
         }
 
-        public override Binding.ViewType Type
+        public override ViewType Type
         {
-            get { return Binding.ViewType.Table; }
+            get { return ViewType.Table; }
         }
 
         #endregion Properties
@@ -533,7 +533,7 @@ namespace ExcelMvc.Views
             var skipCategories = Orientation == ViewOrientation.Portrait ? target.Column - first.Cell.Column : target.Row - first.Cell.Row;
             var takeCategories = Orientation == ViewOrientation.Portrait ? target.Columns.Count : target.Rows.Count;
             var toSource = Bindings.Skip(skipCategories).Take(takeCategories)
-                .Where(x => (x.Mode == Binding.ModeType.TwoWay || x.Mode == Binding.ModeType.OneWayToSource)).ToList();
+                .Where(x => (x.Mode == ModeType.TwoWay || x.Mode == ModeType.OneWayToSource)).ToList();
             var updated = 0;
             foreach (var model in rangeItems.Items)
             {
@@ -583,7 +583,7 @@ namespace ExcelMvc.Views
             Dictionary<Binding, List<object>> bindingValues = null;
             var numberItemsBound = itemsBound == null ? 0  : itemsBound.Count;
             var toView = from binding in Bindings
-                         where binding.Mode != Binding.ModeType.OneWayToSource
+                         where binding.Mode != ModeType.OneWayToSource
                          select binding;
 
             if (enumerable != null)

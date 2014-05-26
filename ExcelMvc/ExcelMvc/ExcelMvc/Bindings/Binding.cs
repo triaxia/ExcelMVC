@@ -67,56 +67,6 @@ namespace ExcelMvc.Bindings
 
         #endregion Constructors
 
-        #region Enumerations
-
-        /// <summary>
-        /// Binding mode types
-        /// </summary>
-        public enum ModeType
-        {
-            OneWay,
-            OneWayToSource,
-            TwoWay
-        }
-
-        /// <summary>
-        /// View types
-        /// </summary>
-        public enum ViewType
-        {
-            /// <summary>
-            /// None
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// Form
-            /// </summary>
-            Form,
-
-            /// <summary>
-            /// Table
-            /// </summary>
-            Table,
-
-            /// <summary>
-            /// Sheet
-            /// </summary>
-            Sheet,
-
-            /// <summary>
-            /// Book
-            /// </summary>
-            Book,
-
-            /// <summary>
-            /// App
-            /// </summary>
-            App
-        }
-
-        #endregion Enumerations
-
         #region Properties
 
         /// <summary>
