@@ -184,7 +184,7 @@ namespace Sample.Application.ViewModels
 
         private void ShowDialogClicked(object sender, CommandEventArgs args)
         {
-            var v = new Views.Forbes2000 { Model = (IEnumerable)CompanyTable.Model };
+            var v = new Views.Forbes2000View { Model = (IEnumerable)CompanyTable.Model };
             var interop = new WindowInteropHelper(v) { Owner = App.Instance.Root.Handle };
             v.ShowDialog(); // or v.Show();
         }

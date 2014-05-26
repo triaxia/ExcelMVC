@@ -89,7 +89,7 @@ namespace Sample.Application.ViewModels
         {
             Clear();
 
-            var lists = new Models.CompanyList();
+            var lists = new Models.CompanyListModel();
             lists.Load(filters.Select(x => x.Model));
             foreach (var item in lists)
                 Add(new Company { Model = item });

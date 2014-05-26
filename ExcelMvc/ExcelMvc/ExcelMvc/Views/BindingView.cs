@@ -69,6 +69,16 @@ namespace ExcelMvc.Views
 
         #endregion Constructors
 
+        #region Enumerations
+
+        public enum ViewOrientation
+        {
+            Portrait,
+            Landscape
+        }
+
+        #endregion Enumerations
+
         #region Events
 
         /// <summary>
@@ -98,6 +108,12 @@ namespace ExcelMvc.Views
             get { return Bindings.First().Name; }
         }
 
+        internal ViewOrientation Orientation
+        {
+            get;
+            set;
+        }
+
         #endregion Properties
 
         #region Methods
@@ -114,7 +130,7 @@ namespace ExcelMvc.Views
         /// Unbinds validation lists
         /// </summary>
         /// <param name="numberItems">Number of rows to unbind</param>
-        protected void BindValidationLists(int numberItems, Table.TableOrientation orientation)
+        protected void BindValidationLists(int numberItems, Table.ViewOrientation orientation)
         {
             foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
             {
@@ -129,7 +145,7 @@ namespace ExcelMvc.Views
         /// Unbinds validation lists
         /// </summary>
         /// <param name="numberItems">Number of rows to unbind</param>
-        protected void UnbindValidationLists(int numberItems, Table.TableOrientation orientation)
+        protected void UnbindValidationLists(int numberItems, Table.ViewOrientation orientation)
         {
             foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
             {
@@ -145,7 +161,7 @@ namespace ExcelMvc.Views
             return list.CompareOrdinalIgnoreCase("True/False") == 0;
         }
 
-        private void BindCheckBoxes(Binding binding, int numberItems, Table.TableOrientation orientation)
+        private void BindCheckBoxes(Binding binding, int numberItems, Table.ViewOrientation orientation)
         {
             var worksheet = ((Sheet)Parent).Underlying;
             var boxes = worksheet.Shapes;
@@ -164,7 +180,7 @@ namespace ExcelMvc.Views
                     box.Line.Weight = 1;
                     cell.Select();
 
-                    var range = orientation == Table.TableOrientation.Portrait ? lbinding.MakeRange(0, 1000, 0, 1) : lbinding.MakeRange(0, 1, 0, 1000);
+                    var range = orientation == Table.ViewOrientation.Portrait ? lbinding.MakeRange(0, 1000, 0, 1) : lbinding.MakeRange(0, 1, 0, 1000);
                     cell.AutoFill(range);
 
                     // range.FillDown();
@@ -172,12 +188,12 @@ namespace ExcelMvc.Views
             });
         }
 
-        private void BindValidationLists(Binding binding, int numberItems, Table.TableOrientation orientation)
+        private void BindValidationLists(Binding binding, int numberItems, Table.ViewOrientation orientation)
         {
             var lbinding = binding;
             Parent.ExecuteProtected(() =>
             {
-                var rangeCategory = orientation == Table.TableOrientation.Portrait ? lbinding.MakeRange(0, numberItems, 0, 1) : lbinding.MakeRange(0, 1, 0, numberItems);
+                var rangeCategory = orientation == Table.ViewOrientation.Portrait ? lbinding.MakeRange(0, numberItems, 0, 1) : lbinding.MakeRange(0, 1, 0, numberItems);
                 rangeCategory.Validation.Delete();
 
                 rangeCategory.Validation.Add(
@@ -197,7 +213,7 @@ namespace ExcelMvc.Views
             });
         }
 
-        private string MarkValidationListFormula(string list, Table.TableOrientation orientation)
+        private string MarkValidationListFormula(string list, Table.ViewOrientation orientation)
         {
             Range range;
             if (list.Contains("["))
@@ -229,7 +245,7 @@ namespace ExcelMvc.Views
             return string.Format("={0}", address);
         }
 
-        private void UnbindCheckBoxes(Binding binding, int rows, Table.TableOrientation orientation)
+        private void UnbindCheckBoxes(Binding binding, int rows, Table.ViewOrientation orientation)
         {
             /*
             var worksheet = ((Sheet)Parent).Underlying;
@@ -249,12 +265,12 @@ namespace ExcelMvc.Views
             });*/
         }
 
-        private void UnbindValidationLists(Binding binding, int numberItems, Table.TableOrientation orientation)
+        private void UnbindValidationLists(Binding binding, int numberItems, Table.ViewOrientation orientation)
         {
             var lbinding = binding;
             Parent.ExecuteProtected(() =>
             {
-                var rangeCategory = orientation == Table.TableOrientation.Portrait ? lbinding.MakeRange(0, numberItems, 0, 1) : lbinding.MakeRange(0, 1, 0, numberItems);
+                var rangeCategory = orientation == Table.ViewOrientation.Portrait ? lbinding.MakeRange(0, numberItems, 0, 1) : lbinding.MakeRange(0, 1, 0, numberItems);
                 rangeCategory.Validation.Delete();
             });
         }

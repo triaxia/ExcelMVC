@@ -36,7 +36,7 @@ Boston, MA 02110-1301 USA.
 
 namespace Sample.Models
 {
-    public class Company
+    public class CompanyModel
     {
         #region Properties
 

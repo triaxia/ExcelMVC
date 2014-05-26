@@ -44,7 +44,7 @@ namespace Sample.Application.ViewModels
 
         public CompanyFilter()
         {
-            Model = new Models.CompanyFilter();
+            Model = new Models.CompanyFilterModel();
         }
 
         #endregion Constructors
@@ -63,7 +63,7 @@ namespace Sample.Application.ViewModels
             set { Model.NameLike = value; }
         }
 
-        public Models.CompanyFilter Model
+        public Models.CompanyFilterModel Model
         {
             get;
             set;

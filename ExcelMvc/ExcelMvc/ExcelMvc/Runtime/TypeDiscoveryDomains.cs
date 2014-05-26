@@ -45,7 +45,7 @@ namespace ExcelMvc.Runtime
 
     using ExcelMvc.Extensions;
 
-    internal class TypeDiscoveryDomains
+    internal static class TypeDiscoveryDomains
     {
         #region Methods
 

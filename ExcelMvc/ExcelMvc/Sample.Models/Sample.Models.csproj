@@ -67,9 +67,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Company.cs" />
-    <Compile Include="CompanyFilter.cs" />
-    <Compile Include="CompanyList.cs" />
+    <Compile Include="CompanyModel.cs" />
+    <Compile Include="CompanyFilterModel.cs" />
+    <Compile Include="CompanyListModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

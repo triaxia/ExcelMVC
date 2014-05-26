@@ -1,4 +1,5 @@
 ﻿#region Header
+
 /*
 Copyright (C) 2013 =>
 
@@ -32,35 +33,43 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
+
 #endregion Header
 
-using System;
-
-namespace Sample.Models
+namespace Sample.Views
 {
-    public class CompanyFilter
+    using System.Collections;
+    using System.Windows;
+
+    /// <summary>
+    /// Interaction logic for Forbes.xaml
+    /// </summary>
+    public partial class Forbes2000View : Window
     {
         #region Constructors
-        public CompanyFilter()
+
+        public Forbes2000View()
         {
-            NameLike = "*";
+            InitializeComponent();
         }
 
         #endregion Constructors
+
         #region Properties
 
-        public string NameLike { get; set; }
-
-        #endregion Properties
-
-        #region Methods
-
-        public bool IsSelected(Company company)
+        public IEnumerable Model
         {
-            return !string.IsNullOrEmpty(NameLike)
-                && (NameLike == "*" || company.Name.IndexOf(NameLike, StringComparison.OrdinalIgnoreCase) >= 0);
+            get
+            {
+                return CompanyList.ItemsSource;
+            }
+
+            set
+            {
+                CompanyList.ItemsSource = value;
+            }
         }
 
-        #endregion 
+        #endregion Properties
     }
 }

@@ -44,7 +44,7 @@ namespace Sample.Application.ViewModels
 
         public Company()
         {
-            Model = new Models.Company();
+            Model = new Models.CompanyModel();
         }
 
         #endregion Constructors
@@ -87,7 +87,7 @@ namespace Sample.Application.ViewModels
             set { Model.MarketValue = value; }
         }
 
-        public Models.Company Model
+        public Models.CompanyModel Model
         {
             get; set;
         }

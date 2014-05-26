@@ -1,4 +1,4 @@
-﻿<Window x:Class="Sample.Views.Forbes2000"
+﻿<Window x:Class="Sample.Views.Forbes2000View"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStartupLocation="CenterOwner"

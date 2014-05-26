@@ -209,7 +209,7 @@ namespace ExcelMvc.Views
                 var categories = bindings.Where(x => x.Type == Binding.ViewType.Table && x.Name.CompareOrdinalIgnoreCase(name) == 0);
                 var origin = categories.First().Cell;
                 bool isPortraitTable = categories.All(x => x.Cell.Row == origin.Row);
-                var table = new Table(this, categories, isPortraitTable ? Table.TableOrientation.Portrait : Table.TableOrientation.Landscape);
+                var table = new Table(this, categories, isPortraitTable ? BindingView.ViewOrientation.Portrait : BindingView.ViewOrientation.Landscape);
                 var args = new ViewEventArgs(table);
                 OnOpening(args);
                 if (!args.IsCancelled)

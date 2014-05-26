@@ -34,17 +34,16 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-
 namespace Sample.Models
 {
-    using System.Linq;
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
 
-    public class CompanyList : List<Company>
+    public class CompanyListModel : List<CompanyModel>
     {
         #region Fields
 
@@ -54,7 +53,7 @@ namespace Sample.Models
 
         #region Methods
 
-        public void Load(IEnumerable<CompanyFilter> filters)
+        public void Load(IEnumerable<CompanyFilterModel> filters)
         {
             Clear();
             var path = Assembly.GetExecutingAssembly().Location;
@@ -98,9 +97,9 @@ namespace Sample.Models
             return cells;
         }
 
-        private static Company ToCompany(List<string> cells, HeadingIndices indices)
+        private static CompanyModel ToCompany(List<string> cells, HeadingIndices indices)
         {
-            var company = new Company
+            var company = new CompanyModel
             {
                 Name = cells[indices.IndexOfCompany],
                 Industry = cells[indices.IndexOfIndustry],
