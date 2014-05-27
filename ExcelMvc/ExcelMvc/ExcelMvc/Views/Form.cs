@@ -59,7 +59,7 @@ namespace ExcelMvc.Views
         #region Constructors
 
         /// <summary>
-        /// Initialises an instances of ExcelMvc.Views.Panel
+        /// Initialises an instances of ExcelMvc.Views.Form
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="bindings">Bindings for the view</param>

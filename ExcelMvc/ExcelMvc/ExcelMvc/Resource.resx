@@ -112,13 +112,16 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorBindingPathInvalidIndexer" xml:space="preserve">
     <value>No matching ending indexer "]" in binding path "{0}".</value>
+  </data>
+  <data name="ErrorInvalidTableOrientation" xml:space="preserve">
+    <value>Table "{0}"  is neither a landscape nor a portrait table, table headers must be arranged as a row or a column.</value>
   </data>
   <data name="ErrorInvalidViewType" xml:space="preserve">
     <value>Invalid view type "{0}". Must be either Form or Table.</value>

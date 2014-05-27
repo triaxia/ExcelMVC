@@ -71,10 +71,11 @@ namespace ExcelMvc.Views
         #region Constructors
 
         /// <summary>
-        /// Initialises an instances of ExcelMvc.Views.Panel
+        /// Initialises an instances of ExcelMvc.Views.Table
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="bindings">Bindings for the view</param>
+        /// <param name="orientation"></param>
         internal Table(View parent, IEnumerable<Binding> bindings, ViewOrientation orientation)
             : base(parent, bindings)
         {

@@ -208,12 +208,12 @@ namespace ExcelMvc.Views
                 var name = item;
                 var categories = bindings.Where(x => x.Type == ViewType.Table && x.Name.CompareOrdinalIgnoreCase(name) == 0);
                 var origin = categories.First().Cell;
-                bool isPortraitTable = categories.All(x => x.Cell.Row == origin.Row);
-                bool isLandscapeTable = categories.All(x => x.Cell.Column == origin.Column);
+                var isPortraitTable = categories.All(x => x.Cell.Row == origin.Row);
+                var isLandscapeTable = categories.All(x => x.Cell.Column == origin.Column);
                 ExcuteBinding(() =>
                 {
                     if (!isPortraitTable && !isLandscapeTable)
-                        throw new InvalidOperationException("The table is neither a landscape nor a portrait table, table headers must be arranged as a row or a column.");
+                        throw new InvalidOperationException(string.Format(Resource.ErrorInvalidTableOrientation, name));
                 });
                 
                 var table = new Table(this, categories, isPortraitTable ? ViewOrientation.Portrait : ViewOrientation.Landscape);
