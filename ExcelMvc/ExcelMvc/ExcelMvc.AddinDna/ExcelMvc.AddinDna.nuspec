@@ -26,9 +26,6 @@
       <file src="..\net40\ExcelMvc.AddinDna.pdb" target="lib\net40\ExcelMvc.AddinDna.pdb" />
       <file src="..\net45\ExcelMvc.AddinDna.dll" target="lib\net45\ExcelMvc.AddinDna.dll" />
       <file src="..\net45\ExcelMvc.AddinDna.pdb" target="lib\net45\ExcelMvc.AddinDna.pdb" />
-      <file src="ExcelDna.Integration.dll" target="lib\net35\ExcelDna.Integration.dll" />
-      <file src="..\net40\ExcelDna.Integration.dll" target="lib\net40\ExcelDna.Integration.dll" />
-      <file src="..\net45\ExcelDna.Integration.dll" target="lib\net45\ExcelDna.Integration.dll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.dll" target="content\net35\ExcelMvc.Addin.dll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.pdb" target="content\net35\ExcelMvc.Addin.pdb" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.dll" target="content\net40\ExcelMvc.Addin.dll" />
