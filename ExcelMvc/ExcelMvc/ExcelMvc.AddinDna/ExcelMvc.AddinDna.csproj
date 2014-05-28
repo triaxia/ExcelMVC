@@ -15,6 +15,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <NuGetPackageImportStamp>6adf6771</NuGetPackageImportStamp>
     <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 3.5|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -53,6 +56,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
     <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release 4.5|AnyCPU'">
     <OutputPath>bin\Release\net45</OutputPath>
@@ -64,6 +68,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
     <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Package|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -74,6 +79,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BuildNuGetPackage>true</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>true</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ExcelDna.Integration, Version=0.30.4718.347, Culture=neutral, processorArchitecture=MSIL">
