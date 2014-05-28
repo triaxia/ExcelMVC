@@ -13,6 +13,9 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <NuGetPackageImportStamp>98c4320d</NuGetPackageImportStamp>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +26,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 3.5|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +38,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -46,6 +53,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release 4.5|AnyCPU'">
     <OutputPath>bin\Release\net45</OutputPath>
@@ -56,6 +65,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Package|AnyCPU' ">
     <OutputPath>bin\Release\net35</OutputPath>
@@ -66,6 +77,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <BuildNuGetPackage>true</BuildNuGetPackage>
+    <BuildNuGetSymbolsPackage>true</BuildNuGetSymbolsPackage>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" Condition="'$(Configuration)' == 'Release 4.0'" />
@@ -153,6 +166,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ExcelMvc.nuspec" />
     <None Include="packages.config" />
     <None Include="Settings.StyleCop" />
   </ItemGroup>
@@ -169,4 +183,11 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\NuGet.for.MSBuild.1.4.1\build\NuGet.for.MSBuild.targets" Condition="Exists('..\packages\NuGet.for.MSBuild.1.4.1\build\NuGet.for.MSBuild.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\NuGet.for.MSBuild.1.4.1\build\NuGet.for.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NuGet.for.MSBuild.1.4.1\build\NuGet.for.MSBuild.targets'))" />
+  </Target>
 </Project>
