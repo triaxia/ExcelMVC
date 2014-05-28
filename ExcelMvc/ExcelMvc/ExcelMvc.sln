@@ -9,13 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelMvc.AddinDna", "ExcelM
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelMvc", "ExcelMvc\ExcelMvc.csproj", "{04AB5D30-781F-4CB1-820A-4A558AEE5B2C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9D7D2566-5F8F-4042-B8FE-32E8B1FCE183} = {9D7D2566-5F8F-4042-B8FE-32E8B1FCE183}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Models", "Sample.Models\Sample.Models.csproj", "{0378350D-B6F9-425D-836B-37B7ED8345B4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelMvc.Addin", "ExcelMvc.Addin\ExcelMvc.Addin.vcxproj", "{9D7D2566-5F8F-4042-B8FE-32E8B1FCE183}"
-	ProjectSection(ProjectDependencies) = postProject
-		{04AB5D30-781F-4CB1-820A-4A558AEE5B2C} = {04AB5D30-781F-4CB1-820A-4A558AEE5B2C}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Views", "Sample.Views\Sample.Views.csproj", "{A5404172-76DE-4C8C-BD9D-298EC4C3A3DC}"
 EndProject
