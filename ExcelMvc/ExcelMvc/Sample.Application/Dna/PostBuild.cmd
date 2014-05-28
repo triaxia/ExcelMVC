@@ -13,9 +13,9 @@ if exist "%out%\." (
 )
 mkdir "%out%"
 
-copy "..\..\packages\Excel-DNA.0.32.0\tools\ExcelDnaPack.exe" "%out%"
-copy "..\..\packages\Excel-DNA.0.32.0\tools\ExcelDna.xll" "%out%ExcelMvc.AddinDna.xll"
-rem copy "..\..\packages\Excel-DNA.0.32.0\tools\ExcelDna64.xll" "%out%ExcelMvc.AddinDna.xll"
+copy "..\..\ExcelMvc.AddinDna\%~3ExcelDnaPack.exe" "%out%"
+copy "..\..\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna-AddIn.xll" "%out%ExcelMvc.AddinDna.xll"
+rem copy "..\..\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna-AddIn64.xll" "%out%ExcelMvc.AddinDna.xll"
 
 copy "Start.cmd" "%out%"
 copy "ExcelMvc.AddinDna.dna" "%out%"
