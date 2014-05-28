@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package>
     <metadata>
-        <id>ExcelMvc</id>
+        <id>ExcelMvc.AddinDna</id>
         <version>1.4</version>
-        <title>ExcelMvc</title>
+        <title>ExcelMvc.AddinDna</title>
         <authors>triaxia@users.sf.net, wstamm@users.sf.net</authors>
         <owners>triaxia@users.sf.net</owners>
         <licenseUrl>https://sourceforge.net/p/excelmvc/code/ci/master/tree/LICENSE.md</licenseUrl>
