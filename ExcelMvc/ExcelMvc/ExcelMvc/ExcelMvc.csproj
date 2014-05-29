@@ -126,7 +126,7 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="Runtime\Lazy.cs" />
-    <Compile Include="Runtime\Result.cs" />
+    <Compile Include="Runtime\TypeResult.cs" />
     <Compile Include="Runtime\TypeDiscoveryDomains.cs" />
     <Compile Include="Runtime\ObjectFactory.cs" />
     <Compile Include="Runtime\ISession.cs" />

@@ -46,5 +46,6 @@ namespace ExcelMvc.Runtime
     /// </summary>
     public interface ISession : IDisposable
     {
+        // this interface is only for ExcelMvc to discover ExcelMvc session.
     }
 }

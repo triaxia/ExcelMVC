@@ -128,23 +128,26 @@ namespace ExcelMvc.Views
 
         public override void Dispose()
         {
-            if (Underlying != null)
+            ExecuteScreenUpdatingOff(() =>
             {
-                Underlying.SheetActivate -= Underlying_SheetActivate;
-                Underlying.SheetDeactivate -= Underlying_SheetDeactivate;
-            }
+                if (Underlying != null)
+                {
+                    Underlying.SheetActivate -= Underlying_SheetActivate;
+                    Underlying.SheetDeactivate -= Underlying_SheetDeactivate;
+                }
 
-            foreach (var item in sheets.Values)
-                item.Dispose();
-            sheets.Clear();
+                foreach (var item in sheets.Values)
+                    item.Dispose();
+                sheets.Clear();
+            });
         }
 
         /// <summary>
-        /// 
+        /// Finds a specfic command
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="sheet">Sheet hosts the command</param>
+        /// <param name="name">Name of the command</param>
+        /// <returns>Command found or nullf if not found</returns>
         internal Command FindCommand(Worksheet sheet, string name)
         {
             Command cmd = null;
@@ -157,19 +160,21 @@ namespace ExcelMvc.Views
         internal void Initialise()
         {
             Dispose();
-
-            var bindings = new CollectBindings(Underlying).Process();
-            foreach (Worksheet item in Underlying.Worksheets)
+            ExecuteScreenUpdatingOff(() =>
             {
-                var view = new Sheet(this, item);
-                List<Binding> sheetBindings;
-                bindings.TryGetValue(item, out sheetBindings);
-                view.Initialise(sheetBindings);
-                sheets[item] = view;
-            }
+                var bindings = new CollectBindings(Underlying).Process();
+                foreach (Worksheet item in Underlying.Worksheets)
+                {
+                    var view = new Sheet(this, item);
+                    List<Binding> sheetBindings;
+                    bindings.TryGetValue(item, out sheetBindings);
+                    view.Initialise(sheetBindings);
+                    sheets[item] = view;
+                }
 
-            Underlying.SheetActivate += Underlying_SheetActivate;
-            Underlying.SheetDeactivate += Underlying_SheetDeactivate;
+                Underlying.SheetActivate += Underlying_SheetActivate;
+                Underlying.SheetDeactivate += Underlying_SheetDeactivate;
+            });
         }
 
         private void Underlying_SheetActivate(object sh)

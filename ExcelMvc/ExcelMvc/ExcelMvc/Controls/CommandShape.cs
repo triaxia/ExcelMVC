@@ -80,6 +80,9 @@ namespace ExcelMvc.Controls
 
             set
             {
+                if (enabled == value)
+                    return;
+
                 enabled = value;
                 Host.ExecuteProtected(() =>
                 {

@@ -207,16 +207,7 @@ namespace ExcelMvc.Views
             {
                 var name = item;
                 var categories = bindings.Where(x => x.Type == ViewType.Table && x.Name.CompareOrdinalIgnoreCase(name) == 0);
-                var origin = categories.First().Cell;
-                var isPortraitTable = categories.All(x => x.Cell.Row == origin.Row);
-                var isLandscapeTable = categories.All(x => x.Cell.Column == origin.Column);
-                ExcuteBinding(() =>
-                {
-                    if (!isPortraitTable && !isLandscapeTable)
-                        throw new InvalidOperationException(string.Format(Resource.ErrorInvalidTableOrientation, name));
-                });
-                
-                var table = new Table(this, categories, isPortraitTable ? ViewOrientation.Portrait : ViewOrientation.Landscape);
+                var table = new Table(this, categories, DeriveOrientation(categories, name));
                 var args = new ViewEventArgs(table);
                 OnOpening(args);
                 if (!args.IsCancelled)
@@ -225,6 +216,23 @@ namespace ExcelMvc.Views
                     OnOpened(new ViewEventArgs(table));
                 }
             }
+        }
+
+        private ViewOrientation DeriveOrientation(IEnumerable<Binding> bindings, string tableName)
+        {
+            var origin = bindings.First().Cell;
+            if (bindings.All(x => x.Cell.Row == origin.Row))
+                return ViewOrientation.Portrait;
+
+            if (bindings.All(x => x.Cell.Column == origin.Column))
+                return ViewOrientation.Landscape;
+
+            ExcuteBinding(() =>
+            {
+                throw new InvalidOperationException(string.Format(Resource.ErrorInvalidTableOrientation, tableName));
+            });
+
+            return ViewOrientation.Portrait;
         }
 
         #endregion Methods

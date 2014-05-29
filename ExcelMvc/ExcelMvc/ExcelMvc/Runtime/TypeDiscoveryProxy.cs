@@ -46,9 +46,9 @@ namespace ExcelMvc.Runtime
     {
         #region Methods
 
-        public Result Discover(string assemblyPath, Type type)
+        public TypeResult Discover(string assemblyPath, Type type)
         {
-            var result = new Result { Types = new List<string>() };
+            var result = new TypeResult { Types = new List<string>() };
             try
             {
                 var asm = Assembly.LoadFrom(assemblyPath);

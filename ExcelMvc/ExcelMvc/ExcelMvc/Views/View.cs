@@ -60,7 +60,7 @@ namespace ExcelMvc.Views
         /// <summary>
         /// Occurs when a binding exception is caught
         /// </summary>
-        public event BindingFailedHandler BindFailed = delegate { };
+        public event BindingFailedHandler BindingFailed = delegate { };
 
         /// <summary>
         /// Occurs after a View is closed. 
@@ -161,6 +161,20 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
+        /// Gets the root view
+        /// </summary>
+        public View Root
+        {
+            get
+            {
+                var result = this;
+                while (result.Parent != null)
+                    result = result.Parent;
+                return result;
+            }
+        }
+
+        /// <summary>
         /// Gets the view type
         /// </summary>
         public abstract ViewType Type
@@ -238,9 +252,9 @@ namespace ExcelMvc.Views
         public void HookBindingFailed(BindingFailedHandler handler, bool isHook)
         {
             if (isHook)
-                BindFailed += handler;
+                BindingFailed += handler;
             else
-                BindFailed -= handler;
+                BindingFailed -= handler;
 
             foreach (var child in Children)
                 child.HookBindingFailed(handler, isHook);
@@ -363,12 +377,34 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Executes an binding exception and raise BindFailed event if an exception is caught
+        /// Executes an binding action and raise BindFailed event if an exception is caught
         /// </summary>
         /// <param name="action">Action to be executed</param>
         protected void ExcuteBinding(Action action)
         {
-            ActionExtensions.Try(action, ex => BindFailed(this, new BindingFailedEventArgs(this, ex)));
+            ActionExtensions.Try(action, ex => BindingFailed(this, new BindingFailedEventArgs(this, ex)));
+        }
+
+        /// <summary>
+        /// Executes an action with ScreenUpdating turned off
+        /// </summary>
+        /// <param name="ation">Action to be executed</param>
+        /// <param name="final">Final action</param>
+        internal void ExecuteScreenUpdatingOff(System.Action ation, System.Action final = null)
+        {
+            var app = ((App)Root).Underlying;
+            var updating = app.ScreenUpdating;
+            try
+            {
+                app.ScreenUpdating = false;
+                ation();
+            }
+            finally
+            {
+                app.ScreenUpdating = updating;
+                if (final != null)
+                    final();
+            }
         }
 
         #endregion Methods

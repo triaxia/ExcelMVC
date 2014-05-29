@@ -4,7 +4,7 @@
     using System.Collections.Generic;
 
     [Serializable]
-    public class Result
+    public class TypeResult
     {
         #region Properties
 

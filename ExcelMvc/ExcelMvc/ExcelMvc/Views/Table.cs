@@ -564,17 +564,16 @@ namespace ExcelMvc.Views
 
         private void UpdateView()
         {
-            try
+            ExecuteScreenUpdatingOff(() =>
             {
                 HookItemsEvents(false);
                 HookViewEvents(false);
                 ExcuteBinding(UpdateViewEx);
-            }
-            finally
+            }, () =>
             {
                 HookViewEvents(true);
                 HookItemsEvents(true);
-            }
+            });
         }
 
         private void UpdateViewEx()

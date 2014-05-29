@@ -181,16 +181,12 @@ namespace ExcelMvc.Views
 
         private void UpdateView()
         {
-            try
+            ExecuteScreenUpdatingOff(() =>
             {
                 UnhookViewEvents();
                 UpdateView(string.Empty);
                 BindValidationLists(1, ViewOrientation.Portrait);
-            }
-            finally
-            {
-                HookViewEvents();
-            }
+            }, HookViewEvents);
         }
 
         private void UpdateView(string path)
