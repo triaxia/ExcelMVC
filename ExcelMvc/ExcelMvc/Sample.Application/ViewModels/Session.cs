@@ -34,6 +34,8 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+using System.Windows.Forms;
+
 namespace Sample.Application.ViewModels
 {
     using System.Collections.Generic;
@@ -93,6 +95,13 @@ namespace Sample.Application.ViewModels
             // defined by the Custom Document Propety named "ExcelMvc".
             if (args.View.Id != ViewName)
                 args.Cancel();
+            else
+                args.View.BindingFailed += View_BindingFailed;
+        }
+
+        static void View_BindingFailed(object sender, ExcelMvc.Bindings.BindingFailedEventArgs args)
+        {
+            MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         #endregion Methods
