@@ -80,6 +80,7 @@ namespace ExcelMvc.Views
                 base.Model = value;
                 HookModelEvents();
                 UpdateView();
+                OneWayToSource();
             }
         }
 
@@ -120,6 +121,13 @@ namespace ExcelMvc.Views
             var sheet = (Sheet)Parent;
             sheet.Underlying.Change += Underlying_Change;
             sheet.Underlying.SelectionChange += Underlying_SelectionChange;
+        }
+
+        private void OneWayToSource()
+        {
+            var oneways = Bindings.Where(x => (x.Mode == ModeType.OneWayToSource));
+            foreach (var oneway in oneways)
+                UpdateObject(oneway, oneway.Cell);
         }
 
         private void Notify_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -163,7 +171,7 @@ namespace ExcelMvc.Views
 
         private void UpdateObject(Binding binding, Range target)
         {
-            ExcuteBinding(() =>
+            ExecuteBinding(() =>
             {
                 var range = binding.Cell;
                 var changed = target.Application.Intersect(range, target);
@@ -181,7 +189,7 @@ namespace ExcelMvc.Views
 
         private void UpdateView()
         {
-            ExecuteScreenUpdatingOff(() =>
+            ExecuteBinding(() =>
             {
                 UnhookViewEvents();
                 UpdateView(string.Empty);
@@ -191,7 +199,7 @@ namespace ExcelMvc.Views
 
         private void UpdateView(string path)
         {
-            ExcuteBinding(() =>
+            ExecuteBinding(() =>
             {
                 var match = string.IsNullOrEmpty(path)  ? null : Bindings.FirstOrDefault(x => x.Path == path);
                 if (match != null)
@@ -211,7 +219,7 @@ namespace ExcelMvc.Views
             if (binding.Mode == ModeType.OneWayToSource)
                 return;
 
-            ExcuteBinding(() =>
+            ExecuteBinding(() =>
             {
                 var value = ObjectBinding.GetPropertyValue(Model, binding);
                 RangeUpdator.Instance.Update(binding.Cell, 0, 1, 0, 1, value);

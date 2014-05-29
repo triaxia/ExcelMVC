@@ -58,7 +58,7 @@ namespace ExcelMvc.Extensions
         /// <param name="action">Action to be executed</param>
         public static void ExecuteProtected(this View host, Action action)
         {
-            host.ExecuteScreenUpdatingOff(() =>
+            host.ExecuteBinding(() =>
             {
                 var sheet = ((Sheet) host).Underlying;
                 if (sheet.ProtectContents)

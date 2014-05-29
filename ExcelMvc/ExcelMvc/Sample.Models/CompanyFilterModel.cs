@@ -43,7 +43,7 @@ namespace Sample.Models
         #region Constructors
         public CompanyFilterModel()
         {
-            NameLike = "*";
+            NameLike = "";
         }
 
         #endregion Constructors

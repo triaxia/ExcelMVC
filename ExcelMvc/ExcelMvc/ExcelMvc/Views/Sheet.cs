@@ -227,7 +227,7 @@ namespace ExcelMvc.Views
             if (bindings.All(x => x.Cell.Column == origin.Column))
                 return ViewOrientation.Landscape;
 
-            ExcuteBinding(() =>
+            ExecuteBinding(() =>
             {
                 throw new InvalidOperationException(string.Format(Resource.ErrorInvalidTableOrientation, tableName));
             });

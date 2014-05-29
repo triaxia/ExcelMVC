@@ -377,20 +377,11 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Executes an binding action and raise BindFailed event if an exception is caught
-        /// </summary>
-        /// <param name="action">Action to be executed</param>
-        protected void ExcuteBinding(Action action)
-        {
-            ActionExtensions.Try(action, ex => BindingFailed(this, new BindingFailedEventArgs(this, ex)));
-        }
-
-        /// <summary>
         /// Executes an action with ScreenUpdating turned off
         /// </summary>
         /// <param name="ation">Action to be executed</param>
         /// <param name="final">Final action</param>
-        internal void ExecuteScreenUpdatingOff(System.Action ation, System.Action final = null)
+        internal void ExecuteBinding(System.Action ation, System.Action final = null)
         {
             var app = ((App)Root).Underlying;
             var updating = app.ScreenUpdating;
@@ -398,6 +389,10 @@ namespace ExcelMvc.Views
             {
                 app.ScreenUpdating = false;
                 ation();
+            }
+            catch (Exception ex)
+            {
+                BindingFailed(this, new BindingFailedEventArgs(this, ex));
             }
             finally
             {

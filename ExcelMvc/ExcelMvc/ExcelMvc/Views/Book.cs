@@ -128,7 +128,7 @@ namespace ExcelMvc.Views
 
         public override void Dispose()
         {
-            ExecuteScreenUpdatingOff(() =>
+            ExecuteBinding(() =>
             {
                 if (Underlying != null)
                 {
@@ -160,7 +160,7 @@ namespace ExcelMvc.Views
         internal void Initialise()
         {
             Dispose();
-            ExecuteScreenUpdatingOff(() =>
+            ExecuteBinding(() =>
             {
                 var bindings = new CollectBindings(Underlying).Process();
                 foreach (Worksheet item in Underlying.Worksheets)

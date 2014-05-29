@@ -99,6 +99,7 @@ namespace ExcelMvc.Views
                 base.Model = value;
                 HookModelEvents();
                 UpdateView();
+                OneWayToSource();
             }
         }
 
@@ -371,6 +372,17 @@ namespace ExcelMvc.Views
             }
         }
 
+        private void OneWayToSource()
+        {
+            var oneways = Bindings.Where(x => (x.Mode == ModeType.OneWayToSource));
+            foreach (var oneway in oneways)
+            {
+                var ranage = Orientation == ViewOrientation.Portrait ?
+                    oneway.MakeRange(0, itemsBound.Count, 0, 1) : oneway.MakeRange(0, 1, 0, itemsBound.Count);
+                UpdateObjects(ranage);
+            }
+        }
+
         private void ItemNotify_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             UpdateCell(sender, e.PropertyName);
@@ -477,7 +489,7 @@ namespace ExcelMvc.Views
 
         private void UpdateCell(Binding binding, object model, int objectId)
         {
-            ExcuteBinding(() =>
+            ExecuteBinding(() =>
             {
                 var value = ObjectBinding.GetPropertyValue(model, binding);
                 switch (Orientation)
@@ -511,7 +523,7 @@ namespace ExcelMvc.Views
         private bool UpdateObjects(Range target)
         {
             var updated = false;
-            ExcuteBinding(() =>
+            ExecuteBinding(() =>
             {
                 var rangeObjs = GetRangeObjects(target);
                 if (rangeObjs.Items != null)
@@ -564,11 +576,11 @@ namespace ExcelMvc.Views
 
         private void UpdateView()
         {
-            ExecuteScreenUpdatingOff(() =>
+            ExecuteBinding(() =>
             {
                 HookItemsEvents(false);
                 HookViewEvents(false);
-                ExcuteBinding(UpdateViewEx);
+                ExecuteBinding(UpdateViewEx);
             }, () =>
             {
                 HookViewEvents(true);

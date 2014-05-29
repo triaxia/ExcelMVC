@@ -34,6 +34,8 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+using System.Security.Policy;
+
 namespace Sample.Application.ViewModels
 {
     using System.Collections.Generic;
@@ -46,6 +48,7 @@ namespace Sample.Application.ViewModels
         public CompanyFilterList()
         {
             Load(10);
+            this[0].NameLike = "*";
         }
 
         #endregion Constructors
