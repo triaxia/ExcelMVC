@@ -517,7 +517,7 @@ namespace ExcelMvc.Views
                             value);
                         break;
                 }
-            });
+            }, null, false);
         }
 
         private bool UpdateObjects(Range target)
@@ -532,7 +532,7 @@ namespace ExcelMvc.Views
                     if (UpdateObjects(rangeObjs) > 0)
                         OnObjectChanged(rangeObjs.Items, null);
                 }
-            });
+            }, null, false);
             return updated;
         }
 

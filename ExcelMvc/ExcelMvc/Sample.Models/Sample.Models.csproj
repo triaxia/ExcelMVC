@@ -71,6 +71,7 @@
     <Compile Include="CompanyFilterModel.cs" />
     <Compile Include="CompanyListModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Forbes.csv" />

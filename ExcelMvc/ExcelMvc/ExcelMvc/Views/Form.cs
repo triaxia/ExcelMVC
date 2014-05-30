@@ -184,7 +184,7 @@ namespace ExcelMvc.Views
                         OnObjectChanged(new[] { Model }, new[] { binding.Path });
                     }
                 }
-            });
+            }, null, false);
         }
 
         private void UpdateView()
@@ -211,7 +211,7 @@ namespace ExcelMvc.Views
                     foreach (var binding in Bindings)
                         UpdateView(binding);
                 }
-            });
+            }, null, false);
         }
 
         private void UpdateView(Binding binding)
@@ -223,7 +223,7 @@ namespace ExcelMvc.Views
             {
                 var value = ObjectBinding.GetPropertyValue(Model, binding);
                 RangeUpdator.Instance.Update(binding.Cell, 0, 1, 0, 1, value);
-            });
+            }, null, false);
         }
 
         #endregion Methods

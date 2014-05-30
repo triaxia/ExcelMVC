@@ -173,7 +173,7 @@ namespace ExcelMvc.Views
                 if (!args.IsCancelled)
                 {
                     book.Initialise();
-                    OnOpened(args);
+                    ExecuteBinding(() => OnOpened(args));
                     Books[item] = book;
                 }
             }

@@ -34,6 +34,7 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+
 namespace Sample.Application.ViewModels
 {
     using System;
@@ -43,6 +44,7 @@ namespace Sample.Application.ViewModels
     using System.Threading;
 
     using ExcelMvc.Runtime;
+    using Sample.Models;
 
     public class CompanyList : List<Company>, INotifyCollectionChanged
     {
@@ -116,13 +118,13 @@ namespace Sample.Application.ViewModels
             IndustryList.Clear();
         }
 
-        public void Update(bool start)
+        public void Update(bool start, Settings settings)
         {
             if (start)
             {
                 updateThread = new Thread(RunUpdate) { Name = RangeUpdator.NameOfAsynUpdateThread };
                 stopEvent = new ManualResetEvent(false);
-                updateThread.Start();
+                updateThread.Start(settings);
             }
             else if (stopEvent != null)
             {
@@ -130,10 +132,11 @@ namespace Sample.Application.ViewModels
             }
         }
 
-        private void RunUpdate()
+        private void RunUpdate(object state)
         {
             var random = new Random();
-            while (!stopEvent.WaitOne(100))
+            var settings = (Settings) state;
+            while (!stopEvent.WaitOne((settings.UpdateIntervalSeconds <= 0 ? 1 : settings.UpdateIntervalSeconds) * 1000))
             {
                 var idx = (int)(random.NextDouble() * 25);
                 if (idx == Count) idx--;

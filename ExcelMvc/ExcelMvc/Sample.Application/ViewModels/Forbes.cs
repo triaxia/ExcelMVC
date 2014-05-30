@@ -34,6 +34,9 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+using ExcelMvc.Extensions;
+using Sample.Models;
+
 namespace Sample.Application.ViewModels
 {
     using System.Windows.Forms;
@@ -51,13 +54,17 @@ namespace Sample.Application.ViewModels
 
             Tests = new CommandTests((Sheet)view.Find(ViewType.Sheet, "Tests"));
 
+            var settingsForms = (ExcelMvc.Views.Form)view.Find(ViewType.Form, "Settings");
+            var settingsModel = new Settings();
+            settingsForms.Model = settingsModel;
+
             // portrait
             var parent = view.Find(ViewType.Sheet, "Forbes");
-            ForbesTest = new Forbes2000(view, parent, "Company", "Company");
+            ForbesTest = new Forbes2000(view, parent, settingsModel, "Company", "Company");
 
             // landscape/transposed
             parent = view.Find(ViewType.Sheet, "Forbes_transposed");
-            ForbesTestTransposed = new Forbes2000(view, parent, "CompanyTransposed", "CompanyTransposed");
+            ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
         }
 
         #endregion Constructors

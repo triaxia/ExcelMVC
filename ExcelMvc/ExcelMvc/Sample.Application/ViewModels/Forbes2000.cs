@@ -34,12 +34,14 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+
 namespace Sample.Application.ViewModels
 {
     using System.Collections;
     using System.Linq;
     using System.Windows.Interop;
 
+    using Sample.Models;
     using ExcelMvc.Bindings;
     using ExcelMvc.Controls;
     using ExcelMvc.Views;
@@ -48,9 +50,10 @@ namespace Sample.Application.ViewModels
     {
         #region Constructors
 
-        public Forbes2000(View grandparent, View parent, string companyTableName, string companyFormName)
+        public Forbes2000(View grandparent, View parent, Settings settings, string companyTableName, string companyFormName)
         {
             ParentView = parent;
+            Settings = settings;
 
             ParentView.HookClicked(LoadAllClicked, "LoadForbes", true);
             ParentView.HookClicked(ClearAllClicked, "ClearForbes", true);
@@ -117,6 +120,12 @@ namespace Sample.Application.ViewModels
         private Table CompanyFilterTable
         {
             get; set;
+        }
+
+        private Settings Settings
+        {
+            get;
+            set;
         }
 
         #endregion Properties
@@ -196,7 +205,7 @@ namespace Sample.Application.ViewModels
             cmd.Value = update;
             cmd.Caption = update ? "Stop Update" : "Start Update";
             var companyList = (CompanyList)CompanyTable.Model;
-            companyList.Update(update);
+            companyList.Update(update, Settings);
             IsUpdating = update;
             EnableControls();
         }

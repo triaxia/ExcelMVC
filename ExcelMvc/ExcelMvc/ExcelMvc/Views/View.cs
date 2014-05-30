@@ -381,13 +381,15 @@ namespace ExcelMvc.Views
         /// </summary>
         /// <param name="ation">Action to be executed</param>
         /// <param name="final">Final action</param>
-        internal void ExecuteBinding(System.Action ation, System.Action final = null)
+        /// <param name="turnOfScreenUpdating"></param>
+        internal void ExecuteBinding(System.Action ation, System.Action final = null, bool turnOfScreenUpdating = true)
         {
             var app = ((App)Root).Underlying;
             var updating = app.ScreenUpdating;
             try
             {
-                app.ScreenUpdating = false;
+                if (turnOfScreenUpdating)
+                    app.ScreenUpdating = false;
                 ation();
             }
             catch (Exception ex)
@@ -396,7 +398,8 @@ namespace ExcelMvc.Views
             }
             finally
             {
-                app.ScreenUpdating = updating;
+                if (turnOfScreenUpdating)
+                    app.ScreenUpdating = updating;
                 if (final != null)
                     final();
             }
