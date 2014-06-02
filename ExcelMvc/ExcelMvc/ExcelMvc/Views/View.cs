@@ -278,10 +278,20 @@ namespace ExcelMvc.Views
         /// <param name="isHook">Indicates if this call is to hook or unhook the handler</param>
         public void HookClicked(ClickedHandler handler, string name, bool isHook)
         {
+            string commandNameNoPrefix = CommandFactory.RemovePrefix(name);
+
+            if (FindCommand(commandNameNoPrefix) == null)
+            {
+                BindingFailed(this, new BindingFailedEventArgs(this, new Exception(string.Format(Resource.ErrorNoCommandNameFound, name, Name))));
+                return;
+            }
+
+            bool hooked = false;
             foreach (var cmd in Commands)
             {
-                if (name == null || cmd.Name.CompareOrdinalIgnoreCase(name) == 0)
+                if (commandNameNoPrefix == null || cmd.Name.CompareOrdinalIgnoreCase(commandNameNoPrefix) == 0)
                 {
+                    hooked = true;
                     if (isHook)
                         cmd.Clicked += handler;
                     else
@@ -289,8 +299,11 @@ namespace ExcelMvc.Views
                 }
             }
 
+            if (hooked)
+                return;
+
             foreach (var child in Children)
-                child.HookClicked(handler, name, isHook);
+                child.HookClicked(handler, commandNameNoPrefix, isHook);
         }
 
         /// <summary>

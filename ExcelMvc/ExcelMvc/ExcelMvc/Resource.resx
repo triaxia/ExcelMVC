@@ -138,6 +138,9 @@
   <data name="ErrorNoBindingPathFound" xml:space="preserve">
     <value>No "Binding Path" column in a view binding config table.</value>
   </data>
+  <data name="ErrorNoCommandNameFound" xml:space="preserve">
+    <value>No command name "{0}" found in "{1}".</value>
+  </data>
   <data name="ErrorNoDataCellRange" xml:space="preserve">
     <value>Data cell "{0}" does not point to a valid Range.</value>
   </data>
