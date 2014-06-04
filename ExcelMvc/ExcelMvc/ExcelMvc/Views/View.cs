@@ -415,7 +415,7 @@ namespace ExcelMvc.Views
         /// <param name="ation">Action to be executed</param>
         /// <param name="final">Final action</param>
         /// <param name="turnOfScreenUpdating"></param>
-        internal void ExecuteBinding(System.Action ation, System.Action final = null, bool turnOfScreenUpdating = true)
+        internal void ExecuteBinding(Action ation, Action final = null, bool turnOfScreenUpdating = true)
         {
             var app = ((App)Root).Underlying;
             var updating = app.ScreenUpdating;
