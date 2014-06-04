@@ -34,14 +34,14 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-using System.Windows.Forms;
-
 namespace Sample.Application.ViewModels
 {
     using System.Collections.Generic;
+    using System.Windows.Forms;
 
     using ExcelMvc.Runtime;
     using ExcelMvc.Views;
+    using View = ExcelMvc.Views.View;
 
     public class Session : ISession
     {
@@ -99,7 +99,7 @@ namespace Sample.Application.ViewModels
                 args.View.BindingFailed += View_BindingFailed;
         }
 
-        static void View_BindingFailed(object sender, ExcelMvc.Bindings.BindingFailedEventArgs args)
+        private static void View_BindingFailed(object sender, ExcelMvc.Bindings.BindingFailedEventArgs args)
         {
             MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }

@@ -34,7 +34,6 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-
 namespace Sample.Application.ViewModels
 {
     using System;
@@ -135,7 +134,7 @@ namespace Sample.Application.ViewModels
         private void RunUpdate(object state)
         {
             var random = new Random();
-            var settings = (Settings) state;
+            var settings = (Settings)state;
             while (!stopEvent.WaitOne((settings.UpdateIntervalSeconds <= 0 ? 1 : settings.UpdateIntervalSeconds) * 1000))
             {
                 var idx = (int)(random.NextDouble() * 25);

@@ -489,50 +489,56 @@ namespace ExcelMvc.Views
 
         private void UpdateCell(Binding binding, object model, int objectId)
         {
-            ExecuteBinding(() =>
-            {
-                var value = ObjectBinding.GetPropertyValue(model, binding);
-                switch (Orientation)
+            ExecuteBinding(
+                () =>
                 {
-                    case ViewOrientation.Portrait:
-                        RangeUpdator.Instance.Update(
-                            binding.Cell,
-                            Bindings.First().Cell,
-                            itemsBound.Count,
-                            objectId.ToString(CultureInfo.InvariantCulture),
-                            1,
-                            0,
-                            1,
-                            value);
-                        break;
-                    case ViewOrientation.Landscape:
-                        RangeUpdator.Instance.Update(
-                            binding.Cell,
-                            0,
-                            1,
-                            Bindings.First().Cell,
-                            itemsBound.Count,
-                            objectId.ToString(CultureInfo.InvariantCulture),
-                            1,
-                            value);
-                        break;
-                }
-            }, null, false);
+                    var value = ObjectBinding.GetPropertyValue(model, binding);
+                    switch (Orientation)
+                    {
+                        case ViewOrientation.Portrait:
+                            RangeUpdator.Instance.Update(
+                                binding.Cell,
+                                Bindings.First().Cell,
+                                itemsBound.Count,
+                                objectId.ToString(CultureInfo.InvariantCulture),
+                                1,
+                                0,
+                                1,
+                                value);
+                            break;
+                        case ViewOrientation.Landscape:
+                            RangeUpdator.Instance.Update(
+                                binding.Cell,
+                                0,
+                                1,
+                                Bindings.First().Cell,
+                                itemsBound.Count,
+                                objectId.ToString(CultureInfo.InvariantCulture),
+                                1,
+                                value);
+                            break;
+                    }
+                },
+                null,
+                false);
         }
 
         private bool UpdateObjects(Range target)
         {
             var updated = false;
-            ExecuteBinding(() =>
-            {
-                var rangeObjs = GetRangeObjects(target);
-                if (rangeObjs.Items != null)
+            ExecuteBinding(
+                () =>
                 {
-                    updated = true;
-                    if (UpdateObjects(rangeObjs) > 0)
-                        OnObjectChanged(rangeObjs.Items, null);
-                }
-            }, null, false);
+                    var rangeObjs = GetRangeObjects(target);
+                    if (rangeObjs.Items != null)
+                    {
+                        updated = true;
+                        if (UpdateObjects(rangeObjs) > 0)
+                            OnObjectChanged(rangeObjs.Items, null);
+                    }
+                },
+                null,
+                false);
             return updated;
         }
 
@@ -576,16 +582,18 @@ namespace ExcelMvc.Views
 
         private void UpdateView()
         {
-            ExecuteBinding(() =>
-            {
-                HookItemsEvents(false);
-                HookViewEvents(false);
-                ExecuteBinding(UpdateViewEx);
-            }, () =>
-            {
-                HookViewEvents(true);
-                HookItemsEvents(true);
-            });
+            ExecuteBinding(
+                () =>
+                {
+                    HookItemsEvents(false);
+                    HookViewEvents(false);
+                    ExecuteBinding(UpdateViewEx);
+                },
+                () =>
+                {
+                    HookViewEvents(true);
+                    HookItemsEvents(true);
+                });
         }
 
         private void UpdateViewEx()

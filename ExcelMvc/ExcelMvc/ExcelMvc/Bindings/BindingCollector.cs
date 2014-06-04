@@ -1,6 +1,4 @@
-﻿using ExcelMvc.Views;
-
-namespace ExcelMvc.Bindings
+﻿namespace ExcelMvc.Bindings
 {
     using System;
     using System.Collections.Generic;
@@ -8,6 +6,7 @@ namespace ExcelMvc.Bindings
 
     using ExcelMvc.Extensions;
     using ExcelMvc.Runtime;
+    using ExcelMvc.Views;
     using Microsoft.Office.Interop.Excel;
 
     internal class BindingCollector

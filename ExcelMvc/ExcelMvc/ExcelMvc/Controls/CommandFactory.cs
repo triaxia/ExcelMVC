@@ -82,6 +82,16 @@ namespace ExcelMvc.Controls
             Create(sheet, host, sheet.Shapes, names, commands);
         }
 
+        /// <summary>
+        /// Removes ExcelMVC prefix from a command name
+        /// </summary>
+        /// <param name="name">Command name</param>
+        /// <returns>Command name without prefix</returns>
+        public static string RemovePrefix(string name)
+        {
+            return IsCreateable(name) ? name.Substring(CommandPrefix.Length) : name;
+        }
+
         private static void Create(Worksheet sheet, View host, IEnumerable items, List<string> names, Dictionary<string, Command> commands)
         {
             foreach (var item in items)
@@ -179,16 +189,6 @@ namespace ExcelMvc.Controls
             });
 
             return true;
-        }
-
-        /// <summary>
-        /// Removes ExcelMVC prefix from a command name
-        /// </summary>
-        /// <param name="name">Command name</param>
-        /// <returns>Command name without prefix</returns>
-        public static string RemovePrefix(string name)
-        {
-            return IsCreateable(name) ? name.Substring(CommandPrefix.Length) : name;
         }
 
         private static bool IsCreateable(string name)

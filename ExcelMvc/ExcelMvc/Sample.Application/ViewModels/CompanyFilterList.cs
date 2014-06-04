@@ -34,13 +34,12 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-using System.Security.Policy;
-
 namespace Sample.Application.ViewModels
 {
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
+    using System.Security.Policy;
 
     public class CompanyFilterList : List<CompanyFilter>, INotifyCollectionChanged
     {

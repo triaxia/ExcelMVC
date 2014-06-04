@@ -34,12 +34,11 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-using ExcelMvc.Views;
-
 namespace ExcelMvc.Bindings
 {
     using System.Windows.Data;
 
+    using ExcelMvc.Views;
     using Microsoft.Office.Interop.Excel;
 
     /// <summary>

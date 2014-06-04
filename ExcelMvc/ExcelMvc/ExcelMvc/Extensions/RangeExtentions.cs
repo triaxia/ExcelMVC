@@ -60,7 +60,7 @@ namespace ExcelMvc.Extensions
         {
             host.ExecuteBinding(() =>
             {
-                var sheet = ((Sheet) host).Underlying;
+                var sheet = ((Sheet)host).Underlying;
                 if (sheet.ProtectContents)
                 {
                     sheet.Unprotect();

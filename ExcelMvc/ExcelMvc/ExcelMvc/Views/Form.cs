@@ -171,47 +171,55 @@ namespace ExcelMvc.Views
 
         private void UpdateObject(Binding binding, Range target)
         {
-            ExecuteBinding(() =>
-            {
-                var range = binding.Cell;
-                var changed = target.Application.Intersect(range, target);
-                if (changed != null)
+            ExecuteBinding(
+                () =>
                 {
-                    var value = RangeConversion.MergeChangedValue(changed, range, ObjectBinding.GetPropertyValue(Model, binding));
-                    if (value.Changed)
+                    var range = binding.Cell;
+                    var changed = target.Application.Intersect(range, target);
+                    if (changed != null)
                     {
-                        ObjectBinding.SetPropertyValue(Model, binding, value.Value);
-                        OnObjectChanged(new[] { Model }, new[] { binding.Path });
+                        var value = RangeConversion.MergeChangedValue(changed, range, ObjectBinding.GetPropertyValue(Model, binding));
+                        if (value.Changed)
+                        {
+                            ObjectBinding.SetPropertyValue(Model, binding, value.Value);
+                            OnObjectChanged(new[] { Model }, new[] { binding.Path });
+                        }
                     }
-                }
-            }, null, false);
+                },
+                null,
+                false);
         }
 
         private void UpdateView()
         {
-            ExecuteBinding(() =>
-            {
-                UnhookViewEvents();
-                UpdateView(string.Empty);
-                BindValidationLists(1, ViewOrientation.Portrait);
-            }, HookViewEvents);
+            ExecuteBinding(
+                () =>
+                {
+                    UnhookViewEvents();
+                    UpdateView(string.Empty);
+                    BindValidationLists(1, ViewOrientation.Portrait);
+                },
+                HookViewEvents);
         }
 
         private void UpdateView(string path)
         {
-            ExecuteBinding(() =>
-            {
-                var match = string.IsNullOrEmpty(path)  ? null : Bindings.FirstOrDefault(x => x.Path == path);
-                if (match != null)
+            ExecuteBinding(
+                () =>
                 {
-                    UpdateView(match);
-                }
-                else
-                {
-                    foreach (var binding in Bindings)
-                        UpdateView(binding);
-                }
-            }, null, false);
+                    var match = string.IsNullOrEmpty(path) ? null : Bindings.FirstOrDefault(x => x.Path == path);
+                    if (match != null)
+                    {
+                        UpdateView(match);
+                    }
+                    else
+                    {
+                        foreach (var binding in Bindings)
+                            UpdateView(binding);
+                    }
+                },
+                null,
+                false);
         }
 
         private void UpdateView(Binding binding)
@@ -219,11 +227,14 @@ namespace ExcelMvc.Views
             if (binding.Mode == ModeType.OneWayToSource)
                 return;
 
-            ExecuteBinding(() =>
-            {
-                var value = ObjectBinding.GetPropertyValue(Model, binding);
-                RangeUpdator.Instance.Update(binding.Cell, 0, 1, 0, 1, value);
-            }, null, false);
+            ExecuteBinding(
+                () =>
+                {
+                    var value = ObjectBinding.GetPropertyValue(Model, binding);
+                    RangeUpdator.Instance.Update(binding.Cell, 0, 1, 0, 1, value);
+                },
+                null,
+                false);
         }
 
         #endregion Methods

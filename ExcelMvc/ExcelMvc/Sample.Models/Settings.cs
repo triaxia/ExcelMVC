@@ -1,5 +1,4 @@
-﻿
-namespace Sample.Models
+﻿namespace Sample.Models
 {
     public class Settings
     {
@@ -8,6 +7,5 @@ namespace Sample.Models
         public int UpdateIntervalSeconds { get; set; }
 
         #endregion Properties
-
     }
 }

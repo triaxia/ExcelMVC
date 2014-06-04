@@ -33,13 +33,11 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 #endregion Header
-
-using System.Linq;
-
 namespace ExcelMvc.Views
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using ExcelMvc.Bindings;
     using ExcelMvc.Controls;
@@ -226,33 +224,6 @@ namespace ExcelMvc.Views
             return result;
         }
 
-        private void SplitName(string fullName, out ViewType type, out string name)
-        {
-            var parts = fullName.Split('.');
-            if (parts.Length == 1)
-            {
-                type = ViewType.None;
-                name = parts[0];
-            }
-            else if (parts.Length == 2)
-            {
-                // "Type.Name";
-                type = (ViewType)Enum.Parse(typeof(ViewType), parts[0], true);
-                name = parts[1];
-            }
-            else if (parts.Length == 3)
-            {
-                // "ExcelMvc.Type.Name";
-                type = (ViewType) Enum.Parse(typeof (ViewType), parts[1], true);
-                name = parts[2];
-            }
-            else
-            {
-                type = ViewType.None;
-                name = fullName;
-            }
-        }
-
         /// <summary>
         /// Finds a command
         /// </summary>
@@ -304,26 +275,6 @@ namespace ExcelMvc.Views
             var commandNameNoPrefix = CommandFactory.RemovePrefix(name);
             if (HookClickedAll(handler, commandNameNoPrefix, isHook) == 0)
                 BindingFailed(this, new BindingFailedEventArgs(this, new Exception(string.Format(Resource.ErrorNoCommandNameFound, name, Name))));
-        }
-
-        private int HookClickedAll(ClickedHandler handler, string name, bool isHook)
-        {
-            var count = 0;
-            foreach (var cmd in Commands)
-            {
-                if (cmd.Name.CompareOrdinalIgnoreCase(name) != 0)
-                    continue;
-
-                count++;
-                if (isHook)
-                    cmd.Clicked += handler;
-                else
-                    cmd.Clicked -= handler;
-            }
-
-            count += Children.Sum(child => child.HookClickedAll(handler, name, isHook));
-
-            return count;
         }
 
         /// <summary>
@@ -435,6 +386,53 @@ namespace ExcelMvc.Views
                     app.ScreenUpdating = updating;
                 if (final != null)
                     final();
+            }
+        }
+
+        private int HookClickedAll(ClickedHandler handler, string name, bool isHook)
+        {
+            var count = 0;
+            foreach (var cmd in Commands)
+            {
+                if (cmd.Name.CompareOrdinalIgnoreCase(name) != 0)
+                    continue;
+
+                count++;
+                if (isHook)
+                    cmd.Clicked += handler;
+                else
+                    cmd.Clicked -= handler;
+            }
+
+            count += Children.Sum(child => child.HookClickedAll(handler, name, isHook));
+
+            return count;
+        }
+
+        private void SplitName(string fullName, out ViewType type, out string name)
+        {
+            var parts = fullName.Split('.');
+            if (parts.Length == 1)
+            {
+                type = ViewType.None;
+                name = parts[0];
+            }
+            else if (parts.Length == 2)
+            {
+                // "Type.Name";
+                type = (ViewType)Enum.Parse(typeof(ViewType), parts[0], true);
+                name = parts[1];
+            }
+            else if (parts.Length == 3)
+            {
+                // "ExcelMvc.Type.Name";
+                type = (ViewType)Enum.Parse(typeof(ViewType), parts[1], true);
+                name = parts[2];
+            }
+            else
+            {
+                type = ViewType.None;
+                name = fullName;
             }
         }
 

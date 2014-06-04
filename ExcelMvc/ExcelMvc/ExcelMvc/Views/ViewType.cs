@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ExcelMvc.Views
+﻿namespace ExcelMvc.Views
 {
+    using System;
+
     #region Enumerations
 
     /// <summary>
