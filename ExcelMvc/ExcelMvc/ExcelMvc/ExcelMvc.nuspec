@@ -7,7 +7,7 @@
         <authors>triaxia@users.sf.net, wstamm@users.sf.net</authors>
         <owners>triaxia@users.sf.net</owners>
         <licenseUrl>https://sourceforge.net/p/excelmvc/code/ci/master/tree/LICENSE.md</licenseUrl>
-        <iconUrl>https://sourceforge.net/p/excelmvc/code/ci/_NET_3_5/tree/ExcelMvc/ExcelMvc/.nuget/icon.png?format=raw</iconUrl>
+        <iconUrl>https://sourceforge.net/p/excelmvc/code/ci/master/tree/ExcelMvc/ExcelMvc/.nuget/icon.png?format=raw</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Writing Excel applications in .NET using the MVC/MVVM pattern. Use this package if you intend to use ExcelMvc, but not Excel-DNA in your project.</description>
         <copyright>Copyright ©  2013</copyright>
