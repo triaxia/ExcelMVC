@@ -61,6 +61,12 @@ namespace ExcelMvc.Controls
 
         #region Methods
 
+        /// <summary>
+        /// Creates commands on a sheet
+        /// </summary>
+        /// <param name="sheet">Sheet where commands are declared</param>
+        /// <param name="host">View to host the commands</param>
+        /// <param name="commands">Commands created</param>
         public static void Create(Worksheet sheet, View host, Dictionary<string, Command> commands)
         {
             var names = (from Comment item in sheet.Comments select item.Shape.Name).ToList();
@@ -74,11 +80,6 @@ namespace ExcelMvc.Controls
             Create(sheet, host, (DropDowns)sheet.DropDowns(), names, commands);
             Create(sheet, host, (Spinners)sheet.Spinners(), names, commands);
             Create(sheet, host, sheet.Shapes, names, commands);
-        }
-
-        public static string RemovePrefix(string name)
-        {
-            return IsCreateable(name) ? name.Substring(CommandPrefix.Length) : name;
         }
 
         private static void Create(Worksheet sheet, View host, IEnumerable items, List<string> names, Dictionary<string, Command> commands)
@@ -144,7 +145,7 @@ namespace ExcelMvc.Controls
 
             var name = item.Name;
             int idx;
-            if ((idx = names.BinarySearch(name)) >= 0) // || !IsCreateable(name)
+            if ((idx = names.BinarySearch(name)) >= 0)
                 return true;
 
             ActionExtensions.Try(() =>
@@ -178,6 +179,16 @@ namespace ExcelMvc.Controls
             });
 
             return true;
+        }
+
+        /// <summary>
+        /// Removes ExcelMVC prefix from a command name
+        /// </summary>
+        /// <param name="name">Command name</param>
+        /// <returns>Command name without prefix</returns>
+        public static string RemovePrefix(string name)
+        {
+            return IsCreateable(name) ? name.Substring(CommandPrefix.Length) : name;
         }
 
         private static bool IsCreateable(string name)

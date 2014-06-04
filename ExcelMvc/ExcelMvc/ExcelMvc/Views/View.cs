@@ -34,6 +34,8 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+using System.Linq;
+
 namespace ExcelMvc.Views
 {
     using System;
@@ -42,8 +44,6 @@ namespace ExcelMvc.Views
     using ExcelMvc.Bindings;
     using ExcelMvc.Controls;
     using ExcelMvc.Extensions;
-
-    using Action = System.Action;
 
     /// <summary>
     /// Represents the base behaviour of Views
@@ -206,6 +206,11 @@ namespace ExcelMvc.Views
         /// <returns>View found or null</returns>
         public View Find(ViewType type, string name)
         {
+            ViewType impliedType;
+            SplitName(name, out impliedType, out name);
+            if (type == ViewType.None)
+                type = impliedType;
+
             if ((type == ViewType.None || type == Type)
                 && Name.CompareOrdinalIgnoreCase(name) == 0)
                 return this;
@@ -221,6 +226,33 @@ namespace ExcelMvc.Views
             return result;
         }
 
+        private void SplitName(string fullName, out ViewType type, out string name)
+        {
+            var parts = fullName.Split('.');
+            if (parts.Length == 1)
+            {
+                type = ViewType.None;
+                name = parts[0];
+            }
+            else if (parts.Length == 2)
+            {
+                // "Type.Name";
+                type = (ViewType)Enum.Parse(typeof(ViewType), parts[0], true);
+                name = parts[1];
+            }
+            else if (parts.Length == 3)
+            {
+                // "ExcelMvc.Type.Name";
+                type = (ViewType) Enum.Parse(typeof (ViewType), parts[1], true);
+                name = parts[2];
+            }
+            else
+            {
+                type = ViewType.None;
+                name = fullName;
+            }
+        }
+
         /// <summary>
         /// Finds a command
         /// </summary>
@@ -228,6 +260,7 @@ namespace ExcelMvc.Views
         /// <returns>Command found or null</returns>
         public Command FindCommand(string name)
         {
+            name = CommandFactory.RemovePrefix(name);
             foreach (var cmd in Commands)
             {
                 if (cmd.Name.CompareOrdinalIgnoreCase(name) == 0)
@@ -264,46 +297,33 @@ namespace ExcelMvc.Views
         /// Hooks a clicked handler to commands
         /// </summary>
         /// <param name="handler">Handled to be hooked</param>
-        /// <param name="isHook">Indicates if this call is to hook or unhook the handler</param>
-        public void HookClicked(ClickedHandler handler, bool isHook)
-        {
-            HookClicked(handler, null, isHook);
-        }
-
-        /// <summary>
-        /// Hooks a clicked handler to commands
-        /// </summary>
-        /// <param name="handler">Handled to be hooked</param>
         /// <param name="name">Command name</param>
         /// <param name="isHook">Indicates if this call is to hook or unhook the handler</param>
         public void HookClicked(ClickedHandler handler, string name, bool isHook)
         {
-            string commandNameNoPrefix = CommandFactory.RemovePrefix(name);
-
-            if (FindCommand(commandNameNoPrefix) == null)
-            {
+            var commandNameNoPrefix = CommandFactory.RemovePrefix(name);
+            if (HookClickedAll(handler, commandNameNoPrefix, isHook) == 0)
                 BindingFailed(this, new BindingFailedEventArgs(this, new Exception(string.Format(Resource.ErrorNoCommandNameFound, name, Name))));
-                return;
-            }
+        }
 
-            bool hooked = false;
+        private int HookClickedAll(ClickedHandler handler, string name, bool isHook)
+        {
+            var count = 0;
             foreach (var cmd in Commands)
             {
-                if (commandNameNoPrefix == null || cmd.Name.CompareOrdinalIgnoreCase(commandNameNoPrefix) == 0)
-                {
-                    hooked = true;
-                    if (isHook)
-                        cmd.Clicked += handler;
-                    else
-                        cmd.Clicked -= handler;
-                }
+                if (cmd.Name.CompareOrdinalIgnoreCase(name) != 0)
+                    continue;
+
+                count++;
+                if (isHook)
+                    cmd.Clicked += handler;
+                else
+                    cmd.Clicked -= handler;
             }
 
-            if (hooked)
-                return;
+            count += Children.Sum(child => child.HookClickedAll(handler, name, isHook));
 
-            foreach (var child in Children)
-                child.HookClicked(handler, commandNameNoPrefix, isHook);
+            return count;
         }
 
         /// <summary>

@@ -162,7 +162,7 @@ namespace ExcelMvc.Views
             Dispose();
             ExecuteBinding(() =>
             {
-                var bindings = new CollectBindings(Underlying).Process();
+                var bindings = new BindingCollector(Underlying).Process();
                 foreach (Worksheet item in Underlying.Worksheets)
                 {
                     var view = new Sheet(this, item);

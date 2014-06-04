@@ -106,13 +106,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bindings\BindingFailedEventArgs.cs" />
-    <Compile Include="Bindings\CollectBindings.cs" />
+    <Compile Include="Bindings\BindingCollector.cs" />
     <Compile Include="Bindings\MergeResult.cs" />
     <Compile Include="Bindings\ModeType.cs" />
     <Compile Include="Bindings\ObjectBinding.cs" />
     <Compile Include="Bindings\ErrorConverter.cs" />
     <Compile Include="Bindings\RangeConversion.cs" />
-    <Compile Include="Bindings\ViewType.cs" />
+    <Compile Include="Views\ViewType.cs" />
     <Compile Include="Controls\CommandEventArgs.cs" />
     <Compile Include="Controls\CommandFactory.cs" />
     <Compile Include="Controls\CommandSpinner.cs" />

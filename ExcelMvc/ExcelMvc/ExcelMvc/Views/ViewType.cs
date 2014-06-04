@@ -1,4 +1,6 @@
-﻿namespace ExcelMvc.Bindings
+﻿using System;
+
+namespace ExcelMvc.Views
 {
     #region Enumerations
 

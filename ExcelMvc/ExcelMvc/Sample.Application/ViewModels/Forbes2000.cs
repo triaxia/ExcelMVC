@@ -69,8 +69,8 @@ namespace Sample.Application.ViewModels
             CompanyForm = (Form)ParentView.Find(ViewType.Form, companyFormName);
             CompanyForm.ObjectChanged += CompanyForm_ObjectChanged;
 
-            CountryTable = (Table)grandparent.Find(ViewType.Table, "Country");
-            IndustryTable = (Table)grandparent.Find(ViewType.Table, "Industry");
+            CountryTable = (Table)grandparent.Find(ViewType.Table, "ExcelMvc.Table.Country");
+            IndustryTable = (Table)grandparent.Find("Table.Industry");
 
             CompanyFilterTable = (Table)grandparent.Find(ViewType.Table, "CompanyFilters");
             CompanyFilterTable.Model = new CompanyFilterList();
