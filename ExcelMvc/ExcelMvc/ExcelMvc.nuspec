@@ -18,10 +18,13 @@
     <files>
       <file src="ExcelMvc.dll" target="lib\net35\ExcelMvc.dll" />
       <file src="ExcelMvc.pdb" target="lib\net35\ExcelMvc.pdb" />
+      <file src="ExcelMvc.xml" target="lib\net35\ExcelMvc.xml" />
       <file src="..\net40\ExcelMvc.dll" target="lib\net40\ExcelMvc.dll" />
       <file src="..\net40\ExcelMvc.pdb" target="lib\net40\ExcelMvc.pdb" />
+      <file src="..\net40\ExcelMvc.xml" target="lib\net40\ExcelMvc.xml" />
       <file src="..\net45\ExcelMvc.dll" target="lib\net45\ExcelMvc.dll" />
       <file src="..\net45\ExcelMvc.pdb" target="lib\net45\ExcelMvc.pdb" />
+      <file src="..\net45\ExcelMvc.xml" target="lib\net45\ExcelMvc.xml" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.dll" target="content\net35\ExcelMvc.Addin.xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.pdb" target="content\net35\ExcelMvc.Addin.pdb" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.dll" target="content\net40\ExcelMvc.Addin.xll" />

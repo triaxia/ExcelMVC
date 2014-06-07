@@ -18,10 +18,13 @@
     <files>
       <file src="..\..\..\..\ExcelMvc\bin\Release\net35\ExcelMvc.dll" target="lib\net35\ExcelMvc.dll" />
       <file src="..\..\..\..\ExcelMvc\bin\Release\net35\ExcelMvc.pdb" target="lib\net35\ExcelMvc.pdb" />
+      <file src="..\..\..\..\ExcelMvc\bin\Release\net35\ExcelMvc.xml" target="lib\net35\ExcelMvc.xml" />
       <file src="..\..\..\..\ExcelMvc\bin\Release\net40\ExcelMvc.dll" target="lib\net40\ExcelMvc.dll" />
       <file src="..\..\..\..\ExcelMvc\bin\Release\net40\ExcelMvc.pdb" target="lib\net40\ExcelMvc.pdb" />
+      <file src="..\..\..\..\ExcelMvc\bin\Release\net40\ExcelMvc.xml" target="lib\net40\ExcelMvc.xml" />
       <file src="..\..\..\..\ExcelMvc\bin\Release\net45\ExcelMvc.dll" target="lib\net45\ExcelMvc.dll" />
       <file src="..\..\..\..\ExcelMvc\bin\Release\net45\ExcelMvc.pdb" target="lib\net45\ExcelMvc.pdb" />
+      <file src="..\..\..\..\ExcelMvc\bin\Release\net45\ExcelMvc.xml" target="lib\net45\ExcelMvc.xml" />
       <file src="ExcelMvc.AddinDna.dll" target="lib\net35\ExcelMvc.AddinDna.dll" />
       <file src="ExcelMvc.AddinDna.pdb" target="lib\net35\ExcelMvc.AddinDna.pdb" />
       <file src="..\net40\ExcelMvc.AddinDna.dll" target="lib\net40\ExcelMvc.AddinDna.dll" />
