@@ -40,9 +40,10 @@ namespace ExcelMvc.Views
     using System.Collections.Generic;
     using System.Linq;
 
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Controls;
-    using ExcelMvc.Extensions;
+    using Bindings;
+    using Controls;
+    using Diagnostics;
+    using Extensions;
 
     using Microsoft.Office.Interop.Excel;
 
@@ -220,11 +221,11 @@ namespace ExcelMvc.Views
 
         private ViewOrientation DeriveOrientation(IEnumerable<Binding> bindings, string tableName)
         {
-            var origin = bindings.First().Cell;
-            if (bindings.All(x => x.Cell.Row == origin.Row))
+            var origin = bindings.First().StartCell;
+            if (bindings.All(x => x.StartCell.Row == origin.Row))
                 return ViewOrientation.Portrait;
 
-            if (bindings.All(x => x.Cell.Column == origin.Column))
+            if (bindings.All(x => x.StartCell.Column == origin.Column))
                 return ViewOrientation.Landscape;
 
             ExecuteBinding(() =>

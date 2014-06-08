@@ -70,7 +70,7 @@ ClrRuntimeHost::FormatError(PCWSTR format, PCWSTR arg)
 void
 ClrRuntimeHost::FormatError(PCWSTR format, PCWSTR arg, HRESULT hr)
 {
-    swprintf(ErrorBuffer, sizeof(ErrorBuffer) / sizeof(WCHAR), format, arg);
+    swprintf(ErrorBuffer, sizeof(ErrorBuffer) / sizeof(WCHAR), format, arg, hr);
 }
 
 BOOL 
@@ -203,7 +203,7 @@ Cleanup:
 }
 
 void
-ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName)
+ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, VARIANT *pArg1, VARIANT *pArg2, VARIANT *pArg3)
 {
 	ErrorBuffer[0] = 0;
 
@@ -221,7 +221,28 @@ ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName)
 		goto Cleanup;
 	}
 
-	psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, 0);
+    int args = (pArg1 == NULL ? 0 : 1) + (pArg2 == NULL ? 0 : 1) + (pArg3 == NULL ? 0 : 1);
+     if (args == 0)
+    {
+        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, 0);
+    }
+    else
+    {
+        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, args);
+        long idx [] = { 0 };
+        SafeArrayPutElement(psaMethodArgs, idx, pArg1);
+        if (args == 2)
+        {
+            idx[0] = 1;
+            SafeArrayPutElement(psaMethodArgs, idx, pArg2);
+        }
+        if (args == 3)
+        {
+            idx[0] = 1;
+            SafeArrayPutElement(psaMethodArgs, idx, pArg2);
+        }
+    }
+
 	hr = spType->InvokeMember_3(
 		bstrMethodName,
 		static_cast<BindingFlags>(BindingFlags_InvokeMethod | BindingFlags_Static | BindingFlags_Public),

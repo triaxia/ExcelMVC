@@ -40,30 +40,38 @@ namespace ExcelMvc.AddinDna
 {
     using ExcelDna.Integration;
 
-    using ExcelMvc.Extensions;
-    using ExcelMvc.Runtime;
+    using Extensions;
+    using Runtime;
 
     public static class Functions
     {
         #region Methods
 
         [ExcelFunction(Description = "Attach Excel to ExcelMvc", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcAttach")]
-        public static object ExcelMvcAttach([ExcelArgument] string name)
+        public static object ExcelMvcAttach()
         {
             return ActionExtensions.Wrap(() => Interface.Attach(null)) ?? (object)true;
         }
 
         [ExcelFunction(Description = "Detach Excel from ExcelMvc", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcDetach")]
-        public static object ExcelMvcDetach([ExcelArgument] string name)
+        public static object ExcelMvcDetach()
         {
             return ActionExtensions.Wrap(() => Interface.Detach()) ?? (object)true;
         }
 
-        [ExcelFunction(Description = "Called by a command",
-            Category = "ExcelMvc",
-            IsVolatile = false,
-            Name = "ExcelMvcRunCommandAction",
-            IsHidden = true)]
+        [ExcelFunction(Description = "Shows the ExcelMvc window", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcShow")]
+        public static object ExcelMvcShow()
+        {
+            return ActionExtensions.Wrap(() => Interface.Show()) ?? (object)true;
+        }
+
+        [ExcelFunction(Description = "Hides the ExcelMvc window", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcHide")]
+        public static object ExcelMvcHide()
+        {
+            return ActionExtensions.Wrap(() => Interface.Hide()) ?? (object)true;
+        }
+
+        [ExcelFunction(Description = "Called by a command", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcRunCommandAction", IsHidden = true)]
         public static void ExcelMvcRunCommandAction()
         {
             Interface.FireClicked();

@@ -36,6 +36,8 @@ Boston, MA 02110-1301 USA.
 
 #endregion Header
 
+using System.Windows.Navigation;
+
 namespace ExcelMvc.Controls
 {
     using System;
@@ -43,8 +45,9 @@ namespace ExcelMvc.Controls
     using System.Collections.Generic;
     using System.Linq;
 
-    using ExcelMvc.Extensions;
-    using ExcelMvc.Views;
+    using Diagnostics;
+    using Extensions;
+    using Views;
 
     using Microsoft.Office.Interop.Excel;
 
@@ -55,7 +58,11 @@ namespace ExcelMvc.Controls
     {
         #region Fields
 
-        private const string CommandPrefix = "ExcelMVC.";
+        /// <summary>
+        /// command names may be prefixed 
+        /// </summary>
+        private const string CommandPrefix = "ExcelMvc.";
+        private const string CommandFullPrefix = "ExcelMvc.Command.";
 
         #endregion Fields
 
@@ -80,6 +87,9 @@ namespace ExcelMvc.Controls
             Create(sheet, host, (DropDowns)sheet.DropDowns(), names, commands);
             Create(sheet, host, (Spinners)sheet.Spinners(), names, commands);
             Create(sheet, host, sheet.Shapes, names, commands);
+
+            foreach (var cmd in commands.Values)
+                MessageWindow.AddInfoLine(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
         }
 
         /// <summary>
@@ -89,7 +99,9 @@ namespace ExcelMvc.Controls
         /// <returns>Command name without prefix</returns>
         public static string RemovePrefix(string name)
         {
-            return IsCreateable(name) ? name.Substring(CommandPrefix.Length) : name;
+            if (StartsWithPrefix(name))
+                return name.Substring(CommandPrefix.Length);
+            return StartsWithFullPrefix(name) ? name.Substring(CommandFullPrefix.Length) : name;
         }
 
         private static void Create(Worksheet sheet, View host, IEnumerable items, List<string> names, Dictionary<string, Command> commands)
@@ -193,7 +205,17 @@ namespace ExcelMvc.Controls
 
         private static bool IsCreateable(string name)
         {
+            return StartsWithPrefix(name) || StartsWithFullPrefix(name);
+        }
+
+        private static bool StartsWithPrefix(string name)
+        {
             return name.StartsWith(CommandPrefix, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool StartsWithFullPrefix(string name)
+        {
+            return name.StartsWith(CommandFullPrefix, StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion Methods

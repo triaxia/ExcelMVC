@@ -43,7 +43,7 @@ namespace Sample.Application.ViewModels
     using System.Threading;
 
     using ExcelMvc.Runtime;
-    using Sample.Models;
+    using Models;
 
     public class CompanyList : List<Company>, INotifyCollectionChanged
     {
@@ -90,7 +90,7 @@ namespace Sample.Application.ViewModels
         {
             Clear();
 
-            var lists = new Models.CompanyListModel();
+            var lists = new CompanyListModel();
             lists.Load(filters.Select(x => x.Model));
             foreach (var item in lists)
                 Add(new Company { Model = item });

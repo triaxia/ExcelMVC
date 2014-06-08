@@ -36,12 +36,14 @@ Boston, MA 02110-1301 USA.
 
 #endregion Header
 
+using Microsoft.Office.Core;
+
 namespace ExcelMvc.Views
 {
     using System.Collections.Generic;
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Controls;
-    using ExcelMvc.Extensions;
+    using Bindings;
+    using Controls;
+    using Extensions;
 
     using Microsoft.Office.Interop.Excel;
 
@@ -96,7 +98,7 @@ namespace ExcelMvc.Views
             get
             {
                 var value = string.Empty;
-                ActionExtensions.Try(() => value = ((Microsoft.Office.Core.DocumentProperties)Underlying.CustomDocumentProperties)[App.ExcelMvc].Value.ToString());
+                ActionExtensions.Try(() => value = ((DocumentProperties)Underlying.CustomDocumentProperties)[App.ExcelMvc].Value.ToString());
                 return value;
             }
         }
@@ -106,7 +108,8 @@ namespace ExcelMvc.Views
         /// </summary>
         public override string Name
         {
-            get { return Underlying.Name; }
+            // get { return Underlying.Name; }
+            get { return Id; }
         }
 
         public override ViewType Type

@@ -38,7 +38,7 @@ namespace ExcelMvc.Runtime
     using System.Runtime.InteropServices;
     using System.Threading;
 
-    using ExcelMvc.Extensions;
+    using Extensions;
 
     using Microsoft.Office.Interop.Excel;
 

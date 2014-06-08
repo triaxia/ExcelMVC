@@ -34,6 +34,8 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+using Application = Microsoft.Office.Interop.Excel.Application;
+
 namespace ExcelMvc.Views
 {
     using System;
@@ -44,13 +46,13 @@ namespace ExcelMvc.Views
     using System.Runtime.InteropServices.ComTypes;
     using System.Windows.Data;
 
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Controls;
-    using ExcelMvc.Runtime;
+    using Bindings;
+    using Controls;
+    using Runtime;
 
     using Microsoft.Office.Interop.Excel;
 
-    using Application = Microsoft.Office.Interop.Excel.Application;
+    using Application = Application;
 
     /// <summary>
     /// Represents a visual over the Excel Application
@@ -117,7 +119,7 @@ namespace ExcelMvc.Views
         /// <summary>
         /// Excel Main Window
         /// </summary>
-        public Root Root
+        public Root MainWindow
         {
             get; private set;
         }
@@ -162,8 +164,8 @@ namespace ExcelMvc.Views
             Underlying.WorkbookActivate += Activate;
             Underlying.WorkbookDeactivate += Deactivate;
 
-            Root = new Root(Underlying.Hwnd);
-            Root.Destroyed += MainWindow_Destroyed;
+            MainWindow = new Root(Underlying.Hwnd);
+            MainWindow.Destroyed += MainWindow_Destroyed;
 
             foreach (Workbook item in Underlying.Workbooks)
             {
@@ -193,7 +195,7 @@ namespace ExcelMvc.Views
                 Underlying = null;
             }
 
-            Root = null;
+            MainWindow = null;
 
             foreach (var space in Books.Values)
                 space.Dispose();

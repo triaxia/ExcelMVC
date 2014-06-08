@@ -38,7 +38,7 @@ namespace ExcelMvc.Bindings
 {
     using System.Windows.Data;
 
-    using ExcelMvc.Views;
+    using Views;
     using Microsoft.Office.Interop.Excel;
 
     /// <summary>
@@ -66,11 +66,20 @@ namespace ExcelMvc.Bindings
         #region Properties
 
         /// <summary>
-        /// Visual cell
+        /// Start cell 
         /// </summary>
-        public Range Cell
+        public Range StartCell
         {
             get; internal set;
+        }
+
+        /// <summary>
+        /// End cell (null if no limit boundary limit)
+        /// </summary>
+        public Range EndCell
+        {
+            get;
+            internal set;
         }
 
         /// <summary>
@@ -143,9 +152,9 @@ namespace ExcelMvc.Bindings
         /// <returns>Column range</returns>
         public Range MakeRange(int rowOffset, int rows, int columnOffset, int cols)
         {
-            var start = Cell.Worksheet.Cells[Cell.Row + rowOffset, Cell.Column + columnOffset];
-            var end = Cell.Worksheet.Cells[Cell.Row + rowOffset + rows - 1, Cell.Column + +columnOffset + cols - 1];
-            return Cell.Worksheet.Range[start, end];
+            var start = StartCell.Worksheet.Cells[StartCell.Row + rowOffset, StartCell.Column + columnOffset];
+            var end = StartCell.Worksheet.Cells[StartCell.Row + rowOffset + rows - 1, StartCell.Column + +columnOffset + cols - 1];
+            return StartCell.Worksheet.Range[start, end];
         }
 
         #endregion Methods

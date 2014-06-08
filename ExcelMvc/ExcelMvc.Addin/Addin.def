@@ -9,4 +9,5 @@ xlAutoClose
 ExcelMvcRunCommandAction
 ExcelMvcAttach
 ExcelMvcDetach
-
+ExcelMvcShow
+ExcelMvcHide

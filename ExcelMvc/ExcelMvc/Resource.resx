@@ -156,4 +156,10 @@
   <data name="ErrorNoViewNameFound" xml:space="preserve">
     <value>No view name specifed in "{0}".</value>
   </data>
+  <data name="InfoCmdCreated" xml:space="preserve">
+    <value>Command "{0}" (type {1}, parent {2}) created.</value>
+  </data>
+  <data name="InfoViewCreated" xml:space="preserve">
+    <value>View "{0}" (type {1}, parent {2}) created.</value>
+  </data>
 </root>

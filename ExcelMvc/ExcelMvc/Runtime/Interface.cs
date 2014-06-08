@@ -41,37 +41,63 @@ namespace ExcelMvc.Runtime
     using System;
     using System.Windows.Forms;
 
-    using ExcelMvc.Extensions;
-    using ExcelMvc.Views;
+    using Diagnostics;
+    using Extensions;
+    using Views;
 
+    /// <summary>
+    /// Defines interfacing methods for ExcelMvc
+    /// </summary>
     public static class Interface
     {
         #region Methods
 
+        /// <summary>
+        /// Attaches the current Excel session to ExcelMvc
+        /// </summary>
+        /// <param name="app">Excel Application object</param>
+        /// <returns>error string, null if success</returns>
         public static string Attach(object app)
         {
             var status = ActionExtensions.Try(() => App.Instance.Attach(app));
             return TestStauts(status);
         }
 
+        /// <summary>
+        /// Attaches the current Excel session to ExcelMvc
+        /// </summary>
+        /// <returns>error string, null if success</returns>
         public static string Attach()
         {
             var status = ActionExtensions.Try(() => App.Instance.Attach(null));
             return TestStauts(status);
         }
 
+        /// <summary>
+        /// Detaches the current Excel session from ExcelMvc 
+        /// </summary>
+        /// <returns>error string, null if success</returns>
         public static string Detach()
         {
             var status = ActionExtensions.Try(() => App.Instance.Detach());
             return TestStauts(status);
         }
 
+        /// <summary>
+        /// Fires clicked event for the caller
+        /// </summary>
+        /// <returns>error string, null if success</returns>
         public static string FireClicked()
         {
             var status = ActionExtensions.Try(() => App.Instance.FireClicked());
             return TestStauts(status);
         }
 
+        /// <summary>
+        /// Tests status
+        /// </summary>
+        /// <param name="status">Exception object</param>
+        /// <returns>error string, null if success</returns>
         public static string TestStauts(Exception status)
         {
             string result = null;
@@ -82,6 +108,26 @@ namespace ExcelMvc.Runtime
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Shows the ExcelMvc winow
+        /// </summary>
+        /// <returns>error string, null if success</returns>
+        public static string Show()
+        {
+            MessageWindow.ShowInstance();
+            return null;
+        }
+
+        /// <summary>
+        /// Hides the ExcelMvc winow
+        /// </summary>
+        /// <returns>error string, null if success</returns>
+        public static string Hide()
+        {
+            MessageWindow.HideInstance();
+            return null;
         }
 
         #endregion Methods

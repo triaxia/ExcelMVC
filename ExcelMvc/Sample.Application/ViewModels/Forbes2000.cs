@@ -34,6 +34,8 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+using Sample.Views;
+
 namespace Sample.Application.ViewModels
 {
     using System.Collections;
@@ -43,7 +45,7 @@ namespace Sample.Application.ViewModels
     using ExcelMvc.Bindings;
     using ExcelMvc.Controls;
     using ExcelMvc.Views;
-    using Sample.Models;
+    using Models;
 
     internal class Forbes2000
     {
@@ -192,8 +194,8 @@ namespace Sample.Application.ViewModels
 
         private void ShowDialogClicked(object sender, CommandEventArgs args)
         {
-            var v = new Views.Forbes2000View { Model = (IEnumerable)CompanyTable.Model };
-            var interop = new WindowInteropHelper(v) { Owner = App.Instance.Root.Handle };
+            var v = new Forbes2000View { Model = (IEnumerable)CompanyTable.Model };
+            var interop = new WindowInteropHelper(v) { Owner = App.Instance.MainWindow.Handle };
             v.ShowDialog(); // or v.Show();
         }
 

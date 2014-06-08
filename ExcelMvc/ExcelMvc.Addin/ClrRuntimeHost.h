@@ -31,14 +31,14 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#include <windows.h>
 class ClrRuntimeHost
 {
 public:
 	static BOOL Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath);
-	static void CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName);
 	static void Stop();
     static BOOL TestAndDisplayError();
+    static void CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName,
+        VARIANT *pArg1 = NULL, VARIANT *pArg2 = NULL, VARIANT *pArg3 = NULL);
 
 private:
     static WCHAR ErrorBuffer[1024];

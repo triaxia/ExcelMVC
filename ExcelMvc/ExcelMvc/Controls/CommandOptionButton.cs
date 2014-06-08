@@ -40,7 +40,7 @@ namespace ExcelMvc.Controls
 {
     using System;
 
-    using ExcelMvc.Views;
+    using Views;
 
     using Microsoft.Office.Interop.Excel;
 

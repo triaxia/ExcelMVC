@@ -43,7 +43,7 @@ namespace ExcelMvc.Runtime
     using System.IO;
     using System.Reflection;
 
-    using ExcelMvc.Extensions;
+    using Extensions;
 
     internal static class TypeDiscoveryDomains
     {

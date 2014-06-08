@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.Windows.Data;
 
-    using ExcelMvc.Extensions;
-    using ExcelMvc.Runtime;
-    using ExcelMvc.Views;
+    using Extensions;
+    using Runtime;
+    using Views;
     using Microsoft.Office.Interop.Excel;
 
     internal class BindingCollector
@@ -28,7 +28,13 @@
             set;
         }
 
-        private string DataCell
+        private string StartCell
+        {
+            get;
+            set;
+        }
+
+        private string EndCell
         {
             get;
             set;
@@ -58,7 +64,13 @@
             set;
         }
 
-        private Range Range
+        private Range StartRange
+        {
+            get;
+            set;
+        }
+
+        private Range EndRange
         {
             get;
             set;
@@ -137,18 +149,21 @@
 
             CheckSecondPartOfName(parts);
 
-            object[,] value = (object[,])nm.RefersToRange.Value;
+            var value = (object[,])nm.RefersToRange.Value;
 
             var indices = GetHeadingIndices(value);
 
             for (var idx = value.GetLowerBound(0) + 1; idx <= value.GetUpperBound(0); idx++)
             {
-                DataCell = ((value[idx, indices.IndexOfCell] as string) ?? string.Empty).Trim();
+                StartCell = ((value[idx, indices.IndexOfStartCell] as string) ?? string.Empty).Trim();
+                EndCell = indices.IndexOfEndCell >= 0 ? ((value[idx, indices.IndexOfStartCell] as string) ?? string.Empty).Trim() : string.Empty;
+
                 BindingPath = ((value[idx, indices.IndexOfPath] as string) ?? string.Empty).Trim();
-                if (DataCell == string.Empty || BindingPath == string.Empty)
+                if (StartCell == string.Empty || BindingPath == string.Empty)
                     continue;
 
-                Range = GetRange(nm);
+                StartRange = GetRange(StartCell, nm);
+                EndRange = string.IsNullOrEmpty(EndCell) ? null: GetRange(EndCell, nm);
 
                 ModeType = ((value[idx, indices.IndexOfMode] as string) ?? string.Empty).Trim();
                 IsVisible = GetVisibility(value, indices, idx);
@@ -158,7 +173,6 @@
                 Converter = GetConverter(value, indices, idx);
 
                 var binding = CreateBinding();
-
                 AddToBindings(binding);
             }
         }
@@ -166,8 +180,9 @@
         private void AddToBindings(Binding binding)
         {
             List<Binding> sheetBindings;
-            if (!Bindings.TryGetValue(Range.Worksheet, out sheetBindings))
-                Bindings[Range.Worksheet] = sheetBindings = new List<Binding>();
+            var sheet = StartRange.Worksheet;
+            if (!Bindings.TryGetValue(sheet, out sheetBindings))
+                Bindings[sheet] = sheetBindings = new List<Binding>();
             sheetBindings.Add(binding);
         }
 
@@ -178,7 +193,8 @@
                 Name = ViewName,
                 Type = (ViewType)Enum.Parse(typeof(ViewType), ViewType),
                 Mode = (ModeType)Enum.Parse(typeof(ModeType), ModeType),
-                Cell = (Range)Range.Cells[1, 1],
+                StartCell = (Range)StartRange.Cells[1, 1],
+                EndCell = EndRange == null ? null : (Range)EndRange.Cells[1, 1],
                 Path = BindingPath,
                 Visible = IsVisible,
                 ValidationList = Validation,
@@ -206,27 +222,27 @@
             return null;
         }
 
-        private Range GetRange(Name nm)
+        private Range GetRange(string cellAddress, Name nm)
         {
             Range range = null;
             ActionExtensions.Try(() =>
             {
-                if (DataCell.Contains("["))
+                if (cellAddress.Contains("["))
                 {
-                    range = Book.Application.Range[DataCell];
+                    range = Book.Application.Range[StartCell];
                 }
-                else if (DataCell.Contains("!"))
+                else if (cellAddress.Contains("!"))
                 {
-                    var names = DataCell.Split('!');
+                    var names = cellAddress.Split('!');
                     range = (Book.Sheets[names[0]] as Worksheet).Range[names[1]];
                 }
                 else
                 {
-                    range = nm.RefersToRange.Worksheet.Range[DataCell];
+                    range = nm.RefersToRange.Worksheet.Range[cellAddress];
                 }
             });
             if (range == null)
-                throw new Exception(string.Format(Resource.ErrorNoDataCellRange, DataCell));
+                throw new Exception(string.Format(Resource.ErrorNoDataCellRange, cellAddress));
             return range;
         }
 
@@ -258,24 +274,29 @@
 
         private Indices GetHeadingIndices(object[,] value)
         {
-            Indices ind;
-            ind.IndexOfCell = IndexOfHeading(value, "Data Cell");
-            if (ind.IndexOfCell == -1)
+            Indices result;
+            result.IndexOfStartCell = IndexOfHeading(value, "Start Cell");
+            // for backward-compatibility, try "Data Cell"
+            if (result.IndexOfStartCell == -1)
+                result.IndexOfStartCell = IndexOfHeading(value, "Data Cell");
+            if (result.IndexOfStartCell == -1)
                 throw new Exception(Resource.ErrorNoBindingCellFound);
 
-            ind.IndexOfPath = IndexOfHeading(value, "Binding Path");
-            if (ind.IndexOfPath == -1)
+            result.IndexOfEndCell = IndexOfHeading(value, "End Cell");
+
+            result.IndexOfPath = IndexOfHeading(value, "Binding Path");
+            if (result.IndexOfPath == -1)
                 throw new Exception(Resource.ErrorNoBindingPathFound);
 
-            ind.IndexOfMode = IndexOfHeading(value, "Binding Mode");
-            if (ind.IndexOfMode == -1)
+            result.IndexOfMode = IndexOfHeading(value, "Binding Mode");
+            if (result.IndexOfMode == -1)
                 throw new Exception(Resource.ErrorNoBindingModeFound);
 
-            ind.IndexOfVisibility = IndexOfHeading(value, "Visibility");
-            ind.IndexOfValidation = IndexOfHeading(value, "Validation");
-            ind.IndexOfConverter = IndexOfHeading(value, "Converter");
+            result.IndexOfVisibility = IndexOfHeading(value, "Visibility");
+            result.IndexOfValidation = IndexOfHeading(value, "Validation");
+            result.IndexOfConverter = IndexOfHeading(value, "Converter");
 
-            return ind;
+            return result;
         }
 
         #endregion Methods
@@ -286,7 +307,8 @@
         {
             #region Fields
 
-            public int IndexOfCell;
+            public int IndexOfStartCell;
+            public int IndexOfEndCell;
             public int IndexOfConverter;
             public int IndexOfMode;
             public int IndexOfPath;

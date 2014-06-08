@@ -34,20 +34,22 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+using Shape = Microsoft.Office.Interop.Excel.Shape;
+
 namespace ExcelMvc.Views
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Controls;
-    using ExcelMvc.Extensions;
+    using Bindings;
+    using Controls;
+    using Extensions;
 
     using Microsoft.Office.Core;
     using Microsoft.Office.Interop.Excel;
 
-    using Shape = Microsoft.Office.Interop.Excel.Shape;
+    using Shape = Shape;
 
     /// <summary>
     /// Defines an abstract interface for Views
@@ -63,7 +65,7 @@ namespace ExcelMvc.Views
         /// <param name="bindings">Bindings for the view</param>
         protected BindingView(View parent, IEnumerable<Binding> bindings)
         {
-            Bindings = (from o in bindings orderby o.Cell.Row, o.Cell.Column select o).ToList();
+            Bindings = (from o in bindings orderby o.StartCell.Row, o.StartCell.Column select o).ToList();
             Parent = parent;
         }
 

@@ -38,8 +38,8 @@ Boston, MA 02110-1301 USA.
 
 namespace ExcelMvc.Controls
 {
-    using ExcelMvc.Extensions;
-    using ExcelMvc.Views;
+    using Extensions;
+    using Views;
 
     using Microsoft.Office.Interop.Excel;
 

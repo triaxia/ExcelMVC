@@ -40,8 +40,8 @@ namespace ExcelMvc.Views
     using System.ComponentModel;
     using System.Linq;
 
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Runtime;
+    using Bindings;
+    using Runtime;
 
     using Microsoft.Office.Interop.Excel;
 
@@ -127,7 +127,7 @@ namespace ExcelMvc.Views
         {
             var oneways = Bindings.Where(x => (x.Mode == ModeType.OneWayToSource));
             foreach (var oneway in oneways)
-                UpdateObject(oneway, oneway.Cell);
+                UpdateObject(oneway, oneway.StartCell);
         }
 
         private void Notify_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -144,7 +144,7 @@ namespace ExcelMvc.Views
         {
             var count = SelectedBindings.Count;
             SelectedBindings.Clear();
-            SelectedBindings.AddRange(Bindings.Where(binding => target.Application.Intersect(binding.Cell, target) != null));
+            SelectedBindings.AddRange(Bindings.Where(binding => target.Application.Intersect(binding.StartCell, target) != null));
             if (count != 0 || SelectedBindings.Count != 0)
                 OnSelectionChanged(new[] { Model }, SelectedBindings);
         }
@@ -174,7 +174,7 @@ namespace ExcelMvc.Views
             ExecuteBinding(
                 () =>
                 {
-                    var range = binding.Cell;
+                    var range = binding.StartCell;
                     var changed = target.Application.Intersect(range, target);
                     if (changed != null)
                     {
@@ -231,7 +231,7 @@ namespace ExcelMvc.Views
                 () =>
                 {
                     var value = ObjectBinding.GetPropertyValue(Model, binding);
-                    RangeUpdator.Instance.Update(binding.Cell, 0, 1, 0, 1, value);
+                    RangeUpdator.Instance.Update(binding.StartCell, 0, 1, 0, 1, value);
                 },
                 null,
                 false);

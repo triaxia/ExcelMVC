@@ -34,6 +34,8 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
+using Sample.Models;
+
 namespace Sample.Application.ViewModels
 {
     using System.ComponentModel;
@@ -44,7 +46,7 @@ namespace Sample.Application.ViewModels
 
         public Company()
         {
-            Model = new Models.CompanyModel();
+            Model = new CompanyModel();
         }
 
         #endregion Constructors
@@ -87,7 +89,7 @@ namespace Sample.Application.ViewModels
             set { Model.MarketValue = value; }
         }
 
-        public Models.CompanyModel Model
+        public CompanyModel Model
         {
             get; set;
         }

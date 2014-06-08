@@ -34,69 +34,77 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-using View = ExcelMvc.Views.View;
-
-namespace Sample.Application.ViewModels
+namespace ExcelMvc.Diagnostics
 {
-    using System.Windows.Forms;
+    using System;
+    using System.ComponentModel;
 
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Extensions;
-    using ExcelMvc.Views;
-    using Models;
-    using View = View;
-
-    internal class Forbes
+    internal class Message : INotifyPropertyChanged
     {
-        #region Constructors
-
-        public Forbes(View view)
+        public Message()
         {
-            view.HookBindingFailed(View_BindingFailed, true);
-
-            Tests = new CommandTests((Sheet)view.Find(ViewType.Sheet, "Tests"));
-
-            var settingsForms = (ExcelMvc.Views.Form)view.Find(ViewType.Form, "Settings");
-            var settingsModel = new Settings();
-            settingsForms.Model = settingsModel;
-
-            // portrait
-            var parent = view.Find(ViewType.Sheet, "Forbes");
-            ForbesTest = new Forbes2000(view, parent, settingsModel, "Company", "Company");
-
-            // landscape/transposed
-            parent = view.Find(ViewType.Sheet, "Forbes_transposed");
-            ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
+            LineLimit = 2000;
         }
 
-        #endregion Constructors
+        public event PropertyChangedEventHandler PropertyChanged = delegate { }; 
 
-        #region Properties
+        public string Error { get; private set; }
 
-        private Forbes2000 ForbesTest
+        public string Info { get; private set; }
+
+        public int LineLimit { get; set; }
+
+        public int ErrorLines { get; set; }
+
+        public int InfoLines { get;  set; }
+
+        public void Clear()
         {
-            get; set;
+            Error = null;
+            Info = null;
+            ErrorLines = 0;
+            InfoLines = 0;
+            RaiseErrorChanged();
+            RaiseInfoChanged();
         }
 
-        private Forbes2000 ForbesTestTransposed
+        public void AddErrorLine(Exception ex)
         {
-            get; set;
+            AddErrorLine(string.Format("{0}[{1}]", ex.Message, ex.StackTrace));
         }
 
-        private CommandTests Tests
+        public void AddErrorLine(string message)
         {
-            get; set;
+            if (ErrorLines > LineLimit)
+            {
+                ErrorLines = 0;
+                Error = null;
+            }
+
+            Error = (Error ?? string.Empty) + message;
+            RaiseErrorChanged();
         }
 
-        #endregion Properties
-
-        #region Methods
-
-        private void View_BindingFailed(object sender, BindingFailedEventArgs args)
+        public void AddInfoLine(string message)
         {
-            MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (InfoLines > LineLimit)
+            {
+                InfoLines = 0;
+                Info = null;
+            }
+
+            Info = (Info ?? string.Empty) + message + Environment.NewLine;
+            RaiseInfoChanged();
         }
 
-        #endregion Methods
+        private void RaiseErrorChanged()
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs("Error"));
+        }
+
+        private void RaiseInfoChanged()
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs("Info"));
+        }
     }
 }

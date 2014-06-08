@@ -69,7 +69,7 @@ namespace ExcelMvc.Bindings
             {
                 object newValue = (toValue == null || changed.Value == null) ? changed.Value
                     : Convert.ChangeType(changed.Value, toValue.GetType());
-                if (!object.Equals(toValue, newValue))
+                if (!Equals(toValue, newValue))
                 {
                     toValue = newValue;
                     count++;
@@ -80,7 +80,7 @@ namespace ExcelMvc.Bindings
                 var toArray = (object[,])toValue;
                 if (changed.Count == 1)
                 {
-                    if (!object.Equals(toArray[changed.Row - to.Row + 1, changed.Column  - to.Column + 1], changed.Value))
+                    if (!Equals(toArray[changed.Row - to.Row + 1, changed.Column  - to.Column + 1], changed.Value))
                     {
                         toArray[changed.Row - to.Row + 1, changed.Column  - to.Column + 1] = changed.Value;
                         count++;
@@ -93,7 +93,7 @@ namespace ExcelMvc.Bindings
                     {
                         for (var jdx = changeArray.GetLowerBound(1); jdx <= changeArray.GetUpperBound(1); jdx++)
                         {
-                            if (!object.Equals(changeArray[idx, jdx], toArray[changed.Row - to.Row + idx, changed.Column - to.Column + jdx]))
+                            if (!Equals(changeArray[idx, jdx], toArray[changed.Row - to.Row + idx, changed.Column - to.Column + jdx]))
                             {
                                 toArray[changed.Row - to.Row + idx, changed.Column - to.Column + jdx] =
                                     changeArray[idx, jdx];

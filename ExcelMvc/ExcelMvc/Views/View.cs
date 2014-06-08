@@ -33,15 +33,17 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 #endregion Header
+
 namespace ExcelMvc.Views
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Controls;
-    using ExcelMvc.Extensions;
+    using Bindings;
+    using Controls;
+    using Diagnostics;
+    using Extensions;
 
     /// <summary>
     /// Represents the base behaviour of Views
@@ -265,6 +267,16 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
+        /// Fires BindingFailed event
+        /// </summary>
+        /// <param name="args"></param>
+        public void OnBindingFailed(BindingFailedEventArgs args)
+        {
+            BindingFailed(this, args);
+            MessageWindow.AddErrorLine(args.Exception);
+        }
+
+        /// <summary>
         /// Hooks a clicked handler to commands
         /// </summary>
         /// <param name="handler">Handled to be hooked</param>
@@ -274,7 +286,7 @@ namespace ExcelMvc.Views
         {
             var commandNameNoPrefix = CommandFactory.RemovePrefix(name);
             if (HookClickedAll(handler, commandNameNoPrefix, isHook) == 0)
-                BindingFailed(this, new BindingFailedEventArgs(this, new Exception(string.Format(Resource.ErrorNoCommandNameFound, name, Name))));
+               OnBindingFailed(new BindingFailedEventArgs(this, new Exception(string.Format(Resource.ErrorNoCommandNameFound, name, Name))));
         }
 
         /// <summary>
@@ -339,6 +351,7 @@ namespace ExcelMvc.Views
         public void OnOpened(ViewEventArgs args)
         {
             Opened(this, args);
+            MessageWindow.AddInfoLine(string.Format(Resource.InfoViewCreated, Name, Type, Parent == null ? string.Empty : Parent.Name));
         }
 
         /// <summary>
@@ -378,7 +391,7 @@ namespace ExcelMvc.Views
             }
             catch (Exception ex)
             {
-                BindingFailed(this, new BindingFailedEventArgs(this, ex));
+                OnBindingFailed(new BindingFailedEventArgs(this, ex));
             }
             finally
             {

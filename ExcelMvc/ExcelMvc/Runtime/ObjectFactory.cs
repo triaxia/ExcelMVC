@@ -36,6 +36,8 @@ Boston, MA 02110-1301 USA.
 
 #endregion Header
 
+using System.Reflection.Emit;
+
 namespace ExcelMvc.Runtime
 {
     using System;
@@ -44,7 +46,7 @@ namespace ExcelMvc.Runtime
     using System.Linq;
     using System.Runtime.CompilerServices;
 
-    using ExcelMvc.Extensions;
+    using Extensions;
 
     /// <summary>
     /// Object factory
@@ -91,7 +93,7 @@ namespace ExcelMvc.Runtime
                 var path = Path.GetDirectoryName(location);
                 var files = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
 
-                var nonDynamicAsms = asms.Where(x => !(x.ManifestModule is System.Reflection.Emit.ModuleBuilder));
+                var nonDynamicAsms = asms.Where(x => !(x.ManifestModule is ModuleBuilder));
 
                 // exclude files already loaded
                 files = files.Where(x => nonDynamicAsms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0)).ToArray();

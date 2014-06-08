@@ -41,7 +41,7 @@ namespace ExcelMvc.Views
     using System;
     using System.Collections.Generic;
 
-    using ExcelMvc.Bindings;
+    using Bindings;
 
     /// <summary>
     /// Represents the EventArgs for a SelectionChanged event

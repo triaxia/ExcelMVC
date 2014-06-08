@@ -40,8 +40,8 @@ namespace ExcelMvc.Controls
 {
     using System;
 
-    using ExcelMvc.Bindings;
-    using ExcelMvc.Views;
+    using Bindings;
+    using Views;
 
     using Microsoft.Office.Interop.Excel;
 
