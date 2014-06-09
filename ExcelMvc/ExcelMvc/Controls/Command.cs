@@ -48,7 +48,7 @@ namespace ExcelMvc.Controls
     {
         #region Fields
 
-        private ICommand sink;
+        private ICommand model;
 
         #endregion Fields
 
@@ -119,24 +119,24 @@ namespace ExcelMvc.Controls
         }
 
         /// <summary>
-        /// Gets and sets te command sink
+        /// Gets and sets te command model
         /// </summary>
-        public ICommand Sink
+        public ICommand Model
         {
             get
             {
-                return sink;
+                return model;
             }
 
             set
             {
-                if (sink != null)
-                    sink.CanExecuteChanged -= _sink_CanExecuteChanged;
+                if (model != null)
+                    model.CanExecuteChanged -= _sink_CanExecuteChanged;
 
-                sink = value;
+                model = value;
 
-                if (sink != null)
-                    sink.CanExecuteChanged += _sink_CanExecuteChanged;
+                if (model != null)
+                    model.CanExecuteChanged += _sink_CanExecuteChanged;
             }
         }
 
@@ -165,13 +165,13 @@ namespace ExcelMvc.Controls
         {
             var args = new CommandEventArgs { Source = this };
             Clicked(this, args);
-            if (Sink != null)
-                Sink.Execute(args);
+            if (Model != null)
+                Model.Execute(args);
         }
 
         private void _sink_CanExecuteChanged(object sender, EventArgs e)
         {
-            IsEnabled = Sink.CanExecute(new CommandEventArgs { Source = this });
+            IsEnabled = Model.CanExecute(new CommandEventArgs { Source = this });
         }
 
         #endregion Methods
