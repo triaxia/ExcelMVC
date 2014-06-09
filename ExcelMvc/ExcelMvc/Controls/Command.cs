@@ -127,16 +127,15 @@ namespace ExcelMvc.Controls
             {
                 return model;
             }
-
             set
             {
                 if (model != null)
-                    model.CanExecuteChanged -= _sink_CanExecuteChanged;
+                    model.CanExecuteChanged -= Model_CanExecuteChanged;
 
                 model = value;
 
                 if (model != null)
-                    model.CanExecuteChanged += _sink_CanExecuteChanged;
+                    model.CanExecuteChanged += Model_CanExecuteChanged;
             }
         }
 
@@ -156,6 +155,8 @@ namespace ExcelMvc.Controls
         public virtual void Dispose()
         {
             Host = null;
+            if (Model != null)
+                Model.CanExecuteChanged -= Model_CanExecuteChanged;
         }
 
         /// <summary>
@@ -169,7 +170,7 @@ namespace ExcelMvc.Controls
                 Model.Execute(args);
         }
 
-        private void _sink_CanExecuteChanged(object sender, EventArgs e)
+        private void Model_CanExecuteChanged(object sender, EventArgs e)
         {
             IsEnabled = Model.CanExecute(new CommandEventArgs { Source = this });
         }
