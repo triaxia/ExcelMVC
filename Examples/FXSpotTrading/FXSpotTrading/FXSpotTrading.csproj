@@ -33,18 +33,29 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExcelMvc">
-      <HintPath>..\packages\ExcelMvc.1.4.1\lib\net40\ExcelMvc.dll</HintPath>
+    <Reference Include="ExcelMvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ExcelMvc\ExcelMvc\bin\Release\net40\ExcelMvc.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExcelMvcSession.cs" />
+    <Compile Include="ViewModels\ViewModelExchangeRate.cs" />
+    <Compile Include="ViewModels\ViewModelExchangeRates.cs" />
+    <Compile Include="ViewModels\ViewModelSession.cs" />
+    <Compile Include="ViewModels\ViewModelTrading.cs" />
+    <Compile Include="Models\CcyPair.cs" />
+    <Compile Include="Models\CcyPairs.cs" />
+    <Compile Include="Models\ExchangeRate.cs" />
+    <Compile Include="Models\ExchangeRates.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -59,7 +70,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FXSpotTrading.xlsx">
+    <None Include="Views\FXSpotTrading.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
