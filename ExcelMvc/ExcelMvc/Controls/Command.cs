@@ -37,6 +37,7 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Controls
 {
     using System;
+    using System.Windows.Input;
 
     using Views;
 
@@ -45,6 +46,12 @@ namespace ExcelMvc.Controls
     /// </summary>
     public abstract class Command : IDisposable
     {
+        #region Fields
+
+        private ICommand sink;
+
+        #endregion Fields
+
         #region Constructors
 
         /// <summary>
@@ -111,6 +118,28 @@ namespace ExcelMvc.Controls
             get; set;
         }
 
+        /// <summary>
+        /// Gets and sets te command sink
+        /// </summary>
+        public ICommand Sink
+        {
+            get
+            {
+                return sink;
+            }
+
+            set
+            {
+                if (sink != null)
+                    sink.CanExecuteChanged -= _sink_CanExecuteChanged;
+
+                sink = value;
+
+                if (sink != null)
+                    sink.CanExecuteChanged += _sink_CanExecuteChanged;
+            }
+        }
+
         #endregion Properties
 
         #region Methods
@@ -125,7 +154,15 @@ namespace ExcelMvc.Controls
         /// </summary>
         public virtual void FireClicked()
         {
-            Clicked(this, new CommandEventArgs());
+            var args = new CommandEventArgs { Source = this };
+            Clicked(this, args);
+            if (Sink != null)
+                Sink.Execute(args);
+        }
+
+        private void _sink_CanExecuteChanged(object sender, EventArgs e)
+        {
+            IsEnabled = Sink.CanExecute(new CommandEventArgs { Source = this });
         }
 
         #endregion Methods

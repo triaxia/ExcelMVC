@@ -43,6 +43,14 @@ namespace ExcelMvc.Controls
     /// </summary>
     public class CommandEventArgs : EventArgs
     {
+        /// <summary>
+        /// Command clicked
+        /// </summary>
+        public Command Source { get; set; }
+        
+        /// <summary>
+        /// Indicates if handled
+        /// </summary>
         public bool Handled { get; set; }
     }
 }
