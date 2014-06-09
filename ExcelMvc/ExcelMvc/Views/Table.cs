@@ -48,9 +48,8 @@ namespace ExcelMvc.Views
 
     using Bindings;
     using Extensions;
-    using Runtime;
-
     using Microsoft.Office.Interop.Excel;
+    using Runtime;
 
     /// <summary>
     /// Represents a rectangular visual with rows and columns
@@ -122,6 +121,19 @@ namespace ExcelMvc.Views
         public override ViewType Type
         {
             get { return ViewType.Table; }
+        }
+
+        /// <summary>
+        /// Gets the maximum number of items to bind
+        /// </summary>
+        public int MaxItemsToBind
+        {
+            get
+            {
+                return Orientation == ViewOrientation.Portrait
+                    ? Bindings.Max(x => x.EndCell == null ? int.MaxValue : (x.EndCell.Row - x.StartCell.Row + 1))
+                    : Bindings.Max(x => x.EndCell == null ? int.MaxValue : (x.EndCell.Column - x.StartCell.Column + 1));
+            }
         }
 
         #endregion Properties
@@ -293,17 +305,18 @@ namespace ExcelMvc.Views
                 return result;
 
             var items = new List<object>();
-            foreach (Range item in Orientation == ViewOrientation.Portrait ? result.Intersection.Rows : result.Intersection.Columns)
+            var isPortrait = Orientation == ViewOrientation.Portrait;
+            foreach (Range item in isPortrait ? result.Intersection.Rows : result.Intersection.Columns)
             {
-                var idx = Orientation == ViewOrientation.Portrait ? item.Row : first.StartCell.Row;
-                var jdx = Orientation == ViewOrientation.Portrait ? first.StartCell.Column : item.Column;
+                var idx = isPortrait ? item.Row : first.StartCell.Row;
+                var jdx = isPortrait ? first.StartCell.Column : item.Column;
                 var cell = (Range)item.Worksheet.Cells[idx, jdx];
                 items.Add(itemsBound[int.Parse(cell.ID)]);
             }
 
             result.Items = items;
-            var skipItems = Orientation == ViewOrientation.Portrait ? result.Intersection.Column - first.StartCell.Column : result.Intersection.Row - first.StartCell.Row;
-            var takeItems = Orientation == ViewOrientation.Portrait ? result.Intersection.Columns.Count : result.Intersection.Rows.Count;
+            var skipItems = isPortrait ? result.Intersection.Column - first.StartCell.Column : result.Intersection.Row - first.StartCell.Row;
+            var takeItems = isPortrait ? result.Intersection.Columns.Count : result.Intersection.Rows.Count;
             result.Bindings = Bindings.Skip(skipItems).Take(takeItems).ToList();
 
             return result;
@@ -551,9 +564,12 @@ namespace ExcelMvc.Views
             var takeCategories = Orientation == ViewOrientation.Portrait ? target.Columns.Count : target.Rows.Count;
             var toSource = Bindings.Skip(skipCategories).Take(takeCategories)
                 .Where(x => (x.Mode == ModeType.TwoWay || x.Mode == ModeType.OneWayToSource)).ToList();
+            
             var updated = 0;
             foreach (var model in rangeItems.Items)
             {
+                if (itemOffset >= MaxItemsToBind)
+                    break;
                 updated += toSource.Count(binding => UpdateObject(binding, itemOffset, model, rangeItems.Intersection));
                 itemOffset++;
             }
@@ -611,6 +627,8 @@ namespace ExcelMvc.Views
                     bindingValues[binding] = new List<object>();
 
                 itemsBound = enumerable.ToList();
+                if (itemsBound.Count > MaxItemsToBind)
+                    itemsBound = itemsBound.Take(MaxItemsToBind).ToList();
 
                 foreach (var item in itemsBound)
                     foreach (var binding in toView)

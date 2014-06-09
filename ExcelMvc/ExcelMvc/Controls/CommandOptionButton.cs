@@ -39,10 +39,8 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Controls
 {
     using System;
-
-    using Views;
-
     using Microsoft.Office.Interop.Excel;
+    using Views;
 
     public class CommandOptionButton : Command
     {

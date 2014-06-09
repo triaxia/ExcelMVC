@@ -41,9 +41,8 @@ namespace ExcelMvc.Views
     using System.Linq;
 
     using Bindings;
-    using Runtime;
-
     using Microsoft.Office.Interop.Excel;
+    using Runtime;
 
     /// <summary>
     /// Represents a visual consists with scattered fields

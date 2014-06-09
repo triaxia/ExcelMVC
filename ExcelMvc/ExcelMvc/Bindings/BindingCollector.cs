@@ -5,9 +5,9 @@
     using System.Windows.Data;
 
     using Extensions;
+    using Microsoft.Office.Interop.Excel;
     using Runtime;
     using Views;
-    using Microsoft.Office.Interop.Excel;
 
     internal class BindingCollector
     {
@@ -156,14 +156,14 @@
             for (var idx = value.GetLowerBound(0) + 1; idx <= value.GetUpperBound(0); idx++)
             {
                 StartCell = ((value[idx, indices.IndexOfStartCell] as string) ?? string.Empty).Trim();
-                EndCell = indices.IndexOfEndCell >= 0 ? ((value[idx, indices.IndexOfStartCell] as string) ?? string.Empty).Trim() : string.Empty;
+                EndCell = indices.IndexOfEndCell >= 0 ? ((value[idx, indices.IndexOfEndCell] as string) ?? string.Empty).Trim() : string.Empty;
 
                 BindingPath = ((value[idx, indices.IndexOfPath] as string) ?? string.Empty).Trim();
                 if (StartCell == string.Empty || BindingPath == string.Empty)
                     continue;
 
                 StartRange = GetRange(StartCell, nm);
-                EndRange = string.IsNullOrEmpty(EndCell) ? null: GetRange(EndCell, nm);
+                EndRange = string.IsNullOrEmpty(EndCell) ? null : GetRange(EndCell, nm);
 
                 ModeType = ((value[idx, indices.IndexOfMode] as string) ?? string.Empty).Trim();
                 IsVisible = GetVisibility(value, indices, idx);
@@ -229,7 +229,7 @@
             {
                 if (cellAddress.Contains("["))
                 {
-                    range = Book.Application.Range[StartCell];
+                    range = Book.Application.Range[cellAddress];
                 }
                 else if (cellAddress.Contains("!"))
                 {
@@ -276,6 +276,7 @@
         {
             Indices result;
             result.IndexOfStartCell = IndexOfHeading(value, "Start Cell");
+
             // for backward-compatibility, try "Data Cell"
             if (result.IndexOfStartCell == -1)
                 result.IndexOfStartCell = IndexOfHeading(value, "Data Cell");

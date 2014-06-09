@@ -34,8 +34,6 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-using Application = Microsoft.Office.Interop.Excel.Application;
-
 namespace ExcelMvc.Views
 {
     using System;
@@ -46,13 +44,11 @@ namespace ExcelMvc.Views
     using System.Runtime.InteropServices.ComTypes;
     using System.Windows.Data;
 
-    using Bindings;
     using Controls;
+    using Microsoft.Office.Interop.Excel;
     using Runtime;
 
-    using Microsoft.Office.Interop.Excel;
-
-    using Application = Application;
+    using Application = Microsoft.Office.Interop.Excel.Application;
 
     /// <summary>
     /// Represents a visual over the Excel Application

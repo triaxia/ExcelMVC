@@ -36,15 +36,14 @@ Boston, MA 02110-1301 USA.
 
 #endregion Header
 
-using Microsoft.Office.Core;
-
 namespace ExcelMvc.Views
 {
     using System.Collections.Generic;
+
     using Bindings;
     using Controls;
     using Extensions;
-
+    using Microsoft.Office.Core;
     using Microsoft.Office.Interop.Excel;
 
     /// <summary>

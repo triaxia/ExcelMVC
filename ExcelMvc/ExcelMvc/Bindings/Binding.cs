@@ -37,9 +37,8 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Bindings
 {
     using System.Windows.Data;
-
-    using Views;
     using Microsoft.Office.Interop.Excel;
+    using Views;
 
     /// <summary>
     /// Represents either a form field binding or a table column binding between 
@@ -74,7 +73,7 @@ namespace ExcelMvc.Bindings
         }
 
         /// <summary>
-        /// End cell (null if no limit boundary limit)
+        /// End cell (null if no binding boundary limit)
         /// </summary>
         public Range EndCell
         {

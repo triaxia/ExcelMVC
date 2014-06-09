@@ -39,9 +39,8 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Controls
 {
     using Extensions;
-    using Views;
-
     using Microsoft.Office.Interop.Excel;
+    using Views;
 
     public class CommandShape : Command
     {

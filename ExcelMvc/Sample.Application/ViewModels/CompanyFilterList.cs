@@ -39,14 +39,13 @@ namespace Sample.Application.ViewModels
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
-    using System.Security.Policy;
 
     public class CompanyFilterList : List<CompanyFilter>, INotifyCollectionChanged
     {
         #region Constructors
-        public CompanyFilterList()
+        public CompanyFilterList(int filters)
         {
-            Load(10);
+            Load(filters);
             this[0].NameLike = "*";
         }
 

@@ -36,8 +36,6 @@ Boston, MA 02110-1301 USA.
 
 #endregion Header
 
-using System.Windows.Navigation;
-
 namespace ExcelMvc.Controls
 {
     using System;
@@ -47,9 +45,8 @@ namespace ExcelMvc.Controls
 
     using Diagnostics;
     using Extensions;
-    using Views;
-
     using Microsoft.Office.Interop.Excel;
+    using Views;
 
     /// <summary>
     /// Creates command on a sheet

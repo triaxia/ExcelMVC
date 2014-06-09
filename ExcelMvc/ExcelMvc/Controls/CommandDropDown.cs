@@ -39,11 +39,9 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Controls
 {
     using System;
-
     using Bindings;
-    using Views;
-
     using Microsoft.Office.Interop.Excel;
+    using Views;
 
     public class CommandDropDown : Command
     {
@@ -76,7 +74,7 @@ namespace ExcelMvc.Controls
         {
             get
             {
-                var from = (Array)((object)Underlying.List);
+                var from = (Array)Underlying.List;
                 return (object[])ObjectBinding.ChangeLBound<object>(from, 0);
             }
         }

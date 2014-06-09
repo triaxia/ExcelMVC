@@ -1,8 +1,7 @@
-﻿using System.ComponentModel;
-
-namespace ExcelMvc.Diagnostics
+﻿namespace ExcelMvc.Diagnostics
 {
     using System;
+    using System.ComponentModel;
     using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Input;

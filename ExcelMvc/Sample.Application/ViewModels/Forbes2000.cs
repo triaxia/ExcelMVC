@@ -34,18 +34,16 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-using Sample.Views;
-
 namespace Sample.Application.ViewModels
 {
     using System.Collections;
     using System.Linq;
     using System.Windows.Interop;
 
-    using ExcelMvc.Bindings;
     using ExcelMvc.Controls;
     using ExcelMvc.Views;
     using Models;
+    using Sample.Views;
 
     internal class Forbes2000
     {
@@ -74,7 +72,7 @@ namespace Sample.Application.ViewModels
             IndustryTable = (Table)grandparent.Find("Table.Industry");
 
             CompanyFilterTable = (Table)grandparent.Find(ViewType.Table, "CompanyFilters");
-            CompanyFilterTable.Model = new CompanyFilterList();
+            CompanyFilterTable.Model = new CompanyFilterList(CompanyFilterTable.MaxItemsToBind);
 
             EnableControls();
         }

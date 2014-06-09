@@ -34,17 +34,15 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-using ExcelMvc.Bindings;
-using View = ExcelMvc.Views.View;
-
 namespace Sample.Application.ViewModels
 {
     using System.Collections.Generic;
     using System.Windows.Forms;
 
+    using ExcelMvc.Bindings;
     using ExcelMvc.Runtime;
     using ExcelMvc.Views;
-    using View = View;
+    using View = ExcelMvc.Views.View;
 
     public class Session : ISession
     {

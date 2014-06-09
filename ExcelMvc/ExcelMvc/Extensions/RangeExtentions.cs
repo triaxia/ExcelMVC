@@ -36,15 +36,10 @@ Boston, MA 02110-1301 USA.
 
 #endregion Header
 
-using System;
-
 namespace ExcelMvc.Extensions
 {
-    using Views;
-
     using Microsoft.Office.Interop.Excel;
-
-    using Action = Action;
+    using Views;
 
     /// <summary>
     /// Encapsulates commonly used extensions for Range
@@ -58,7 +53,7 @@ namespace ExcelMvc.Extensions
         /// </summary>
         /// <param name="host">Hosting View</param>
         /// <param name="action">Action to be executed</param>
-        public static void ExecuteProtected(this View host, Action action)
+        public static void ExecuteProtected(this View host, System.Action action)
         {
             host.ExecuteBinding(() =>
             {

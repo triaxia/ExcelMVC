@@ -34,8 +34,6 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-using Shape = Microsoft.Office.Interop.Excel.Shape;
-
 namespace ExcelMvc.Views
 {
     using System.Collections.Generic;
@@ -49,7 +47,7 @@ namespace ExcelMvc.Views
     using Microsoft.Office.Core;
     using Microsoft.Office.Interop.Excel;
 
-    using Shape = Shape;
+    using Shape = Microsoft.Office.Interop.Excel.Shape;
 
     /// <summary>
     /// Defines an abstract interface for Views
@@ -122,6 +120,7 @@ namespace ExcelMvc.Views
         /// Unbinds validation lists
         /// </summary>
         /// <param name="numberItems">Number of rows to unbind</param>
+        /// <param name="orientation"></param>
         protected void BindValidationLists(int numberItems, ViewOrientation orientation)
         {
             foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
@@ -137,6 +136,7 @@ namespace ExcelMvc.Views
         /// Unbinds validation lists
         /// </summary>
         /// <param name="numberItems">Number of rows to unbind</param>
+        /// <param name="orientation"></param>
         protected void UnbindValidationLists(int numberItems, ViewOrientation orientation)
         {
             foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))

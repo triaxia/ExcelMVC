@@ -39,11 +39,9 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Controls
 {
     using System;
-
     using Bindings;
-    using Views;
-
     using Microsoft.Office.Interop.Excel;
+    using Views;
 
     public class CommandListBox : Command
     {
@@ -76,7 +74,7 @@ namespace ExcelMvc.Controls
         {
             get
             {
-                return ((int)Underlying.MultiSelect) != (int)Constants.xlNone;
+                return Underlying.MultiSelect != (int)Constants.xlNone;
             }
         }
 
@@ -84,7 +82,7 @@ namespace ExcelMvc.Controls
         {
             get
             {
-                var from = (Array)((object)Underlying.List);
+                var from = (Array)Underlying.List;
                 return (object[])ObjectBinding.ChangeLBound<object>(from, 0);
             }
         }
@@ -93,7 +91,7 @@ namespace ExcelMvc.Controls
         {
             get
             {
-                return (int)Underlying.ListIndex - 1;
+                return Underlying.ListIndex - 1;
             }
 
             set
@@ -106,7 +104,7 @@ namespace ExcelMvc.Controls
         {
             get
             {
-                var from = (Array)((object)Underlying.Selected);
+                var from = (Array)Underlying.Selected;
                 return (object[])ObjectBinding.ChangeLBound<object>(from, 0);
             }
 
