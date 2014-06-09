@@ -182,6 +182,15 @@ namespace ExcelMvc.Views
             get;
         }
 
+        /// <summary>
+        ///  Gets and sets an application specific object
+        /// </summary>
+        public object State
+        {
+            get;
+            set;
+        }
+
         #endregion Properties
 
         #region Methods
