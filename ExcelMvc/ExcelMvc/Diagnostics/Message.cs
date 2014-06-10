@@ -81,7 +81,7 @@ namespace ExcelMvc.Diagnostics
                 Error = null;
             }
 
-            Error = (Error ?? string.Empty) + message;
+            Error = (Error ?? string.Empty) + message + Environment.NewLine;
             RaiseErrorChanged();
         }
 

@@ -383,19 +383,14 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Executes an action with ScreenUpdating turned off
+        /// Executes an binding action
         /// </summary>
         /// <param name="ation">Action to be executed</param>
         /// <param name="final">Final action</param>
-        /// <param name="turnOfScreenUpdating"></param>
-        internal void ExecuteBinding(Action ation, Action final = null, bool turnOfScreenUpdating = true)
+        internal void ExecuteBinding(Action ation, Action final = null)
         {
-            var app = ((App)Root).Underlying;
-            var updating = app.ScreenUpdating;
             try
             {
-                if (turnOfScreenUpdating)
-                    app.ScreenUpdating = false;
                 ation();
             }
             catch (Exception ex)
@@ -404,8 +399,6 @@ namespace ExcelMvc.Views
             }
             finally
             {
-                if (turnOfScreenUpdating)
-                    app.ScreenUpdating = updating;
                 if (final != null)
                     final();
             }

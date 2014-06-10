@@ -170,8 +170,7 @@ namespace ExcelMvc.Views
 
         private void UpdateObject(Binding binding, Range target)
         {
-            ExecuteBinding(
-                () =>
+            ExecuteBinding(() =>
                 {
                     var range = binding.StartCell;
                     var changed = target.Application.Intersect(range, target);
@@ -184,9 +183,7 @@ namespace ExcelMvc.Views
                             OnObjectChanged(new[] { Model }, new[] { binding.Path });
                         }
                     }
-                },
-                null,
-                false);
+                });
         }
 
         private void UpdateView()
@@ -203,8 +200,7 @@ namespace ExcelMvc.Views
 
         private void UpdateView(string path)
         {
-            ExecuteBinding(
-                () =>
+            ExecuteBinding(() =>
                 {
                     var match = string.IsNullOrEmpty(path) ? null : Bindings.FirstOrDefault(x => x.Path == path);
                     if (match != null)
@@ -216,9 +212,7 @@ namespace ExcelMvc.Views
                         foreach (var binding in Bindings)
                             UpdateView(binding);
                     }
-                },
-                null,
-                false);
+                });
         }
 
         private void UpdateView(Binding binding)
@@ -226,14 +220,11 @@ namespace ExcelMvc.Views
             if (binding.Mode == ModeType.OneWayToSource)
                 return;
 
-            ExecuteBinding(
-                () =>
+            ExecuteBinding(() =>
                 {
                     var value = ObjectBinding.GetPropertyValue(Model, binding);
                     RangeUpdator.Instance.Update(binding.StartCell, 0, 1, 0, 1, value);
-                },
-                null,
-                false);
+                });
         }
 
         #endregion Methods

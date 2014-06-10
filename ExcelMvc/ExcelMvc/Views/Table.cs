@@ -502,8 +502,7 @@ namespace ExcelMvc.Views
 
         private void UpdateCell(Binding binding, object model, int objectId)
         {
-            ExecuteBinding(
-                () =>
+            ExecuteBinding(() =>
                 {
                     var value = ObjectBinding.GetPropertyValue(model, binding);
                     switch (Orientation)
@@ -531,16 +530,13 @@ namespace ExcelMvc.Views
                                 value);
                             break;
                     }
-                },
-                null,
-                false);
+                });
         }
 
         private bool UpdateObjects(Range target)
         {
             var updated = false;
-            ExecuteBinding(
-                () =>
+            ExecuteBinding(() =>
                 {
                     var rangeObjs = GetRangeObjects(target);
                     if (rangeObjs.Items != null)
@@ -549,9 +545,7 @@ namespace ExcelMvc.Views
                         if (UpdateObjects(rangeObjs) > 0)
                             OnObjectChanged(rangeObjs.Items, null);
                     }
-                },
-                null,
-                false);
+                });
             return updated;
         }
 
