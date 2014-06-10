@@ -61,7 +61,7 @@ namespace ExcelMvc.Extensions
                 if (sheet.ProtectContents)
                 {
                     var args = new ViewEventArgs(host);
-                    if (args.State != null)
+                    if (args.State == null)
                         sheet.Unprotect();
                     else 
                         sheet.Unprotect(args.State as string);
@@ -71,7 +71,7 @@ namespace ExcelMvc.Extensions
                     }
                     finally
                     {
-                        if (args.State != null)
+                        if (args.State == null)
                             sheet.Protect();
                         else
                             sheet.Protect(args.State as string);
