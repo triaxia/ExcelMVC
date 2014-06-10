@@ -60,14 +60,21 @@ namespace ExcelMvc.Extensions
                 var sheet = ((Sheet)host).Underlying;
                 if (sheet.ProtectContents)
                 {
-                    sheet.Unprotect();
+                    var args = new ViewEventArgs(host);
+                    if (args.State != null)
+                        sheet.Unprotect();
+                    else 
+                        sheet.Unprotect(args.State as string);
                     try
                     {
                         action();
                     }
                     finally
                     {
-                        sheet.Protect();
+                        if (args.State != null)
+                            sheet.Protect();
+                        else
+                            sheet.Protect(args.State as string);
                     }
                 }
                 else

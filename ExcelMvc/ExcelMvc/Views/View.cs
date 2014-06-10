@@ -102,6 +102,12 @@ namespace ExcelMvc.Views
         /// </summary>
         public event SelectionChangedHandler SelectionChanged = delegate { };
 
+        /// <summary>
+        /// Occurs before a View is unprotected. 
+        /// </summary>
+        public event ViewEventHandler Unprotecting = delegate { };
+
+
         #endregion Events
 
         #region Properties
@@ -380,6 +386,15 @@ namespace ExcelMvc.Views
         public void OnSelectionChanged(IEnumerable<object> items, IEnumerable<Binding> bindings)
         {
             SelectionChanged(this, new SelectionChangedArgs(items, bindings));
+        }
+
+        /// <summary>
+        /// Fires the Unprotecting event. If the view is password protected, return the password in args.State
+        /// </summary>
+        /// <param name="args">Event args</param>
+        public void OnUnprotecting(ViewEventArgs args)
+        {
+            Unprotecting(this, args);
         }
 
         /// <summary>
