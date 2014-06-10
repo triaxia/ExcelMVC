@@ -154,11 +154,8 @@ namespace ExcelMvc.Views
         /// </summary>
         public void SetCategoryVisibility()
         {
-            Parent.ExecuteProtected(() =>
-            {
-                foreach (var binding in Bindings)
-                    SetCategoryVisibility(binding);
-            });
+            foreach (var binding in Bindings)
+                SetCategoryVisibility(binding);
         }
 
         /// <summary>
@@ -446,11 +443,19 @@ namespace ExcelMvc.Views
             switch (Orientation)
             {
                 case ViewOrientation.Portrait:
-                    binding.StartCell.EntireColumn.Hidden = !binding.Visible;
+                {
+                    // set if different, otherwise the column is going to flicker
+                    if (Convert.ToBoolean(binding.StartCell.EntireColumn.Hidden) != !binding.Visible)
+                        Parent.ExecuteProtected(() => binding.StartCell.EntireColumn.Hidden = !binding.Visible);
                     break;
+                }
                 case ViewOrientation.Landscape:
-                    binding.StartCell.EntireRow.Hidden = !binding.Visible;
+                {
+                    // set if different, otherwise the row is going to flicker
+                    if (Convert.ToBoolean(binding.StartCell.EntireRow.Hidden) != !binding.Visible)
+                        Parent.ExecuteProtected(() =>binding.StartCell.EntireRow.Hidden = !binding.Visible);
                     break;
+                }
             }
         }
 
