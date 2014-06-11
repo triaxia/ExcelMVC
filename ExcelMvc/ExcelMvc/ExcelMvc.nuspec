@@ -25,11 +25,11 @@
       <file src="..\net45\ExcelMvc.dll" target="lib\net45\ExcelMvc.dll" />
       <file src="..\net45\ExcelMvc.pdb" target="lib\net45\ExcelMvc.pdb" />
       <file src="..\net45\ExcelMvc.xml" target="lib\net45\ExcelMvc.xml" />
-      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.dll" target="content\net35\ExcelMvc.Addin.xll" />
+      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.xll" target="content\net35\ExcelMvc.Addin.xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.pdb" target="content\net35\ExcelMvc.Addin.pdb" />
-      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.dll" target="content\net40\ExcelMvc.Addin.xll" />
+      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.xll" target="content\net40\ExcelMvc.Addin.xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.pdb" target="content\net40\ExcelMvc.Addin.pdb" />
-      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5\ExcelMvc.Addin.dll" target="content\net45\ExcelMvc.Addin.xll" />
+      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5\ExcelMvc.Addin.xll" target="content\net45\ExcelMvc.Addin.xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5\ExcelMvc.Addin.pdb" target="content\net45\ExcelMvc.Addin.pdb" />
       <file src="ReadMe.txt" target="" />
     </files>
