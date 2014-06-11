@@ -127,6 +127,7 @@ namespace ExcelMvc.Controls
             {
                 return model;
             }
+
             set
             {
                 if (model != null)

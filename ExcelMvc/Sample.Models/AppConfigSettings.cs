@@ -50,7 +50,7 @@ namespace Sample.Models
         public void Load()
         {
             Clear();
-            var values = (NameValueCollection) ConfigurationManager.GetSection("settings");
+            var values = (NameValueCollection)ConfigurationManager.GetSection("settings");
             foreach (var key in values.AllKeys)
                 Add(string.Format("{0}, {1}", key, values[key]));
         }

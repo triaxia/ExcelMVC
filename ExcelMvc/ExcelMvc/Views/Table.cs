@@ -449,11 +449,12 @@ namespace ExcelMvc.Views
                         Parent.ExecuteProtected(() => binding.StartCell.EntireColumn.Hidden = !binding.Visible);
                     break;
                 }
+
                 case ViewOrientation.Landscape:
                 {
                     // set if different, otherwise the row is going to flicker
                     if (Convert.ToBoolean(binding.StartCell.EntireRow.Hidden) != !binding.Visible)
-                        Parent.ExecuteProtected(() =>binding.StartCell.EntireRow.Hidden = !binding.Visible);
+                        Parent.ExecuteProtected(() => binding.StartCell.EntireRow.Hidden = !binding.Visible);
                     break;
                 }
             }
