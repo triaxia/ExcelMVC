@@ -22,7 +22,7 @@ namespace FXSpotTrading.ViewModels
             var tblRates = (Table)book.Find("ExcelMvc.Table.Rates");
             tblRates.Model = ExchangeRates = new ViewModelExchangeRates(new ExchangeRates(pairs));
 
-            book.FindCommand("AutoRate").Sink = ExchangeRates;
+            book.FindCommand("AutoRate").Model = ExchangeRates;
         }
     }
 }
