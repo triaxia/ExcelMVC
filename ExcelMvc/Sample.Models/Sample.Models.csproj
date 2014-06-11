@@ -64,9 +64,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfigSettings.cs" />
     <Compile Include="CompanyModel.cs" />
     <Compile Include="CompanyFilterModel.cs" />
     <Compile Include="CompanyListModel.cs" />

@@ -69,6 +69,7 @@ BOOL StartAddinClrHost()
 	int pos = wcslen(buffer);
 	while (--pos >= 0 && buffer[pos] != '\\');
 	buffer[pos] = 0;
+
 #if CLR2
     static LPCTSTR clrVersion = L"v2.0.50727";
 #elif CLR4

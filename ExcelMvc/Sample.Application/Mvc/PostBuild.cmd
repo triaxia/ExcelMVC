@@ -23,6 +23,7 @@ copy "..\..\ExcelMvc.Addin\bin\%~4\ExcelMvc.Addin.dll" "%out%ExcelMvc.Addin.xll"
 copy "..\..\Sample.Models\%~3Sample.Models.dll" "%out%"
 copy "..\..\Sample.Views\%~3Sample.Views.dll" "%out%"
 copy "..\..\Sample.Application\%~3Sample.Application.dll" "%out%"
+copy "..\..\Sample.Application\%~3Sample.Application.dll.config" "%out%"
 
 copy "..\..\Sample.Models\Forbes.csv" "%out%"
 copy "..\..\Sample.Views\Forbes2000.xlsx" "%out%"

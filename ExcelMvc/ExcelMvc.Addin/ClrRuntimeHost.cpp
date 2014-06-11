@@ -173,6 +173,19 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 		goto Cleanup;
 	}
 
+    // set app config file is there is one matching *.dll.config in the base path
+    TCHAR configFile[MAX_PATH];
+    if (FindAppConfig(basePath, configFile, MAX_PATH))
+    {
+        bstr_t bstrconfigFile(configFile);
+        hr = pAppDomainSetup->put_ConfigurationFile(bstrconfigFile);
+        if (FAILED(hr))
+        {
+            FormatError(L"Failed to AppDomainSetup.ConfigurationFile w/hr 0x%08lx\n", hr);
+            goto Cleanup;
+        }
+    }
+
 	// Get a pointer to the default AppDomain in the CLR.
 	//hr = pCorRuntimeHost->GetDefaultDomain(&spAppDomainThunk);
 	hr = pCorRuntimeHost->CreateDomainEx(L"ExcelMvc", pAppDomainSetup, NULL, &pAppDomainThunk);
@@ -337,5 +350,22 @@ ClrRuntimeHost::TestAndDisplayError()
         MessageBox(0, ErrorBuffer, L"ExcelMvc", MB_OK + MB_ICONERROR);
 	return result;
 }
+
+BOOL ClrRuntimeHost::FindAppConfig(PCWSTR basePath, TCHAR *buffer, DWORD size)
+{
+    TCHAR pattern[MAX_PATH];
+    swprintf(pattern, MAX_PATH, L"%s\\*.dll.config", basePath);
+
+    WIN32_FIND_DATA data;
+    HANDLE hfile = ::FindFirstFile(pattern, &data);
+    if (hfile != NULL)
+    {
+        swprintf(buffer, size, L"%s\\%s", basePath, data.cFileName);
+        FindClose(hfile);
+        return true;
+    }
+    return false;
+}
+
 
 

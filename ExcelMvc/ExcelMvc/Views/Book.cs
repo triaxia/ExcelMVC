@@ -107,8 +107,7 @@ namespace ExcelMvc.Views
         /// </summary>
         public override string Name
         {
-            // get { return Underlying.Name; }
-            get { return Id; }
+            get { return Underlying.Name; }
         }
 
         public override ViewType Type

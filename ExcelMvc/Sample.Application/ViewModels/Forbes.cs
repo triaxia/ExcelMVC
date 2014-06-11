@@ -36,6 +36,7 @@ Boston, MA 02110-1301 USA.
 
 namespace Sample.Application.ViewModels
 {
+    using System;
     using System.Windows.Forms;
 
     using ExcelMvc.Bindings;
@@ -49,21 +50,30 @@ namespace Sample.Application.ViewModels
 
         public Forbes(View view)
         {
-            view.HookBindingFailed(View_BindingFailed, true);
+            try
+            {
+                view.HookBindingFailed(View_BindingFailed, true);
 
-            Tests = new CommandTests((Sheet)view.Find(ViewType.Sheet, "Tests"));
+                Tests = new CommandTests((Sheet)view.Find(ViewType.Sheet, "Tests"));
 
-            var settingsForms = (ExcelMvc.Views.Form)view.Find(ViewType.Form, "Settings");
-            var settingsModel = new Settings();
-            settingsForms.Model = settingsModel;
+                var settingsForms = (ExcelMvc.Views.Form)view.Find(ViewType.Form, "Settings");
+                var settingsModel = new Settings();
+                settingsForms.Model = settingsModel;
 
-            // portrait
-            var parent = view.Find(ViewType.Sheet, "Forbes");
-            ForbesTest = new Forbes2000(view, parent, settingsModel, "Company", "Company");
+                view.Find("Table.AppSettings").Model = new AppConfigSettings();
 
-            // landscape/transposed
-            parent = view.Find(ViewType.Sheet, "Forbes_transposed");
-            ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
+                // portrait
+                var parent = view.Find(ViewType.Sheet, "Forbes");
+                ForbesTest = new Forbes2000(view, parent, settingsModel, "Company", "Company");
+
+                // landscape/transposed
+                parent = view.Find(ViewType.Sheet, "Forbes_transposed");
+                ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
+            }
+            catch (Exception ex)
+            {
+                DisplayException(ex, view.Name);
+            }
         }
 
         #endregion Constructors
@@ -91,7 +101,12 @@ namespace Sample.Application.ViewModels
 
         private void View_BindingFailed(object sender, BindingFailedEventArgs args)
         {
-            MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            DisplayException(args.Exception, args.View.Name);
+        }
+
+        private void DisplayException(Exception ex, string title)
+        {
+            MessageBox.Show(ex.Message,title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         #endregion Methods

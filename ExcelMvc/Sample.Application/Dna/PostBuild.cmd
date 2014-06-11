@@ -14,11 +14,11 @@ if exist "%out%\." (
 mkdir "%out%"
 
 copy "..\..\ExcelMvc.AddinDna\%~3ExcelDnaPack.exe" "%out%"
-copy "..\..\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna-AddIn.xll" "%out%ExcelMvc.AddinDna.xll"
-rem copy "..\..\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna-AddIn64.xll" "%out%ExcelMvc.AddinDna.xll"
+copy "..\..\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna-AddIn.xll" "%out%Sample.Application.xll"
+rem copy "..\..\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna-AddIn64.xll" "%out%Sample.Application.xll"
 
 copy "Start.cmd" "%out%"
-copy "ExcelMvc.AddinDna.dna" "%out%"
+copy "Sample.Application.dna" "%out%"
 
 copy "..\..\ExcelMvc\%~3ExcelMvc.dll" "%out%"
 copy "..\..\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna.dll" "%out%"
@@ -31,12 +31,13 @@ copy "..\..\Sample.Application\%~3Sample.Application.dll" "%out%"
 copy "..\..\Sample.Models\Forbes.csv" "%out%"
 copy "..\..\Sample.Views\Forbes2000.xlsx" "%out%"
 
-if exist "%~1%~2.dll.config" (
-	copy "%~1%~2.dll.config" "%~1%~2.xll.config"
-)
+copy "..\..\Sample.Application\%~3Sample.Application.dll.config" "%out%Sample.Application.xll.config"
 
 cd "%out%"
-ExcelDnaPack.exe "ExcelMvc.AddinDna.dna" /Y
+ExcelDnaPack.exe "Sample.Application.dna" /Y
+
+del "Sample.Application.xll"
+rename "Sample.Application-packed.xll" "Sample.Application.xll"
 
 del "*.dll"
 del "*.exe"

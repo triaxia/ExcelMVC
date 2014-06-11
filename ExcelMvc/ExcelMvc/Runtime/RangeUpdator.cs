@@ -41,6 +41,7 @@ namespace ExcelMvc.Runtime
     using Extensions;
 
     using Microsoft.Office.Interop.Excel;
+    using Views;
 
     /// <summary>
     /// Encapsulates Range updating functions
@@ -92,7 +93,7 @@ namespace ExcelMvc.Runtime
             if (IsAsyncUpdateThread())
                 Enqueue(new Item { Range = range, RowOffset = rowOffset, Rows = rows, ColumnOffset = columnOffset, Columns = columns, Value = value });
             else
-                range.MakeRange(rowOffset, rows, columnOffset, columns).Value = value;
+                AssignRangeValue(range.MakeRange(rowOffset, rows, columnOffset, columns), value);
         }
 
         public void Update(Range range, Range rowIdStart, int rowCount, string rowId, int rows, int columnOffset, int columns, object value)
@@ -110,7 +111,7 @@ namespace ExcelMvc.Runtime
                     Value = value
                 });
             else
-                range.MakeRange(RowOffsetFromRowId(rowIdStart, rowCount, rowId), rows, columnOffset, columns).Value = value;
+                AssignRangeValue(range.MakeRange(RowOffsetFromRowId(rowIdStart, rowCount, rowId), rows, columnOffset, columns), value);
         }
 
         public void Update(Range range, int rowOffset, int rows, Range colIdStart, int colCount, string colId, int columns, object value)
@@ -128,7 +129,7 @@ namespace ExcelMvc.Runtime
                     Value = value
                 });
             else
-                range.MakeRange(rowOffset, rows, ColOffsetFromColId(colIdStart, colCount, colId), columns).Value = value;
+                AssignRangeValue(range.MakeRange(rowOffset, rows, ColOffsetFromColId(colIdStart, colCount, colId), columns), value);
         }
 
         private static int ColOffsetFromColId(Range start, int count, string colId)
@@ -169,7 +170,7 @@ namespace ExcelMvc.Runtime
                     : RowOffsetFromRowId(item.RowIdStart, item.RowCount, item.RowId);
                 var colOffset = item.ColIdStart == null ? item.ColumnOffset
                     : ColOffsetFromColId(item.ColIdStart, item.ColCount, item.ColId);
-                item.Range.MakeRange(rowOffset, item.Rows, colOffset, item.Columns).Value = item.Value;
+                AssignRangeValue(item.Range.MakeRange(rowOffset, item.Rows, colOffset, item.Columns), item.Value);
             });
 
             if (status == null)
@@ -185,6 +186,22 @@ namespace ExcelMvc.Runtime
 
             // TODO
             return false;
+        }
+
+        private static void AssignRangeValue(Range range, object value)
+        {
+            var locked = false;
+            ActionExtensions.Try(() => locked = System.Convert.ToBoolean(range.Locked));
+            if (locked)
+            {
+                var book = App.Instance.Find(ViewType.Book, (range.Worksheet.Parent as Workbook).Name);
+                var sheet = book.Find(ViewType.Sheet, range.Worksheet.Name);
+                sheet.ExecuteProtected(() => range.Value = value);
+            }
+            else
+            {
+                range.Value = value;
+            }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

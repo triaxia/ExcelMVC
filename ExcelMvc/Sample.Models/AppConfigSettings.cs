@@ -1,3 +1,4 @@
+﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -31,22 +32,27 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-class ClrRuntimeHost
+#endregion Header
+
+namespace Sample.Models
 {
-public:
-	static BOOL Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath);
-	static void Stop();
-    static BOOL TestAndDisplayError();
-    static void CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName,
-        VARIANT *pArg1 = NULL, VARIANT *pArg2 = NULL, VARIANT *pArg3 = NULL);
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Configuration;
 
-private:
-    static WCHAR ErrorBuffer[1024];
-    static void FormatError(PCWSTR format, HRESULT hr);
-    static void FormatError(PCWSTR format, PCWSTR arg, HRESULT hr);
-    static void FormatError(PCWSTR format, PCWSTR arg);
-    static BOOL FindAppConfig(PCWSTR basePath, TCHAR *buffer, DWORD size);
+    public class AppConfigSettings : List<string>
+    {
+        public AppConfigSettings()
+        {
+            Load();
+        }
 
-    ClrRuntimeHost();
-	~ClrRuntimeHost();
-};
+        public void Load()
+        {
+            Clear();
+            var values = (NameValueCollection) ConfigurationManager.GetSection("settings");
+            foreach (var key in values.AllKeys)
+                Add(string.Format("{0}, {1}", key, values[key]));
+        }
+    }
+}

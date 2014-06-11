@@ -442,28 +442,26 @@ namespace ExcelMvc.Views
         private void SplitName(string fullName, out ViewType type, out string name)
         {
             var parts = fullName.Split('.');
-            if (parts.Length == 1)
+            type = ViewType.None;
+            name = fullName;
+            switch (parts.Length)
             {
-                type = ViewType.None;
-                name = parts[0];
+                case 2:
+                    type = TryParseViewType(parts[0]);
+                    name = type == ViewType.None ? fullName : parts[1];
+                    break;
+                case 3:
+                    type = TryParseViewType(parts[1]);
+                    name = type == ViewType.None ? fullName : parts[2];
+                    break;
             }
-            else if (parts.Length == 2)
-            {
-                // "Type.Name";
-                type = (ViewType)Enum.Parse(typeof(ViewType), parts[0], true);
-                name = parts[1];
-            }
-            else if (parts.Length == 3)
-            {
-                // "ExcelMvc.Type.Name";
-                type = (ViewType)Enum.Parse(typeof(ViewType), parts[1], true);
-                name = parts[2];
-            }
-            else
-            {
-                type = ViewType.None;
-                name = fullName;
-            }
+        }
+
+        private static ViewType TryParseViewType(string value)
+        {
+            var type = ViewType.None;
+            ActionExtensions.Try(() => type = (ViewType) Enum.Parse(typeof (ViewType), value, true));
+            return type;
         }
 
         #endregion Methods

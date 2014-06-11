@@ -44,7 +44,7 @@ namespace ExcelMvc.Extensions
     /// <summary>
     /// Encapsulates commonly used extensions for Range
     /// </summary>
-    public static class RangeExtentions
+    internal static class RangeExtentions
     {
         #region Methods
 
