@@ -58,28 +58,32 @@ namespace ExcelMvc.Extensions
             host.ExecuteBinding(() =>
             {
                 var sheet = ((Sheet)host).Underlying;
-                if (sheet.ProtectContents)
-                {
-                    var args = new ViewEventArgs(host);
-                    if (args.State == null)
-                        sheet.Unprotect();
-                    else 
-                        sheet.Unprotect(args.State as string);
-                    try
-                    {
-                        action();
-                    }
-                    finally
-                    {
-                        if (args.State == null)
-                            sheet.Protect();
-                        else
-                            sheet.Protect(args.State as string);
-                    }
-                }
-                else
+                if (!sheet.ProtectContents)
                 {
                     action();
+                    return;
+                }
+
+                // stops screen flickering
+                var updating = App.Instance.Underlying.ScreenUpdating;
+                App.Instance.Underlying.ScreenUpdating = false;
+
+                var args = new ViewEventArgs(host);
+                if (args.State == null)
+                    sheet.Unprotect();
+                else 
+                    sheet.Unprotect(args.State as string);
+                try
+                {
+                    action();
+                }
+                finally
+                {
+                    if (args.State == null)
+                        sheet.Protect();
+                    else
+                        sheet.Protect(args.State as string);
+                    App.Instance.Underlying.ScreenUpdating = updating;
                 }
             });
         }
