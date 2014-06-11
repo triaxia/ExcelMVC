@@ -2,7 +2,7 @@
 <package>
     <metadata>
         <id>ExcelMvc.AddinDna</id>
-        <version>1.4.1</version>
+        <version>1.4.2</version>
         <title>ExcelMvc.AddinDna</title>
         <authors>triaxia@users.sf.net, wstamm@users.sf.net</authors>
         <owners>triaxia@users.sf.net</owners>
@@ -10,7 +10,7 @@
         <iconUrl>https://sourceforge.net/p/excelmvc/code/ci/master/tree/ExcelMvc/ExcelMvc/.nuget/icon.png?format=raw</iconUrl>
         <projectUrl>https://sourceforge.net/projects/excelmvc/</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Writing Excel applications in .NET using the MVC/MVVM pattern</description>
+        <description>Writing Excel applications in .NET using the MVC/MVVM pattern. Use this package if you intend to write applications using both ExcelMvc and Excel-DNA.</description>
         <copyright>Copyright © 2013 Peter Gu &amp;Wolfgang Stamm</copyright>
         <dependencies>
         </dependencies>
