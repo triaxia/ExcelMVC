@@ -178,6 +178,7 @@
   <ItemGroup>
     <None Include="ExcelMvc.nuspec" />
     <None Include="packages.config" />
+    <None Include="PushNuGetPackage.cmd" />
     <None Include="Settings.StyleCop" />
   </ItemGroup>
   <ItemGroup>
