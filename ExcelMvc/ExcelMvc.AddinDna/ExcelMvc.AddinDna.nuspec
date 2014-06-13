@@ -2,15 +2,15 @@
 <package>
     <metadata>
         <id>ExcelMvc.AddinDna</id>
-        <version>1.4.1</version>
+        <version>1.4.3</version>
         <title>ExcelMvc.AddinDna</title>
         <authors>triaxia@users.sf.net, wstamm@users.sf.net</authors>
         <owners>triaxia@users.sf.net</owners>
         <licenseUrl>https://sourceforge.net/p/excelmvc/code/ci/master/tree/LICENSE.md</licenseUrl>
-        <iconUrl>https://sourceforge.net/p/excelmvc/code/ci/master/tree/ExcelMvc/ExcelMvc/.nuget/icon.png?format=raw</iconUrl>
+        <iconUrl>https://sourceforge.net/p/excelmvc/code/ci/master/tree/ExcelMvc/.nuget/icon.png?format=raw</iconUrl>
         <projectUrl>https://sourceforge.net/projects/excelmvc/</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Writing Excel applications in .NET using the MVC/MVVM pattern</description>
+        <description>Writing Excel applications in .NET using the MVC/MVVM pattern. Use this package if you intend to write applications using both ExcelMvc and Excel-DNA.</description>
         <copyright>Copyright © 2013 Peter Gu &amp;Wolfgang Stamm</copyright>
         <dependencies>
         </dependencies>
@@ -31,11 +31,11 @@
       <file src="..\net40\ExcelMvc.AddinDna.pdb" target="lib\net40\ExcelMvc.AddinDna.pdb" />
       <file src="..\net45\ExcelMvc.AddinDna.dll" target="lib\net45\ExcelMvc.AddinDna.dll" />
       <file src="..\net45\ExcelMvc.AddinDna.pdb" target="lib\net45\ExcelMvc.AddinDna.pdb" />
-      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.dll" target="content\net35\ExcelMvc.Addin.xll" />
+      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.xll" target="content\net35\ExcelMvc.Addin.xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.pdb" target="content\net35\ExcelMvc.Addin.pdb" />
-      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.dll" target="content\net40\ExcelMvc.Addin.xll" />
+      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.xll" target="content\net40\ExcelMvc.Addin.xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.pdb" target="content\net40\ExcelMvc.Addin.pdb" />
-      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5\ExcelMvc.Addin.dll" target="content\net45\ExcelMvc.Addin.xll" />
+      <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5\ExcelMvc.Addin.xll" target="content\net45\ExcelMvc.Addin.xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5\ExcelMvc.Addin.pdb" target="content\net45\ExcelMvc.Addin.pdb" />
       <file src="Readme.txt" target="" />
     </files>

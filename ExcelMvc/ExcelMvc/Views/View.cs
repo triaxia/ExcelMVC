@@ -107,7 +107,6 @@ namespace ExcelMvc.Views
         /// </summary>
         public event ViewEventHandler Unprotecting = delegate { };
 
-
         #endregion Events
 
         #region Properties
@@ -419,6 +418,13 @@ namespace ExcelMvc.Views
             }
         }
 
+        private static ViewType TryParseViewType(string value)
+        {
+            var type = ViewType.None;
+            ActionExtensions.Try(() => type = (ViewType)Enum.Parse(typeof(ViewType), value, true));
+            return type;
+        }
+
         private int HookClickedAll(ClickedHandler handler, string name, bool isHook)
         {
             var count = 0;
@@ -455,13 +461,6 @@ namespace ExcelMvc.Views
                     name = type == ViewType.None ? fullName : parts[2];
                     break;
             }
-        }
-
-        private static ViewType TryParseViewType(string value)
-        {
-            var type = ViewType.None;
-            ActionExtensions.Try(() => type = (ViewType) Enum.Parse(typeof (ViewType), value, true));
-            return type;
         }
 
         #endregion Methods

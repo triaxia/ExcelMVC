@@ -66,8 +66,16 @@ namespace ExcelMvc.Controls
 
         public override bool IsEnabled
         {
-            get { return Underlying.Enabled; }
-            set { Underlying.Enabled = value; }
+            get
+            {
+                return Underlying.Enabled;
+            }
+
+            set
+            {
+                if (Underlying.Enabled != value)
+                    Underlying.Enabled = value;
+            }
         }
 
         public object[] List
