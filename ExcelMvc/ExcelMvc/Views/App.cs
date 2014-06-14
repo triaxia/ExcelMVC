@@ -42,8 +42,9 @@ namespace ExcelMvc.Views
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Runtime.InteropServices.ComTypes;
+    using System.Windows;
     using System.Windows.Data;
-
+    using Bindings;
     using Controls;
     using Microsoft.Office.Interop.Excel;
     using Runtime;
@@ -155,6 +156,9 @@ namespace ExcelMvc.Views
             ObjectFactory<IValueConverter>.CreateAll();
 
             Underlying = (app as Application) ?? Find();
+            if (Underlying == null)
+                throw new Exception(Resource.ErrorExcelAppFound);
+
             Underlying.WorkbookOpen += OpenBook;
             Underlying.WorkbookBeforeClose += CloseingBook;
             Underlying.WorkbookActivate += Activate;
@@ -168,12 +172,11 @@ namespace ExcelMvc.Views
                 var book = new Book(this, item);
                 var args = new ViewEventArgs(book);
                 OnOpening(args);
-                if (!args.IsCancelled)
-                {
-                    book.Initialise();
-                    ExecuteBinding(() => OnOpened(args));
-                    Books[item] = book;
-                }
+                if (args.IsCancelled)
+                    continue;
+                book.Initialise();
+                Books[item] = book;
+                ExecuteBinding(() => OnOpened(args));
             }
         }
 

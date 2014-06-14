@@ -104,6 +104,7 @@ namespace ExcelMvc.Runtime
             if (status != null)
             {
                 result = status.Message + Environment.NewLine + status.StackTrace;
+                MessageWindow.AddErrorLine(status);
                 MessageBox.Show(result, typeof(Interface).Namespace, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 

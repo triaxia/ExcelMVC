@@ -120,6 +120,9 @@
   <data name="ErrorBindingPathInvalidIndexer" xml:space="preserve">
     <value>No matching ending indexer "]" in binding path "{0}".</value>
   </data>
+  <data name="ErrorExcelAppFound" xml:space="preserve">
+    <value>Excel.Application not found.</value>
+  </data>
   <data name="ErrorInvalidTableOrientation" xml:space="preserve">
     <value>Table "{0}"  is neither a landscape nor a portrait table, table headers must be arranged as a row or a column.</value>
   </data>

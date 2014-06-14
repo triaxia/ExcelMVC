@@ -70,6 +70,15 @@ namespace ExcelMvc {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Excel.Application not found..
+        /// </summary>
+        internal static string ErrorExcelAppFound {
+            get {
+                return ResourceManager.GetString("ErrorExcelAppFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Table &quot;{0}&quot;  is neither a landscape nor a portrait table, table headers must be arranged as a row or a column..
         /// </summary>
         internal static string ErrorInvalidTableOrientation {

@@ -34,6 +34,42 @@ Boston, MA 02110-1301 USA.
 #include "stdafx.h"
 #include "ClrRuntimeHost.h"
 
+
+extern "C" const GUID __declspec(selectany) DIID__Workbook =
+{ 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
+
+BOOL IsExcelThere()
+{
+    IRunningObjectTable *pRot = NULL;
+    ::GetRunningObjectTable(0, &pRot);
+
+    IEnumMoniker *pEnum = NULL;
+    pRot->EnumRunning(&pEnum);
+    IMoniker* pMon[1] = { NULL };
+    ULONG fetched = 0;
+    BOOL found = FALSE;
+    while (pEnum->Next(1, pMon, &fetched) == 0)
+    {
+        IUnknown *pUnknown;
+        pRot->GetObject(pMon[0], &pUnknown);
+        IUnknown *pWorkbook;
+        if (SUCCEEDED(pUnknown->QueryInterface(DIID__Workbook, (void **) &pWorkbook)))
+        {
+            found = TRUE;
+            pWorkbook->Release();
+        }
+        pUnknown->Release();
+    }
+
+    if (pRot != NULL)
+        pRot->Release();
+
+    if (pEnum != NULL)
+        pEnum->Release();
+
+    return found;
+}
+
 /*
 LPXLOPER12 pxProcedure
 LPXLOPER12 pxTypeText
@@ -79,16 +115,23 @@ BOOL StartAddinClrHost()
 	BOOL result = ClrRuntimeHost::TestAndDisplayError();
 	if (result)
 	{
-		// create a scratch book to get Excel registered with the ROT
-		Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(false));
-		Excel12f(xlcNew, 0, 1, (LPXLOPER12) TempInt12(5));
-		Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12) TempInt12(6));
+        BOOL isThere = IsExcelThere();
+        if (!isThere)
+        {
+            // create a scratch book to get Excel registered with the ROT
+            Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(false));
+            Excel12f(xlcNew, 0, 1, (LPXLOPER12) TempInt12(5));
+            Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12) TempInt12(6));
+        }
 
 		ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Attach");
 
-		// remove scratch book
-		Excel12f(xlcFileClose, 0, 1, (LPXLOPER12) TempBool12(false));
-		Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(true));
+        if (!isThere)
+        {
+            // remove scratch book
+            Excel12f(xlcFileClose, 0, 1, (LPXLOPER12) TempBool12(false));
+            Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(true));
+        }
 
 		result = ClrRuntimeHost::TestAndDisplayError();
 	}

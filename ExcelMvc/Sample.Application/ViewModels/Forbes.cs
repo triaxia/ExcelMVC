@@ -106,7 +106,7 @@ namespace Sample.Application.ViewModels
 
         private void DisplayException(Exception ex, string title)
         {
-            MessageBox.Show(ex.Message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message + ex.StackTrace, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         #endregion Methods
