@@ -57,6 +57,7 @@ BOOL IsExcelThere()
         {
             found = TRUE;
             pWorkbook->Release();
+            break;
         }
         pUnknown->Release();
     }
