@@ -108,9 +108,9 @@
     <None Include="App.config" />
     <None Include="Dna\Sample.Application.dna" />
     <None Include="Dna\PostBuild.cmd" />
-    <None Include="Dna\Start.cmd" />
+    <None Include="Dna\Run.cmd" />
     <None Include="Mvc\PostBuild.cmd" />
-    <None Include="Mvc\Start.cmd" />
+    <None Include="Mvc\Run.cmd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -120,7 +120,7 @@
     <None Include="Settings.StyleCop" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExcelMvc\ExcelMvc.csproj">
+    <ProjectReference Include="..\..\..\ExcelMvc\ExcelMvc\ExcelMvc.csproj">
       <Project>{04ab5d30-781f-4cb1-820a-4a558aee5b2c}</Project>
       <Name>ExcelMvc</Name>
     </ProjectReference>

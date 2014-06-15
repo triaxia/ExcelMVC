@@ -33,8 +33,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExcelMvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ExcelMvc">
       <HintPath>..\packages\ExcelMvc.1.4.3\lib\net40\ExcelMvc.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -59,9 +58,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExcelMvc.Addin.xll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="ExcelMvc.Addin %28x64%29.xll" />
+    <None Include="ExcelMvc.Addin.xll" />
     <None Include="packages.config" />
     <None Include="Run.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -73,9 +71,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ExcelMvc.Addin.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="ExcelMvc.Addin %28x64%29.pdb" />
+    <Content Include="ExcelMvc.Addin.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

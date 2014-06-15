@@ -15,14 +15,12 @@ if exist "%out%\." (
 )
 mkdir "%out%"
 
-copy "Start.cmd" "%out%"
+copy "Run.cmd" "%out%"
 
-copy "..\..\ExcelMvc\%~3ExcelMvc.dll" "%out%"
+copy "..\..\..\..\ExcelMvc\ExcelMvc\%~3ExcelMvc.dll" "%out%"
 
-for /f "tokens=1 delims= " %%a in ("%~4") do set config=%%a
-
-copy "..\..\ExcelMvc.Addin\bin\%config%\ExcelMvc.Addin.xll" "%out%ExcelMvc.Addin.xll"
-copy "..\..\ExcelMvc.Addin\bin\%config% (x64)\ExcelMvc.Addin (x64).xll" "%out%ExcelMvc.Addin (x64).xll"
+copy "..\..\..\..\ExcelMvc\ExcelMvc.Addin\bin\%~4\ExcelMvc.Addin.xll" "%out%ExcelMvc.Addin.xll"
+copy "..\..\..\..\ExcelMvc\ExcelMvc.Addin\bin\%~4 (x64)\ExcelMvc.Addin (x64).xll" "%out%ExcelMvc.Addin (x64).xll"
 
 copy "..\..\Sample.Models\%~3Sample.Models.dll" "%out%"
 copy "..\..\Sample.Views\%~3Sample.Views.dll" "%out%"
