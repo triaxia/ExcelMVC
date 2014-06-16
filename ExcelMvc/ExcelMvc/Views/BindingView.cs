@@ -210,15 +210,19 @@ namespace ExcelMvc.Views
             Range range;
             if (list.Contains("["))
             {
+                // "[book]sheet!start:[book]sheet!end"
                 range = ((Sheet)Parent).Underlying.Application.Range[list];
             }
             else if (list.Contains("!"))
             {
-                var names = list.Split('!');
-                range = ((Sheet)Parent.Parent.Find(ViewType.Sheet, names[0])).Underlying.Range[names[1]];
+                // "sheet!start:sheet!end", make it a book address
+                var book = Parent.Parent.Name;
+                list = string.Join(":", list.Split(':').Select(x => string.Format("[{0}]{1}", book, x)).ToArray());
+                range = ((Sheet)Parent).Underlying.Application.Range[list];
             }
             else
             {
+                // start:end
                 range = ((Sheet)Parent).Underlying.Range[list];
             }
 
