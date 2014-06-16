@@ -1,7 +1,14 @@
 pushd .
 
-cd "%~sdp0"
+cd "%~dp0"
 
-START Excel "ExcelMvc.Addin.xll" "Views\FXSpotTrading.xlsx"
+
+set addin="ExcelMvc.Addin.xll"
+if exist "C:\Program Files (x86)\." (
+if exist "C:\Program Files\Microsoft Office\Office15\." (
+set addin="ExcelMvc.Addin (x64).xll"
+))
+
+START Excel %addin% "Views\FXSpotTrading.xlsx"
 
 popd

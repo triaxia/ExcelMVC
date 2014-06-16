@@ -4,11 +4,13 @@ using System.ComponentModel;
 
 namespace FXSpotTrading.ViewModels
 {
+    using Models;
+
     public class ViewModelExchangeRate : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        public Models.ExchangeRate Model { get; set; }
+        public ExchangeRate Model { get; set; }
 
         public string Code
         {

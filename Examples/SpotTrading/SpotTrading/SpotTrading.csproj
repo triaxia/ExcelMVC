@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Deal.cs" />
+    <Compile Include="ViewModels\ViewModelDeal.cs" />
     <Compile Include="ViewModels\ViewModelExchangeRate.cs" />
     <Compile Include="ViewModels\ViewModelExchangeRates.cs" />
     <Compile Include="ViewModels\ViewModelSession.cs" />
@@ -58,8 +60,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExcelMvc.Addin %28x64%29.xll" />
-    <None Include="ExcelMvc.Addin.xll" />
+    <None Include="ExcelMvc.Addin %28x64%29.xll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ExcelMvc.Addin.xll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Run.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -71,8 +77,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ExcelMvc.Addin %28x64%29.pdb" />
-    <Content Include="ExcelMvc.Addin.pdb" />
+    <Content Include="ExcelMvc.Addin %28x64%29.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExcelMvc.Addin.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

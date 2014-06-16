@@ -1,5 +1,4 @@
-﻿using ExcelMvc.Controls;
-using ExcelMvc.Views;
+﻿using ExcelMvc.Views;
 using FXSpotTrading.Models;
 
 namespace FXSpotTrading.ViewModels
@@ -15,14 +14,18 @@ namespace FXSpotTrading.ViewModels
             tblCcyPair.Model = pairs;
 
             // bind static ccy list (OneWay)
-            var tblCcys = (Table)book.Find("ExcelMvc.Table.Ccys");
+            var tblCcys = book.Find("ExcelMvc.Table.Ccys");
             tblCcys.Model = pairs.Ccys;
 
             // bind exchange rates
-            var tblRates = (Table)book.Find("ExcelMvc.Table.Rates");
+            var tblRates = book.Find("ExcelMvc.Table.Rates");
             tblRates.Model = ExchangeRates = new ViewModelExchangeRates(new ExchangeRates(pairs));
 
             book.FindCommand("AutoRate").Model = ExchangeRates;
+
+            // bind deal
+            book.Find("ExcelMvc.Form.Deal").Model = new ViewModelDeal(ExchangeRates.Model);
+
         }
     }
 }

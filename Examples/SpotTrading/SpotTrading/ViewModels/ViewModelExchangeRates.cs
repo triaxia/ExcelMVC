@@ -1,29 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading;
-using System.Windows.Input;
-using ExcelMvc.Controls;
-using ExcelMvc.Runtime;
-using FXSpotTrading.Models;
-
-namespace FXSpotTrading.ViewModels
+﻿namespace FXSpotTrading.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Linq;
+    using System.Threading;
+    using System.Windows.Input;
+    using ExcelMvc.Controls;
+    using ExcelMvc.Runtime;
+    using Models;
+
     internal class ViewModelExchangeRates : List<ViewModelExchangeRate>, INotifyCollectionChanged, ICommand
     {
         private ManualResetEvent AutoUpDateEvent { get; set; }
         public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };
 
-        public ViewModelExchangeRates(List<ExchangeRate> rates)
+        public ExchangeRates Model { get; private set; }
+
+        public ViewModelExchangeRates(ExchangeRates rates)
         {
-            Create(rates);
+            Model = rates;
+            Create();
         }
 
-        public void Create(List<ExchangeRate> rates)
+        private void Create()
         {
             Clear();
-            AddRange(rates.Select(x => new ViewModelExchangeRate {Model = x}));
+            AddRange(Model.Select(x => new ViewModelExchangeRate { Model = x }));
             CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
@@ -63,7 +66,7 @@ namespace FXSpotTrading.ViewModels
         private void StartSimulate()
         {
             AutoUpDateEvent = new ManualResetEvent(false);
-            var thread = new Thread(Update) {Name = RangeUpdator.NameOfAsynUpdateThread, IsBackground = true};
+            var thread = new Thread(Update) { Name = RangeUpdator.NameOfAsynUpdateThread, IsBackground = true };
             thread.Start();
         }
 
@@ -78,7 +81,7 @@ namespace FXSpotTrading.ViewModels
             var random = new Random();
             while (!AutoUpDateEvent.WaitOne(1000))
             {
-                var idx = (int) (random.NextDouble() * Count);
+                var idx = (int)(random.NextDouble() * Count);
                 if (idx >= Count) idx--;
                 this[idx].Update();
             }
