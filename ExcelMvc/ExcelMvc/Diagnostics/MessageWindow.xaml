@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStartupLocation="CenterScreen"
         Title="ExcelMVC Exceptions &amp; Messages" Height="400" Width="800"
-        xmlns:diag="clr-namespace:ExcelMvc.Diagnostics">
+        xmlns:diag="clr-namespace:ExcelMvc.Diagnostics" Icon="/ExcelMvc;component/Resources/ExcelMvc.ico">
     <Window.Resources>
         <diag:Message x:Key="Model"></diag:Message>
     </Window.Resources>
