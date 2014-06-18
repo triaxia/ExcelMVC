@@ -8,93 +8,96 @@
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public Deal Model { get; private set; }
-        public ExchangeRates Rates { get; private set; }
+        public ViewModelExchangeRates Rates { get; private set; }
 
-        public ViewModelDeal(ExchangeRates rates)
+        public ViewModelDeal(ViewModelExchangeRates rates)
         {
             Model = new Deal();
             Rates = rates;
+            foreach (var rate in Rates)
+                rate.PropertyChanged += rate_PropertyChanged;
         }
 
-        public string Ccy1
+        void rate_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var rate = (ViewModelExchangeRate) sender;
+            if (ReferenceEquals(rate.Model, Model.Rate))
+                SetRate(rate.Model);
+        }
+
+        public string BuyCcy
         {
             get 
             {
-                return Model.Ccy1; 
+                return Model.BuyCcy; 
             }
             set
             {
-                Model.Ccy1 = value;
+                Model.BuyCcy = value;
                 SetRate();
             }
         }
 
-        public string Ccy2
+        public string SellCcy
         {
             get
             {
-                return Model.Ccy2;
+                return Model.SellCcy;
             }
             set
             {
-                Model.Ccy2 = value;
+                Model.SellCcy = value;
                 SetRate();
             }
         }
 
 
-        public double Amount1
+        public double BuyAmount
         {
             get
             {
-                return Model.Amount1;
+                return Model.BuyAmount;
             }
             set
             {
-                Model.Amount1 = value;
+                Model.BuyAmount = value;
                 Model.IsCcy1Fixed = true;
-                DeriveAmount();
+                DeriveXAmount();
             }
         }
 
-        public double Amount2
+        public double SellAmount
         {
             get
             {
-                return Model.Amount2;
+                return Model.SellAmount;
             }
             set
             {
-                Model.Amount2 = value;
+                Model.SellAmount = value;
                 Model.IsCcy1Fixed = false;
-                DeriveAmount();
-            }
-        }
-
-        public double Rate
-        {
-            get
-            {
-                return Model.Rate;
-            }
-            set
-            {
-                Model.Rate = value;
+                DeriveXAmount();
             }
         }
 
         public void SetRate()
         {
-            var fx = Rates.Find(Ccy1, Ccy2);
+            var fx = Rates.Model.Find(BuyCcy, SellCcy);
             if (fx == null)
                 return;
-            Rate = fx.Pair.Ccy1 == Ccy1 ? fx.Ask : fx.Bid;
+            SetRate(fx);
         }
 
-        public void DeriveAmount()
+        private void SetRate(ExchangeRate fx)
         {
-            if (Model.TryDeriveXcrossAmount())
-                RaiseChanged(Model.IsCcy1Fixed ? "Amoun2" : "Amount1");
+            Model.Rate = fx;
+            DeriveXAmount();
+        }
+
+        public void DeriveXAmount()
+        {
+            if (Model.TryDeriveXAmount())
+                RaiseChanged(Model.IsCcy1Fixed ? "SellAmoun" : "BuyAmount");
         }
 
         public void RaiseChanged(string name)

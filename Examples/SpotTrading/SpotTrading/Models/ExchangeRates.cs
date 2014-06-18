@@ -13,7 +13,7 @@ namespace FXSpotTrading.Models
         public void Create(IEnumerable<CcyPair> pairs)
         {
             Clear();
-            AddRange(pairs.Where(x => x.IsValid).Select(y => new ExchangeRate { Pair = y, Bid = y.Spot, Ask = y.Spot }));
+            AddRange(pairs.Where(x => x.IsValid).Select(y => new ExchangeRate { Pair = y, Bid = y.Spot - y.Pip, Ask = y.Spot + y.Pip }));
         }
 
         public ExchangeRate Find(string ccy1, string ccy2)
@@ -21,8 +21,21 @@ namespace FXSpotTrading.Models
             if (ccy1 == null || ccy2 == null)
                 return null;
 
-            return this.FirstOrDefault(x => (x.Pair.Ccy1 == ccy1 && x.Pair.Ccy2 == ccy2)
+            var rate = this.FirstOrDefault(x => (x.Pair.Ccy1 == ccy1 && x.Pair.Ccy2 == ccy2)
                 || (x.Pair.Ccy1 == ccy2 && x.Pair.Ccy2 == ccy1));
+
+            if (rate != null)
+                return rate;
+
+            var lhs = Find(ccy1, "USD");
+            if (lhs == null)
+                return null;
+
+            var rhs = Find(ccy2, "USD");
+            if (rhs == null)
+                return null;
+
+            return ExchangeRate.Cross(lhs, rhs);
         }
     }
 }

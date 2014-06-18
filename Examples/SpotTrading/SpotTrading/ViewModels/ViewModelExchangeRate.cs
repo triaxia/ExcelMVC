@@ -36,7 +36,7 @@ namespace FXSpotTrading.ViewModels
         public void Update()
         {
             var random = new Random();
-            var change = (0.5 - random.NextDouble()) * Model.Pair.Pip;
+            var change = (0.5 - random.NextDouble()) * Model.Pair.Pip * 10;
             var bid = Bid - change;
             var ask = Ask + change;
             Model.Bid = Math.Min(bid, ask);

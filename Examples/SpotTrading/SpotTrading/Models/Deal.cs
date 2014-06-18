@@ -4,23 +4,33 @@
 
     public class Deal
     {
-        public string Ccy1 { get; set; }
-        public string Ccy2 { get; set; }
-        public double Amount1 { get; set; }
-        public double Amount2 { get; set; }
-        public double Rate { get; set; }
+        public string BuyCcy { get; set; }
+        public string SellCcy { get; set; }
+        public double BuyAmount { get; set; }
+        public double SellAmount { get; set; }
         public bool IsCcy1Fixed { get; set; }
 
-        public bool TryDeriveXcrossAmount()
+        public ExchangeRate Rate { get; set; }
+
+        public bool TryDeriveXAmount()
         {
+            if (Rate == null)
+                return false;
+
+            double fx;
+            if (Rate.Pair.Ccy1 == BuyCcy)
+                fx = Rate.Ask;
+            else
+                fx = 1 / Rate.Bid;
+
             if (IsCcy1Fixed)
             {
-                Amount2 = Amount1*Rate;
+                SellAmount = BuyAmount * fx;
                 return true;
             }
-            else if (Math.Abs(Rate) > 0.000001)
+            else if (Math.Abs(fx) > 0.000001)
             {
-                Amount1 = Amount2/Rate;
+                BuyAmount = SellAmount / fx;
                 return true;
             }
             return false;

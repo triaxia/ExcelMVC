@@ -5,7 +5,6 @@ namespace FXSpotTrading.ViewModels
 {
     public class ViewModelTrading
     {
-        private ViewModelExchangeRates ExchangeRates { get; set; }
         public ViewModelTrading(View book)
         {
             // bind static ccy pair table (OneWayToSource)
@@ -19,13 +18,13 @@ namespace FXSpotTrading.ViewModels
 
             // bind exchange rates
             var tblRates = book.Find("ExcelMvc.Table.Rates");
-            tblRates.Model = ExchangeRates = new ViewModelExchangeRates(new ExchangeRates(pairs));
+            var rates = new ViewModelExchangeRates(new ExchangeRates(pairs));
+            tblRates.Model = rates;
 
-            book.FindCommand("AutoRate").Model = ExchangeRates;
+            book.FindCommand("ExcelMvc.AutoRate").Model = rates;
 
             // bind deal
-            book.Find("ExcelMvc.Form.Deal").Model = new ViewModelDeal(ExchangeRates.Model);
-
+            book.Find("ExcelMvc.Form.Deal").Model = new ViewModelDeal(rates);
         }
     }
 }

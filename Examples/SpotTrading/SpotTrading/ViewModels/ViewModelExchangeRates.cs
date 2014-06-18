@@ -10,7 +10,7 @@
     using ExcelMvc.Runtime;
     using Models;
 
-    internal class ViewModelExchangeRates : List<ViewModelExchangeRate>, INotifyCollectionChanged, ICommand
+    public class ViewModelExchangeRates : List<ViewModelExchangeRate>, INotifyCollectionChanged, ICommand
     {
         private ManualResetEvent AutoUpDateEvent { get; set; }
         public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };
@@ -35,7 +35,7 @@
             return true;
         }
 
-        public event System.EventHandler CanExecuteChanged = delegate { };
+        public event EventHandler CanExecuteChanged = delegate { };
 
         public void Execute(object parameter)
         {
