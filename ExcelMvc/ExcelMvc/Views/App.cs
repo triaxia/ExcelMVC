@@ -42,10 +42,10 @@ namespace ExcelMvc.Views
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Runtime.InteropServices.ComTypes;
-    using System.Windows;
     using System.Windows.Data;
     using Bindings;
     using Controls;
+    using Diagnostics;
     using Microsoft.Office.Interop.Excel;
     using Runtime;
 
@@ -66,7 +66,7 @@ namespace ExcelMvc.Views
 
         static App()
         {
-            Instance  = new App();
+            Instance = new App();
         }
 
         /// <summary>
@@ -90,7 +90,8 @@ namespace ExcelMvc.Views
         /// </summary>
         public static App Instance
         {
-            get; private set;
+            get;
+            private set;
         }
 
         public override IEnumerable<View> Children
@@ -118,7 +119,8 @@ namespace ExcelMvc.Views
         /// </summary>
         public Root MainWindow
         {
-            get; private set;
+            get;
+            private set;
         }
 
         public override ViewType Type
@@ -131,7 +133,8 @@ namespace ExcelMvc.Views
         /// </summary>
         public Application Underlying
         {
-            get; private set;
+            get;
+            private set;
         }
 
         #endregion Properties
@@ -151,33 +154,36 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Attach(object app)
         {
-            Detach();
-            ObjectFactory<ISession>.CreateAll();
-            ObjectFactory<IValueConverter>.CreateAll();
-
-            Underlying = (app as Application) ?? Find();
-            if (Underlying == null)
-                throw new Exception(Resource.ErrorExcelAppFound);
-
-            Underlying.WorkbookOpen += OpenBook;
-            Underlying.WorkbookBeforeClose += CloseingBook;
-            Underlying.WorkbookActivate += Activate;
-            Underlying.WorkbookDeactivate += Deactivate;
-
-            MainWindow = new Root(Underlying.Hwnd);
-            MainWindow.Destroyed += MainWindow_Destroyed;
-
-            foreach (Workbook item in Underlying.Workbooks)
+            Try(() =>
             {
-                var book = new Book(this, item);
-                var args = new ViewEventArgs(book);
-                OnOpening(args);
-                if (args.IsCancelled)
-                    continue;
-                book.Initialise();
-                Books[item] = book;
-                ExecuteBinding(() => OnOpened(args));
-            }
+                Detach();
+                ObjectFactory<ISession>.CreateAll();
+                ObjectFactory<IValueConverter>.CreateAll();
+
+                Underlying = (app as Application) ?? Find();
+                if (Underlying == null)
+                    throw new Exception(Resource.ErrorExcelAppFound);
+
+                Underlying.WorkbookOpen += OpenBook;
+                Underlying.WorkbookBeforeClose += CloseingBook;
+                Underlying.WorkbookActivate += Activate;
+                Underlying.WorkbookDeactivate += Deactivate;
+
+                MainWindow = new Root(Underlying.Hwnd);
+                MainWindow.Destroyed += MainWindow_Destroyed;
+
+                foreach (Workbook item in Underlying.Workbooks)
+                {
+                    var book = new Book(this, item);
+                    var args = new ViewEventArgs(book);
+                    OnOpening(args);
+                    if (args.IsCancelled)
+                        continue;
+                    book.Initialise();
+                    Books[item] = book;
+                    ExecuteBinding(() => OnOpened(args));
+                }
+            });
         }
 
         /// <summary>
@@ -185,23 +191,26 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Detach()
         {
-            if (Underlying != null)
+            Try(() =>
             {
-                Underlying.WorkbookOpen -= OpenBook;
-                Underlying.WorkbookBeforeClose -= CloseingBook;
-                Underlying.WorkbookActivate -= Activate;
-                Underlying.WorkbookDeactivate -= Deactivate;
-                Underlying = null;
-            }
+                if (Underlying != null)
+                {
+                    Underlying.WorkbookOpen -= OpenBook;
+                    Underlying.WorkbookBeforeClose -= CloseingBook;
+                    Underlying.WorkbookActivate -= Activate;
+                    Underlying.WorkbookDeactivate -= Deactivate;
+                    Underlying = null;
+                }
 
-            MainWindow = null;
+                MainWindow = null;
 
-            foreach (var space in Books.Values)
-                space.Dispose();
-            Books.Clear();
+                foreach (var space in Books.Values)
+                    space.Dispose();
+                Books.Clear();
 
-            ObjectFactory<ISession>.DeleteAll(x => x.Dispose());
-            ObjectFactory<IValueConverter>.DeleteAll(x => { });
+                ObjectFactory<ISession>.DeleteAll(x => x.Dispose());
+                ObjectFactory<IValueConverter>.DeleteAll(x => { });
+            });
         }
 
         /// <summary>
@@ -228,19 +237,21 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void FireClicked()
         {
-            if (Underlying == null)
-                return;
-
-            var caller = CommandFactory.RemovePrefix(Underlying.Caller as string);
-            var cmd = FindCommand((Worksheet)Underlying.ActiveSheet, caller);
-            if (cmd != null && cmd.IsEnabled)
-                cmd.FireClicked();
+            Try(() =>
+            {
+                if (Underlying == null)
+                    return;
+                var caller = CommandFactory.RemovePrefix(Underlying.Caller as string);
+                var cmd = FindCommand((Worksheet)Underlying.ActiveSheet, caller);
+                if (cmd != null && cmd.IsEnabled)
+                    cmd.FireClicked();
+            });
         }
 
         private static Application Find()
         {
             Application excel = null;
-            int hWnd = Process.GetCurrentProcess().MainWindowHandle.ToInt32();
+            var hWnd = Process.GetCurrentProcess().MainWindowHandle.ToInt32();
             IRunningObjectTable prot = null;
             IEnumMoniker pMonkEnum = null;
             try
@@ -271,34 +282,44 @@ namespace ExcelMvc.Views
 
         private void Activate(Workbook book)
         {
-            Purge();
-            OnActivated(new ViewEventArgs(Books[book]));
+            Try(() =>
+            {
+                Purge();
+                OnActivated(new ViewEventArgs(Books[book]));
+            });
         }
 
         private void CloseingBook(Workbook book, ref bool cancel)
         {
-            Book space;
-            if (Books.TryGetValue(book, out space))
+            var toCancel = cancel;
+            Try(() =>
             {
-                var args = new ViewEventArgs(space);
-                OnClosing(args);
-                cancel = cancel | args.IsCancelled;
-            }
+                Book space;
+                if (Books.TryGetValue(book, out space))
+                {
+                    var args = new ViewEventArgs(space);
+                    OnClosing(args);
+                    toCancel = toCancel | args.IsCancelled;
+                }
+            });
+            cancel = toCancel;
         }
 
         private void Deactivate(Workbook book)
         {
             if (Books.Count < 1)
                 return;
-            OnDeactivated(new ViewEventArgs(Books[book]));
+            Try(() => OnDeactivated(new ViewEventArgs(Books[book])));
         }
 
         private void OpenBook(Workbook book)
         {
-            Book space;
-            var created = Books.TryGetValue(book, out space);
-            if (!created)
+            Try(() =>
             {
+                Book space;
+                var isCreated = Books.TryGetValue(book, out space);
+                if (isCreated)
+                    return;
                 space = new Book(this, book);
                 var args = new ViewEventArgs(space);
                 OnOpening(args);
@@ -308,29 +329,42 @@ namespace ExcelMvc.Views
                     Books[book] = space;
                     OnOpened(args);
                 }
-            }
+            });
         }
 
         private void Purge()
         {
-            var books = (from object obj in Underlying.Workbooks select (Workbook)obj).ToList();
-            foreach (var key in Books.Keys.ToArray())
+            Try(() =>
             {
-                if (!books.Any(x => ReferenceEquals(x, key)))
+                var books = (from object obj in Underlying.Workbooks select (Workbook)obj).ToList();
+                foreach (var key in Books.Keys.ToArray())
                 {
+                    if (books.Any(x => ReferenceEquals(x, key)))
+                        continue;
                     var space = Books[key];
                     Books.Remove(key);
                     OnClosed(new ViewEventArgs(space));
                     space.Dispose();
                 }
-            }
+            });
         }
 
         private void MainWindow_Destroyed(object sender, EventArgs args)
         {
-            OnDestroyed(this);
+            Try(() => OnDestroyed(this));
         }
 
+        private void Try(System.Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                OnBindingFailed(new BindingFailedEventArgs(this, ex));
+            }
+        }
         #endregion Methods
     }
 }

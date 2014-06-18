@@ -365,7 +365,7 @@ namespace ExcelMvc.Views
         public void OnOpened(ViewEventArgs args)
         {
             Opened(this, args);
-            MessageWindow.AddInfoLine(string.Format(Resource.InfoViewCreated, Name, Type, Parent == null ? string.Empty : Parent.Name));
+            MessageWindow.AddInfoLine(string.Format(Resource.InfoViewCreated, args.View.Name, args.View.Type, args.View.Parent == null ? string.Empty : args.View.Parent.Name));
         }
 
         /// <summary>

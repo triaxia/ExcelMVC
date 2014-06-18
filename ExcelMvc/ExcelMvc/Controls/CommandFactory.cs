@@ -96,9 +96,9 @@ namespace ExcelMvc.Controls
         /// <returns>Command name without prefix</returns>
         public static string RemovePrefix(string name)
         {
-            if (StartsWithPrefix(name))
-                return name.Substring(CommandPrefix.Length);
-            return StartsWithFullPrefix(name) ? name.Substring(CommandFullPrefix.Length) : name;
+            if (StartsWithFullPrefix(name))
+                return name.Substring(CommandFullPrefix.Length);
+            return StartsWithPrefix(name) ? name.Substring(CommandPrefix.Length) : name;
         }
 
         private static void Create(Worksheet sheet, View host, IEnumerable items, List<string> names, Dictionary<string, Command> commands)

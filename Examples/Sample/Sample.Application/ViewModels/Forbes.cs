@@ -50,30 +50,23 @@ namespace Sample.Application.ViewModels
 
         public Forbes(View view)
         {
-            try
-            {
-                view.HookBindingFailed(View_BindingFailed, true);
+            view.HookBindingFailed(View_BindingFailed, true);
 
-                Tests = new CommandTests((Sheet)view.Find(ViewType.Sheet, "Tests"));
+            Tests = new CommandTests((Sheet)view.Find(ViewType.Sheet, "Tests"));
 
-                var settingsForms = (ExcelMvc.Views.Form)view.Find(ViewType.Form, "Settings");
-                var settingsModel = new Settings();
-                settingsForms.Model = settingsModel;
+            var settingsForms = (ExcelMvc.Views.Form)view.Find(ViewType.Form, "Settings");
+            var settingsModel = new Settings();
+            settingsForms.Model = settingsModel;
 
-                view.Find("Table.AppSettings").Model = new AppConfigSettings();
+            view.Find("Table.AppSettings").Model = new AppConfigSettings();
 
-                // portrait
-                var parent = view.Find(ViewType.Sheet, "Forbes");
-                ForbesTest = new Forbes2000(view, parent, settingsModel, "Company", "Company");
+            // portrait
+            var parent = view.Find(ViewType.Sheet, "Forbes");
+            ForbesTest = new Forbes2000(view, parent, settingsModel, "Company", "Company");
 
-                // landscape/transposed
-                parent = view.Find(ViewType.Sheet, "Forbes_transposed");
-                ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
-            }
-            catch (Exception ex)
-            {
-                DisplayException(ex, view.Name);
-            }
+            // landscape/transposed
+            parent = view.Find(ViewType.Sheet, "Forbes_transposed");
+            ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
         }
 
         #endregion Constructors

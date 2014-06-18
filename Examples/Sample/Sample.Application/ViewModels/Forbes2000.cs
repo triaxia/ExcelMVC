@@ -54,6 +54,8 @@ namespace Sample.Application.ViewModels
             ParentView = parent;
             Settings = settings;
 
+            ParentView.FindCommand("ExcelMvc.Command.LoadForbes").Model = null;
+
             ParentView.HookClicked(LoadAllClicked, "LoadForbes", true);
             ParentView.HookClicked(ClearAllClicked, "ClearForbes", true);
             ParentView.HookClicked(StartUpdateClicked, "StartUpdate", true);
