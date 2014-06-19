@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace FXSpotTrading.ViewModels
 {
-    using Models;
+    using BusinessModels;
 
     public class ViewModelExchangeRate : INotifyPropertyChanged
     {

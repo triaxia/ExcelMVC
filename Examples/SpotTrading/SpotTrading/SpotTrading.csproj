@@ -48,16 +48,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Deal.cs" />
+    <Compile Include="BusinessModels\Deal.cs" />
+    <Compile Include="CmdModels\CmdModelAutoRate.cs" />
+    <Compile Include="CmdModels\CmdModelDeal.cs" />
     <Compile Include="ViewModels\ViewModelDeal.cs" />
     <Compile Include="ViewModels\ViewModelExchangeRate.cs" />
     <Compile Include="ViewModels\ViewModelExchangeRates.cs" />
     <Compile Include="ViewModels\ViewModelSession.cs" />
     <Compile Include="ViewModels\ViewModelTrading.cs" />
-    <Compile Include="Models\CcyPair.cs" />
-    <Compile Include="Models\CcyPairs.cs" />
-    <Compile Include="Models\ExchangeRate.cs" />
-    <Compile Include="Models\ExchangeRates.cs" />
+    <Compile Include="BusinessModels\CcyPair.cs" />
+    <Compile Include="BusinessModels\CcyPairs.cs" />
+    <Compile Include="BusinessModels\ExchangeRate.cs" />
+    <Compile Include="BusinessModels\ExchangeRates.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

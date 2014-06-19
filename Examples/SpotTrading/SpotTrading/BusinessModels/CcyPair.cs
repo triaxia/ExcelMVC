@@ -1,4 +1,4 @@
-﻿namespace FXSpotTrading.Models
+﻿namespace FXSpotTrading.BusinessModels
 {
     public class CcyPair
     {

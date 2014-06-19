@@ -1,7 +1,7 @@
 ﻿namespace FXSpotTrading.ViewModels
 {
     using System.ComponentModel;
-    using Models;
+    using BusinessModels;
 
     public class ViewModelDeal : INotifyPropertyChanged
     {

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace FXSpotTrading.Models
+﻿namespace FXSpotTrading.BusinessModels
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class ExchangeRates : List<ExchangeRate>
     {
         public ExchangeRates(IEnumerable<CcyPair> pairs)

@@ -7,8 +7,10 @@ namespace FXSpotTrading.ViewModels
     public class ViewModelSession : ISession
     {
         private readonly Dictionary<View, object> sessions; 
+
         public ViewModelSession()
         {
+            // hook book view notificaton event
             App.Instance.Opening += Instance_Opening;
             App.Instance.Opened += Instance_Opened;
             App.Instance.Closing += Instance_Closing;
@@ -18,7 +20,7 @@ namespace FXSpotTrading.ViewModels
 
         void Instance_Opening(object sender, ViewEventArgs args)
         {
-            // cancel out for irrelevant books
+            // cancel out for non-ExcelMvc books
             if (args.View.Id != "FXSpotTrading")
                 args.Cancel();
         }
@@ -32,6 +34,8 @@ namespace FXSpotTrading.ViewModels
 
         void Instance_Closing(object sender, ViewEventArgs args)
         {
+            // cancel out here
+            // args.Cancel();
         }
 
         void Instance_Closed(object sender, ViewEventArgs args)

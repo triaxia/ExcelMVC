@@ -5,12 +5,10 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Threading;
-    using System.Windows.Input;
-    using ExcelMvc.Controls;
+    using BusinessModels;
     using ExcelMvc.Runtime;
-    using Models;
 
-    public class ViewModelExchangeRates : List<ViewModelExchangeRate>, INotifyCollectionChanged, ICommand
+    public class ViewModelExchangeRates : List<ViewModelExchangeRate>, INotifyCollectionChanged
     {
         private ManualResetEvent AutoUpDateEvent { get; set; }
         public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };
@@ -23,54 +21,14 @@
             Create();
         }
 
-        private void Create()
-        {
-            Clear();
-            AddRange(Model.Select(x => new ViewModelExchangeRate { Model = x }));
-            CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
-
-        public event EventHandler CanExecuteChanged = delegate { };
-
-        public void Execute(object parameter)
-        {
-            var args = parameter as CommandEventArgs;
-            if (args == null)
-                return;
-
-            if (args.Source.Name == "AutoRate")
-                ExecuteAutoRate(args.Source);
-        }
-
-        private void ExecuteAutoRate(Command cmd)
-        {
-            if (cmd.Value == null)
-            {
-                cmd.Caption = "Stop Simulation";
-                cmd.Value = "Started";
-                StartSimulate();
-            }
-            else
-            {
-                cmd.Caption = "Start Simulation";
-                cmd.Value = null;
-                StopSimulate();
-            }
-        }
-
-        private void StartSimulate()
+        public void StartSimulate()
         {
             AutoUpDateEvent = new ManualResetEvent(false);
             var thread = new Thread(Update) { Name = RangeUpdator.NameOfAsynUpdateThread, IsBackground = true };
             thread.Start();
         }
 
-        private void StopSimulate()
+        public void StopSimulate()
         {
             if (AutoUpDateEvent != null)
                 AutoUpDateEvent.Set();
@@ -85,6 +43,12 @@
                 if (idx >= Count) idx--;
                 this[idx].Update();
             }
+        }
+        private void Create()
+        {
+            Clear();
+            AddRange(Model.Select(x => new ViewModelExchangeRate { Model = x }));
+            CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
     }
 }
