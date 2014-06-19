@@ -23,14 +23,27 @@
             var rate = new ExchangeRate { Pair = new CcyPair { Ccy1 = nonBaseCcy(lhs.Pair), Ccy2 = nonBaseCcy(rhs.Pair) } };
             rate.Pair.Pip = Math.Max(lhs.Pair.Pip, rate.Pair.Pip);
 
-            if (rate.Pair.Ccy1 == lhs.Pair.Ccy2)
-                lhs = lhs.Flip();
+            ExchangeRate ccy1Base;
+            ExchangeRate ccy2Base;
+            if (rate.Pair.Ccy1 == lhs.Pair.Ccy1 || rate.Pair.Ccy1 == lhs.Pair.Ccy2)
+            {
+                ccy1Base = lhs;
+                ccy2Base = rhs;
+            }
+            else
+            {
+                ccy1Base = rhs;
+                ccy2Base = lhs;
+            }
 
-            if (rate.Pair.Ccy1 == rhs.Pair.Ccy2)
-                rhs = rhs.Flip();
+            if (rate.Pair.Ccy1 == ccy1Base.Pair.Ccy2)
+                ccy1Base = ccy1Base.Flip();
 
-            rate.Bid = lhs.Bid * rhs.Ask;
-            rate.Ask = lhs.Ask * rhs.Bid;
+            if (rate.Pair.Ccy2 == ccy2Base.Pair.Ccy1)
+                ccy2Base = rhs.Flip();
+
+            rate.Bid = ccy1Base.Bid * ccy2Base.Ask;
+            rate.Ask = ccy1Base.Ask * ccy2Base.Bid;
 
             return rate;
         }
