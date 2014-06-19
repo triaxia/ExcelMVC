@@ -9,6 +9,6 @@ if exist "C:\Program Files\Microsoft Office\Office15\." (
 set addin="ExcelMvc.Addin (x64).xll"
 ))
 
-START Excel %addin% "Views\FXSpotTrading.xlsx"
+START Excel %addin% "Views\SpotTrading.xlsx"
 
 popd

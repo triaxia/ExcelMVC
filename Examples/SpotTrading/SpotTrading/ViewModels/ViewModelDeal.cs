@@ -1,4 +1,4 @@
-﻿namespace FXSpotTrading.ViewModels
+﻿namespace SpotTrading.ViewModels
 {
     using System.ComponentModel;
     using BusinessModels;
@@ -33,7 +33,7 @@
             }
             set
             {
-                Model.BuyCcy = value;
+                Model.BuyCcy = value.ToUpper();
                 SetRate();
             }
         }
@@ -46,7 +46,7 @@
             }
             set
             {
-                Model.SellCcy = value;
+                Model.SellCcy = value.ToUpper();
                 SetRate();
             }
         }
@@ -97,7 +97,7 @@
         public void DeriveXAmount()
         {
             if (Model.TryDeriveXAmount())
-                RaiseChanged(Model.IsCcy1Fixed ? "SellAmoun" : "BuyAmount");
+                RaiseChanged(Model.IsCcy1Fixed ? "SellAmount" : "BuyAmount");
         }
 
         public void RaiseChanged(string name)

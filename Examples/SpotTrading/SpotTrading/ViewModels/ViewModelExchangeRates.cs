@@ -1,4 +1,4 @@
-﻿namespace FXSpotTrading.ViewModels
+﻿namespace SpotTrading.ViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -44,6 +44,7 @@
                 this[idx].Update();
             }
         }
+
         private void Create()
         {
             Clear();

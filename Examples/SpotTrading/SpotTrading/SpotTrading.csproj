@@ -7,8 +7,8 @@
     <ProjectGuid>{F8FA8BD9-A07A-419E-A2F2-2844C7F74587}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FXSpotTrading</RootNamespace>
-    <AssemblyName>FXSpotTrading</AssemblyName>
+    <RootNamespace>SpotTrading</RootNamespace>
+    <AssemblyName>SpotTrading</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -48,9 +48,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessModels\Position.cs" />
+    <Compile Include="BusinessModels\Positions.cs" />
     <Compile Include="BusinessModels\Deal.cs" />
     <Compile Include="CmdModels\CmdModelAutoRate.cs" />
     <Compile Include="CmdModels\CmdModelDeal.cs" />
+    <Compile Include="ViewModels\ViewModelPosition.cs" />
+    <Compile Include="ViewModels\ViewModelPositions.cs" />
     <Compile Include="ViewModels\ViewModelDeal.cs" />
     <Compile Include="ViewModels\ViewModelExchangeRate.cs" />
     <Compile Include="ViewModels\ViewModelExchangeRates.cs" />
@@ -75,7 +79,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Views\FXSpotTrading.xlsx">
+    <None Include="Views\SpotTrading.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

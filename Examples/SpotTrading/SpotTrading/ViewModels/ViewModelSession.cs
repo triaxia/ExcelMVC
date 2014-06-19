@@ -2,7 +2,7 @@
 using ExcelMvc.Runtime;
 using ExcelMvc.Views;
 
-namespace FXSpotTrading.ViewModels
+namespace SpotTrading.ViewModels
 {
     public class ViewModelSession : ISession
     {
@@ -21,14 +21,14 @@ namespace FXSpotTrading.ViewModels
         void Instance_Opening(object sender, ViewEventArgs args)
         {
             // cancel out for non-ExcelMvc books
-            if (args.View.Id != "FXSpotTrading")
+            if (args.View.Id != "SpotTrading")
                 args.Cancel();
         }
 
         void Instance_Opened(object sender, ViewEventArgs args)
         {
             // create book model
-            if (args.View.Id == "FXSpotTrading")
+            if (args.View.Id == "SpotTrading")
                 sessions[args.View] = new ViewModelTrading(args.View);
         }
 

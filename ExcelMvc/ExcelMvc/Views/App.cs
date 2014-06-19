@@ -45,7 +45,6 @@ namespace ExcelMvc.Views
     using System.Windows.Data;
     using Bindings;
     using Controls;
-    using Diagnostics;
     using Microsoft.Office.Interop.Excel;
     using Runtime;
 
@@ -80,6 +79,9 @@ namespace ExcelMvc.Views
 
         #region Properties
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static string ExcelMvc
         {
             get { return "ExcelMvc"; }
@@ -94,21 +96,33 @@ namespace ExcelMvc.Views
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override IEnumerable<View> Children
         {
             get { return Books.Values.ToArray(); }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override IEnumerable<Command> Commands
         {
             get { return new Command[] { }; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override string Id
         {
             get { return ExcelMvc; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override string Name
         {
             get { return ExcelMvc; }
@@ -123,6 +137,9 @@ namespace ExcelMvc.Views
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override ViewType Type
         {
             get { return ViewType.App; }
@@ -141,8 +158,14 @@ namespace ExcelMvc.Views
 
         #region Methods
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="reserved"></param>
+        /// <param name="prot"></param>
+        /// <returns></returns>
         [DllImport("ole32.dll")]
-        public static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
+        private static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
 
         public override void Dispose()
         {
@@ -282,11 +305,9 @@ namespace ExcelMvc.Views
 
         private void Activate(Workbook book)
         {
-            Try(() =>
-            {
-                Purge();
-                OnActivated(new ViewEventArgs(Books[book]));
-            });
+            Purge();
+            if (Books.ContainsKey(book))
+                Try(() => OnActivated(new ViewEventArgs(Books[book])));
         }
 
         private void CloseingBook(Workbook book, ref bool cancel)
@@ -309,7 +330,9 @@ namespace ExcelMvc.Views
         {
             if (Books.Count < 1)
                 return;
-            Try(() => OnDeactivated(new ViewEventArgs(Books[book])));
+
+            if (Books.ContainsKey(book))
+                Try(() => OnDeactivated(new ViewEventArgs(Books[book])));
         }
 
         private void OpenBook(Workbook book)

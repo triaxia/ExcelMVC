@@ -1,4 +1,4 @@
-﻿namespace FXSpotTrading.BusinessModels
+﻿namespace SpotTrading.BusinessModels
 {
     using System;
 

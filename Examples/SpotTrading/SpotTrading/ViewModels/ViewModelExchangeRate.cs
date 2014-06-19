@@ -1,8 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-
-namespace FXSpotTrading.ViewModels
+namespace SpotTrading.ViewModels
 {
     using BusinessModels;
 

@@ -1,6 +1,6 @@
 ﻿using ExcelMvc.Views;
 
-namespace FXSpotTrading.ViewModels
+namespace SpotTrading.ViewModels
 {
     using BusinessModels;
     using CmdModels;
@@ -30,8 +30,12 @@ namespace FXSpotTrading.ViewModels
             var deal = new ViewModelDeal(rates);
             book.Find("ExcelMvc.Form.Deal").Model = deal;
 
+            // position table
+            var positions = new ViewModelPositions();
+            book.Find("ExcelMvc.Table.Positions").Model = positions;
+
             // manual deal command
-            book.FindCommand("ExcelMvc.Command.ManualDeal").Model = new CmdModelDeal(deal);
+            book.FindCommand("ExcelMvc.Command.ManualDeal").Model = new CmdModelDeal(deal, positions, rates);
         }
     }
 }

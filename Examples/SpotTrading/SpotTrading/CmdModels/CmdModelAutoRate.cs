@@ -1,4 +1,4 @@
-﻿namespace FXSpotTrading.CmdModels
+﻿namespace SpotTrading.CmdModels
 {
     using System;
     using System.Windows.Input;
