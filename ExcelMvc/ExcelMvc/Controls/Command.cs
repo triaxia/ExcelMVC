@@ -165,15 +165,21 @@ namespace ExcelMvc.Controls
         /// </summary>
         public virtual void FireClicked()
         {
-            var args = new CommandEventArgs { Source = this };
-            Clicked(this, args);
-            if (Model != null)
-                Model.Execute(args);
+            Host.ExecuteBinding(() =>
+            {
+                var args = new CommandEventArgs {Source = this};
+                Clicked(this, args);
+                if (Model != null)
+                    Model.Execute(args);
+            });
         }
 
         private void Model_CanExecuteChanged(object sender, EventArgs e)
         {
-            IsEnabled = Model.CanExecute(new CommandEventArgs { Source = this });
+            Host.ExecuteBinding(() =>
+            {
+                IsEnabled = Model.CanExecute(new CommandEventArgs {Source = this});
+            });
         }
 
         #endregion Methods
