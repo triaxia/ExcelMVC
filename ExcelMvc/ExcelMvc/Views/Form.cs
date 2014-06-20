@@ -72,6 +72,9 @@ namespace ExcelMvc.Views
 
         #region Properties
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override object Model
         {
             set
@@ -91,6 +94,9 @@ namespace ExcelMvc.Views
             get; private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override ViewType Type
         {
             get { return ViewType.Form; }
@@ -131,7 +137,7 @@ namespace ExcelMvc.Views
 
         private void Notify_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            UpdateView(e.PropertyName);
+            UpdateView(e.PropertyName ?? "*");
         }
 
         private void Underlying_Change(Range target)
@@ -207,7 +213,7 @@ namespace ExcelMvc.Views
                     {
                         UpdateView(match);
                     }
-                    else
+                    else if (path == "*")
                     {
                         foreach (var binding in Bindings)
                             UpdateView(binding);

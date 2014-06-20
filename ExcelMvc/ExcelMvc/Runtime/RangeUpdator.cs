@@ -192,7 +192,7 @@ namespace ExcelMvc.Runtime
         {
             var locked = false;
             ActionExtensions.Try(() => locked = System.Convert.ToBoolean(range.Locked));
-            if (locked)
+            if (locked && range.Worksheet.ProtectContents)
             {
                 var book = App.Instance.Find(ViewType.Book, (range.Worksheet.Parent as Workbook).Name);
                 var sheet = book.Find(ViewType.Sheet, range.Worksheet.Name);

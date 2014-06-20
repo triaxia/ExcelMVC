@@ -395,7 +395,7 @@ namespace ExcelMvc.Views
 
         private void ItemNotify_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            UpdateCell(sender, e.PropertyName);
+            UpdateCell(sender, e.PropertyName ?? "*");
         }
 
         private void RestoreCategoryIds(Range selection)
@@ -499,7 +499,7 @@ namespace ExcelMvc.Views
             {
                 UpdateCell(match, model, objectId);
             }
-            else
+            else if (propertyName == "*")
             {
                 foreach (var binding in Bindings)
                     UpdateCell(binding, model, objectId);
