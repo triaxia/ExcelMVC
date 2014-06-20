@@ -42,6 +42,9 @@ namespace ExcelMvc.Controls
     using Microsoft.Office.Interop.Excel;
     using Views;
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CommandShape : Command
     {
         #region Fields
@@ -52,6 +55,12 @@ namespace ExcelMvc.Controls
 
         #region Constructors
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="shape"></param>
+        /// <param name="name"></param>
         public CommandShape(View host, Shape shape, string name)
             : base(host, name)
         {
@@ -85,7 +94,7 @@ namespace ExcelMvc.Controls
                 enabled = value;
                 Host.ExecuteProtected(() =>
                 {
-                    ((Shape)Underlying).TextFrame2.TextRange.Characters.Font.Fill.ForeColor.Brightness = value
+                    Underlying.TextFrame2.TextRange.Characters.Font.Fill.ForeColor.Brightness = value
                         ? (float)1.0
                         : (float)-0.1;
                 });
