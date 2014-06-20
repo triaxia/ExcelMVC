@@ -2,16 +2,15 @@
 {
     using System;
     using System.Windows.Input;
-    using ExcelMvc.Controls;
     using ViewModels;
 
-    public class CmdModelDeal:  ICommand
+    public class CmdModelManualDeal:  ICommand
     {
         private ViewModelDeal Deal { get; set; }
         private ViewModelPositions Positions { get; set; }
         private ViewModelExchangeRates Rates { get; set; }
 
-        public CmdModelDeal(ViewModelDeal deal, ViewModelPositions positions, ViewModelExchangeRates rates)
+        public CmdModelManualDeal(ViewModelDeal deal, ViewModelPositions positions, ViewModelExchangeRates rates)
         {
             Deal = deal;
             Deal.PropertyChanged += Deal_PropertyChanged;
@@ -36,8 +35,7 @@
 
         public void Execute(object parameter)
         {
-            var args = parameter as CommandEventArgs;
-            Positions.Net(Deal.Model, Rates.Model);
+             Positions.Net(Deal.Model, Rates.Model);
         }
     }
 }

@@ -9,6 +9,7 @@
 
         public Deal Model { get; private set; }
         public ViewModelExchangeRates Rates { get; private set; }
+        public bool IsInsideTrading { get; set; }
 
         public ViewModelDeal(ViewModelExchangeRates rates)
         {
@@ -96,13 +97,21 @@
 
         public void DeriveXAmount()
         {
-            if (Model.TryDeriveXAmount())
+            if (Model.TryDeriveXAmount(IsInsideTrading))
                 RaiseChanged(Model.IsCcy1Fixed ? "SellAmount" : "BuyAmount");
         }
 
         public void RaiseChanged(string name)
         {
             PropertyChanged(this, new PropertyChangedEventArgs((name)));
+        }
+
+        public void RaiseChanged()
+        {
+            RaiseChanged("BuyCcy");
+            RaiseChanged("BuyAmount");
+            RaiseChanged("SellCcy");
+            RaiseChanged("SellAmount");
         }
     }
 }

@@ -12,16 +12,16 @@
 
         public ExchangeRate Rate { get; set; }
 
-        public bool TryDeriveXAmount()
+        public bool TryDeriveXAmount(bool inside)
         {
             if (Rate == null)
                 return false;
 
             double fx;
             if (Rate.Pair.Ccy1 == BuyCcy)
-                fx = Rate.Ask;
+                fx = inside ? Rate.Bid : Rate.Ask;
             else
-                fx = 1 / Rate.Bid;
+                fx = 1 / (inside ? Rate.Ask : Rate.Bid);
 
             if (IsCcy1Fixed)
             {

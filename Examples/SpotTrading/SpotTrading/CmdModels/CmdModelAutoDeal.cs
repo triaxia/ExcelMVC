@@ -5,13 +5,14 @@
     using ExcelMvc.Controls;
     using ViewModels;
 
-    public class CmdModelAutoRate :  ICommand
+    public class CmdModelAutoDeal :  ICommand
     {
-        private ViewModelExchangeRates Model { get; set; }
+        private ViewModelDealing Model { get; set; }
 
-        public CmdModelAutoRate(ViewModelExchangeRates rates)
+        public CmdModelAutoDeal(ViewModelDealing deals)
         {
-            Model = rates;
+            Model = deals;
+            CanExecuteChanged(this, new EventArgs());
         }
 
         public bool CanExecute(object parameter)
@@ -25,20 +26,20 @@
         public void Execute(object parameter)
         {
             var args = parameter as CommandEventArgs;
-            ExecuteAutoRate(args.Source);
+            ExecuteAutoDeal(args.Source);
         }
 
-        private void ExecuteAutoRate(Command cmd)
+        private void ExecuteAutoDeal(Command cmd)
         {
             if (cmd.State == null)
             {
-                cmd.Caption = "Stop Simulation";
+                cmd.Caption = "Stop Dealing";
                 cmd.State = 1;
                 Model.StartSimulate();
             }
             else
             {
-                cmd.Caption = "Start Simulation";
+                cmd.Caption = "Start Dealing";
                 cmd.State = null;
                 Model.StopSimulate();
             }

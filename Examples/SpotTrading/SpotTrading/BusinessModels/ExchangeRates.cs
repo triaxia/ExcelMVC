@@ -18,7 +18,7 @@
 
         public ExchangeRate Find(string ccy1, string ccy2)
         {
-            if (ccy1 == null || ccy2 == null)
+            if (ccy1 == null || ccy2 == null || ccy1 == ccy2)
                 return null;
 
             var rate = this.FirstOrDefault(x => x.Pair.IsMatched(ccy1, ccy2));

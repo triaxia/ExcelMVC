@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using ExcelMvc.Runtime;
-using ExcelMvc.Views;
-
-namespace SpotTrading.ViewModels
+﻿namespace SpotTrading.ViewModels
 {
+    using System.Collections.Generic;
+    using ExcelMvc.Runtime;
+    using ExcelMvc.Views;
+
     public class ViewModelSession : ISession
     {
         private readonly Dictionary<View, object> sessions; 

@@ -12,8 +12,8 @@
         {
             var rate = new ExchangeRate { Pair = new CcyPair { Ccy1 = Pair.Ccy2, Ccy2 = Pair.Ccy1, Pip = Pair.Pip } };
             rate.Pair.Pip = Pair.Pip;
-            rate.Bid = 1.0 / Ask;
-            rate.Ask = 1.0 / Bid;
+            rate.Bid = 1.0 / Bid;
+            rate.Ask = 1.0 / Ask;
             return rate;
         }
 

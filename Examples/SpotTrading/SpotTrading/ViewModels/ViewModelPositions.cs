@@ -9,8 +9,6 @@
     {
         public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };
 
-        public Positions Model { get; private set; }
-
         public void Net(Deal deal, ExchangeRates rates)
         {
             var item = this.FirstOrDefault(x => CcyPair.IsMatched(deal.BuyCcy, deal.SellCcy, x.Model.Ccy1, x.Model.Ccy2));
@@ -19,12 +17,23 @@
                 item = new ViewModelPosition(new Position());
                 item.Net(deal, rates, false);
                 Add(item);
-                CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                RaiseChanged();
             }
             else
             {
                 item.Net(deal, rates, true);
             }
+        }
+
+        public void RaiseChanged()
+        {
+            CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        public void Reset()
+        {
+            Clear();
+            RaiseChanged();
         }
     }
 }

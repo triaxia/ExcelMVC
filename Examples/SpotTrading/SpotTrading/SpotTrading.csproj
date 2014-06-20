@@ -51,8 +51,10 @@
     <Compile Include="BusinessModels\Position.cs" />
     <Compile Include="BusinessModels\Positions.cs" />
     <Compile Include="BusinessModels\Deal.cs" />
+    <Compile Include="CmdModels\CmdModelAutoDeal.cs" />
     <Compile Include="CmdModels\CmdModelAutoRate.cs" />
-    <Compile Include="CmdModels\CmdModelDeal.cs" />
+    <Compile Include="CmdModels\CmdModelManualDeal.cs" />
+    <Compile Include="ViewModels\ViewModelDealing.cs" />
     <Compile Include="ViewModels\ViewModelPosition.cs" />
     <Compile Include="ViewModels\ViewModelPositions.cs" />
     <Compile Include="ViewModels\ViewModelDeal.cs" />
