@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Threading;
     using BusinessModels;
-    using ExcelMvc.Runtime;
 
     public class ViewModelExchangeRates : List<ViewModelExchangeRate>, INotifyCollectionChanged
     {
@@ -24,7 +23,7 @@
         public void StartSimulate()
         {
             AutoUpDateEvent = new ManualResetEvent(false);
-            var thread = new Thread(Update) { Name = RangeUpdator.NameOfAsynUpdateThread, IsBackground = true };
+            var thread = new Thread(Update) { Name = "ExcelMvcAsynUpdateThread", IsBackground = true };
             thread.Start();
         }
 
@@ -37,7 +36,7 @@
         private void Update(object state)
         {
             var random = new Random();
-            while (!AutoUpDateEvent.WaitOne(1000))
+            while (!AutoUpDateEvent.WaitOne(3000))
             {
                 var idx = (int)(random.NextDouble() * Count);
                 if (idx >= Count) idx--;

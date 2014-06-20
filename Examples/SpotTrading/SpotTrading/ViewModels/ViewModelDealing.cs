@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Threading;
-    using ExcelMvc.Runtime;
 
     public class ViewModelDealing
     {
@@ -25,7 +24,7 @@
         public void StartSimulate()
         {
             AutoUpDateEvent = new ManualResetEvent(false);
-            var thread = new Thread(Update) { Name = RangeUpdator.NameOfAsynUpdateThread, IsBackground = true };
+            var thread = new Thread(Update) { Name = "ExcelMvcAsynUpdateThread", IsBackground = true };
             thread.Start();
         }
 
@@ -37,7 +36,7 @@
 
         private void Update(object state)
         {
-            while (!AutoUpDateEvent.WaitOne(1000))
+            while (!AutoUpDateEvent.WaitOne(3000))
             {
                 MaketDeal();
                 Positions.Net(Deal.Model, Rates.Model);

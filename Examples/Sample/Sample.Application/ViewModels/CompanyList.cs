@@ -121,7 +121,7 @@ namespace Sample.Application.ViewModels
         {
             if (start)
             {
-                updateThread = new Thread(RunUpdate) { Name = RangeUpdator.NameOfAsynUpdateThread, IsBackground = true };
+                updateThread = new Thread(RunUpdate) { Name = "ExcelMvcAsynUpdateThread", IsBackground = true };
                 stopEvent = new ManualResetEvent(false);
                 updateThread.Start(settings);
             }
