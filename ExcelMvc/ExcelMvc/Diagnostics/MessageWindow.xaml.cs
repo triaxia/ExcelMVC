@@ -5,6 +5,7 @@
     using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Input;
+    using Views;
 
     /// <summary>
     /// Implements a visual sink for exception and information messages
@@ -19,7 +20,7 @@
             Closing += MessageWindow_Closing;
         }
 
-        #endregion 
+        #endregion
 
         #region Properties
         private static MessageWindow Instance { get; set; }
@@ -34,16 +35,19 @@
         #region Methods
 
         /// <summary>
-        /// Creates and shows the singleton
+        /// Creates and shows to the status window
         /// </summary>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void ShowInstance()
         {
-            if (Instance == null)
-                Instance = new MessageWindow();
+            App.Instance.MainWindow.Post(state =>
+            {
+                if (Instance == null)
+                    Instance = new MessageWindow();
 
-            // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
-            Instance.Show();
+                // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
+                Instance.Show();
+            }, null);
         }
 
         /// <summary>
@@ -52,41 +56,53 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void HideInstance()
         {
-            if (Instance != null)
-                Instance.Hide();
+            App.Instance.MainWindow.Post(state =>
+            {
+                if (Instance != null)
+                    Instance.Hide();
+            }, null);
         }
 
         /// <summary>
-        /// Adds an exception to the singleton (only if it has been created by the ShowInstane method)
+        /// Adds an exception to the status window
         /// </summary>
         /// <param name="ex">Exception to be addded</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddErrorLine(Exception ex)
         {
-            CreateInstance();
-            Instance.Model.AddErrorLine(ex);
+            App.Instance.MainWindow.Post(state =>
+            {
+                CreateInstance();
+                Instance.Model.AddErrorLine((Exception)state);
+            }, ex);
         }
 
         /// <summary>
-        /// Adds an error to the singleton
+        /// Adds an error to  to the status window
         /// </summary>
         /// <param name="error">Error to be added</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddErrorLine(string error)
         {
-            CreateInstance();
-            Instance.Model.AddErrorLine(error);
+            App.Instance.MainWindow.Post(state =>
+            {
+                CreateInstance();
+                Instance.Model.AddErrorLine((string)state);
+            }, error);
         }
 
         /// <summary>
-        /// Adds a message to the singleton
+        /// Adds a message to  to the status window
         /// </summary>
         /// <param name="message">Message to be added</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddInfoLine(string message)
         {
-            CreateInstance();
-            Instance.Model.AddInfoLine(message);
+            App.Instance.MainWindow.Post(state =>
+            {
+                CreateInstance();
+                Instance.Model.AddInfoLine(message);
+            }, message);
         }
 
         private static void CreateInstance()

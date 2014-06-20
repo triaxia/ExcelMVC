@@ -37,6 +37,8 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Views
 {
     using System;
+    using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
@@ -48,7 +50,9 @@ namespace ExcelMvc.Views
         #region Fields
 
         private static readonly uint AsyncUpdateMsg;
-
+        private static readonly Dictionary<int, Action<object>> Actions = new Dictionary<int, Action<object>>();
+        private static readonly Dictionary<int, object> States = new Dictionary<int, object>();
+    
         #endregion Fields
 
         #region Constructors
@@ -91,27 +95,49 @@ namespace ExcelMvc.Views
 
         #region Methods
 
+
         /// <summary>
-        /// Posts an async update message
+        /// Performs an Asnc action
         /// </summary>
-        public void PostAsyncUpdate()
+        /// <param name="action">Action to be executed</param>
+        /// <param name="state">State object</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void Post(Action<object> action, object state)
         {
-            PostMessage(Handle, (int)AsyncUpdateMsg, 0, 0);
+            var key = Actions.Count;
+            Actions[key] = action;
+            States[key] = state;
+            PostMessage(Handle, (int)AsyncUpdateMsg, key, 0);
         }
 
         protected override void WndProc(ref Message m)
         {
-            const int WmDestroy = 0x0002;
-            if (m.Msg == WmDestroy)
+            const int wmDestroy = 0x0002;
+            if (m.Msg == wmDestroy)
             {
                 Destroyed(this, new EventArgs());
             }
             else if (m.Msg == AsyncUpdateMsg)
             {
+                Act((int)m.WParam);
                 return;
             }
 
             base.WndProc(ref m);
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void Act(int key)
+        {
+            try
+            {
+                Actions[key](States[key]);
+            }
+            finally
+            {
+                Actions.Remove(key);
+                States.Remove(key);
+            }
         }
 
         [DllImport("user32.dll")]
