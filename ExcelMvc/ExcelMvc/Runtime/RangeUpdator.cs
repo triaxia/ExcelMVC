@@ -74,9 +74,9 @@ namespace ExcelMvc.Runtime
             get { return LazyInstance.Value; }
         }
 
-        public static string NameOfAsynUpdateThread
+        internal static string NameOfAsynUpdateThread
         {
-            get { return "AsynUodateThread"; }
+            get { return "ExcelMvcAsynUpdateThread"; }
         }
 
         private Thread Worker
