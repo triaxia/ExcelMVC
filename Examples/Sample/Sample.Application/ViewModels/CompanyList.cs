@@ -41,8 +41,6 @@ namespace Sample.Application.ViewModels
     using System.Collections.Specialized;
     using System.Linq;
     using System.Threading;
-
-    using ExcelMvc.Runtime;
     using Models;
 
     public class CompanyList : List<Company>, INotifyCollectionChanged

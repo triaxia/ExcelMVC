@@ -15,7 +15,7 @@ namespace SpotTrading.BusinessModels
 
         public void Net(Deal deal, ExchangeRates rates)
         {
-            if (Ccy1 == null)
+            if (string.IsNullOrEmpty(Ccy1))
             {
                 Ccy1 = deal.BuyCcy;
                 Ccy2 = deal.SellCcy;
@@ -43,6 +43,15 @@ namespace SpotTrading.BusinessModels
 
             BaseAmount = baseConversiion(Ccy1, Amount1);
             BaseAmount += baseConversiion(Ccy2, Amount2);
+        }
+
+        public void Clear()
+        {
+            Ccy1 = "";
+            Ccy2 = "";
+            Amount1 = 0;
+            Amount2 = 0;
+            BaseAmount = 0;
         }
     }
 }

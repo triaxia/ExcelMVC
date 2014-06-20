@@ -37,9 +37,14 @@ namespace SpotTrading.ViewModels
             };
 
             // position table
-            var positions = new ViewModelPositions();
-            book.Find("ExcelMvc.Table.Positions").Model = positions;
-            book.FindCommand("ExcelMvc.Command.Reset").Clicked += (x, y) => positions.Reset();
+            var tblPositions = (Table)book.Find("ExcelMvc.Table.Positions");
+            var positions = new ViewModelPositions(tblPositions.MaxItemsToBind);
+            tblPositions.Model = positions;
+            book.FindCommand("ExcelMvc.Command.Reset").Clicked += (x, y) =>
+            {
+                positions.Reset();
+                tblPositions.Model = positions;
+            };
 
             // manual deal command
             book.FindCommand("ExcelMvc.Command.ManualDeal").Model = new CmdModelManualDeal(deal, positions, rates);

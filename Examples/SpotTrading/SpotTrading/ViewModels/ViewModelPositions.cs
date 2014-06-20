@@ -9,31 +9,23 @@
     {
         public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };
 
-        public void Net(Deal deal, ExchangeRates rates)
+        public ViewModelPositions(int count)
         {
-            var item = this.FirstOrDefault(x => CcyPair.IsMatched(deal.BuyCcy, deal.SellCcy, x.Model.Ccy1, x.Model.Ccy2));
-            if (item == null)
-            {
-                item = new ViewModelPosition(new Position());
-                item.Net(deal, rates, false);
-                Add(item);
-                RaiseChanged();
-            }
-            else
-            {
-                item.Net(deal, rates, true);
-            }
+            for (int idx = 0; idx < count; idx++)
+                Add(new ViewModelPosition(new Position {Ccy1 = "", Ccy2 = ""}));
         }
 
-        public void RaiseChanged()
+        public void Net(Deal deal, ExchangeRates rates)
         {
-            CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            var item = this.FirstOrDefault(x => CcyPair.IsMatched(deal.BuyCcy, deal.SellCcy, x.Model.Ccy1, x.Model.Ccy2))
+                       ?? this.FirstOrDefault(x => x.Model.Ccy1 == "");
+            item.Net(deal, rates);
         }
 
         public void Reset()
         {
-            Clear();
-            RaiseChanged();
+            foreach (var item in this)
+                item.Model.Clear();
         }
     }
 }

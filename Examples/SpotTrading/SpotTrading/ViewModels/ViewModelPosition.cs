@@ -14,15 +14,23 @@
             Model = model;
         }
 
-        public void Net(Deal deal, ExchangeRates rates, bool raiseChanged)
+        public void Net(Deal deal, ExchangeRates rates)
         {
+            bool everything = string.IsNullOrEmpty(Model.Ccy1);
             Model.Net(deal, rates);
-            if (raiseChanged)
+            RaiseChanged(everything);
+        }
+
+        public void RaiseChanged(bool everything)
+        {
+            if (everything)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("Model.Amount1"));
-                PropertyChanged(this, new PropertyChangedEventArgs("Model.Amount2"));
-                PropertyChanged(this, new PropertyChangedEventArgs("Model.BaseAmount"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Model.Ccy1"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Model.Ccy2"));
             }
+            PropertyChanged(this, new PropertyChangedEventArgs("Model.Amount1"));
+            PropertyChanged(this, new PropertyChangedEventArgs("Model.Amount2"));
+            PropertyChanged(this, new PropertyChangedEventArgs("Model.BaseAmount"));
         }
     }
 }
