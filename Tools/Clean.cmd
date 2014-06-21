@@ -5,7 +5,8 @@ pushd .
 
 cd "%~dp0"
 
-call :loop "%cd%"
+call :loop "%cd%\..\ExcelMvc"
+call :loop "%cd%\..\Examples"
 
 popd
 goto :eof
@@ -15,6 +16,7 @@ goto :eof
 pushd .
 cd "%~1"
 
+if exist "*.sdf" del /Q *.vsmdi
 if exist "*.vsmdi" del /Q *.vsmdi
 if exist "*.vspscc" del /Q *.vspscc
 if exist "*.vssscc" del /Q *.vssscc
