@@ -46,7 +46,7 @@ namespace ExcelMvc.Runtime
     /// <summary>
     /// Encapsulates Range updating functions
     /// </summary>
-    public class RangeUpdator
+    internal class RangeUpdator
     {
         #region Fields
 
@@ -106,6 +106,7 @@ namespace ExcelMvc.Runtime
                     RowId = rowId,
                     RowCount = rowCount,
                     Rows = rows,
+                    RowOffset = int.Parse(rowId),
                     ColumnOffset = columnOffset,
                     Columns = columns,
                     Value = value
@@ -125,6 +126,7 @@ namespace ExcelMvc.Runtime
                     ColCount = colCount,
                     Rows = rows,
                     RowOffset = rowOffset,
+                    ColumnOffset = int.Parse(colId),
                     Columns = columns,
                     Value = value
                 });
@@ -134,14 +136,26 @@ namespace ExcelMvc.Runtime
 
         private static int ColOffsetFromColId(Range start, int count, string colId)
         {
-            var row = start.MakeRange(0, 1, 0, count);
-            for (var idx = 0; idx < count; idx++)
+            var offset = -1;
+            if (start == null)
             {
-                if (((Range)row.Cells[1, idx + 1]).ID == colId)
-                    return idx;
+                // columns are assumed not shuffled after binding
+                offset = int.Parse(colId);
             }
+            else
+            {
+                // this can be very slow (needs a better way)
+                var row = start.MakeRange(0, 1, 0, count);
+                for (var idx = 0; idx < count; idx++)
+                {
+                    if (((Range)row.Cells[1, idx + 1]).ID != colId)
+                        continue;
 
-            return -1;
+                    offset = idx;
+                    break;
+                }
+            }
+            return offset;
         }
 
         private static bool IsAsyncUpdateThread()
@@ -152,14 +166,26 @@ namespace ExcelMvc.Runtime
 
         private static int RowOffsetFromRowId(Range start, int count, string rowId)
         {
-            var column = start.MakeRange(0, count, 0, 1);
-            for (var idx = 0; idx < count; idx++)
+            var offset = -1;
+            if (start == null)
             {
-                if (((Range)column.Cells[idx + 1, 1]).ID == rowId)
-                    return idx;
+                // rows are assumed not sorted after binding
+                offset = int.Parse(rowId);
             }
+            else
+            {
+                // this can be very slow (needs a better way)
+                var column = start.MakeRange(0, count, 0, 1);
+                for (var idx = 0; idx < count; idx++)
+                {
+                    if (((Range)column.Cells[idx + 1, 1]).ID != rowId)
+                        continue;
 
-            return -1;
+                    offset = idx;
+                    break;
+                }
+            }
+            return offset;
         }
 
         private static bool Update(Item item)

@@ -198,7 +198,7 @@ namespace ExcelMvc.Views
                 () =>
                 {
                     UnhookViewEvents();
-                    UpdateView(string.Empty);
+                    UpdateView("*");
                     BindValidationLists(1, ViewOrientation.Portrait);
                 },
                 HookViewEvents);
