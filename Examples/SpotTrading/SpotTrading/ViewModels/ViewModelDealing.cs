@@ -36,7 +36,7 @@
 
         private void Update(object state)
         {
-            while (!AutoUpDateEvent.WaitOne(3000))
+            while (!AutoUpDateEvent.WaitOne(2000))
             {
                 MaketDeal();
                 Positions.Net(Deal.Model, Rates.Model);

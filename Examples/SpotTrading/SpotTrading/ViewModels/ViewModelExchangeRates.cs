@@ -36,7 +36,7 @@
         private void Update(object state)
         {
             var random = new Random();
-            while (!AutoUpDateEvent.WaitOne(3000))
+            while (!AutoUpDateEvent.WaitOne(2000))
             {
                 var idx = (int)(random.NextDouble() * Count);
                 if (idx >= Count) idx--;
