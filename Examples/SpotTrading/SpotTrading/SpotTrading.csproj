@@ -89,12 +89,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\ExcelMvc\ExcelMvc\ExcelMvc.csproj">
-      <Project>{04ab5d30-781f-4cb1-820a-4a558aee5b2c}</Project>
-      <Name>ExcelMvc</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
