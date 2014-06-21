@@ -15,6 +15,11 @@
         None,
 
         /// <summary>
+        /// Matrix
+        /// </summary>
+        Matrix,
+
+        /// <summary>
         /// Form
         /// </summary>
         Form,

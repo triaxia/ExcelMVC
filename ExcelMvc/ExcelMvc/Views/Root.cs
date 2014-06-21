@@ -95,7 +95,6 @@ namespace ExcelMvc.Views
 
         #region Methods
 
-
         /// <summary>
         /// Performs an Asnc action
         /// </summary>
@@ -110,10 +109,14 @@ namespace ExcelMvc.Views
             PostMessage(Handle, (int)AsyncUpdateMsg, key, 0);
         }
 
+        /// <summary>
+        /// Windows proc
+        /// </summary>
+        /// <param name="m">Message instance</param>
         protected override void WndProc(ref Message m)
         {
-            const int wmDestroy = 0x0002;
-            if (m.Msg == wmDestroy)
+            const int WmDestroy = 0x0002;
+            if (m.Msg == WmDestroy)
             {
                 Destroyed(this, new EventArgs());
             }
@@ -125,6 +128,12 @@ namespace ExcelMvc.Views
 
             base.WndProc(ref m);
         }
+
+        [DllImport("user32.dll")]
+        private static extern int PostMessage(IntPtr hwnd, int msg, int wParam, int lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern uint RegisterWindowMessage(string lpProcName);
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         private void Act(int key)
@@ -139,12 +148,6 @@ namespace ExcelMvc.Views
                 States.Remove(key);
             }
         }
-
-        [DllImport("user32.dll")]
-        private static extern int PostMessage(IntPtr hwnd, int msg, int wParam, int lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern uint RegisterWindowMessage(string lpProcName);
 
         #endregion Methods
     }

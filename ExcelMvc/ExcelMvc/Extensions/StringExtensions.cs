@@ -47,6 +47,12 @@ namespace ExcelMvc.Extensions
     {
         #region Methods
 
+        /// <summary>
+        /// Compases two string with OrdinalIgnoreCase 
+        /// </summary>
+        /// <param name="lhs">left string</param>
+        /// <param name="rhs">right string</param>
+        /// <returns>see string.Compare </returns>
         public static int CompareOrdinalIgnoreCase(this string lhs, string rhs)
         {
             return string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase);

@@ -159,17 +159,21 @@ namespace ExcelMvc.Views
         #region Methods
 
         /// <summary>
-        /// 
+        /// Disposes resources
         /// </summary>
-        /// <param name="reserved"></param>
-        /// <param name="prot"></param>
-        /// <returns></returns>
-        [DllImport("ole32.dll")]
-        private static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
-
         public override void Dispose()
         {
             Underlying = null;
+        }
+
+        /// <summary>
+        /// Collects bindings and rebinds the view
+        /// </summary>
+        /// <param name="recursive"></param>
+        public override void Rebind(bool recursive)
+        {
+            foreach (var view in Children)
+                view.Rebind(recursive);
         }
 
         /// <summary>
@@ -272,14 +276,13 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Collects bindings and rebinds the view
+        /// 
         /// </summary>
-        /// <param name="recursive"></param>
-        public override void Rebind(bool recursive)
-        {
-            foreach (var view in Children)
-                view.Rebind(recursive);
-        }
+        /// <param name="reserved"></param>
+        /// <param name="prot"></param>
+        /// <returns></returns>
+        [DllImport("ole32.dll")]
+        private static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
 
         private static Application Find()
         {
@@ -398,6 +401,7 @@ namespace ExcelMvc.Views
                 OnBindingFailed(new BindingFailedEventArgs(this, ex));
             }
         }
+
         #endregion Methods
     }
 }

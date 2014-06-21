@@ -2,7 +2,7 @@
 {
     #region Enumerations
 
-    public enum ViewOrientation
+    internal enum ViewOrientation
     {
         Portrait,
         Landscape

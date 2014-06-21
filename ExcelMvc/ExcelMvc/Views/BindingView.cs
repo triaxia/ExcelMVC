@@ -95,11 +95,17 @@ namespace ExcelMvc.Views
             protected set;
         }
 
+        /// <summary>
+        /// Gets the view id
+        /// </summary>
         public override string Id
         {
             get { return Name; }
         }
 
+        /// <summary>
+        /// Gets the view name
+        /// </summary>
         public override string Name
         {
             get { return name; }
@@ -127,8 +133,7 @@ namespace ExcelMvc.Views
         /// Unbinds validation lists
         /// </summary>
         /// <param name="numberItems">Number of rows to unbind</param>
-        /// <param name="orientation"></param>
-        protected void BindValidationLists(int numberItems, ViewOrientation orientation)
+        protected void BindValidationLists(int numberItems)
         {
             foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
             {
@@ -143,8 +148,7 @@ namespace ExcelMvc.Views
         /// Unbinds validation lists
         /// </summary>
         /// <param name="numberItems">Number of rows to unbind</param>
-        /// <param name="orientation"></param>
-        protected void UnbindValidationLists(int numberItems, ViewOrientation orientation)
+        protected void UnbindValidationLists(int numberItems)
         {
             foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
             {

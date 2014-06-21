@@ -1608,7 +1608,7 @@ BOOL XLOper12ToXLOper(LPXLOPER12 pxloper12, LPXLOPER pxloper)
 		break;
 	case xltypeBool:
 #ifdef __cplusplus
-		pxloper->val.xbool = pxloper12->val.xbool;
+		pxloper->val.xbool =(WORD) pxloper12->val.xbool;
 #else		
 		pxloper->val.bool = pxloper12->val.xbool;
 #endif
@@ -1789,8 +1789,8 @@ BOOL XLOper12ToXLOper(LPXLOPER12 pxloper12, LPXLOPER pxloper)
 					else
 					{
 						pxloper->val.array.lparray = rgxloperConv;
-						pxloper->val.array.rows = crw;
-						pxloper->val.array.columns = ccol;
+						pxloper->val.array.rows = (WORD) crw;
+						pxloper->val.array.columns = (WORD) ccol;
 					}
 				}
 			}

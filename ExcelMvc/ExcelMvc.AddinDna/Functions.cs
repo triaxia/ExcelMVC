@@ -47,30 +47,50 @@ namespace ExcelMvc.AddinDna
     {
         #region Methods
 
+        /// <summary>
+        /// Attaches the current Excel session to ExcelMVC
+        /// </summary>
+        /// <returns></returns>
         [ExcelFunction(Description = "Attach Excel to ExcelMvc", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcAttach")]
         public static object ExcelMvcAttach()
         {
             return ActionExtensions.Wrap(() => Interface.Attach(null)) ?? (object)true;
         }
 
+        /// <summary>
+        /// Detaches the current Excel session from ExcelMVC
+        /// </summary>
+        /// <returns></returns>
         [ExcelFunction(Description = "Detach Excel from ExcelMvc", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcDetach")]
         public static object ExcelMvcDetach()
         {
             return ActionExtensions.Wrap(() => Interface.Detach()) ?? (object)true;
         }
 
+        /// <summary>
+        /// Shows the ExcelMVC status window
+        /// </summary>
+        /// <returns></returns>
         [ExcelFunction(Description = "Shows the ExcelMvc window", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcShow")]
         public static object ExcelMvcShow()
         {
             return ActionExtensions.Wrap(() => Interface.Show()) ?? (object)true;
         }
 
+        /// <summary>
+        /// Hides the ExcelMVC status window
+        /// </summary>
+        /// <returns></returns>
         [ExcelFunction(Description = "Hides the ExcelMvc window", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcHide")]
         public static object ExcelMvcHide()
         {
             return ActionExtensions.Wrap(() => Interface.Hide()) ?? (object)true;
         }
 
+        /// <summary>
+        /// Fires the Clicked event on the current command
+        /// </summary>
+        /// <returns></returns>
         [ExcelFunction(Description = "Called by a command", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcRunCommandAction", IsHidden = true)]
         public static void ExcelMvcRunCommandAction()
         {

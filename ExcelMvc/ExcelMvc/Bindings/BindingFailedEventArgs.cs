@@ -40,12 +40,17 @@ namespace ExcelMvc.Bindings
     using Views;
 
     /// <summary>
-    /// 
+    /// Binding exception EventArgs
     /// </summary>
     public class BindingFailedEventArgs : EventArgs
     {
         #region Constructors
 
+        /// <summary>
+        /// Initialises an instance of BindingFailedEventArgs
+        /// </summary>
+        /// <param name="view">View</param>
+        /// <param name="exception">Exception</param>
         public BindingFailedEventArgs(View view, Exception exception)
         {
             View = view;
@@ -56,11 +61,17 @@ namespace ExcelMvc.Bindings
 
         #region Properties
 
+        /// <summary>
+        /// Gets the exception object
+        /// </summary>
         public Exception Exception
         {
             get; private set;
         }
 
+        /// <summary>
+        /// Gets the view
+        /// </summary>
         public View View
         {
             get; private set;

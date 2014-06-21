@@ -110,15 +110,18 @@ namespace ExcelMvc.Views
             get { return Underlying.Name; }
         }
 
+        /// <summary>
+        /// Gets the view type
+        /// </summary>
         public override ViewType Type
         {
             get { return ViewType.Book; }
         }
 
         /// <summary>
-        /// The underlying Excel Workbook
+        /// Underlying Excel Workbook
         /// </summary>
-        public Workbook Underlying
+        internal Workbook Underlying
         {
             get; private set;
         }
@@ -127,6 +130,9 @@ namespace ExcelMvc.Views
 
         #region Methods
 
+        /// <summary>
+        /// Disposes resources
+        /// </summary>
         public override void Dispose()
         {
             ExecuteBinding(() =>
@@ -141,6 +147,17 @@ namespace ExcelMvc.Views
                     item.Dispose();
                 sheets.Clear();
             });
+        }
+
+        /// <summary>
+        /// Collects bindings and rebinds the view
+        /// </summary>
+        /// <param name="recursive"></param>
+        public override void Rebind(bool recursive)
+        {
+            var bindings = new BindingCollector(Underlying).Process();
+            foreach (var view in Children)
+                view.Rebind(bindings, recursive);
         }
 
         /// <summary>
@@ -179,17 +196,6 @@ namespace ExcelMvc.Views
                 Underlying.SheetActivate += Underlying_SheetActivate;
                 Underlying.SheetDeactivate += Underlying_SheetDeactivate;
             });
-        }
-
-        /// <summary>
-        /// Collects bindings and rebinds the view
-        /// </summary>
-        /// <param name="recursive"></param>
-        public override void Rebind(bool recursive)
-        {
-            var bindings = new BindingCollector(Underlying).Process();
-            foreach (var view in Children)
-                view.Rebind(bindings, recursive);
         }
 
         private void Underlying_SheetActivate(object sh)

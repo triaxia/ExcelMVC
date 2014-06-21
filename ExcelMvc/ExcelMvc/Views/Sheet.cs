@@ -113,19 +113,25 @@ namespace ExcelMvc.Views
             get { return commands.Values.ToList(); }
         }
 
+        /// <summary>
+        /// Gets the view id
+        /// </summary>
         public override string Id
         {
             get { return Name; }
         }
 
         /// <summary>
-        /// Gets the workspace name
+        /// Gets the view name
         /// </summary>
         public override string Name
         {
             get { return Underlying.Name; }
         }
 
+        /// <summary>
+        /// Gets the view type
+        /// </summary>
         public override ViewType Type
         {
             get { return ViewType.Sheet; }
@@ -134,7 +140,7 @@ namespace ExcelMvc.Views
         /// <summary>
         /// The underlying Excel sheet
         /// </summary>
-        public Worksheet Underlying
+        internal Worksheet Underlying
         {
             get; private set;
         }
@@ -143,6 +149,9 @@ namespace ExcelMvc.Views
 
         #region Methods
 
+        /// <summary>
+        /// Disposes resources
+        /// </summary>
         public override void Dispose()
         {
             foreach (var cmd in commands.Values)

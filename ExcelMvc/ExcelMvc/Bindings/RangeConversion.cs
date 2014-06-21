@@ -45,7 +45,7 @@ namespace ExcelMvc.Bindings
     /// <summary>
     /// Wraps commonly used range conversion functions
     /// </summary>
-    public static class RangeConversion
+    internal static class RangeConversion
     {
         #region Fields
 

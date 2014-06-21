@@ -81,7 +81,8 @@ namespace ExcelMvc.Runtime
 
         private Thread Worker
         {
-            get; set;
+            get;
+            set;
         }
 
         #endregion Properties
@@ -155,6 +156,7 @@ namespace ExcelMvc.Runtime
                     break;
                 }
             }
+
             return offset;
         }
 
@@ -185,6 +187,7 @@ namespace ExcelMvc.Runtime
                     break;
                 }
             }
+
             return offset;
         }
 
@@ -284,62 +287,74 @@ namespace ExcelMvc.Runtime
 
             public int ColCount
             {
-                get; set;
+                get;
+                set;
             }
 
             public string ColId
             {
-                get; set;
+                get;
+                set;
             }
 
             public Range ColIdStart
             {
-                get; set;
+                get;
+                set;
             }
 
             public int ColumnOffset
             {
-                get; set;
+                get;
+                set;
             }
 
             public int Columns
             {
-                get; set;
+                get;
+                set;
             }
 
             public Range Range
             {
-                get; set;
+                get;
+                set;
             }
 
             public int RowCount
             {
-                get; set;
+                get;
+                set;
             }
 
             public string RowId
             {
-                get; set;
+                get;
+                set;
             }
 
             public Range RowIdStart
             {
-                get; set;
+                get;
+                set;
             }
 
             public int RowOffset
             {
-                get; set;
+                get;
+                set;
             }
 
             public int Rows
             {
-                get; set;
+                get;
+                set;
             }
 
             public object Value
             {
-                get; set;
+                get;
+                set;
             }
 
             #endregion Properties

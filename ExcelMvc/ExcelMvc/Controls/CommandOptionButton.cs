@@ -42,7 +42,7 @@ namespace ExcelMvc.Controls
     using Microsoft.Office.Interop.Excel;
     using Views;
 
-    public class CommandOptionButton : Command
+    internal class CommandOptionButton : Command
     {
         #region Constructors
 

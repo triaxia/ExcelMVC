@@ -45,7 +45,7 @@ namespace ExcelMvc.Controls
     /// <summary>
     /// 
     /// </summary>
-    public class CommandShape : Command
+    internal class CommandShape : Command
     {
         #region Fields
 

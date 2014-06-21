@@ -43,7 +43,7 @@ namespace ExcelMvc.Controls
     using Microsoft.Office.Interop.Excel;
     using Views;
 
-    public class CommandDropDown : Command
+    internal class CommandDropDown : Command
     {
         #region Constructors
 

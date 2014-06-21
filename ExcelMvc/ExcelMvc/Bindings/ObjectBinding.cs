@@ -44,6 +44,11 @@ namespace ExcelMvc.Bindings
 
     #region Delegates
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     public delegate void BindingFailedHandler(object sender, BindingFailedEventArgs args);
 
     #endregion Delegates
@@ -51,7 +56,7 @@ namespace ExcelMvc.Bindings
     /// <summary>
     /// Encapsulates binding functions between View models and Views
     /// </summary>
-    public static class ObjectBinding
+    internal static class ObjectBinding
     {
         #region Fields
 
@@ -88,6 +93,11 @@ namespace ExcelMvc.Bindings
             return to;
         }
 
+        /// <summary>
+        /// Gets a list of Get property names
+        /// </summary>
+        /// <param name="value">Object to be Interrogated</param>
+        /// <returns>a list of Get property names</returns>
         public static IEnumerable<string> GetGetPropertyNames(object value)
         {
             const BindingFlags Flags = BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.Public;

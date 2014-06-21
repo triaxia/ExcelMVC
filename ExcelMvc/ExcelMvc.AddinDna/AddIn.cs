@@ -41,15 +41,24 @@ namespace ExcelMvc.AddinDna
     using ExcelDna.Integration;
     using Runtime;
 
+    /// <summary>
+    /// Captures Addin Open and Close events
+    /// </summary>
     public class AddIn : IExcelAddIn
     {
         #region Methods
 
+        /// <summary>
+        /// Called when the DNA Addin is closed
+        /// </summary>
         public void AutoClose()
         {
             Interface.Detach();
         }
 
+        /// <summary>
+        /// Called when the DNA Addin is opened.
+        /// </summary>
         void IExcelAddIn.AutoOpen()
         {
             Interface.Attach(ExcelDnaUtil.Application);

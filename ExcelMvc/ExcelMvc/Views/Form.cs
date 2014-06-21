@@ -106,6 +106,9 @@ namespace ExcelMvc.Views
 
         #region Methods
 
+        /// <summary>
+        /// Disposes resources
+        /// </summary>
         public override void Dispose()
         {
             base.Model = null;
@@ -215,17 +218,19 @@ namespace ExcelMvc.Views
 
         private void UpdateView()
         {
-            ExecuteBinding(() =>
-            {
-                UnhookViewEvents();
-                UnhookModelEvents();
-                UpdateView("*");
-                BindValidationLists(1, ViewOrientation.Portrait);
-            }, () =>
-            {
-                HookViewEvents();
-                HookModelEvents();
-            });
+            ExecuteBinding(
+                () =>
+                {
+                    UnhookViewEvents();
+                    UnhookModelEvents();
+                    UpdateView("*");
+                    BindValidationLists(1);
+                }, 
+                () =>
+                {
+                    HookViewEvents();
+                    HookModelEvents();
+                });
         }
 
         private void UpdateView(string path)

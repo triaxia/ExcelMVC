@@ -40,14 +40,16 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void ShowInstance()
         {
-            App.Instance.MainWindow.Post(state =>
-            {
-                if (Instance == null)
-                    Instance = new MessageWindow();
+            App.Instance.MainWindow.Post(
+                state =>
+                {
+                    if (Instance == null)
+                        Instance = new MessageWindow();
 
-                // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
-                Instance.Show();
-            }, null);
+                    // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
+                    Instance.Show();
+                },
+                null);
         }
 
         /// <summary>
@@ -56,11 +58,13 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void HideInstance()
         {
-            App.Instance.MainWindow.Post(state =>
-            {
-                if (Instance != null)
-                    Instance.Hide();
-            }, null);
+            App.Instance.MainWindow.Post(
+                state =>
+                {
+                    if (Instance != null)
+                        Instance.Hide();
+                },
+                null);
         }
 
         /// <summary>
@@ -70,11 +74,13 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddErrorLine(Exception ex)
         {
-            App.Instance.MainWindow.Post(state =>
-            {
-                CreateInstance();
-                Instance.Model.AddErrorLine((Exception)state);
-            }, ex);
+            App.Instance.MainWindow.Post(
+                state =>
+                {
+                    CreateInstance();
+                    Instance.Model.AddErrorLine((Exception)state);
+                }, 
+                ex);
         }
 
         /// <summary>
@@ -84,11 +90,13 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddErrorLine(string error)
         {
-            App.Instance.MainWindow.Post(state =>
-            {
-                CreateInstance();
-                Instance.Model.AddErrorLine((string)state);
-            }, error);
+            App.Instance.MainWindow.Post(
+                state =>
+                {
+                    CreateInstance();
+                    Instance.Model.AddErrorLine((string)state);
+                },
+                error);
         }
 
         /// <summary>
@@ -98,11 +106,13 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddInfoLine(string message)
         {
-            App.Instance.MainWindow.Post(state =>
-            {
-                CreateInstance();
-                Instance.Model.AddInfoLine(message);
-            }, message);
+            App.Instance.MainWindow.Post(
+                state =>
+                {
+                    CreateInstance();
+                    Instance.Model.AddInfoLine((string)state);
+                }, 
+                message);
         }
 
         private static void CreateInstance()

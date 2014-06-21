@@ -48,8 +48,9 @@ namespace ExcelMvc.Runtime
     using Extensions;
 
     /// <summary>
-    /// Object factory
+    /// Generic object factory
     /// </summary>
+    /// <typeparam name="T">Type of object</typeparam>
     public static class ObjectFactory<T>
     {
         #region Properties

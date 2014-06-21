@@ -39,7 +39,7 @@ namespace ExcelMvc.Controls
     /// <summary>
     /// Defines the macro names used by ExcelMvc
     /// </summary>
-    public static class MacroNames
+    internal static class MacroNames
     {
         #region Fields
 

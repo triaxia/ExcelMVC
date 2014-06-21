@@ -147,6 +147,7 @@ namespace ExcelMvc.Views
             {
                 return orderingAllowed;
             }
+
             set
             {
                 if (value != orderingAllowed)
@@ -162,6 +163,9 @@ namespace ExcelMvc.Views
 
         #region Methods
 
+        /// <summary>
+        /// Disposes resources
+        /// </summary>
         public override void Dispose()
         {
             HookViewEvents(false);
@@ -667,22 +671,23 @@ namespace ExcelMvc.Views
 
         private void UpdateView(bool clearifnull)
         {
-            ExecuteBinding(() =>
-            {
-                HookViewEvents(false);
-                HookModelEvents();
-                HookItemsEvents(false);
-                UpdateViewEx(clearifnull);
-            },
-            () =>
-            {
-                if (Model != null)
+            ExecuteBinding(
+                () =>
                 {
-                    HookViewEvents(true);
+                    HookViewEvents(false);
                     HookModelEvents();
-                    HookItemsEvents(true);
-                }
-            });
+                    HookItemsEvents(false);
+                    UpdateViewEx(clearifnull);
+                },
+                () =>
+                {
+                    if (Model != null)
+                    {
+                        HookViewEvents(true);
+                        HookModelEvents();
+                        HookItemsEvents(true);
+                    }
+                });
         }
 
         private void UpdateViewEx(bool clearifnull)
@@ -718,14 +723,14 @@ namespace ExcelMvc.Views
             {
                 ClearView(groupBindings, numberItemsBound);
                 if (numberItemsBound > 0)
-                    UnbindValidationLists(numberItemsBound, Orientation);
+                    UnbindValidationLists(numberItemsBound);
             }
 
             if (newItems > 0)
             {
                 if (IsOrderingAllowed) AssignCategoryIds();
                 UpdateView(groupBindings, bindingValues, newItems);
-                BindValidationLists(newItems, Orientation);
+                BindValidationLists(newItems);
             }
         }
 

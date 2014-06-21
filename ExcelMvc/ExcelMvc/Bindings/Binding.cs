@@ -73,7 +73,7 @@ namespace ExcelMvc.Bindings
         }
 
         /// <summary>
-        /// End cell (null if no binding boundary limit)
+        /// End cell (null for no binding boundary limit)
         /// </summary>
         public Range EndCell
         {
@@ -106,14 +106,6 @@ namespace ExcelMvc.Bindings
         }
 
         /// <summary>
-        /// Gets and sets the View Type
-        /// </summary>
-        public ViewType Type
-        {
-            get; set;
-        }
-
-        /// <summary>
         /// Validation list address
         /// </summary>
         public string ValidationList
@@ -135,6 +127,15 @@ namespace ExcelMvc.Bindings
         internal string Name
         {
             get; set;
+        }
+
+        /// <summary>
+        /// Gets and sets the View Type
+        /// </summary>
+        internal ViewType Type
+        {
+            get;
+            set;
         }
 
         #endregion Properties

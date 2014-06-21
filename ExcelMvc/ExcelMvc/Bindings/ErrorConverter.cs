@@ -45,7 +45,7 @@ namespace ExcelMvc.Bindings
     /// <summary>
     /// Defines Excel errors
     /// </summary>
-    public enum ErrorCode
+    internal enum ErrorCode
     {
         ErrDiv0  = -2146826281,
         ErrNA    = -2146826246,
@@ -61,7 +61,7 @@ namespace ExcelMvc.Bindings
     /// <summary>
     /// Wraps commonly used Error conversion functions
     /// </summary>
-    public static class ErrorConverter
+    internal static class ErrorConverter
     {
         #region Methods
 

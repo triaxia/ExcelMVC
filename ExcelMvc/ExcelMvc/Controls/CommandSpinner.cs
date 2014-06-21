@@ -42,7 +42,7 @@ namespace ExcelMvc.Controls
     using Microsoft.Office.Interop.Excel;
     using Views;
 
-    public class CommandSpinner : Command
+    internal class CommandSpinner : Command
     {
         #region Constructors
 

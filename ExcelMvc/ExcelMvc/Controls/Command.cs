@@ -42,7 +42,7 @@ namespace ExcelMvc.Controls
     using Views;
 
     /// <summary>
-    /// Defines an abstract base class for Commands
+    /// Defines an abstract base class for a Command
     /// </summary>
     public abstract class Command : IDisposable
     {
@@ -83,7 +83,8 @@ namespace ExcelMvc.Controls
         /// </summary>
         public abstract string Caption
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -91,7 +92,8 @@ namespace ExcelMvc.Controls
         /// </summary>
         public View Host
         {
-            get; private set;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -99,7 +101,8 @@ namespace ExcelMvc.Controls
         /// </summary>
         public abstract bool IsEnabled
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -107,7 +110,8 @@ namespace ExcelMvc.Controls
         /// </summary>
         public string Name
         {
-            get; private set;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -115,7 +119,8 @@ namespace ExcelMvc.Controls
         /// </summary>
         public abstract object Value
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -153,6 +158,9 @@ namespace ExcelMvc.Controls
 
         #region Methods
 
+        /// <summary>
+        /// Disposes resources
+        /// </summary>
         public virtual void Dispose()
         {
             Host = null;
@@ -167,7 +175,7 @@ namespace ExcelMvc.Controls
         {
             Host.ExecuteBinding(() =>
             {
-                var args = new CommandEventArgs {Source = this};
+                var args = new CommandEventArgs { Source = this };
                 Clicked(this, args);
                 if (Model != null)
                     Model.Execute(args);
@@ -178,7 +186,7 @@ namespace ExcelMvc.Controls
         {
             Host.ExecuteBinding(() =>
             {
-                IsEnabled = Model.CanExecute(new CommandEventArgs {Source = this});
+                IsEnabled = Model.CanExecute(new CommandEventArgs { Source = this });
             });
         }
 

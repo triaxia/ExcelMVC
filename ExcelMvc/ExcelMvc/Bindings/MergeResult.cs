@@ -1,6 +1,6 @@
 ﻿namespace ExcelMvc.Bindings
 {
-    public struct MergeResult
+    internal struct MergeResult
     {
         #region Fields
 

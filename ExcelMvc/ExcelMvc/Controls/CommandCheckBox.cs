@@ -42,7 +42,7 @@ namespace ExcelMvc.Controls
     using Microsoft.Office.Interop.Excel;
     using Views;
 
-    public class CommandCheckBox : Command
+    internal class CommandCheckBox : Command
     {
         #region Constructors
 

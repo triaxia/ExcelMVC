@@ -148,7 +148,8 @@ namespace ExcelMvc.Views
         /// </summary>
         public virtual object Model
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -164,7 +165,8 @@ namespace ExcelMvc.Views
         /// </summary>
         public View Parent
         {
-            get; protected set;
+            get;
+            protected set;
         }
 
         /// <summary>
@@ -202,6 +204,9 @@ namespace ExcelMvc.Views
 
         #region Methods
 
+        /// <summary>
+        /// Disposes resources
+        /// </summary>
         public abstract void Dispose();
 
         /// <summary>
@@ -221,9 +226,10 @@ namespace ExcelMvc.Views
         {
             if (Parent == null)
                 return null;
-            if (Parent.GetType() == typeof (T))
-                return (T) Parent;
-            return Parent.FindAncestor<T>();
+            if (Parent.GetType() == typeof(T))
+                return (T)Parent;
+            else
+                return Parent.FindAncestor<T>();
         }
 
         /// <summary>
@@ -324,7 +330,7 @@ namespace ExcelMvc.Views
         {
             var commandNameNoPrefix = CommandFactory.RemovePrefix(name);
             if (HookClickedAll(handler, commandNameNoPrefix, isHook) == 0)
-               OnBindingFailed(new BindingFailedEventArgs(this, new Exception(string.Format(Resource.ErrorNoCommandNameFound, name, Name))));
+                OnBindingFailed(new BindingFailedEventArgs(this, new Exception(string.Format(Resource.ErrorNoCommandNameFound, name, Name))));
         }
 
         /// <summary>
@@ -417,7 +423,7 @@ namespace ExcelMvc.Views
         /// <param name="recursive"></param>
         public virtual void Rebind(bool recursive)
         {
-            var book = this is Book ? (Book) this : FindAncestor<Book>();
+            var book = this is Book ? (Book)this : FindAncestor<Book>();
             if (book == null)
                 return;
 
@@ -429,21 +435,21 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Rebinds the view with bindings supplied
-        /// </summary>
-        /// <param name="bindings">Bindings</param>
-        /// <param name="recursive">true to rebind child views</param>
-        internal virtual void Rebind(Dictionary<Worksheet, List<Binding>> bindings, bool recursive)
-        {
-        }
-
-        /// <summary>
         /// Fires the Unprotecting event. If the view is password protected, return the password in args.State
         /// </summary>
         /// <param name="args">Event args</param>
         public void OnUnprotecting(ViewEventArgs args)
         {
             Unprotecting(this, args);
+        }
+
+        /// <summary>
+        /// Rebinds the view with bindings supplied
+        /// </summary>
+        /// <param name="bindings">Bindings</param>
+        /// <param name="recursive">true to rebind child views</param>
+        internal virtual void Rebind(Dictionary<Worksheet, List<Binding>> bindings, bool recursive)
+        {
         }
 
         /// <summary>
