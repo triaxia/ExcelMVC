@@ -16,7 +16,7 @@ goto :eof
 pushd .
 cd "%~1"
 
-if exist "*.sdf" del /Q *.vsmdi
+if exist "*.sdf" del /Q *.sdf
 if exist "*.vsmdi" del /Q *.vsmdi
 if exist "*.vspscc" del /Q *.vspscc
 if exist "*.vssscc" del /Q *.vssscc
