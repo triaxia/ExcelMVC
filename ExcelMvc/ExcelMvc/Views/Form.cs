@@ -41,6 +41,7 @@ namespace ExcelMvc.Views
     using System.Linq;
 
     using Bindings;
+    using Extensions;
     using Microsoft.Office.Interop.Excel;
     using Runtime;
 
@@ -80,7 +81,6 @@ namespace ExcelMvc.Views
             set
             {
                 base.Model = value;
-                HookModelEvents();
                 UpdateView();
                 OneWayToSource();
             }
@@ -113,6 +113,26 @@ namespace ExcelMvc.Views
             UnhookViewEvents();
         }
 
+        /// <summary>
+        /// Rebinds the view with bindings supplied
+        /// </summary>
+        /// <param name="bindings"></param>
+        /// <param name="recursive"></param>
+        internal override void Rebind(Dictionary<Worksheet, List<Binding>> bindings, bool recursive)
+        {
+            List<Binding> sheetBindings;
+            if (bindings.TryGetValue(((Sheet)Parent).Underlying, out sheetBindings))
+            {
+                // clear current view
+                var current = Model;
+                Model = null;
+                
+                // rebind
+                Bindings = sheetBindings.Where(x => x.Type == Type && x.Name.CompareOrdinalIgnoreCase(Name) == 0).ToList();
+                Model = current;
+            }
+        }
+
         private void HookModelEvents()
         {
             UnhookModelEvents();
@@ -123,6 +143,7 @@ namespace ExcelMvc.Views
 
         private void HookViewEvents()
         {
+            UnhookViewEvents();
             var sheet = (Sheet)Parent;
             sheet.Underlying.Change += Underlying_Change;
             sheet.Underlying.SelectionChange += Underlying_SelectionChange;
@@ -177,48 +198,51 @@ namespace ExcelMvc.Views
         private void UpdateObject(Binding binding, Range target)
         {
             ExecuteBinding(() =>
+            {
+                var range = binding.StartCell;
+                var changed = target.Application.Intersect(range, target);
+                if (changed != null)
                 {
-                    var range = binding.StartCell;
-                    var changed = target.Application.Intersect(range, target);
-                    if (changed != null)
+                    var value = RangeConversion.MergeChangedValue(changed, range, ObjectBinding.GetPropertyValue(Model, binding));
+                    if (value.Changed)
                     {
-                        var value = RangeConversion.MergeChangedValue(changed, range, ObjectBinding.GetPropertyValue(Model, binding));
-                        if (value.Changed)
-                        {
-                            ObjectBinding.SetPropertyValue(Model, binding, value.Value);
-                            OnObjectChanged(new[] { Model }, new[] { binding.Path });
-                        }
+                        ObjectBinding.SetPropertyValue(Model, binding, value.Value);
+                        OnObjectChanged(new[] { Model }, new[] { binding.Path });
                     }
-                });
+                }
+            });
         }
 
         private void UpdateView()
         {
-            ExecuteBinding(
-                () =>
-                {
-                    UnhookViewEvents();
-                    UpdateView("*");
-                    BindValidationLists(1, ViewOrientation.Portrait);
-                },
-                HookViewEvents);
+            ExecuteBinding(() =>
+            {
+                UnhookViewEvents();
+                UnhookModelEvents();
+                UpdateView("*");
+                BindValidationLists(1, ViewOrientation.Portrait);
+            }, () =>
+            {
+                HookViewEvents();
+                HookModelEvents();
+            });
         }
 
         private void UpdateView(string path)
         {
             ExecuteBinding(() =>
+            {
+                var match = string.IsNullOrEmpty(path) ? null : Bindings.FirstOrDefault(x => x.Path == path);
+                if (match != null)
                 {
-                    var match = string.IsNullOrEmpty(path) ? null : Bindings.FirstOrDefault(x => x.Path == path);
-                    if (match != null)
-                    {
-                        UpdateView(match);
-                    }
-                    else if (path == "*")
-                    {
-                        foreach (var binding in Bindings)
-                            UpdateView(binding);
-                    }
-                });
+                    UpdateView(match);
+                }
+                else if (path == "*")
+                {
+                    foreach (var binding in Bindings)
+                        UpdateView(binding);
+                }
+            });
         }
 
         private void UpdateView(Binding binding)

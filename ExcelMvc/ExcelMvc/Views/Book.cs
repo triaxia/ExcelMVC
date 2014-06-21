@@ -116,7 +116,7 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// The underlying Excel Workkbook
+        /// The underlying Excel Workbook
         /// </summary>
         public Workbook Underlying
         {
@@ -158,6 +158,9 @@ namespace ExcelMvc.Views
             return cmd;
         }
 
+        /// <summary>
+        /// Initialises the view
+        /// </summary>
         internal void Initialise()
         {
             Dispose();
@@ -176,6 +179,17 @@ namespace ExcelMvc.Views
                 Underlying.SheetActivate += Underlying_SheetActivate;
                 Underlying.SheetDeactivate += Underlying_SheetDeactivate;
             });
+        }
+
+        /// <summary>
+        /// Collects bindings and rebinds the view
+        /// </summary>
+        /// <param name="recursive"></param>
+        public override void Rebind(bool recursive)
+        {
+            var bindings = new BindingCollector(Underlying).Process();
+            foreach (var view in Children)
+                view.Rebind(bindings, recursive);
         }
 
         private void Underlying_SheetActivate(object sh)

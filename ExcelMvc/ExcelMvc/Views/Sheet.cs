@@ -42,7 +42,6 @@ namespace ExcelMvc.Views
 
     using Bindings;
     using Controls;
-    using Diagnostics;
     using Extensions;
 
     using Microsoft.Office.Interop.Excel;
@@ -159,12 +158,31 @@ namespace ExcelMvc.Views
             tables.Clear();
         }
 
+        /// <summary>
+        /// Rebinds the view with bindings supplied
+        /// </summary>
+        /// <param name="bindings"></param>
+        /// <param name="recursive"></param>
+        internal override void Rebind(Dictionary<Worksheet, List<Binding>> bindings, bool recursive)
+        {
+            List<Binding> sheetBindings;
+            if (!bindings.TryGetValue(Underlying, out sheetBindings))
+                return;
+
+            if (!recursive)
+                return;
+
+            foreach (var view in Children)
+                view.Rebind(bindings, true);
+        }
+
         internal void Initialise(IEnumerable<Binding> bindings)
         {
             Dispose();
 
             if (bindings != null)
                 CreateViews(bindings);
+
             CommandFactory.Create(Underlying, this, commands);
             foreach (var cmd in commands.Values)
                 cmd.Clicked += Cmd_Clicked;
@@ -188,52 +206,30 @@ namespace ExcelMvc.Views
 
         private void CreateViews(IEnumerable<Binding> bindings)
         {
-            var names = bindings.Where(x => x.Type == ViewType.Form).Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase);
+            CreateViews(bindings, ViewType.Form, (x, y) => new Form(x, y), forms);
+            CreateViews(bindings, ViewType.Table, (x, y) => new Table(x, y), tables);
+        }
+
+        private void CreateViews<T>(
+            IEnumerable<Binding> bindings,
+            ViewType type, 
+            Func<Sheet, IEnumerable<Binding>, T> create,
+            Dictionary<string, T> views) where T : View
+        {
+            var names = bindings.Where(x => x.Type == type).Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             foreach (var item in names)
             {
                 var name = item;
-                var fields = bindings.Where(x => x.Type == ViewType.Form && x.Name.CompareOrdinalIgnoreCase(name) == 0);
-                var form = new Form(this, fields);
-                var args = new ViewEventArgs(form);
+                var fields = bindings.Where(x => x.Type == type && x.Name.CompareOrdinalIgnoreCase(name) == 0).ToList();
+                var view = create(this, fields);
+                var args = new ViewEventArgs(view);
                 OnOpening(args);
                 if (!args.IsCancelled)
                 {
-                    forms[name] = form;
+                    views[name] = view;
                     OnOpened(args);
                 }
             }
-
-            names = bindings.Where(x => x.Type == ViewType.Table).Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase);
-            foreach (var item in names)
-            {
-                var name = item;
-                var categories = bindings.Where(x => x.Type == ViewType.Table && x.Name.CompareOrdinalIgnoreCase(name) == 0);
-                var table = new Table(this, categories, DeriveOrientation(categories, name));
-                var args = new ViewEventArgs(table);
-                OnOpening(args);
-                if (!args.IsCancelled)
-                {
-                    tables[name] = table;
-                    OnOpened(new ViewEventArgs(table));
-                }
-            }
-        }
-
-        private ViewOrientation DeriveOrientation(IEnumerable<Binding> bindings, string tableName)
-        {
-            var origin = bindings.First().StartCell;
-            if (bindings.All(x => x.StartCell.Row == origin.Row))
-                return ViewOrientation.Portrait;
-
-            if (bindings.All(x => x.StartCell.Column == origin.Column))
-                return ViewOrientation.Landscape;
-
-            ExecuteBinding(() =>
-            {
-                throw new InvalidOperationException(string.Format(Resource.ErrorInvalidTableOrientation, tableName));
-            });
-
-            return ViewOrientation.Portrait;
         }
 
         #endregion Methods

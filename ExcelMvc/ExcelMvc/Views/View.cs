@@ -44,6 +44,8 @@ namespace ExcelMvc.Views
     using Controls;
     using Diagnostics;
     using Extensions;
+    using Microsoft.Office.Interop.Excel;
+    using Action = System.Action;
 
     /// <summary>
     /// Represents the base behaviour of Views
@@ -201,6 +203,28 @@ namespace ExcelMvc.Views
         #region Methods
 
         public abstract void Dispose();
+
+        /// <summary>
+        /// Sets the Model property to null, but does not clear the view's content 
+        /// </summary>
+        public virtual void DetachModel()
+        {
+            Model = null;
+        }
+
+        /// <summary>
+        /// Gets the Ancestor of the specfied type
+        /// </summary>
+        /// <typeparam name="T">View type</typeparam>
+        /// <returns>Ancestor found or null</returns>
+        public T FindAncestor<T>() where T : View
+        {
+            if (Parent == null)
+                return null;
+            if (Parent.GetType() == typeof (T))
+                return (T) Parent;
+            return Parent.FindAncestor<T>();
+        }
 
         /// <summary>
         /// Finds the view with the name specified, starting from this instance and downwards
@@ -385,6 +409,32 @@ namespace ExcelMvc.Views
         public void OnSelectionChanged(IEnumerable<object> items, IEnumerable<Binding> bindings)
         {
             SelectionChanged(this, new SelectionChangedArgs(items, bindings));
+        }
+
+        /// <summary>
+        /// Collects bindings and rebinds the view
+        /// </summary>
+        /// <param name="recursive"></param>
+        public virtual void Rebind(bool recursive)
+        {
+            var book = this is Book ? (Book) this : FindAncestor<Book>();
+            if (book == null)
+                return;
+
+            ExecuteBinding(() =>
+            {
+                var bindings = new BindingCollector(book.Underlying).Process();
+                Rebind(bindings, recursive);
+            });
+        }
+
+        /// <summary>
+        /// Rebinds the view with bindings supplied
+        /// </summary>
+        /// <param name="bindings">Bindings</param>
+        /// <param name="recursive">true to rebind child views</param>
+        internal virtual void Rebind(Dictionary<Worksheet, List<Binding>> bindings, bool recursive)
+        {
         }
 
         /// <summary>

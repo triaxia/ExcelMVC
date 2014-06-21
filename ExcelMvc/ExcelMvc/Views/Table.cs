@@ -74,11 +74,10 @@ namespace ExcelMvc.Views
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="bindings">Bindings for the view</param>
-        /// <param name="orientation"></param>
-        internal Table(View parent, IEnumerable<Binding> bindings, ViewOrientation orientation)
+        internal Table(View parent, IEnumerable<Binding> bindings)
             : base(parent, bindings)
         {
-            Orientation = orientation;
+            DeriveOrientation();
             SelectedItems = new List<object>();
             SelectedBindings = new List<Binding>();
             SetCategoryVisibility();
@@ -95,10 +94,7 @@ namespace ExcelMvc.Views
         {
             set
             {
-                base.Model = value;
-                HookModelEvents();
-                UpdateView();
-                OneWayToSource();
+                AttachModel(value, true);
             }
         }
 
@@ -170,9 +166,16 @@ namespace ExcelMvc.Views
         {
             HookViewEvents(false);
             HookItemsEvents(false);
-
-            base.Model = null;
             UnhookModelEvents();
+            base.Model = null;
+        }
+
+        /// <summary>
+        /// Sets the Model property to null, but does not clear the view's current content 
+        /// </summary>
+        public override void DetachModel()
+        {
+           AttachModel(null, false);
         }
 
         /// <summary>
@@ -207,6 +210,34 @@ namespace ExcelMvc.Views
             }
 
             return binding != null && binding.Visible;
+        }
+
+        /// <summary>
+        /// Rebinds the view with bindings supplied
+        /// </summary>
+        /// <param name="bindings"></param>
+        /// <param name="recursive"></param>
+        internal override void Rebind(Dictionary<Worksheet, List<Binding>> bindings, bool recursive)
+        {
+            List<Binding> sheetBindings;
+            if (bindings.TryGetValue(((Sheet)Parent).Underlying, out sheetBindings))
+            {
+                // clear previous view
+                var current = Model;
+                Model = null;
+
+                // rebind
+                Bindings = sheetBindings.Where(x => x.Type == Type && x.Name.CompareOrdinalIgnoreCase(Name) == 0).ToList();
+                DeriveOrientation();
+                Model = current;
+            }
+        }
+
+        private void AttachModel(object model, bool clearifnull) 
+        {
+            base.Model = model;
+            UpdateView(clearifnull);
+            OneWayToSource();
         }
 
         private void ClearRange(List<Binding> bindings, int numberItems)
@@ -417,6 +448,9 @@ namespace ExcelMvc.Views
 
         private void OneWayToSource()
         {
+            if (Model == null)
+                return;
+
             var oneways = Bindings.Where(x => (x.Mode == ModeType.OneWayToSource));
             var isPortrait = Orientation == ViewOrientation.Portrait;
             foreach (var oneway in oneways)
@@ -544,49 +578,49 @@ namespace ExcelMvc.Views
         private void UpdateCell(Binding binding, object model, int objectId)
         {
             ExecuteBinding(() =>
+            {
+                var value = ObjectBinding.GetPropertyValue(model, binding);
+                switch (Orientation)
                 {
-                    var value = ObjectBinding.GetPropertyValue(model, binding);
-                    switch (Orientation)
-                    {
-                        case ViewOrientation.Portrait:
-                            RangeUpdator.Instance.Update(
-                                binding.StartCell,
-                                IsOrderingAllowed ? Bindings.First().StartCell : null,
-                                itemsBound.Count,
-                                objectId.ToString(CultureInfo.InvariantCulture),
-                                1,
-                                0,
-                                1,
-                                value);
-                            break;
-                        case ViewOrientation.Landscape:
-                            RangeUpdator.Instance.Update(
-                                binding.StartCell,
-                                0,
-                                1,
-                                IsOrderingAllowed  ? Bindings.First().StartCell : null,
-                                itemsBound.Count,
-                                objectId.ToString(CultureInfo.InvariantCulture),
-                                1,
-                                value);
-                            break;
-                    }
-                });
+                    case ViewOrientation.Portrait:
+                        RangeUpdator.Instance.Update(
+                            binding.StartCell,
+                            IsOrderingAllowed ? Bindings.First().StartCell : null,
+                            itemsBound.Count,
+                            objectId.ToString(CultureInfo.InvariantCulture),
+                            1,
+                            0,
+                            1,
+                            value);
+                        break;
+                    case ViewOrientation.Landscape:
+                        RangeUpdator.Instance.Update(
+                            binding.StartCell,
+                            0,
+                            1,
+                            IsOrderingAllowed ? Bindings.First().StartCell : null,
+                            itemsBound.Count,
+                            objectId.ToString(CultureInfo.InvariantCulture),
+                            1,
+                            value);
+                        break;
+                }
+            });
         }
 
         private bool UpdateObjects(Range target)
         {
             var updated = false;
             ExecuteBinding(() =>
+            {
+                var rangeObjs = GetRangeObjects(target);
+                if (rangeObjs.Items != null)
                 {
-                    var rangeObjs = GetRangeObjects(target);
-                    if (rangeObjs.Items != null)
-                    {
-                        updated = true;
-                        if (UpdateObjects(rangeObjs) > 0)
-                            OnObjectChanged(rangeObjs.Items, null);
-                    }
-                });
+                    updated = true;
+                    if (UpdateObjects(rangeObjs) > 0)
+                        OnObjectChanged(rangeObjs.Items, null);
+                }
+            });
             return updated;
         }
 
@@ -631,23 +665,27 @@ namespace ExcelMvc.Views
             }
         }
 
-        private void UpdateView()
+        private void UpdateView(bool clearifnull)
         {
-            ExecuteBinding(
-                () =>
-                {
-                    HookItemsEvents(false);
-                    HookViewEvents(false);
-                    ExecuteBinding(UpdateViewEx);
-                },
-                () =>
+            ExecuteBinding(() =>
+            {
+                HookViewEvents(false);
+                HookModelEvents();
+                HookItemsEvents(false);
+                UpdateViewEx(clearifnull);
+            },
+            () =>
+            {
+                if (Model != null)
                 {
                     HookViewEvents(true);
+                    HookModelEvents();
                     HookItemsEvents(true);
-                });
+                }
+            });
         }
 
-        private void UpdateViewEx()
+        private void UpdateViewEx(bool clearifnull)
         {
             Dictionary<Binding, List<object>> bindingValues = null;
             var numberItemsBound = itemsBound == null ? 0 : itemsBound.Count;
@@ -669,10 +707,14 @@ namespace ExcelMvc.Views
                     foreach (var binding in toView)
                         bindingValues[binding].Add(ObjectBinding.GetPropertyValue(item, binding));
             }
+            else
+            {
+                itemsBound = null;
+            }
 
             var newItems = itemsBound == null ? 0 : itemsBound.Count;
             var groupBindings = GroupBindings(toView);
-            if (numberItemsBound != newItems)
+            if (numberItemsBound != newItems && (itemsBound != null || clearifnull))
             {
                 ClearView(groupBindings, numberItemsBound);
                 if (numberItemsBound > 0)
@@ -689,11 +731,27 @@ namespace ExcelMvc.Views
 
         private void NotifyCollectionChanged_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateView();
+            UpdateView(true);
         }
 
         private void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+        }
+
+        private void DeriveOrientation()
+        {
+            var origin = Bindings.First().StartCell;
+            if (Bindings.All(x => x.StartCell.Row == origin.Row))
+                Orientation = ViewOrientation.Portrait;
+            else if (Bindings.All(x => x.StartCell.Column == origin.Column))
+                Orientation = ViewOrientation.Landscape;
+            else
+            {
+                ExecuteBinding(() =>
+                {
+                    throw new InvalidOperationException(string.Format(Resource.ErrorInvalidTableOrientation, Name));
+                });
+            }
         }
 
         #endregion Methods

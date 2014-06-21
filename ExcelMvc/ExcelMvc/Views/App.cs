@@ -271,6 +271,16 @@ namespace ExcelMvc.Views
             });
         }
 
+        /// <summary>
+        /// Collects bindings and rebinds the view
+        /// </summary>
+        /// <param name="recursive"></param>
+        public override void Rebind(bool recursive)
+        {
+            foreach (var view in Children)
+                view.Rebind(recursive);
+        }
+
         private static Application Find()
         {
             Application excel = null;
