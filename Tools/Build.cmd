@@ -10,6 +10,8 @@ msbuild "..\Examples\Sample\Sample.sln" /t:Rebuild /p:Configuration="Release Pac
 msbuild "..\Examples\SpotTrading\SpotTrading.sln" /t:Rebuild /p:Configuration="Release Package" /p:Platform="Any CPU" /clp:ErrorsOnly
 msbuild "..\ExcelMvc\ExcelMvc.sln" /t:Rebuild /p:Configuration="Release Package" /p:Platform="Any CPU" /clp:ErrorsOnly
 
+call "Package.cmd"
+
 popd
 
 pause
