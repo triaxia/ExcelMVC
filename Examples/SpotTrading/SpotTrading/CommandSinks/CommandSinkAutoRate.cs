@@ -1,15 +1,15 @@
-﻿namespace SpotTrading.CmdModels
+﻿namespace SpotTrading.CommandSinks
 {
     using System;
     using System.Windows.Input;
     using ExcelMvc.Controls;
     using ViewModels;
 
-    public class CmdModelAutoRate :  ICommand
+    public class CommandSinkAutoRate :  ICommand
     {
         private ViewModelExchangeRates Model { get; set; }
 
-        public CmdModelAutoRate(ViewModelExchangeRates rates)
+        public CommandSinkAutoRate(ViewModelExchangeRates rates)
         {
             Model = rates;
         }

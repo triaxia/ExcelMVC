@@ -58,17 +58,17 @@
     <Compile Include="BusinessModels\Position.cs" />
     <Compile Include="BusinessModels\Positions.cs" />
     <Compile Include="BusinessModels\Deal.cs" />
-    <Compile Include="CmdModels\CmdModelAutoDeal.cs" />
-    <Compile Include="CmdModels\CmdModelAutoRate.cs" />
-    <Compile Include="CmdModels\CmdModelManualDeal.cs" />
+    <Compile Include="CommandSinks\CommandSinkAutoDeal.cs" />
+    <Compile Include="CommandSinks\CommandSinkAutoRate.cs" />
+    <Compile Include="CommandSinks\CommandSinkManualDeal.cs" />
     <Compile Include="ViewModels\ViewModelDealing.cs" />
     <Compile Include="ViewModels\ViewModelPosition.cs" />
     <Compile Include="ViewModels\ViewModelPositions.cs" />
     <Compile Include="ViewModels\ViewModelDeal.cs" />
     <Compile Include="ViewModels\ViewModelExchangeRate.cs" />
     <Compile Include="ViewModels\ViewModelExchangeRates.cs" />
-    <Compile Include="ViewModels\ViewModelSession.cs" />
-    <Compile Include="ViewModels\ViewModelTrading.cs" />
+    <Compile Include="ApplicationModels\ViewModelSession.cs" />
+    <Compile Include="ApplicationModels\ViewModelTrading.cs" />
     <Compile Include="BusinessModels\CcyPair.cs" />
     <Compile Include="BusinessModels\CcyPairs.cs" />
     <Compile Include="BusinessModels\ExchangeRate.cs" />
@@ -92,6 +92,7 @@
       <Name>ExcelMvc</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call "$(ProjectDir)"postbuild.cmd "$(TargetDir)" "$(ConfigurationName)"

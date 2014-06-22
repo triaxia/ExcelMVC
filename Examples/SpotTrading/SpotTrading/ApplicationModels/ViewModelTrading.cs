@@ -1,11 +1,11 @@
-﻿
-namespace SpotTrading.ViewModels
+﻿namespace SpotTrading.ApplicationModels
 {
     using System.Linq;
     using BusinessModels;
-    using CmdModels;
+    using CommandSinks;
     using ExcelMvc.Controls;
     using ExcelMvc.Views;
+    using ViewModels;
 
     public class ViewModelTrading
     {
@@ -26,7 +26,7 @@ namespace SpotTrading.ViewModels
             tblRates.Model = rates;
 
             // auto rate command
-            book.FindCommand("ExcelMvc.Command.AutoRate").Model = new CmdModelAutoRate(rates);
+            book.FindCommand("ExcelMvc.Command.AutoRate").Model = new CommandSinkAutoRate(rates);
 
             // deal form
             var deal = new ViewModelDeal(rates);
@@ -43,10 +43,10 @@ namespace SpotTrading.ViewModels
             book.FindCommand("ExcelMvc.Command.Reset").Clicked += (x, y) => positions.Reset();
 
             // manual deal command
-            book.FindCommand("ExcelMvc.Command.ManualDeal").Model = new CmdModelManualDeal(deal, positions, rates);
+            book.FindCommand("ExcelMvc.Command.ManualDeal").Model = new CommandSinkManualDeal(deal, positions, rates);
 
             var dealing = new ViewModelDealing(pairs.Ccys.ToList(), deal, positions, rates);
-            book.FindCommand("ExcelMvc.Command.AutoDeal").Model = new CmdModelAutoDeal(dealing);
+            book.FindCommand("ExcelMvc.Command.AutoDeal").Model = new CommandSinkAutoDeal(dealing);
         }
     }
 }

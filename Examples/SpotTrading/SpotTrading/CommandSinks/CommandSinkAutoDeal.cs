@@ -1,15 +1,15 @@
-﻿namespace SpotTrading.CmdModels
+﻿namespace SpotTrading.CommandSinks
 {
     using System;
     using System.Windows.Input;
     using ExcelMvc.Controls;
     using ViewModels;
 
-    public class CmdModelAutoDeal :  ICommand
+    public class CommandSinkAutoDeal :  ICommand
     {
         private ViewModelDealing Model { get; set; }
 
-        public CmdModelAutoDeal(ViewModelDealing deals)
+        public CommandSinkAutoDeal(ViewModelDealing deals)
         {
             Model = deals;
             CanExecuteChanged(this, new EventArgs());

@@ -1,52 +1,49 @@
-﻿namespace SpotTrading.ViewModels
+﻿namespace SpotTrading.ApplicationModels
 {
-    using System.Collections.Generic;
+    using ExcelMvc.Extensions;
     using ExcelMvc.Runtime;
     using ExcelMvc.Views;
 
     public class ViewModelSession : ISession
     {
-        private readonly Dictionary<View, object> sessions; 
-
+        private const string BookId = "SpotTrading";
         public ViewModelSession()
         {
-            // hook book view notificaton event
+            // hook notificaton events
             App.Instance.Opening += Instance_Opening;
             App.Instance.Opened += Instance_Opened;
             App.Instance.Closing += Instance_Closing;
             App.Instance.Closed += Instance_Closed;
-            sessions = new Dictionary<View, object>();
         }
 
         void Instance_Opening(object sender, ViewEventArgs args)
         {
             // cancel out for non-ExcelMvc books
-            if (args.View.Id != "SpotTrading")
+            if (args.View.Id.CompareOrdinalIgnoreCase(BookId) != 0)
                 args.Cancel();
         }
 
         void Instance_Opened(object sender, ViewEventArgs args)
         {
             // create book model
-            if (args.View.Id == "SpotTrading")
-                sessions[args.View] = new ViewModelTrading(args.View);
+            if (args.View.Id.CompareOrdinalIgnoreCase(BookId) == 0)
+                args.View.Model = new ViewModelTrading(args.View);
         }
 
         void Instance_Closing(object sender, ViewEventArgs args)
         {
-            // cancel out here
+            // cancel close
             // args.Cancel();
         }
 
         void Instance_Closed(object sender, ViewEventArgs args)
         {
             // remove view models
-            sessions.Remove(args.View);
+            args.View.Model = null;
         }
 
         public void Dispose()
         {
-            sessions.Clear();
         }
     }
 }

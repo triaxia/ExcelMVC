@@ -1,16 +1,16 @@
-﻿namespace SpotTrading.CmdModels
+﻿namespace SpotTrading.CommandSinks
 {
     using System;
     using System.Windows.Input;
     using ViewModels;
 
-    public class CmdModelManualDeal:  ICommand
+    public class CommandSinkManualDeal:  ICommand
     {
         private ViewModelDeal Deal { get; set; }
         private ViewModelPositions Positions { get; set; }
         private ViewModelExchangeRates Rates { get; set; }
 
-        public CmdModelManualDeal(ViewModelDeal deal, ViewModelPositions positions, ViewModelExchangeRates rates)
+        public CommandSinkManualDeal(ViewModelDeal deal, ViewModelPositions positions, ViewModelExchangeRates rates)
         {
             Deal = deal;
             Deal.PropertyChanged += Deal_PropertyChanged;

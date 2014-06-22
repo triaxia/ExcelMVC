@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
-    using System.Xml.XPath;
     using BusinessModels;
 
     public class ViewModelPositions :  List<ViewModelPosition>, INotifyCollectionChanged
