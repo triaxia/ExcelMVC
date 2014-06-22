@@ -26,7 +26,9 @@
             tblRates.Model = rates;
 
             // auto rate command
-            book.FindCommand("ExcelMvc.Command.AutoRate").Model = new CommandSinkAutoRate(rates);
+            var cmd = book.FindCommand("ExcelMvc.Command.AutoRate");
+            cmd.Model = new CommandSinkAutoRate(rates);
+            cmd.ClickedCaption = "Stop Simulation";
 
             // deal form
             var deal = new ViewModelDeal(rates);
@@ -46,7 +48,9 @@
             book.FindCommand("ExcelMvc.Command.ManualDeal").Model = new CommandSinkManualDeal(deal, positions, rates);
 
             var dealing = new ViewModelDealing(pairs.Ccys.ToList(), deal, positions, rates);
-            book.FindCommand("ExcelMvc.Command.AutoDeal").Model = new CommandSinkAutoDeal(dealing);
+            cmd = book.FindCommand("ExcelMvc.Command.AutoDeal");
+            cmd.Model = new CommandSinkAutoDeal(dealing);
+            cmd.ClickedCaption = "Stop Auto-Deal";
         }
     }
 }

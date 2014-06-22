@@ -2,12 +2,12 @@
 {
     using System;
     using System.Windows.Input;
-    using ExcelMvc.Controls;
     using ViewModels;
 
     public class CommandSinkAutoDeal :  ICommand
     {
         private ViewModelDealing Model { get; set; }
+        private bool IsRunning { get; set; }
 
         public CommandSinkAutoDeal(ViewModelDealing deals)
         {
@@ -25,24 +25,16 @@
 
         public void Execute(object parameter)
         {
-            var args = parameter as CommandEventArgs;
-            ExecuteAutoDeal(args.Source);
+            ExecuteAutoDeal();
         }
 
-        private void ExecuteAutoDeal(Command cmd)
+        private void ExecuteAutoDeal()
         {
-            if (cmd.State == null)
-            {
-                cmd.Caption = "Stop Dealing";
-                cmd.State = 1;
+            IsRunning = !IsRunning;
+            if (IsRunning)
                 Model.StartSimulate();
-            }
             else
-            {
-                cmd.Caption = "Start Dealing";
-                cmd.State = null;
                 Model.StopSimulate();
-            }
         }
     }
 }

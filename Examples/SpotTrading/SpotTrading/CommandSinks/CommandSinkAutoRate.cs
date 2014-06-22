@@ -8,6 +8,7 @@
     public class CommandSinkAutoRate :  ICommand
     {
         private ViewModelExchangeRates Model { get; set; }
+        private bool IsRunning { get; set; }
 
         public CommandSinkAutoRate(ViewModelExchangeRates rates)
         {
@@ -24,24 +25,16 @@
 
         public void Execute(object parameter)
         {
-            var args = parameter as CommandEventArgs;
-            ExecuteAutoRate(args.Source);
+            ExecuteAutoRate();
         }
 
-        private void ExecuteAutoRate(Command cmd)
+        private void ExecuteAutoRate()
         {
-            if (cmd.State == null)
-            {
-                cmd.Caption = "Stop Simulation";
-                cmd.State = 1;
+            IsRunning = !IsRunning;
+            if (IsRunning)
                 Model.StartSimulate();
-            }
             else
-            {
-                cmd.Caption = "Start Simulation";
-                cmd.State = null;
                 Model.StopSimulate();
-            }
         }
     }
 }
