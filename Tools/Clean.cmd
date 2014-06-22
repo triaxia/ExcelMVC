@@ -5,8 +5,7 @@ pushd .
 
 cd "%~dp0"
 
-call :loop "%cd%\..\ExcelMvc"
-call :loop "%cd%\..\Examples"
+call :loop "%cd%\release"
 
 popd
 goto :eof
@@ -27,6 +26,7 @@ if exist "obj\." rmdir /s /Q obj
 if exist "TestResults\." rmdir /S /Q TestResults
 if exist "Debug\." rmdir /S /Q Debug
 if exist "Release\." rmdir /S /Q Release
+if exist "packages\." rmdir /S /Q packages
 if exist "ipch\." rmdir /S /Q ipch
 
 for /D %%x in (*) do call :loop "%%x"
