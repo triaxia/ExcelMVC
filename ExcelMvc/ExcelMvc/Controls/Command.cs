@@ -88,6 +88,15 @@ namespace ExcelMvc.Controls
         }
 
         /// <summary>
+        /// Caption to be swaped when the command is clicked
+        /// </summary>
+        public string ClickedCaption
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the host view 
         /// </summary>
         public View Host
@@ -179,6 +188,14 @@ namespace ExcelMvc.Controls
                 Clicked(this, args);
                 if (Model != null)
                     Model.Execute(args);
+
+                if (ClickedCaption != null)
+                {
+                    var current = Caption;
+                    Caption = ClickedCaption;
+                    ClickedCaption = current;
+                }
+
             });
         }
 
