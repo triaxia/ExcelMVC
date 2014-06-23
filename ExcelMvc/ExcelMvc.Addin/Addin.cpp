@@ -116,7 +116,6 @@ BOOL StartAddinClrHost()
 	BOOL result = ClrRuntimeHost::TestAndDisplayError();
 	if (result)
 	{
-        MessageBox(0, L"", L"", MB_OK);
         // create a scratch book to get Excel registered with the ROT
         Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(false));
         Excel12f(xlcNew, 0, 1, (LPXLOPER12) TempInt12(5));
