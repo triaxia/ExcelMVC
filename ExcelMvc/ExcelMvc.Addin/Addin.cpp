@@ -116,23 +116,17 @@ BOOL StartAddinClrHost()
 	BOOL result = ClrRuntimeHost::TestAndDisplayError();
 	if (result)
 	{
-        BOOL isThere = IsExcelThere();
-        if (!isThere)
-        {
-            // create a scratch book to get Excel registered with the ROT
-            Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(false));
-            Excel12f(xlcNew, 0, 1, (LPXLOPER12) TempInt12(5));
-            Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12) TempInt12(6));
-        }
+        MessageBox(0, L"", L"", MB_OK);
+        // create a scratch book to get Excel registered with the ROT
+        Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(false));
+        Excel12f(xlcNew, 0, 1, (LPXLOPER12) TempInt12(5));
+        Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12) TempInt12(6));
 
 		ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Attach");
 
-        if (!isThere)
-        {
-            // remove scratch book
-            Excel12f(xlcFileClose, 0, 1, (LPXLOPER12) TempBool12(false));
-            Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(true));
-        }
+        // remove scratch book
+        Excel12f(xlcFileClose, 0, 1, (LPXLOPER12) TempBool12(false));
+        Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(true));
 
 		result = ClrRuntimeHost::TestAndDisplayError();
 	}

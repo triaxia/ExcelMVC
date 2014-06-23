@@ -8,5 +8,5 @@ if exist "C:\Program Files\Microsoft Office\Office15\." (
 set addin="Sample.Application (x64).xll"
 ))
 
-START EXCEL %addin% "Forbes2000.xlsx"
+START EXCEL /x %addin% "Forbes2000.xlsx"
 popd
