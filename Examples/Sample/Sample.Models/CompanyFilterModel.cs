@@ -41,6 +41,7 @@ namespace Sample.Models
     public class CompanyFilterModel
     {
         #region Constructors
+
         public CompanyFilterModel()
         {
             NameLike = string.Empty;
