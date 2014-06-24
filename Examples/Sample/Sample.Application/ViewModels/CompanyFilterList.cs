@@ -43,13 +43,14 @@ namespace Sample.Application.ViewModels
     public class CompanyFilterList : List<CompanyFilter>, INotifyCollectionChanged
     {
         #region Constructors
-        public CompanyFilterList(int filters)
+
+        public CompanyFilterList(int numberOfFilters)
         {
-            Load(filters);
-            this[0].NameLike = "*";
+            Load(numberOfFilters);
         }
 
         #endregion Constructors
+
         #region Events
 
         public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };

@@ -195,7 +195,6 @@ namespace ExcelMvc.Controls
                     Caption = ClickedCaption;
                     ClickedCaption = current;
                 }
-
             });
         }
 
