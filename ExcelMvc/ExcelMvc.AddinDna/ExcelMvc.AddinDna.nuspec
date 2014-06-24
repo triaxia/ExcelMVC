@@ -46,9 +46,10 @@
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5 (x64)\ExcelMvc.Addin (x64).xll" target="content\net45\ExcelMvc.Addin (x64).xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5 (x64)\ExcelMvc.Addin (x64).pdb" target="content\net45\ExcelMvc.Addin (x64).pdb" />
 
-      <file src="..\..\..\..\**\*.cs" target="src" exclude="**\obj\**"/>
+      <file src="..\..\..\..\**\*.cs" target="src" />
       <file src="..\..\..\..\**\*.h" target="src" exclude="**\obj\**"/>
       <file src="..\..\..\..\**\*.cpp" target="src" exclude="**\obj\**"/>
+      <file src="..\..\..\..\**\*.xaml" target="src" exclude="**\obj\**"/>
       <file src="Readme.txt" target="" />
     </files>
 </package>

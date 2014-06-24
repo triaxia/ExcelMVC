@@ -81,7 +81,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
     <BuildNuGetPackage>true</BuildNuGetPackage>
-    <BuildNuGetSymbolsPackage>false</BuildNuGetSymbolsPackage>
+    <BuildNuGetSymbolsPackage>true</BuildNuGetSymbolsPackage>
     <DocumentationFile>bin\Release\net35\ExcelMvc.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
