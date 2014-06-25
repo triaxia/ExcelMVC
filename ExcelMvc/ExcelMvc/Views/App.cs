@@ -335,7 +335,7 @@ namespace ExcelMvc.Views
                 {
                     var args = new ViewEventArgs(view);
                     OnClosing(args);
-                    toCancel = toCancel | !args.IsAccepted;
+                    //toCancel = toCancel | !args.IsAccepted;
                 }
             });
             cancel = toCancel;
