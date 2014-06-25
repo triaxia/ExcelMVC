@@ -201,14 +201,15 @@ namespace ExcelMvc.Views
 
                 foreach (Workbook item in Underlying.Workbooks)
                 {
-                    var book = new Book(this, item);
-                    var args = new ViewEventArgs(book);
+                    var view = new Book(this, item);
+                    var args = new ViewEventArgs(view);
                     OnOpening(args);
-                    if (args.IsCancelled)
-                        continue;
-                    book.Initialise();
-                    Books[item] = book;
-                    ExecuteBinding(() => OnOpened(args));
+                    if (args.IsAccepted)
+                    {
+                        view.Initialise();
+                        Books[item] = view;
+                        ExecuteBinding(() => OnOpened(new ViewEventArgs(view)));
+                    }
                 }
             });
         }
@@ -275,19 +276,15 @@ namespace ExcelMvc.Views
             });
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="reserved"></param>
-        /// <param name="prot"></param>
-        /// <returns></returns>
         [DllImport("ole32.dll")]
         private static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
         private static Application Find()
         {
-            Application excel = null;
-            var hWnd = Process.GetCurrentProcess().MainWindowHandle.ToInt32();
+            var pid = Process.GetCurrentProcess().Id;
             IRunningObjectTable prot = null;
             IEnumMoniker pMonkEnum = null;
             try
@@ -296,13 +293,18 @@ namespace ExcelMvc.Views
                 prot.EnumRunning(out pMonkEnum);
                 var pmon = new IMoniker[1];
                 var fetched = IntPtr.Zero;
-                while (excel == null && pMonkEnum.Next(1, pmon, fetched) == 0)
+                while (pMonkEnum.Next(1, pmon, fetched) == 0)
                 {
                     object result;
                     prot.GetObject(pmon[0], out result);
-                    var book = result as Workbook;
-                    if (book != null && book.Application.Hwnd == hWnd)
-                        excel = book.Application;
+                    var excel = result as Application;
+                    if (excel != null)
+                    {
+                        uint excelpid;
+                        GetWindowThreadProcessId(new IntPtr(excel.Hwnd), out excelpid);
+                        if (pid == excelpid)
+                            return excel;
+                    }
                 }
             }
             finally
@@ -313,7 +315,7 @@ namespace ExcelMvc.Views
                     Marshal.ReleaseComObject(pMonkEnum);
             }
 
-            return excel;
+            return null;
         }
 
         private void Activate(Workbook book)
@@ -328,12 +330,12 @@ namespace ExcelMvc.Views
             var toCancel = cancel;
             Try(() =>
             {
-                Book space;
-                if (Books.TryGetValue(book, out space))
+                Book view;
+                if (Books.TryGetValue(book, out view))
                 {
-                    var args = new ViewEventArgs(space);
+                    var args = new ViewEventArgs(view);
                     OnClosing(args);
-                    toCancel = toCancel | args.IsCancelled;
+                    toCancel = toCancel | !args.IsAccepted;
                 }
             });
             cancel = toCancel;
@@ -352,18 +354,18 @@ namespace ExcelMvc.Views
         {
             Try(() =>
             {
-                Book space;
-                var isCreated = Books.TryGetValue(book, out space);
+                Book view;
+                var isCreated = Books.TryGetValue(book, out view);
                 if (isCreated)
                     return;
-                space = new Book(this, book);
-                var args = new ViewEventArgs(space);
+                view = new Book(this, book);
+                var args = new ViewEventArgs(view);
                 OnOpening(args);
-                if (!args.IsCancelled)
+                if (args.IsAccepted)
                 {
-                    space.Initialise();
-                    Books[book] = space;
-                    OnOpened(args);
+                    view.Initialise();
+                    Books[book] = view;
+                    OnOpened(new ViewEventArgs(view));
                 }
             });
         }
@@ -377,10 +379,10 @@ namespace ExcelMvc.Views
                 {
                     if (books.Any(x => ReferenceEquals(x, key)))
                         continue;
-                    var space = Books[key];
+                    var view = Books[key];
                     Books.Remove(key);
-                    OnClosed(new ViewEventArgs(space));
-                    space.Dispose();
+                    OnClosed(new ViewEventArgs(view));
+                    view.Dispose();
                 }
             });
         }

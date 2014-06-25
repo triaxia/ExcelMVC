@@ -45,6 +45,10 @@ namespace ExcelMvc.Views
     /// </summary>
     public class ViewEventArgs : EventArgs
     {
+        #region Fields
+        private int acceptedCount;
+        #endregion Fields
+
         #region Constructors
 
         /// <summary>
@@ -54,6 +58,7 @@ namespace ExcelMvc.Views
         public ViewEventArgs(View view)
         {
             View = view;
+            acceptedCount = 0;
         }
 
         #endregion Constructors
@@ -61,12 +66,20 @@ namespace ExcelMvc.Views
         #region Properties
 
         /// <summary>
-        /// Indicates if the event has been sigalled to be cancelled by any of the event sinks
+        /// Indicates if no event sinks have accepted the event
         /// </summary>
+        [Obsolete("This property is superseded by IsAccepted", true)]
         public bool IsCancelled
         {
-            get;
-            private set;
+            get { return acceptedCount == 0; }
+        }
+
+        /// <summary>
+        /// Indicates if the event has been signaled to be cancelled by all sinks
+        /// </summary>
+        public bool IsAccepted
+        {
+            get { return acceptedCount > 0; }
         }
 
         /// <summary>
@@ -92,11 +105,19 @@ namespace ExcelMvc.Views
         #region Methods
 
         /// <summary>
-        /// Signals that the event should be cancelled. Note IsCancelled is not allowed to be set to false.
+        /// Signals that the calling sink is not interested in the event
         /// </summary>
+        [Obsolete("This method is superseded by the Signal method", true)]
         public void Cancel()
         {
-            IsCancelled = true;
+        }
+
+        /// <summary>
+        /// Signals that the calling sink is interested in the view
+        /// </summary>
+        public void Accept()
+        {
+            acceptedCount++;
         }
 
         #endregion Methods

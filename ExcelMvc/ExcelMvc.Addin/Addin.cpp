@@ -116,17 +116,15 @@ BOOL StartAddinClrHost()
 	BOOL result = ClrRuntimeHost::TestAndDisplayError();
 	if (result)
 	{
-        // create a scratch book to get Excel registered with the ROT
+        // create and remove a book just to get Excel registered with the ROT
         Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(false));
         Excel12f(xlcNew, 0, 1, (LPXLOPER12) TempInt12(5));
         Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12) TempInt12(6));
-
-		ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Attach");
-
-        // remove scratch book
         Excel12f(xlcFileClose, 0, 1, (LPXLOPER12) TempBool12(false));
         Excel12f(xlcEcho, 0, 1, (LPXLOPER12) TempBool12(true));
 
+        // attach to ExcelMVC
+		ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Attach");
 		result = ClrRuntimeHost::TestAndDisplayError();
 	}
 	return result;
@@ -137,8 +135,16 @@ void StopAddinClrHost()
 	ClrRuntimeHost::Stop();
 }
 
+static int AutoOpenCount = 0;
+
 BOOL __stdcall xlAutoOpen(void)
 {
+    if (++AutoOpenCount > 1)
+    {
+        //MessageBox(0, L"Test", L"Test", MB_OK);
+        return TRUE;
+    }
+
 	static XLOPER12 xDLL;
 	Excel12f(xlGetName, &xDLL, 0);
 

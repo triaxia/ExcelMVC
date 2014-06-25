@@ -36,13 +36,11 @@ Boston, MA 02110-1301 USA.
 
 namespace Sample.Application.ViewModels
 {
-    using System.Collections.Generic;
     using System.Windows.Forms;
 
     using ExcelMvc.Bindings;
     using ExcelMvc.Runtime;
     using ExcelMvc.Views;
-    using View = ExcelMvc.Views.View;
 
     public class Session : ISession
     {
@@ -50,17 +48,14 @@ namespace Sample.Application.ViewModels
 
         private const string ViewName = "Forbes2000";
 
-        private static readonly Dictionary<View, object> Views = new Dictionary<View, object>();
-
         #endregion Fields
 
         #region Constructors
 
-        static Session()
+        public Session()
         {
             App.Instance.Opening += Book_Opening;
             App.Instance.Opened += Book_Opened;
-
             App.Instance.Closing += Book_Closing;
             App.Instance.Closed += Book_Closed;
         }
@@ -73,34 +68,41 @@ namespace Sample.Application.ViewModels
         {
         }
 
-        private static void Book_Closed(object sender, ViewEventArgs args)
+        private void Book_Closed(object sender, ViewEventArgs args)
         {
-            // remove the applicaton model for the book closed
-            Views.Remove(args.View);
-        }
-
-        private static void Book_Closing(object sender, ViewEventArgs args)
-        {
-        }
-
-        private static void Book_Opened(object sender, ViewEventArgs args)
-        {
-            // create the application model for the book opened
             if (args.View.Id == ViewName)
-                Views[args.View] = new Forbes(args.View);
+            {
+                args.Accept();
+            }
         }
 
-        private static void Book_Opening(object sender, ViewEventArgs args)
+        private void Book_Closing(object sender, ViewEventArgs args)
         {
-            // cancel out if the book being opened is not "Forbes2000", whose view id is
-            // defined by the Custom Document Propety named "ExcelMvc".
-            if (args.View.Id != ViewName)
-                args.Cancel();
-            else
-                args.View.BindingFailed += View_BindingFailed;
+            if (args.View.Id == ViewName)
+                args.Accept();
         }
 
-        private static void View_BindingFailed(object sender, BindingFailedEventArgs args)
+        private void Book_Opened(object sender, ViewEventArgs args)
+        {
+            if (args.View.Id == ViewName)
+            {
+                args.Accept();
+                args.View.Model = new Forbes(args.View);
+            }
+        }
+
+        private void Book_Opening(object sender, ViewEventArgs args)
+        {
+            // accept if the book being opened is "Forbes2000", whose view id is
+            // defined by the Custom Document Propety named "ExcelMvc".
+            if (args.View.Id == ViewName)
+            {
+                args.Accept();
+                args.View.BindingFailed += View_BindingFailed;
+            }
+        }
+
+        private void View_BindingFailed(object sender, BindingFailedEventArgs args)
         {
             MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }

@@ -18,28 +18,44 @@
 
         void Instance_Opening(object sender, ViewEventArgs args)
         {
-            // cancel out for non-ExcelMvc books
-            if (args.View.Id.CompareOrdinalIgnoreCase(BookId) != 0)
-                args.Cancel();
+            if (IsMybook(args))
+            {
+                // accept view
+                args.Accept();
+            }
         }
 
         void Instance_Opened(object sender, ViewEventArgs args)
         {
-            // create book model
-            if (args.View.Id.CompareOrdinalIgnoreCase(BookId) == 0)
+            if (IsMybook(args))
+            {
+                // assign model
+                args.Accept();
                 args.View.Model = new ViewModelTrading(args.View);
+            }
         }
 
         void Instance_Closing(object sender, ViewEventArgs args)
         {
-            // cancel close
-            // args.Cancel();
+            if (IsMybook(args))
+            {
+                // allow closing
+                args.Accept();
+            }
         }
 
         void Instance_Closed(object sender, ViewEventArgs args)
         {
-            // remove view models
-            args.View.Model = null;
+            if (IsMybook(args))
+            {
+                // detach model
+                args.View.Model = null;
+            }
+        }
+
+        private bool IsMybook(ViewEventArgs args)
+        {
+            return args.View.Id.CompareOrdinalIgnoreCase(BookId) == 0;
         }
 
         public void Dispose()

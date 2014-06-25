@@ -232,12 +232,8 @@ namespace ExcelMvc.Views
                 var fields = bindings.Where(x => x.Type == type && x.Name.CompareOrdinalIgnoreCase(name) == 0).ToList();
                 var view = create(this, fields);
                 var args = new ViewEventArgs(view);
-                OnOpening(args);
-                if (!args.IsCancelled)
-                {
-                    views[name] = view;
-                    OnOpened(args);
-                }
+                views[name] = view;
+                OnOpened(args);
             }
         }
 
