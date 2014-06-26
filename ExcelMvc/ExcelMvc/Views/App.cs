@@ -192,7 +192,7 @@ namespace ExcelMvc.Views
                     throw new Exception(Resource.ErrorExcelAppFound);
 
                 Underlying.WorkbookOpen += OpenBook;
-                Underlying.WorkbookBeforeClose += CloseingBook;
+                Underlying.WorkbookBeforeClose += ClosingBook;
                 Underlying.WorkbookActivate += Activate;
                 Underlying.WorkbookDeactivate += Deactivate;
 
@@ -224,7 +224,7 @@ namespace ExcelMvc.Views
                 if (Underlying != null)
                 {
                     Underlying.WorkbookOpen -= OpenBook;
-                    Underlying.WorkbookBeforeClose -= CloseingBook;
+                    Underlying.WorkbookBeforeClose -= ClosingBook;
                     Underlying.WorkbookActivate -= Activate;
                     Underlying.WorkbookDeactivate -= Deactivate;
                     Underlying = null;
@@ -325,7 +325,7 @@ namespace ExcelMvc.Views
                 Try(() => OnActivated(new ViewEventArgs(Books[book])));
         }
 
-        private void CloseingBook(Workbook book, ref bool cancel)
+        private void ClosingBook(Workbook book, ref bool cancel)
         {
             var toCancel = cancel;
             Try(() =>
@@ -335,7 +335,8 @@ namespace ExcelMvc.Views
                 {
                     var args = new ViewEventArgs(view);
                     OnClosing(args);
-                    //toCancel = toCancel | !args.IsAccepted;
+
+                    // toCancel = toCancel | !args.IsAccepted;
                 }
             });
             cancel = toCancel;
@@ -343,9 +344,7 @@ namespace ExcelMvc.Views
 
         private void Deactivate(Workbook book)
         {
-            if (Books.Count < 1)
-                return;
-
+            Purge();
             if (Books.ContainsKey(book))
                 Try(() => OnDeactivated(new ViewEventArgs(Books[book])));
         }
@@ -354,6 +353,8 @@ namespace ExcelMvc.Views
         {
             Try(() =>
             {
+                Purge();
+
                 Book view;
                 var isCreated = Books.TryGetValue(book, out view);
                 if (isCreated)

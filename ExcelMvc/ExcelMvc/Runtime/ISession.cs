@@ -41,11 +41,17 @@ namespace ExcelMvc.Runtime
     using System;
 
     /// <summary>
-    /// Defines an interface for ExcelMvc sessions. ExcelMvc session objects are created by ExcelMvc 
-    /// automatically
+    /// Defines an interface for ExcelMvc sessions. ExcelMvc session objects are discovered and created
+    /// by ExcelMvc automatically. Derived classes should hook into App.Instance notification events.
+    ///     public Session()
+    ///     {
+    ///         App.Instance.Opening += Book_Opening;
+    ///         App.Instance.Opened += Book_Opened;
+    ///         App.Instance.Closing += Book_Closing;
+    ///         App.Instance.Closed += Book_Closed;
+    ///     }
     /// </summary>
     public interface ISession : IDisposable
     {
-        // this interface is only for ExcelMvc to discover ExcelMvc session.
     }
 }

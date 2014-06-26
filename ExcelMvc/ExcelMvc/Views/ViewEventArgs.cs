@@ -47,7 +47,8 @@ namespace ExcelMvc.Views
     {
         #region Fields
         private int acceptedCount;
-        //[Obsolete]
+
+        // [Obsolete]
         private bool? cancelled;
         #endregion Fields
         

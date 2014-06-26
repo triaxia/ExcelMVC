@@ -37,7 +37,7 @@ namespace ExcelMvc.Runtime
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Threading;
-
+    using Diagnostics;
     using Extensions;
 
     using Microsoft.Office.Interop.Excel;
@@ -219,18 +219,22 @@ namespace ExcelMvc.Runtime
 
         private static void AssignRangeValue(Range range, object value)
         {
-            var locked = false;
-            ActionExtensions.Try(() => locked = System.Convert.ToBoolean(range.Locked));
-            if (locked && range.Worksheet.ProtectContents)
-            {
-                var book = App.Instance.Find(ViewType.Book, (range.Worksheet.Parent as Workbook).Name);
-                var sheet = book.Find(ViewType.Sheet, range.Worksheet.Name);
-                sheet.ExecuteProtected(() => range.Value = value);
-            }
-            else
-            {
-                range.Value = value;
-            }
+            ActionExtensions.Try(
+                () =>
+                {
+                    var locked = System.Convert.ToBoolean(range.Locked);
+                    if (locked && range.Worksheet.ProtectContents)
+                    {
+                        var book = App.Instance.Find(ViewType.Book, (range.Worksheet.Parent as Workbook).Name);
+                        var sheet = book.Find(ViewType.Sheet, range.Worksheet.Name);
+                        sheet.ExecuteProtected(() => range.Value = value);
+                    }
+                    else
+                    {
+                        range.Value = value;
+                    }
+                },
+                MessageWindow.AddErrorLine);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
