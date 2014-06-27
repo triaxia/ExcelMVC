@@ -31,9 +31,9 @@ if exist "%out%\." (
 
 mkdir %out%
 
-xcopy /Y /S /R "..\ExcelMvc\ExcelMvc\bin\Release\*.*" "%out%\Bin\"
+xcopy /Y /S /R "..\ExcelMvc\ExcelMvc\bin\Release\*.*" "%out%\bin\"
 
-xcopy /Y /S /R "..\Examples\SpotTrading\SpotTrading\bin\Release\net35\*.*" "%out%\Samples\Trading\"
+xcopy /Y /S /R "..\Examples\Trading\SpotTrading\bin\Release\*.*" "%out%\Samples\Trading\"
 xcopy /Y /S /R "..\Examples\Forbes\Forbes.Application.MVC\bin\Release\*.*"  "%out%\Samples\Forbes.MVC\"
 xcopy /Y /S /R "..\Examples\Forbes\Forbes.Application.DNA\bin\Release\*.*"  "%out%\Samples\Forbes.DNA\"
 
