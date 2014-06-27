@@ -1,0 +1,8 @@
+<DnaLibrary RuntimeVersion="v4.0">
+  <ExternalLibrary Path="ExcelMvc.AddinDna.dll" Pack="true" ExplicitExports="true" />
+  <Reference Path="ExcelMvc.dll" Pack="true" />
+  <Reference Path="Forbes.Models.dll" Pack="true" />
+  <Reference Path="Forbes.Views.dll" Pack="true" />
+  <!--Use ExternalLibrary for assemblies containing classes derived from ExcelMvc.Runtime.ISesson -->
+  <ExternalLibrary Path="Forbes.Application.dll" Pack="true" ExplicitExports="false" />
+</DnaLibrary>

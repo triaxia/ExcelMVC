@@ -31,6 +31,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExcelDna.Integration">
+      <HintPath>..\packages\Excel-DNA.Lib.0.32.0\lib\ExcelDna.Integration.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ExcelMvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ExcelMvc.AddinDna.1.4.8\lib\net35\ExcelMvc.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelMvc.AddinDna">
+      <HintPath>..\packages\ExcelMvc.AddinDna.1.4.8\lib\net35\ExcelMvc.AddinDna.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -55,8 +66,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Readme.txt" />
+    <None Include="App.config" />
+    <None Include="packages.config" />
     <None Include="PostBuild.cmd" />
-    <None Include="Forbes.Application.dna">
+    <None Include="Forbes.Application.DNA.dna">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Run.cmd">
@@ -65,8 +79,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>call $(ProjectDir)PostBuild.cmd "$(ProjectDir)" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

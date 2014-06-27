@@ -32,6 +32,7 @@
       <file src="..\net45\ExcelMvc.AddinDna.dll" target="lib\net45\ExcelMvc.AddinDna.dll" />
       <file src="..\net45\ExcelMvc.AddinDna.pdb" target="lib\net45\ExcelMvc.AddinDna.pdb" />
 
+      <!-- ExcelMvc.Add.xll not required if Excel-DNA is used
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.xll" target="content\net35\ExcelMvc.Addin.xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release Package\ExcelMvc.Addin.pdb" target="content\net35\ExcelMvc.Addin.pdb" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0\ExcelMvc.Addin.xll" target="content\net40\ExcelMvc.Addin.xll" />
@@ -45,6 +46,7 @@
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.0 (x64)\ExcelMvc.Addin (x64).pdb" target="content\net40\ExcelMvc.Addin (x64).pdb" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5 (x64)\ExcelMvc.Addin (x64).xll" target="content\net45\ExcelMvc.Addin (x64).xll" />
       <file src="..\..\..\..\ExcelMvc.Addin\bin\Release 4.5 (x64)\ExcelMvc.Addin (x64).pdb" target="content\net45\ExcelMvc.Addin (x64).pdb" />
+      -->
 
       <file src="..\..\..\..\**\*.cs" target="src" />
       <file src="..\..\..\..\**\*.h" target="src" exclude="**\obj\**"/>

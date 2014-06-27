@@ -1,55 +1,46 @@
-REM This command is called by the project's post build event. It simply copies the sample dlls
-REM to where the xll is and then packs the lot into a DNA xll.
+REM %1 "$(ProjectDir)"
+REM %2 "$(TargetDir)"
 
-REM %1 "$(TargetDir)"
-REM %2 "$(TargetName)"
-REM %3 "$(OutDir)"
+pushd .
 
-pushd "%~dp0"
+-----------------------------------------------------------------------------------------------
+REM copy the workbook and data file the target directory
 
-set out=%~1Dna\
-if exist "%out%\." (
-  rmdir /S /Q "%out%"
-)
-mkdir "%out%"
+copy "%~1..\Forbes.Models\Forbes.csv" "%~2*.*"
+copy "%~1..\Forbes.Views\Forbes2000.xlsx" "%~2*.*"
 
-copy "Run.cmd" "%out%"
-copy "Sample.Application.dna" "%out%"
+-----------------------------------------------------------------------------------------------
+REM copy DNA pack files to the target directory
 
-copy "..\..\..\..\ExcelMvc\ExcelMvc\%~3ExcelMvc.dll" "%out%"
-copy "..\..\..\..\ExcelMvc\ExcelMvc.AddinDna\%~3ExcelMvc.AddinDna.dll" "%out%"
-copy "..\..\..\..\ExcelMvc\ExcelMvc.AddinDna\%~3ExcelDna.Integration.dll" "%out%"
+copy "%~1..\packages\Excel-DNA.0.32.0\tools\ExcelDnaPack.exe" "%~2"
+copy "%~1..\packages\Excel-DNA.0.32.0\tools\ExcelDna.Integration.dll" "%~2"
+copy "%~1..\packages\Excel-DNA.0.32.0\tools\ExcelDna.xll" "%~2Forbes.Application.DNA.xll"
+copy "%~1..\packages\Excel-DNA.0.32.0\tools\ExcelDna64.xll" "%~2Forbes.Application.DNA (x64).xll"
 
-copy "..\..\Sample.Models\%~3Sample.Models.dll" "%out%"
-copy "..\..\Sample.Views\%~3Sample.Views.dll" "%out%"
-copy "..\..\Sample.Application\%~3Sample.Application.dll" "%out%"
-copy "..\..\Sample.Application.dna" "%out%"
+-----------------------------------------------------------------------------------------------
+REM pack x86 addin
 
-copy "..\..\Sample.Models\Forbes.csv" "%out%"
-copy "..\..\Sample.Views\Forbes2000.xlsx" "%out%"
+ExcelDnaPack.exe "Forbes.Application.DNA.dna" /Y
+del "Forbes.Application.DNA.xll"
+rename "Forbes.Application.DNA-packed.xll" "Forbes.Application.DNA.xll"
+copy "Forbes.Application.DNA.dll.config" "Forbes.Application.DNA.xll.config"
 
-copy "..\..\Sample.Application\%~3Sample.Application.dll.config" "%out%Sample.Application.xll.config"
+-----------------------------------------------------------------------------------------------
+REM pack x64 addin
 
-copy "..\..\packages\Excel-DNA.0.32.0\tools\ExcelDnaPack.exe" "%out%"
-copy "..\..\packages\Excel-DNA.0.32.0\tools\ExcelDna.xll" "%out%Sample.Application.xll"
-copy "..\..\packages\Excel-DNA.0.32.0\tools\ExcelDna64.xll" "%out%Sample.Application (x64).xll"
+rename "Forbes.Application.DNA.dna" "Forbes.Application.DNA (x64).dna"
+ExcelDnaPack.exe "Forbes.Application.DNA (x64).dna" /Y
+del "Forbes.Application.DNA (x64).xll"
+rename "Forbes.Application.DNA (x64)-packed.xll" "Forbes.Application.DNA (x64).xll"
+copy "Forbes.Application.DNA.dll.config" "Forbes.Application.DNA (x64).xll.config"
 
-cd "%out%"
-
-rem x86
-ExcelDnaPack.exe "Sample.Application.dna" /Y
-del "Sample.Application.xll"
-rename "Sample.Application-packed.xll" "Sample.Application.xll"
-
-rem x64
-rename "Sample.Application.dna" "Sample.Application (x64).dna"
-ExcelDnaPack.exe "Sample.Application (x64).dna" /Y
-del "Sample.Application (x64).xll"
-rename "Sample.Application (x64)-packed.xll" "Sample.Application (x64).xll"
-copy "Sample.Application.xll.config" "Sample.Application (x64).xll.config
-
-del "*.dll"
-del "*.exe"
+-----------------------------------------------------------------------------------------------
+REM clean up unwanted files
 del "*.dna"
+del "*.exe"
+del "*.pdb"
+del "*.dll"
+del "*.xml"
+del "*.dll.config"
 
 popd
