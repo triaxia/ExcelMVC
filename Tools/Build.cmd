@@ -1,7 +1,7 @@
 @echo off
 REM ----------------------------------------------------------------------------------------------------------------------------------
 REM Builds ExcelMVC solutions
-set /p version=Enter the build version (i.j.k):
+REM set /p version=Enter the build version (i.j.k):
 
 pushd "%~dp0"
 
@@ -10,7 +10,7 @@ msbuild "..\Examples\Forebes\Forbes.sln" /t:Rebuild /p:Configuration="Release" /
 msbuild "..\Examples\SpotTrading\SpotTrading.sln" /t:Rebuild /p:Configuration="Release Package" /p:Platform="Any CPU" /clp:ErrorsOnly
 msbuild "..\ExcelMvc\ExcelMvc.sln" /t:Rebuild /p:Configuration="Release Package" /p:Platform="Any CPU" /clp:ErrorsOnly
 
-call ::package_release "%cd%" "ExcelMVC.%version%"
+call ::package_release "%cd%" "release"
 
 popd
 
@@ -40,6 +40,7 @@ xcopy /Y /S /R "..\Examples\Forbes\Forbes.Application.DNA\bin\Release\*.*"  "%ou
 xcopy /Y /S /R "..\ExcelMvc\*.*" "%out%\Source\ExcelMvc\"
 xcopy /Y /S /R "..\Examples\*.*" "%out%\Source\Examples\"
 
+@echo clean up build files
 call :clean_dir "%out%\Source\ExcelMvc"
 call :clean_dir "%out%\Source\Examples"
 
