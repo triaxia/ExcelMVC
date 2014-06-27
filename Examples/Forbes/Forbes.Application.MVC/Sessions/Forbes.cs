@@ -34,11 +34,10 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-namespace Forbes.Application.ViewModels
+namespace Forbes.Application.Sessions
 {
     using System;
     using System.Windows.Forms;
-
     using ExcelMvc.Bindings;
     using ExcelMvc.Views;
     using Models;

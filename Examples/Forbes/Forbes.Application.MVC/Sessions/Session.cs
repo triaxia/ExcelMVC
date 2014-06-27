@@ -34,55 +34,76 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-namespace Forbes.Application.ViewModels
+namespace Forbes.Application.Sessions
 {
-    using System.Windows;
-
-    using ExcelMvc.Controls;
+    using System.Windows.Forms;
+    using ExcelMvc.Bindings;
+    using ExcelMvc.Runtime;
     using ExcelMvc.Views;
 
-    internal class CommandTests
+    public class Session : ISession
     {
+        #region Fields
+
+        private const string ViewName = "Forbes2000";
+
+        #endregion Fields
+
         #region Constructors
 
-        public CommandTests(Sheet sheet)
+        public Session()
         {
-            View = sheet;
-            sheet.HookClicked(CmdClicked, "ShapeButton", true);
-            sheet.HookClicked(CmdClicked, "FormButton", true);
-            sheet.HookClicked(CmdClicked, "FormCheckBox", true);
-            sheet.HookClicked(CmdClicked, "FormOptionButtonYes", true);
-            sheet.HookClicked(CmdClicked, "FormOptionButtonNo", true);
-            sheet.HookClicked(CmdClicked, "FormOptionButtonMale", true);
-            sheet.HookClicked(CmdClicked, "FormOptionButtonFemale", true);
-            sheet.HookClicked(CmdClicked, "FormListBox", true);
-            sheet.HookClicked(CmdClicked, "FormDropDown", true);
-            sheet.HookClicked(CmdClicked, "FormSpinner", true);
+            App.Instance.Opening += Book_Opening;
+            App.Instance.Opened += Book_Opened;
+            App.Instance.Closing += Book_Closing;
+            App.Instance.Closed += Book_Closed;
         }
 
         #endregion Constructors
 
-        #region Properties
-
-        private Sheet View
-        {
-            get; set;
-        }
-
-        #endregion Properties
-
         #region Methods
 
-        public void CmdClicked(object sender, CommandEventArgs args)
+        public void Dispose()
         {
-            var cmd = (Command)sender;
-            var message = string.Format(
-                "Command (name={0}, caption={1}, value={2}, enabled={3}) clicked.",
-                cmd.Name,
-                cmd.Caption,
-                cmd.Value,
-                cmd.IsEnabled);
-            MessageBox.Show(message, View.Name, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void Book_Closed(object sender, ViewEventArgs args)
+        {
+            if (args.View.Id == ViewName)
+            {
+                args.Accept();
+            }
+        }
+
+        private void Book_Closing(object sender, ViewEventArgs args)
+        {
+            if (args.View.Id == ViewName)
+                args.Accept();
+        }
+
+        private void Book_Opened(object sender, ViewEventArgs args)
+        {
+            if (args.View.Id == ViewName)
+            {
+                args.Accept();
+                args.View.Model = new Forbes(args.View);
+            }
+        }
+
+        private void Book_Opening(object sender, ViewEventArgs args)
+        {
+            // accept if the book being opened is "Forbes2000", whose view id is
+            // defined by the Custom Document Propety named "ExcelMvc".
+            if (args.View.Id == ViewName)
+            {
+                args.Accept();
+                args.View.BindingFailed += View_BindingFailed;
+            }
+        }
+
+        private void View_BindingFailed(object sender, BindingFailedEventArgs args)
+        {
+            MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         #endregion Methods

@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forbes.Models", "Forbes.Models\Forbes.Models.csproj", "{0378350D-B6F9-425D-836B-37B7ED8345B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forbes.Application", "Forbes.Application\Forbes.Application.csproj", "{C1059EF6-AFEE-4CB2-BB15-2F9EDDE89184}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forbes.ViewModels", "Forbes.ViewModels\Forbes.ViewModels.csproj", "{C1059EF6-AFEE-4CB2-BB15-2F9EDDE89184}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forbes.Views", "Forbes.Views\Forbes.Views.csproj", "{A5404172-76DE-4C8C-BD9D-298EC4C3A3DC}"
 EndProject

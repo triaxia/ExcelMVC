@@ -34,7 +34,7 @@ Boston, MA 02110-1301 USA.
 */
 #endregion Header
 
-namespace Forbes.Application.ViewModels
+namespace Forbes.Application.Sessions
 {
     using System.Collections;
     using System.Linq;
@@ -42,6 +42,7 @@ namespace Forbes.Application.ViewModels
     using ExcelMvc.Controls;
     using ExcelMvc.Views;
     using Models;
+    using ViewModels;
     using Views;
 
     internal class Forbes2000

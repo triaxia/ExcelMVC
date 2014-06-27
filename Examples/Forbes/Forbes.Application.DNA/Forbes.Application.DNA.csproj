@@ -42,19 +42,35 @@
     <Reference Include="ExcelMvc.AddinDna">
       <HintPath>..\packages\ExcelMvc.AddinDna.1.4.8\lib\net35\ExcelMvc.AddinDna.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Forbes.Application.MVC\Sessions\CommandTests.cs">
+      <Link>Sessions\CommandTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Forbes.Application.MVC\Sessions\Forbes.cs">
+      <Link>Sessions\Forbes.cs</Link>
+    </Compile>
+    <Compile Include="..\Forbes.Application.MVC\Sessions\Forbes2000.cs">
+      <Link>Sessions\Forbes2000.cs</Link>
+    </Compile>
+    <Compile Include="..\Forbes.Application.MVC\Sessions\Session.cs">
+      <Link>Sessions\Session.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Forbes.Application\Forbes.Application.csproj">
+    <ProjectReference Include="..\Forbes.ViewModels\Forbes.ViewModels.csproj">
       <Project>{c1059ef6-afee-4cb2-bb15-2f9edde89184}</Project>
-      <Name>Forbes.Application</Name>
+      <Name>Forbes.ViewModels</Name>
     </ProjectReference>
     <ProjectReference Include="..\Forbes.Models\Forbes.Models.csproj">
       <Project>{0378350d-b6f9-425d-836b-37b7ed8345b4}</Project>
