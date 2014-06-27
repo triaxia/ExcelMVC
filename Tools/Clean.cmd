@@ -5,7 +5,7 @@ pushd .
 
 cd "%~dp0"
 
-call :loop "%cd%\release"
+call :loop "%~1"
 
 popd
 goto :eof

@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C1059EF6-AFEE-4CB2-BB15-2F9EDDE89184}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Forbes.Application</RootNamespace>
+    <AssemblyName>Forbes.Application</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ExcelMvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ExcelMvc.1.4.8\lib\net35\ExcelMvc.dll</HintPath>
+    </Reference>
+    <Reference Include="StyleCop">
+      <HintPath>..\packages\StyleCop.4.7.49.0\lib\net35\StyleCop.dll</HintPath>
+    </Reference>
+    <Reference Include="StyleCop.CSharp">
+      <HintPath>..\packages\StyleCop.4.7.49.0\lib\net35\StyleCop.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Core" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" Condition="'$(Configuration)' == 'Release 4.0'">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xaml" Condition="'$(Configuration)' == 'Release 4.5'">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Converters\BoolToYesOrNo.cs" />
+    <Compile Include="ViewModels\Company.cs" />
+    <Compile Include="ViewModels\CompanyFilter.cs" />
+    <Compile Include="ViewModels\CompanyFilterList.cs" />
+    <Compile Include="ViewModels\CompanyList.cs" />
+    <Compile Include="ViewModels\Forbes.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="ViewModels\Forbes2000.cs" />
+    <Compile Include="ViewModels\Session.cs" />
+    <Compile Include="ViewModels\CommandTests.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="ExcelMvc.Addin %28x64%29.xll" />
+    <None Include="ExcelMvc.Addin.xll" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <None Include="Settings.StyleCop" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Forbes.Models\Forbes.Models.csproj">
+      <Project>{0378350d-b6f9-425d-836b-37b7ed8345b4}</Project>
+      <Name>Forbes.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Forbes.Views\Forbes.Views.csproj">
+      <Project>{a5404172-76de-4c8c-bd9d-298ec4c3a3dc}</Project>
+      <Name>Forbes.Views</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ExcelMvc.Addin %28x64%29.pdb" />
+    <Content Include="ExcelMvc.Addin.pdb" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+</PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="BeforeBuild">
+    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.0&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild&quot; $(MSBuildProjectFile) /p:Configuration=&quot;Release 4.5&quot;" Condition=" '$(Configuration)' == 'Release Package'" WorkingDirectory="$(ProjectDir)" />
+  </Target>
+</Project>
