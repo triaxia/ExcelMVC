@@ -12,7 +12,7 @@ if exist "%out%\." (
 
 mkdir %out%
 
-xcopy /Y /S /R "..\ExcelMvc\ExcelMvc\bin\Release\*.*" "%out%\binn\"
+xcopy /Y /S /R "..\ExcelMvc\ExcelMvc\bin\Release\*.*" "%out%\bin\"
 xcopy /Y /S /R "..\Examples\SpotTrading\SpotTrading\bin\Release\net35\*.*" "%out%\samples\trading\"
 xcopy /Y /S /R "..\Examples\Sample\Sample.Application\bin\Release\net35\Mvc\*.*"  "%out%\samples\sample\"
 
