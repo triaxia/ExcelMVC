@@ -42,9 +42,9 @@ namespace ExcelMvc.Runtime
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Reflection.Emit;
     using System.Runtime.CompilerServices;
-
     using Extensions;
 
     /// <summary>
@@ -73,6 +73,8 @@ namespace ExcelMvc.Runtime
             Instances = new List<T>();
             Instances.Clear();
             var itype = typeof(T);
+
+            var asms = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (var type in asm.GetTypes())
@@ -85,21 +87,34 @@ namespace ExcelMvc.Runtime
                 }
             }
 
-            var asms = AppDomain.CurrentDomain.GetAssemblies();
-            var location = typeof(ObjectFactory<T>).Assembly.Location; // "" for sandbox execution
-            if (!string.IsNullOrEmpty(location))
+            var location = typeof(ObjectFactory<T>).Assembly.Location;
+            if (string.IsNullOrEmpty(location))
             {
-                // var path = Path.GetDirectoryName(new Uri(location).AbsolutePath);
-                var path = Path.GetDirectoryName(location);
-                var files = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
-
-                var nonDynamicAsms = asms.Where(x => !(x.ManifestModule is ModuleBuilder));
-
-                // exclude files already loaded
-                files = files.Where(x => nonDynamicAsms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0)).ToArray();
-                foreach (var file in files)
-                    Discover(file);
+                // from a sandbox execution(e.g.Excel-DNA)
+                return;
             }
+
+            var path = Path.GetDirectoryName(location);
+            var files = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
+
+            // .NET 4 Assembly.IsDynamic equvialent
+            Func<Assembly, bool> isDynamic = asm =>
+            {
+                if (asm.ManifestModule is ModuleBuilder)
+                    return true;
+
+                // the above test does not really return true for a dynamic assembly, hence use the try ignore 
+                // method
+                var unloadable = false;
+                ActionExtensions.Try(() => unloadable = string.IsNullOrEmpty(asm.Location));
+                return unloadable;
+            };
+            var nonDynamicAsms = asms.Where(isDynamic);
+    
+            // exclude files already loaded
+            files = files.Where(x => nonDynamicAsms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0)).ToArray();
+            foreach (var file in files)
+                Discover(file);
         }
 
         /// <summary>
