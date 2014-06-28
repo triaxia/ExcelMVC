@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Forbes.Application.MVC")]
+[assembly: AssemblyTitle("Forbes.ApplicationDna")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Forbes.Application.MVC")]
+[assembly: AssemblyProduct("Forbes.ApplicationDna")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("499ed03d-abab-438e-8126-8298ff90f574")]
+[assembly: Guid("24e982cb-2b33-4d9f-8b0c-5617487d2509")]
 
 // Version information for an assembly consists of the following four values:
 //

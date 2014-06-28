@@ -34,8 +34,8 @@ mkdir %out%
 xcopy /Y /S /R "..\ExcelMvc\ExcelMvc\bin\Release\*.*" "%out%\bin\"
 
 xcopy /Y /S /R "..\Examples\Trading\SpotTrading\bin\Release\*.*" "%out%\Samples\Trading\"
-xcopy /Y /S /R "..\Examples\Forbes\Forbes.Application.MVC\bin\Release\*.*"  "%out%\Samples\Forbes.MVC\"
-xcopy /Y /S /R "..\Examples\Forbes\Forbes.Application.DNA\bin\Release\*.*"  "%out%\Samples\Forbes.DNA\"
+xcopy /Y /S /R "..\Examples\Forbes\Forbes.ApplicationMvc\bin\Release\*.*"  "%out%\Samples\ForbesMvc\"
+xcopy /Y /S /R "..\Examples\Forbes\Forbes.ApplicationDna\bin\Release\*.*"  "%out%\Samples\ForbesDna\"
 
 xcopy /Y /S /R "..\ExcelMvc\*.*" "%out%\Source\ExcelMvc\"
 xcopy /Y /S /R "..\Examples\*.*" "%out%\Source\Examples\"

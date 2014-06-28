@@ -1,11 +1,11 @@
 pushd "%~dp0"
 
-set addin="Forbes.Application.DNA.xll"
+set addin="Forbes.ApplicationDna.xll"
 
 if exist "C:\Program Files (x86)\." (
 
 if exist "C:\Program Files\Microsoft Office\Office15\Excel.Exe" (
-  set addin="Forbes.Application.DNA (x64).xll"
+  set addin="Forbes.ApplicationDna (x64).xll"
 
 ))
 
