@@ -6,8 +6,8 @@ REM set /p version=Enter the build version (i.j.k):
 pushd "%~dp0"
 
 call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\Tools\vsvars32.bat"
-msbuild "..\Examples\Forebes\Forbes.sln" /t:Rebuild /p:Configuration="Release" /p:Platform="Any CPU" /clp:ErrorsOnly
-msbuild "..\Examples\SpotTrading\SpotTrading.sln" /t:Rebuild /p:Configuration="Release Package" /p:Platform="Any CPU" /clp:ErrorsOnly
+msbuild "..\Examples\Forbes\Forbes.sln" /t:Rebuild /p:Configuration="Release" /p:Platform="Any CPU" /clp:ErrorsOnly
+msbuild "..\Examples\Trading\SpotTrading.sln" /t:Rebuild /p:Configuration="Release" /p:Platform="Any CPU" /clp:ErrorsOnly
 msbuild "..\ExcelMvc\ExcelMvc.sln" /t:Rebuild /p:Configuration="Release Package" /p:Platform="Any CPU" /clp:ErrorsOnly
 
 call ::package_release "%cd%" "release"
@@ -39,6 +39,8 @@ xcopy /Y /S /R "..\Examples\Forbes\Forbes.ApplicationDna\bin\Release\*.*"  "%out
 
 xcopy /Y /S /R "..\ExcelMvc\*.*" "%out%\Source\ExcelMvc\"
 xcopy /Y /S /R "..\Examples\*.*" "%out%\Source\Examples\"
+
+xcopy /Y /S /R "..\Docs\Getting Started with ExcelMVC.docx" "%out%\Docs\"
 
 @echo clean up build files
 call :clean_dir "%out%\Source\ExcelMvc"
