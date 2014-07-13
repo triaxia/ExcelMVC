@@ -10,7 +10,7 @@ msbuild "..\Examples\Forbes\Forbes.sln" /t:Rebuild /p:Configuration="Release" /p
 msbuild "..\Examples\Trading\SpotTrading.sln" /t:Rebuild /p:Configuration="Release" /p:Platform="Any CPU" /clp:ErrorsOnly
 msbuild "..\ExcelMvc\ExcelMvc.sln" /t:Rebuild /p:Configuration="Release Package" /p:Platform="Any CPU" /clp:ErrorsOnly
 
-call ::package_release "%cd%" "release"
+call ::package_release "%cd%" "Release"
 
 popd
 
