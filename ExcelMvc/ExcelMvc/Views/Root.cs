@@ -37,30 +37,17 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Views
 {
     using System;
-    using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
     /// <summary>
-    /// Wraps an native window
+    /// Subclasses a window
     /// </summary>
     public class Root : NativeWindow
     {
         #region Fields
-
-        private static readonly uint AsyncUpdateMsg;
-        private static readonly Dictionary<int, Action<object>> Actions = new Dictionary<int, Action<object>>();
-        private static readonly Dictionary<int, object> States = new Dictionary<int, object>();
-    
         #endregion Fields
 
         #region Constructors
-
-        static Root()
-        {
-            AsyncUpdateMsg = RegisterWindowMessage("__ExcelMvcAsyncUpdate__");
-        }
 
         /// <summary>
         /// Intialises an instance of Window
@@ -94,61 +81,20 @@ namespace ExcelMvc.Views
         #endregion Events
 
         #region Methods
-
-        /// <summary>
-        /// Performs an Asnc action
-        /// </summary>
-        /// <param name="action">Action to be executed</param>
-        /// <param name="state">State object</param>
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public void Post(Action<object> action, object state)
-        {
-            var key = Actions.Count;
-            Actions[key] = action;
-            States[key] = state;
-            PostMessage(Handle, (int)AsyncUpdateMsg, key, 0);
-        }
-
+        
         /// <summary>
         /// Windows proc
         /// </summary>
         /// <param name="m">Message instance</param>
         protected override void WndProc(ref Message m)
         {
-            const int WmDestroy = 0x0002;
-            if (m.Msg == WmDestroy)
+            const int wmDestroy = 0x0002;
+            if (m.Msg == wmDestroy)
             {
-                Destroyed(this, new EventArgs());
+                Destroyed(this, EventArgs.Empty);
             }
-            else if (m.Msg == AsyncUpdateMsg)
-            {
-                Act((int)m.WParam);
-                return;
-            }
-
             base.WndProc(ref m);
         }
-
-        [DllImport("user32.dll")]
-        private static extern int PostMessage(IntPtr hwnd, int msg, int wParam, int lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern uint RegisterWindowMessage(string lpProcName);
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private void Act(int key)
-        {
-            try
-            {
-                Actions[key](States[key]);
-            }
-            finally
-            {
-                Actions.Remove(key);
-                States.Remove(key);
-            }
-        }
-
         #endregion Methods
     }
 }

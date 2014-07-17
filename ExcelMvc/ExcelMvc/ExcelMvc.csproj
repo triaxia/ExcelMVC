@@ -128,6 +128,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Runtime\AsyncActions.cs" />
+    <Compile Include="Runtime\AsyncWindow.cs" />
     <Compile Include="Views\ViewType.cs" />
     <Compile Include="Controls\CommandEventArgs.cs" />
     <Compile Include="Controls\CommandFactory.cs" />

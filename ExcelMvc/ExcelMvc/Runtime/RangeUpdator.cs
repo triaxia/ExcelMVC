@@ -33,8 +33,7 @@ Boston, MA 02110-1301 USA.
 */
 namespace ExcelMvc.Runtime
 {
-    using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
+    using System;
     using System.Runtime.InteropServices;
     using System.Threading;
     using Diagnostics;
@@ -51,8 +50,6 @@ namespace ExcelMvc.Runtime
         #region Fields
 
         private static readonly Lazy<RangeUpdator> LazyInstance = new Lazy<RangeUpdator>(() => new RangeUpdator());
-
-        private readonly Queue<Item> items = new Queue<Item>();
 
         #endregion Fields
 
@@ -77,12 +74,6 @@ namespace ExcelMvc.Runtime
         internal static string NameOfAsynUpdateThread
         {
             get { return "ExcelMvcAsynUpdateThread"; }
-        }
-
-        private Thread Worker
-        {
-            get;
-            set;
         }
 
         #endregion Properties
@@ -191,94 +182,72 @@ namespace ExcelMvc.Runtime
             return offset;
         }
 
-        private static bool Update(Item item)
+        private static void Enqueue(Item item, int pumpMilliseconds = 0)
         {
-            var status = ActionExtensions.Try(() =>
+            AsyncActions.Post(UpdateAsync, item, true, pumpMilliseconds);
+        }
+
+        private static void UpdateAsync(object state)
+        {
+            var item = (Item) state;
+            try
             {
                 var rowOffset = item.RowIdStart == null ? item.RowOffset
                     : RowOffsetFromRowId(item.RowIdStart, item.RowCount, item.RowId);
                 var colOffset = item.ColIdStart == null ? item.ColumnOffset
                     : ColOffsetFromColId(item.ColIdStart, item.ColCount, item.ColId);
                 AssignRangeValue(item.Range.MakeRange(rowOffset, item.Rows, colOffset, item.Columns), item.Value);
-            });
-
-            if (status == null)
-                return true;
-
-            var exp = status as COMException;
-            if (exp != null)
-            {
-                var errorCode = (uint)exp.ErrorCode;
-                if (errorCode == 0x8001010A || errorCode == 0x800AC472)
-                    return false;
             }
-
-            // TODO
-            return false;
+            catch(Exception ex)
+            {
+                var comex = (ex as COMException) ?? ex.InnerException as COMException;
+                if (IsRecoverable(comex))
+                {
+                    item.AgeMilliseconds += 100;
+                    if ( item.AgeMilliseconds > 10000)
+                        MessageWindow.AddErrorLine(ex);
+                    else
+                        Enqueue(item, 100);
+                }
+                else
+                {
+                    MessageWindow.AddErrorLine(ex);
+                }
+            }
         }
 
         private static void AssignRangeValue(Range range, object value)
         {
-            ActionExtensions.Try(
-                () =>
-                {
-                    var locked = System.Convert.ToBoolean(range.Locked);
-                    if (locked && range.Worksheet.ProtectContents)
-                    {
-                        var book = App.Instance.Find(ViewType.Book, (range.Worksheet.Parent as Workbook).Name);
-                        var sheet = book.Find(ViewType.Sheet, range.Worksheet.Name);
-                        sheet.ExecuteProtected(() => range.Value = value);
-                    }
-                    else
-                    {
-                        range.Value = value;
-                    }
-                },
-                MessageWindow.AddErrorLine);
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private Item Dequeue()
-        {
-            return items.Count == 0 ? null : items.Dequeue();
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private void Enqueue(Item item)
-        {
-            items.Enqueue(item);
-            Start();
-        }
-
-        private void Process()
-        {
-            Item item;
-            while ((item = Dequeue()) != null)
+            var locked = Convert.ToBoolean(range.Locked);
+            if (locked && range.Worksheet.ProtectContents)
             {
-                if (!Update(item))
-                {
-                    Enqueue(item);
-                    Thread.Sleep(100);
-                }
+                var book = App.Instance.Find(ViewType.Book, (range.Worksheet.Parent as Workbook).Name);
+                var sheet = book.Find(ViewType.Sheet, range.Worksheet.Name);
+                sheet.ExecuteProtected(() => range.Value = value);
             }
-
-            Stop();
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private void Start()
-        {
-            if (Worker == null)
+            else
             {
-                Worker = new Thread(Process) { IsBackground = true };
-                Worker.Start();
+                range.Value = value;
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private void Stop()
+        static bool IsRecoverable(COMException ex)
         {
-            Worker = null;
+            const uint RPC_E_SERVERCALL_RETRYLATER = 0x8001010A;
+            const uint RPC_E_CALL_REJECTED = 0x80010001;
+            const uint VBA_E_IGNORE = 0x800AC472;
+            const uint NAME_NOT_FOUND = 0x800A03EC;
+            var errorCode = (uint)ex.ErrorCode;
+            switch (errorCode)
+            {
+                case RPC_E_SERVERCALL_RETRYLATER:
+                case VBA_E_IGNORE:
+                case NAME_NOT_FOUND:
+                case RPC_E_CALL_REJECTED:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         #endregion Methods
@@ -356,6 +325,12 @@ namespace ExcelMvc.Runtime
             }
 
             public object Value
+            {
+                get;
+                set;
+            }
+
+            public int AgeMilliseconds
             {
                 get;
                 set;

@@ -5,7 +5,7 @@
     using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Input;
-    using Views;
+    using Runtime;
 
     /// <summary>
     /// Implements a visual sink for exception and information messages
@@ -40,7 +40,7 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void ShowInstance()
         {
-            App.Instance.MainWindow.Post(
+            AsyncActions.Post(
                 state =>
                 {
                     if (Instance == null)
@@ -49,7 +49,8 @@
                     // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
                     Instance.Show();
                 },
-                null);
+                null,
+                false);
         }
 
         /// <summary>
@@ -58,13 +59,14 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void HideInstance()
         {
-            App.Instance.MainWindow.Post(
+            AsyncActions.Post(
                 state =>
                 {
                     if (Instance != null)
                         Instance.Hide();
                 },
-                null);
+                null,
+                false);
         }
 
         /// <summary>
@@ -74,13 +76,14 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddErrorLine(Exception ex)
         {
-            App.Instance.MainWindow.Post(
+            AsyncActions.Post(
                 state =>
                 {
                     CreateInstance();
                     Instance.Model.AddErrorLine((Exception)state);
                 }, 
-                ex);
+                ex,
+                false);
         }
 
         /// <summary>
@@ -90,13 +93,14 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddErrorLine(string error)
         {
-            App.Instance.MainWindow.Post(
+            AsyncActions.Post(
                 state =>
                 {
                     CreateInstance();
                     Instance.Model.AddErrorLine((string)state);
                 },
-                error);
+                error,
+                false);
         }
 
         /// <summary>
@@ -106,13 +110,14 @@
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void AddInfoLine(string message)
         {
-            App.Instance.MainWindow.Post(
+            AsyncActions.Post(
                 state =>
                 {
                     CreateInstance();
                     Instance.Model.AddInfoLine((string)state);
                 }, 
-                message);
+                message,
+                false);
         }
 
         private static void CreateInstance()

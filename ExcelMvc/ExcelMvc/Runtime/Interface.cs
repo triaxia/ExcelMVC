@@ -112,7 +112,7 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Shows the ExcelMvc winow
+        /// Shows the ExcelMvc window
         /// </summary>
         /// <returns>error string, null if success</returns>
         public static string Show()
@@ -122,7 +122,7 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Hides the ExcelMvc winow
+        /// Hides the ExcelMvc window
         /// </summary>
         /// <returns>error string, null if success</returns>
         public static string Hide()
@@ -131,6 +131,16 @@ namespace ExcelMvc.Runtime
             return null;
         }
 
+        /// <summary>
+        /// Runs an action
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns>error string, null if success</returns>
+        public static string Run(int action)
+        {
+            AsyncActions.Execute(true);
+            return null;
+        }
         #endregion Methods
     }
 }

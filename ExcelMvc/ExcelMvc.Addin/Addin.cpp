@@ -94,7 +94,8 @@ static LPWSTR rgFuncs[][NumberOfParameters] =
     { L"ExcelMvcAttach", L"I", L"ExcelMvcAttach", L"", L"2", L"ExcelMvc", L"", L"", L"Attach Excel to ExcelMvc", L"", L"" },
     { L"ExcelMvcDetach", L"I", L"ExcelMvcDetach", L"", L"2", L"ExcelMvc", L"", L"", L"Detach Excel from ExcelMvc", L"", L"" },
     { L"ExcelMvcShow", L"I", L"ExcelMvcShow", L"", L"2", L"ExcelMvc", L"", L"", L"Shows the ExcelMvc window", L"", L"" },
-    { L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"2", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" }
+    { L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"2", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" },
+    { L"ExcelMvcRun", L"IJ", L"ExcelMvcRun", L"", L"0", L"ExcelMvc", L"", L"", L"Runs an action", L"", L"" }
 };
 
 BOOL StartAddinClrHost()
@@ -200,21 +201,22 @@ BOOL __stdcall ExcelMvcDetach(void)
 
 BOOL __stdcall ExcelMvcShow(void)
 {
-    //VARIANT arg1;
-    //VariantInit(&arg1);
-    //arg1.vt = VT_BOOL;
-    //arg1.boolVal = visible ? VARIANT_TRUE : VARIANT_FALSE;
 	ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Show");
 	return ClrRuntimeHost::TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcHide(void)
 {
-    //VARIANT arg1;
-    //VariantInit(&arg1);
-    //arg1.vt = VT_BOOL;
-    //arg1.boolVal = visible ? VARIANT_TRUE : VARIANT_FALSE;
-    ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Hide");
+     ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Hide");
     return ClrRuntimeHost::TestAndDisplayError();
 }
 
+BOOL __stdcall ExcelMvcRun(int action)
+{
+    VARIANT arg1;
+    VariantInit(&arg1);
+    arg1.vt = VT_INT;
+    arg1.intVal = action;
+    ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Run", &arg1);
+    return ClrRuntimeHost::TestAndDisplayError();
+}
