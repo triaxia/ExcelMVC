@@ -104,7 +104,7 @@ namespace ExcelMvc.AddinDna
         [ExcelFunction(Description = "Runs the next action in the async queue", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcRun", IsHidden = true)]
         public static object ExcelMvcRun()
         {
-            return ActionExtensions.Wrap(() => Interface.Run(0)) ?? (object)true;
+            return ActionExtensions.Wrap(() => Interface.Run()) ?? (object)true;
         }
 
         #endregion Methods

@@ -59,11 +59,7 @@ namespace ExcelMvc.Runtime
         /// <returns>error string, null if success</returns>
         public static string Attach(object app)
         {
-            var status = ActionExtensions.Try(() =>
-            {
-                AsyncActions.Initialise();
-                App.Instance.Attach(app);
-            });
+            var status = ActionExtensions.Try(() => App.Instance.Attach(app));
             return TestStauts(status);
         }
 
@@ -136,11 +132,10 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Runs an action
+        /// Runs the next action in the Async queue
         /// </summary>
-        /// <param name="action"></param>
         /// <returns>error string, null if success</returns>
-        public static string Run(int action)
+        public static string Run()
         {
             AsyncActions.Execute(true);
             return null;

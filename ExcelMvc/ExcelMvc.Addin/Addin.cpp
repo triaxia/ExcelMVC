@@ -95,7 +95,7 @@ static LPWSTR rgFuncs[][NumberOfParameters] =
     { L"ExcelMvcDetach", L"I", L"ExcelMvcDetach", L"", L"2", L"ExcelMvc", L"", L"", L"Detach Excel from ExcelMvc", L"", L"" },
     { L"ExcelMvcShow", L"I", L"ExcelMvcShow", L"", L"2", L"ExcelMvc", L"", L"", L"Shows the ExcelMvc window", L"", L"" },
     { L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"2", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" },
-    { L"ExcelMvcRun", L"IJ", L"ExcelMvcRun", L"", L"0", L"ExcelMvc", L"", L"", L"Runs the next action in the async queue", L"", L"" }
+    { L"ExcelMvcRun", L"I", L"ExcelMvcRun", L"", L"0", L"ExcelMvc", L"", L"", L"Runs the next action in the async queue", L"", L"" }
 };
 
 BOOL StartAddinClrHost()
@@ -211,12 +211,12 @@ BOOL __stdcall ExcelMvcHide(void)
     return ClrRuntimeHost::TestAndDisplayError();
 }
 
-BOOL __stdcall ExcelMvcRun(int action)
+BOOL __stdcall ExcelMvcRun(void)
 {
-    VARIANT arg1;
+    /*VARIANT arg1;
     VariantInit(&arg1);
     arg1.vt = VT_INT;
-    arg1.intVal = action;
-    ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Run", &arg1);
+    arg1.intVal = action;*/
+    ClrRuntimeHost::CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Run");
     return ClrRuntimeHost::TestAndDisplayError();
 }

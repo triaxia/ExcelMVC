@@ -45,6 +45,7 @@ namespace ExcelMvc.Runtime
     using System.Reflection;
     using System.Reflection.Emit;
     using System.Runtime.CompilerServices;
+    using System.Windows;
     using Extensions;
 
     /// <summary>
@@ -105,11 +106,11 @@ namespace ExcelMvc.Runtime
 
                 // the above test does not really return true for a dynamic assembly, hence use the try ignore 
                 // method
-                var unloadable = false;
-                ActionExtensions.Try(() => unloadable = string.IsNullOrEmpty(asm.Location));
-                return unloadable;
+                var asmPath = "";
+                ActionExtensions.Try(() => asmPath = asm.Location);
+                return string.IsNullOrEmpty(asmPath);
             };
-            var nonDynamicAsms = asms.Where(isDynamic);
+            var nonDynamicAsms = asms.Where(x=> !isDynamic(x));
     
             // exclude files already loaded
             files = files.Where(x => nonDynamicAsms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0)).ToArray();

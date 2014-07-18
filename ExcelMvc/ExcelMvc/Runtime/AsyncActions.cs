@@ -79,7 +79,7 @@ namespace ExcelMvc.Runtime
 
         static void MainWindow_AsyncMacroReceived(object sender, EventArgs args)
         {
-            ActionExtensions.Try(() => App.Instance.Underlying.Run("ExcelMvcRun", 0));
+            ActionExtensions.Try(() => App.Instance.Underlying.Run("ExcelMvcRun"));
         }
 
         #endregion Constructors

@@ -190,6 +190,7 @@ namespace ExcelMvc.Views
                 Underlying = (app as Application) ?? Find();
                 if (Underlying == null)
                     throw new Exception(Resource.ErrorExcelAppFound);
+                AsyncActions.Initialise();
 
                 Underlying.WorkbookOpen += OpenBook;
                 Underlying.WorkbookBeforeClose += ClosingBook;
