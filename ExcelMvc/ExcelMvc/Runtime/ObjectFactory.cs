@@ -149,7 +149,7 @@ namespace ExcelMvc.Runtime
         {
             ActionExtensions.Try(() =>
             {
-                var itype = typeof(ISession);
+                var itype = typeof(T);
                 var types = TypeDiscoveryDomains.Discover(assemblyPath, itype);
                 foreach (var type in types)
                     Instances.Add((T)Activator.CreateInstance(Type.GetType(type)));
