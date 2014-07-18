@@ -59,7 +59,11 @@ namespace ExcelMvc.Runtime
         /// <returns>error string, null if success</returns>
         public static string Attach(object app)
         {
-            var status = ActionExtensions.Try(() => App.Instance.Attach(app));
+            var status = ActionExtensions.Try(() =>
+            {
+                AsyncActions.Initialise();
+                App.Instance.Attach(app);
+            });
             return TestStauts(status);
         }
 

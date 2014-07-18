@@ -97,6 +97,16 @@ namespace ExcelMvc.AddinDna
             Interface.FireClicked();
         }
 
+        /// <summary>
+        /// Detaches the current Excel session from ExcelMVC
+        /// </summary>
+        /// <returns></returns>
+        [ExcelFunction(Description = "Runs the next action in the async queue", Category = "ExcelMvc", IsVolatile = false, Name = "ExcelMvcRun", IsHidden = true)]
+        public static object ExcelMvcRun()
+        {
+            return ActionExtensions.Wrap(() => Interface.Run(0)) ?? (object)true;
+        }
+
         #endregion Methods
     }
 }

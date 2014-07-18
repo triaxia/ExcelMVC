@@ -2,7 +2,7 @@
 <package>
     <metadata>
         <id>ExcelMvc.AddinDna</id>
-        <version>1.5.1</version>
+        <version>1.5.2</version>
         <title>ExcelMvc.AddinDna</title>
         <authors>triaxia@users.sf.net, wstamm@users.sf.net</authors>
         <owners>triaxia@users.sf.net</owners>

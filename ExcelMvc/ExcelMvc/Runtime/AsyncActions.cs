@@ -111,6 +111,15 @@ namespace ExcelMvc.Runtime
         #region Methods
 
         /// <summary>
+        /// Initialise class static states
+        /// </summary>
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public static void Initialise()
+        {
+            // nothing needs to be done, as the static contructor will be called
+        }
+
+        /// <summary>
         /// Posts an Async action
         /// </summary>
         /// <param name="action">Action to be executed</param>

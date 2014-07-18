@@ -44,7 +44,7 @@ namespace ExcelMvc.Runtime
     /// <summary>
     /// Subclasses a window
     /// </summary>
-    public sealed class AsyncWindow : NativeWindow
+    internal sealed class AsyncWindow : NativeWindow
     {
         #region Fields
 
@@ -79,14 +79,14 @@ namespace ExcelMvc.Runtime
         #region Delegates
 
         /// <summary>
-        /// Hanalder for a AsyncAction
+        /// Handler for a AsyncAction
         /// </summary>
         /// <param name="sender">Event sender</param>
         /// <param name="args">EventArgs</param>
         public delegate void AsyncActionReceivedHandler(object sender, EventArgs args);
 
         /// <summary>
-        /// Hanalder for a AsyncAction
+        /// Handler for a AsyncAction
         /// </summary>
         /// <param name="sender">Event sender</param>
         /// <param name="args">EventArgs</param>

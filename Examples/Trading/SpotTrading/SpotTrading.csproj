@@ -31,7 +31,7 @@
   <ItemGroup>
     <Reference Include="ExcelMvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ExcelMvc.1.4.8\lib\net35\ExcelMvc.dll</HintPath>
+      <HintPath>..\packages\ExcelMvc.1.5.2\lib\net35\ExcelMvc.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

@@ -95,7 +95,7 @@ static LPWSTR rgFuncs[][NumberOfParameters] =
     { L"ExcelMvcDetach", L"I", L"ExcelMvcDetach", L"", L"2", L"ExcelMvc", L"", L"", L"Detach Excel from ExcelMvc", L"", L"" },
     { L"ExcelMvcShow", L"I", L"ExcelMvcShow", L"", L"2", L"ExcelMvc", L"", L"", L"Shows the ExcelMvc window", L"", L"" },
     { L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"2", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" },
-    { L"ExcelMvcRun", L"IJ", L"ExcelMvcRun", L"", L"0", L"ExcelMvc", L"", L"", L"Runs an action", L"", L"" }
+    { L"ExcelMvcRun", L"IJ", L"ExcelMvcRun", L"", L"0", L"ExcelMvc", L"", L"", L"Runs the next action in the async queue", L"", L"" }
 };
 
 BOOL StartAddinClrHost()

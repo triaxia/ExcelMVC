@@ -36,14 +36,6 @@
       <HintPath>..\packages\Excel-DNA.Lib.0.32.0\lib\ExcelDna.Integration.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ExcelMvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ExcelMvc.AddinDna.1.5.0\lib\net35\ExcelMvc.dll</HintPath>
-    </Reference>
-    <Reference Include="ExcelMvc.AddinDna, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ExcelMvc.AddinDna.1.5.0\lib\net35\ExcelMvc.AddinDna.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -84,7 +76,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Readme.txt" />
     <Content Include="Sessions\readme.txt" />
     <None Include="App.config" />
     <None Include="packages.config" />
