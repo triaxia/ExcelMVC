@@ -721,9 +721,11 @@ namespace ExcelMvc.Views
             var groupBindings = GroupBindings(toView);
             if (numberItemsBound != newItems && (itemsBound != null || clearifnull))
             {
-                ClearView(groupBindings, numberItemsBound);
                 if (numberItemsBound > 0)
+                {
+                    ClearView(groupBindings, numberItemsBound);
                     UnbindValidationLists(numberItemsBound);
+                }
             }
 
             if (newItems > 0)
