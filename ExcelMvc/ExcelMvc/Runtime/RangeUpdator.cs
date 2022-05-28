@@ -38,8 +38,8 @@ namespace ExcelMvc.Runtime
     using System.Threading;
     using Diagnostics;
     using Extensions;
-
     using Microsoft.Office.Interop.Excel;
+    using Range = Microsoft.Office.Interop.Excel.Range;
     using Views;
 
     /// <summary>

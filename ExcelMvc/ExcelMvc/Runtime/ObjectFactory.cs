@@ -89,11 +89,7 @@ namespace ExcelMvc.Runtime
             }
 
             var location = typeof(ObjectFactory<T>).Assembly.Location;
-            if (string.IsNullOrEmpty(location))
-            {
-                // from a sandbox execution(e.g.Excel-DNA)
-                return;
-            }
+            if (string.IsNullOrEmpty(location)) return;
 
             var path = Path.GetDirectoryName(location);
             var files = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);

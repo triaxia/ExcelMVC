@@ -8,7 +8,7 @@
     using Microsoft.Office.Interop.Excel;
     using Runtime;
     using Views;
-
+    using Range = Microsoft.Office.Interop.Excel.Range;
     internal class BindingCollector
     {
         #region Constructors

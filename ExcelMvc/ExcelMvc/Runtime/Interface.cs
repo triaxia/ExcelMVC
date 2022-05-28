@@ -39,6 +39,7 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Runtime
 {
     using System;
+    using System.Windows;
     using System.Windows.Forms;
 
     using Diagnostics;
@@ -105,7 +106,7 @@ namespace ExcelMvc.Runtime
             {
                 result = status.Message + Environment.NewLine + status.StackTrace;
                 MessageWindow.AddErrorLine(status);
-                MessageBox.Show(result, typeof(Interface).Namespace, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.MessageBox.Show(result, typeof(Interface).Namespace, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return result;

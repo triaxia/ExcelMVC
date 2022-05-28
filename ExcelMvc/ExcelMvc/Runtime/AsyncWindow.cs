@@ -40,7 +40,7 @@ namespace ExcelMvc.Runtime
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
     using Views;
-
+    
     /// <summary>
     /// Subclasses a window
     /// </summary>

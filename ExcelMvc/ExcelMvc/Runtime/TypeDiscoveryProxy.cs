@@ -51,7 +51,7 @@ namespace ExcelMvc.Runtime
             var result = new TypeResult { Types = new List<string>() };
             try
             {
-                var asm = Assembly.LoadFrom(assemblyPath);
+                var asm = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
                 foreach (var item in asm.GetTypes())
                 {
                     if (type.IsAssignableFrom(item) && !item.IsInterface && !item.IsAbstract)

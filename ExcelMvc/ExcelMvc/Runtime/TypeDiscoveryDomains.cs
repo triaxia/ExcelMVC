@@ -48,50 +48,20 @@ namespace ExcelMvc.Runtime
     internal static class TypeDiscoveryDomains
     {
         #region Methods
-
-        public static AppDomain CreateDomain(string domainName, string privateBinPath)
+        public static TypeDiscoveryProxy CreateProxy()
         {
-            var domain = AppDomain.CurrentDomain;
-            if (string.Compare(domainName, domain.FriendlyName, StringComparison.OrdinalIgnoreCase) != 0)
-            {
-                var ads = new AppDomainSetup
-                {
-                    ApplicationBase = privateBinPath ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                    DisallowBindingRedirects = false,
-                    DisallowCodeDownload = true,
-                    ConfigurationFile = domain.SetupInformation.ConfigurationFile,
-                    PrivateBinPath = privateBinPath
-                };
-                domain = AppDomain.CreateDomain(domainName, null, ads);
-            }
-
-            return domain;
-        }
-
-        public static TypeDiscoveryProxy CreateProxy(AppDomain domain)
-        {
-            return domain.FriendlyName.CompareOrdinalIgnoreCase(AppDomain.CurrentDomain.FriendlyName) == 0
-                ? new TypeDiscoveryProxy()
-                : (TypeDiscoveryProxy)domain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(TypeDiscoveryProxy).FullName);
+            return (TypeDiscoveryProxy)AppDomain.CurrentDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName
+                , typeof(TypeDiscoveryProxy).FullName);
         }
 
         public static List<string> Discover(string assemblyPath, Type type)
         {
-            var domain = CreateDomain("~~DiscoveryDomain~~", null);
-            try
-            {
-                var proxy = CreateProxy(domain);
-                var result = proxy.Discover(assemblyPath, type);
-                if (result.Error != null)
-                    throw result.Error;
-                return result.Types;
-            }
-            finally
-            {
-                AppDomain.Unload(domain);
-            }
+            var proxy = CreateProxy();
+            var result = proxy.Discover(assemblyPath, type);
+            if (result.Error != null)
+                throw result.Error;
+            return result.Types;
         }
-
-        #endregion Methods
+        #endregion
     }
 }

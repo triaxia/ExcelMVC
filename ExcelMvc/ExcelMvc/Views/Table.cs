@@ -49,6 +49,7 @@ namespace ExcelMvc.Views
     using Extensions;
     using Microsoft.Office.Interop.Excel;
     using Runtime;
+    using Range = Microsoft.Office.Interop.Excel.Range;
 
     /// <summary>
     /// Represents a rectangular visual with rows and columns
