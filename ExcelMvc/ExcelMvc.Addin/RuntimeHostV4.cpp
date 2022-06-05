@@ -16,7 +16,7 @@
  * WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 \***************************************************************************/
 
-#include "stdafx.h"
+#include "pch.h"
 #include <windows.h>
 #include <metahost.h>
 
@@ -99,6 +99,7 @@ HRESULT RuntimeHostV4Demo1(PCWSTR pszVersion, PCWSTR pszAssemblyName,
     bstr_t bstrMethodName(L"ToString");
     SAFEARRAY *psaMethodArgs = NULL;
     variant_t vtStringRet;
+    LONG index = 0;
 
     // 
     // Load and start the .NET runtime.
@@ -218,7 +219,6 @@ HRESULT RuntimeHostV4Demo1(PCWSTR pszVersion, PCWSTR pszAssemblyName,
     // expects an array of Object - VT_VARIANT. There is only one argument, 
     // so cElements = 1.
     psaStaticMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, 1);
-    LONG index = 0;
     hr = SafeArrayPutElement(psaStaticMethodArgs, &index, &vtStringArg);
     if (FAILED(hr))
     {

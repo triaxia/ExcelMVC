@@ -16,7 +16,7 @@
 * WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 \***************************************************************************/
 
-#include "stdafx.h"
+#include "pch.h"
 #include <windows.h>
 #include <metahost.h>
 #include "ClrRuntimeHost.h"
@@ -225,6 +225,7 @@ ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, VARI
 	SAFEARRAY *psaMethodArgs = NULL;
 	variant_t vtEmpty;
 	variant_t vtReturn;
+	int args;
 
 	_TypePtr spType = NULL;
 	HRESULT hr = pAssembly->GetType_2(bstrClassName, &spType);
@@ -234,7 +235,7 @@ ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, VARI
 		goto Cleanup;
 	}
 
-    int args = (pArg1 == NULL ? 0 : 1) + (pArg2 == NULL ? 0 : 1) + (pArg3 == NULL ? 0 : 1);
+    args = (pArg1 == NULL ? 0 : 1) + (pArg2 == NULL ? 0 : 1) + (pArg3 == NULL ? 0 : 1);
      if (args == 0)
     {
         psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, 0);

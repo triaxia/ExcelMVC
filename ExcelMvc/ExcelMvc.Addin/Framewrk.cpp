@@ -68,7 +68,7 @@
 //
 //***************************************************************************
 
-#include "stdafx.h"
+#include "pch.h"
 #include <windows.h>
 #include <malloc.h>
 #include <wchar.h>
