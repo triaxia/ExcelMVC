@@ -1,90 +1,83 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
-    <!--<Nullable>enable</Nullable>-->
-    <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	<Version>2.0.0</Version>
-	<Description>Writing Excel applications in .NET using the MVC/MVVM pattern</Description>
-	<Copyright>Copyright © 2013 Peter Gu &amp; Wolfgang Stamm</Copyright>
-	<RepositoryUrl>https://github.com/triaxia/ExcelMVC</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <DebugType>embedded</DebugType>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
+		<!--<Nullable>enable</Nullable>-->
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>2.0.0</Version>
+		<Description>Writing Excel applications in .NET using the MVC/MVVM pattern</Description>
+		<Copyright>Copyright © 2013 Peter Gu &amp; Wolfgang Stamm</Copyright>
+		<RepositoryUrl>https://github.com/triaxia/ExcelMVC</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="ReadMe.txt" />
-    <None Remove="Resources\ExcelMvc.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Resources\ExcelMvc.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="ReadMe.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="Microsoft.Office.Interop.Excel">
+			<HintPath>..\..\Office\Microsoft.Office.Interop.Excel.dll</HintPath>
+			<EmbedInteropTypes>True</EmbedInteropTypes>
+		</Reference>
+		<Reference Include="Microsoft.Vbe.Interop">
+			<HintPath>..\..\Office\Microsoft.Vbe.Interop.dll</HintPath>
+			<EmbedInteropTypes>True</EmbedInteropTypes>
+		</Reference>
+		<Reference Include="office">
+			<HintPath>..\..\Office\Office.dll</HintPath>
+			<EmbedInteropTypes>True</EmbedInteropTypes>
+		</Reference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Microsoft.Office.Interop.Excel">
-      <HintPath>..\..\Office\Microsoft.Office.Interop.Excel.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Microsoft.Vbe.Interop">
-      <HintPath>..\..\Office\Microsoft.Vbe.Interop.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="office">
-      <HintPath>..\..\Office\Office.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" version="1.0.0" PrivateAssets="All" />
+	</ItemGroup>
 
-  <ItemGroup>
-      <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-      <PackageReference Include="Microsoft.SourceLink.GitHub" version="1.0.0" PrivateAssets="All" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Resources\ExcelMvc.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Resources\ExcelMvc.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Controls\CommandCheckBox.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Resource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resource.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Controls\CommandCheckBox.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Resource.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resource.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Resource.resx">
+			<LastGenOutput>Resource.Designer.cs</LastGenOutput>
+			<Generator>ResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Resource.resx">
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Page Update="Diagnostics\MessageWindow.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Page Update="Diagnostics\MessageWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-	
- <ItemGroup>
-	 <Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\ExcelMvc.Addin.xll">
-		 <PackagePath>lib\net6.0</PackagePath>
-	 </Content>
-	 <Content Include="..\ExcelMvc.Addin\bin\$(Configuration) (x64)\ExcelMvc.Addin (x64).xll">
-		 <PackagePath>lib\net6.0</PackagePath>
-	 </Content>
-	 <Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\ExcelMvc.Addin.xll">
-		 <PackagePath>lib\net471</PackagePath>
-	 </Content>
-	 <Content Include="..\ExcelMvc.Addin\bin\$(Configuration) (x64)\ExcelMvc.Addin (x64).xll">
-		 <PackagePath>lib\net471</PackagePath>
-	 </Content>
- </ItemGroup>
+	<ItemGroup>
+		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\ExcelMvc.Addin.xll">
+			<PackagePath>lib\net6.0-windows7.0</PackagePath>
+		</Content>
+		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration) (x64)\ExcelMvc.Addin (x64).xll">
+			<PackagePath>lib\net6.0-windows7.0</PackagePath>
+		</Content>
+		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\ExcelMvc.Addin.xll">
+			<PackagePath>lib\net471</PackagePath>
+		</Content>
+		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration) (x64)\ExcelMvc.Addin (x64).xll">
+			<PackagePath>lib\net471</PackagePath>
+		</Content>
+	</ItemGroup>
 </Project>

@@ -53,3 +53,4 @@ packages/
 #The existense of NuGet.exe helps Visual Studio to understand
 #that NuGet package restore has been enabled already for sln
 !NuGet.exe
+.vs
