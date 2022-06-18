@@ -118,6 +118,7 @@
       <AdditionalLibraryDirectories>.\Sdk\Lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).xll</OutputFile>
+      <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -146,6 +147,7 @@
       <AdditionalLibraryDirectories>.\Sdk\Lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).xll</OutputFile>
+      <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -170,6 +172,7 @@
       <AdditionalLibraryDirectories>.\Sdk\Lib\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName) (x64).xll</OutputFile>
+      <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -194,6 +197,7 @@
       <AdditionalLibraryDirectories>.\Sdk\Lib\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName) (x64).xll</OutputFile>
+      <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -205,6 +209,14 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <Link>
+      <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">
+    <Link>
+      <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ClrRuntimeHost.h" />
@@ -215,6 +227,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Addin.cpp" />
     <ClCompile Include="ClrRuntimeHost.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Framewrk.cpp" />
@@ -227,6 +240,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RuntimeHostV4.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Addin.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
