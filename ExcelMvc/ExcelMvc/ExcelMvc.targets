@@ -1,0 +1,12 @@
+﻿<Project>
+	<ItemGroup>
+		<Content Include="ExcelMvc.Addin.xll">
+			<HintPath>$(MSBuildThisFileDirectory)ExcelMvc.Addin.xll</HintPath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="ExcelMvc.Addin (x64).xll">
+			<HintPath>$(MSBuildThisFileDirectory)ExcelMvc.Addin (x64).xll</HintPath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+</Project>

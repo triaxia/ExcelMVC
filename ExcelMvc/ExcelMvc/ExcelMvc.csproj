@@ -16,7 +16,13 @@
 		<PackageOutputPath>bin\NuGet</PackageOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="ExcelMvc.targets" />
 		<None Remove="Resources\ExcelMvc.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="ExcelMvc.targets">
+			<PackagePath>Build</PackagePath>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -69,16 +75,11 @@
 
 	<ItemGroup>
 		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\ExcelMvc.Addin.xll">
-			<PackagePath>lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>Build</PackagePath>
 		</Content>
 		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration) (x64)\ExcelMvc.Addin (x64).xll">
-			<PackagePath>lib\net6.0-windows7.0</PackagePath>
-		</Content>
-		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\ExcelMvc.Addin.xll">
-			<PackagePath>lib\net471</PackagePath>
-		</Content>
-		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration) (x64)\ExcelMvc.Addin (x64).xll">
-			<PackagePath>lib\net471</PackagePath>
+			<PackagePath>Build</PackagePath>
 		</Content>
 	</ItemGroup>
+
 </Project>
