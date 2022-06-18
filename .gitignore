@@ -1,6 +1,4 @@
-#ignore thumbnails created by windows
 Thumbs.db
-#Ignore files build by Visual Studio
 *.obj
 *.pdb
 *.user
@@ -46,11 +44,4 @@ bin
 obj
 *.vsmdi
 ~$*
-#The solution uses NuGet package restore, therefore
-#package binaries don't need to be committed to source control
-packages/
-!packages/repositories.config
-#The existense of NuGet.exe helps Visual Studio to understand
-#that NuGet package restore has been enabled already for sln
-!NuGet.exe
-.vs
+.vs/
