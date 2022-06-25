@@ -72,8 +72,7 @@ namespace ExcelMvc.Extensions
             catch (Exception ex)
             {
                 status = ex;
-                if (handler != null)
-                    handler(ex);
+                handler?.Invoke(ex);
             }
 
             return status;

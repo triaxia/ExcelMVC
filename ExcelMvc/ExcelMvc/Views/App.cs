@@ -184,13 +184,13 @@ namespace ExcelMvc.Views
             Try(() =>
             {
                 Detach();
-                ObjectFactory<ISession>.CreateAll();
-                ObjectFactory<IValueConverter>.CreateAll();
-
                 Underlying = (app as Application) ?? Find();
                 if (Underlying == null)
                     throw new Exception(Resource.ErrorExcelAppFound);
+
                 AsyncActions.Initialise();
+                ObjectFactory<ISession>.CreateAll();
+                ObjectFactory<IValueConverter>.CreateAll();
 
                 Underlying.WorkbookOpen += OpenBook;
                 Underlying.WorkbookBeforeClose += ClosingBook;

@@ -70,7 +70,7 @@ namespace ExcelMvc.Diagnostics
 
         public void AddErrorLine(Exception ex)
         {
-            AddErrorLine(string.Format("{0} [{1}]", ex.Message, ex.StackTrace));
+            AddErrorLine($"{ex}");
         }
 
         public void AddErrorLine(string message)

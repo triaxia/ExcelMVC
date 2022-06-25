@@ -43,9 +43,7 @@ namespace ExcelMvc.Runtime
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Reflection.Emit;
     using System.Runtime.CompilerServices;
-    using System.Windows;
     using Extensions;
 
     /// <summary>
@@ -65,6 +63,12 @@ namespace ExcelMvc.Runtime
 
         #region Methods
 
+        static ObjectFactory()
+        {
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve +=
+                (_, args) => Assembly.ReflectionOnlyLoad(args.Name);
+        }
+
         /// <summary>
         /// Create instances of type T in the current AppDomain
         /// </summary>
@@ -73,45 +77,21 @@ namespace ExcelMvc.Runtime
         {
             Instances = new List<T>();
             Instances.Clear();
-            var itype = typeof(T);
 
-            var asms = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                foreach (var type in asm.GetTypes())
-                {
-                    if (itype.IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
-                    {
-                        if (type.GetConstructor(Type.EmptyTypes) != null)
-                            Instances.Add((T)Activator.CreateInstance(type));
-                    }
-                }
-            }
+            var asms = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => !x.IsDynamic);
 
+            var types = asms.SelectMany(x => GetTypes(x));
             var location = typeof(ObjectFactory<T>).Assembly.Location;
-            if (string.IsNullOrEmpty(location)) return;
-
-            var path = Path.GetDirectoryName(location);
-            var files = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
-
-            // .NET 4 Assembly.IsDynamic equvialent
-            Func<Assembly, bool> isDynamic = asm =>
+            if (!string.IsNullOrWhiteSpace(location))
             {
-                if (asm.ManifestModule is ModuleBuilder)
-                    return true;
-
-                // the above test does not really return true for a dynamic assembly, hence use the try ignore 
-                // method
-                var asmPath = "";
-                ActionExtensions.Try(() => asmPath = asm.Location);
-                return string.IsNullOrEmpty(asmPath);
-            };
-            var nonDynamicAsms = asms.Where(x=> !isDynamic(x));
-    
-            // exclude files already loaded
-            files = files.Where(x => nonDynamicAsms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0)).ToArray();
-            foreach (var file in files)
-                Discover(file);
+                var path = Path.GetDirectoryName(location);
+                var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
+                    .Where(x => asms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0));
+                var dllTypes = files.SelectMany(x => DiscoverTypes(x));
+                types = types.Concat(dllTypes);
+            }
+            Instances.AddRange(types.Select(x => (T)Activator.CreateInstance(Type.GetType(x))));
         }
 
         /// <summary>
@@ -139,18 +119,39 @@ namespace ExcelMvc.Runtime
             var idx = Instances.FindIndex(x => x.GetType().FullName == fullTypeName);
             if (idx < 0)
                 idx = Instances.FindIndex(x => x.GetType().AssemblyQualifiedName == fullTypeName);
-            return idx < 0 ? default(T) : Instances[idx];
+            return idx < 0 ? default : Instances[idx];
         }
 
-        private static void Discover(string assemblyPath)
+        private static IEnumerable<string> DiscoverTypes(string assemblyPath)
         {
-            ActionExtensions.Try(() =>
+            var types = Enumerable.Empty<string>(); 
+            var ex = ActionExtensions.Try(() =>
             {
-                var itype = typeof(T);
-                var types = TypeDiscoveryDomains.Discover(assemblyPath, itype);
-                foreach (var type in types)
-                    Instances.Add((T)Activator.CreateInstance(Type.GetType(type)));
+                var asm = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
+                types = types.Concat(GetTypes(asm));
             });
+
+            if (ex != null)
+                Diagnostics.MessageWindow.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex));
+            return types;
+        }
+
+        private static IEnumerable<string> GetTypes(Assembly asm)
+        {
+            var itype = typeof(T);
+            return asm.GetTypes()
+                .Where(x => !x.IsInterface && !x.IsAbstract && IsDerivedFrom(x, itype))
+                .Where(x => x.GetConstructor(Type.EmptyTypes) != null)
+                .Select(x => x.AssemblyQualifiedName);
+        }
+
+        private static bool IsDerivedFrom(Type type, Type baseType)
+        {
+            bool IsEqual(Type lhs, Type rhs)
+                => (lhs?.AssemblyQualifiedName ?? "") == (rhs?.AssemblyQualifiedName ?? "");
+            return IsEqual(type, baseType)
+                || IsEqual(type.BaseType, baseType)
+                || type.GetInterfaces().Any(x => IsEqual(x, baseType) || IsDerivedFrom(x, baseType));
         }
 
         #endregion Methods

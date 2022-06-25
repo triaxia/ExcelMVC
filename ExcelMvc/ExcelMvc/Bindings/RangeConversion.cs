@@ -39,7 +39,6 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Bindings
 {
     using System;
-    using Microsoft.Office.Interop.Excel;
     using Range = Microsoft.Office.Interop.Excel.Range;
 
     /// <summary>
