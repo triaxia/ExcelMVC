@@ -3,7 +3,7 @@
     <TargetFramework>net471</TargetFramework>
     <AssemblyTitle>SpotTrading</AssemblyTitle>
     <Product>SpotTrading</Product>
-    <Copyright>Copyright © 2014</Copyright>
+    <Copyright>Copyright © 2013 Peter Gu &amp; Wolfgang Stamm</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <PostBuildEvent />
     <DebugType>full</DebugType>
