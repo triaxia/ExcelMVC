@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,13 +33,9 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Bindings
 {
     using System.Runtime.InteropServices;
-
-    #region Enumerations
 
     /// <summary>
     /// Defines Excel errors
@@ -56,14 +51,11 @@ namespace ExcelMvc.Bindings
         ErrValue = -2146826273
     }
 
-    #endregion Enumerations
-
     /// <summary>
     /// Wraps commonly used Error conversion functions
     /// </summary>
     internal static class ErrorConverter
     {
-        #region Methods
 
         /// <summary>
         /// Converts an int value to ErrorCode
@@ -114,6 +106,5 @@ namespace ExcelMvc.Bindings
             return new ErrorWrapper((int)code);
         }
 
-        #endregion Methods
     }
 }

@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Runtime
 {
     using System;
@@ -47,7 +44,6 @@ namespace ExcelMvc.Runtime
 
     internal static class TypeDiscoveryDomains
     {
-        #region Methods
 
         public static AppDomain CreateDomain(string domainName, string privateBinPath)
         {
@@ -92,6 +88,5 @@ namespace ExcelMvc.Runtime
             }
         }
 
-        #endregion Methods
     }
 }

@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Views
 {
@@ -54,12 +52,8 @@ namespace ExcelMvc.Views
     /// </summary>
     public abstract class BindingView : View
     {
-        #region Fields
 
         private readonly string name;
-
-        #endregion Fields
-        #region Constructors
 
         /// <summary>
         /// Initialises an instances of ExcelMvc.Views.Panel
@@ -73,18 +67,10 @@ namespace ExcelMvc.Views
             Parent = parent;
         }
 
-        #endregion Constructors
-
-        #region Events
-
         /// <summary>
         /// Occurs when a command is clicked
         /// </summary>
         public event ClickedHandler Clicked = delegate { };
-
-        #endregion Events
-
-        #region Properties
 
         /// <summary>
         /// Gets the bindings on the View
@@ -116,10 +102,6 @@ namespace ExcelMvc.Views
             get;
             set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// Fires the Clicked event
@@ -282,6 +264,5 @@ namespace ExcelMvc.Views
             });
         }
 
-        #endregion Methods
     }
 }

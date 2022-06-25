@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Application.Sessions
 {
@@ -42,7 +40,6 @@ namespace Forbes.Application.Sessions
 
     internal class CommandTests
     {
-        #region Constructors
 
         public CommandTests(Sheet sheet)
         {
@@ -59,18 +56,10 @@ namespace Forbes.Application.Sessions
             sheet.HookClicked(CmdClicked, "FormSpinner", true);
         }
 
-        #endregion Constructors
-
-        #region Properties
-
         private Sheet View
         {
             get; set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         public void CmdClicked(object sender, CommandEventArgs args)
         {
@@ -84,6 +73,5 @@ namespace Forbes.Application.Sessions
             MessageBox.Show(message, View.Name, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        #endregion Methods
     }
 }

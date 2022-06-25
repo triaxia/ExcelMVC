@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Application.Sessions
 {
@@ -45,7 +43,6 @@ namespace Forbes.Application.Sessions
 
     internal class Forbes
     {
-        #region Constructors
 
         public Forbes(View view)
         {
@@ -68,10 +65,6 @@ namespace Forbes.Application.Sessions
             ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
         }
 
-        #endregion Constructors
-
-        #region Properties
-
         private Forbes2000 ForbesTest
         {
             get; set;
@@ -87,10 +80,6 @@ namespace Forbes.Application.Sessions
             get; set;
         }
 
-        #endregion Properties
-
-        #region Methods
-
         private void View_BindingFailed(object sender, BindingFailedEventArgs args)
         {
             DisplayException(args.Exception, args.View.Name);
@@ -101,6 +90,5 @@ namespace Forbes.Application.Sessions
             MessageBox.Show(ex.Message + ex.StackTrace, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        #endregion Methods
     }
 }

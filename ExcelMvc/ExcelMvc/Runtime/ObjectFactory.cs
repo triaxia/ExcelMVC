@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Runtime
 {
     using System;
@@ -52,16 +49,11 @@ namespace ExcelMvc.Runtime
     /// <typeparam name="T">Type of object</typeparam>
     public static class ObjectFactory<T>
     {
-        #region Properties
 
         private static List<T> Instances
         {
             get; set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         static ObjectFactory()
         {
@@ -154,6 +146,5 @@ namespace ExcelMvc.Runtime
                 || type.GetInterfaces().Any(x => IsEqual(x, baseType) || IsDerivedFrom(x, baseType));
         }
 
-        #endregion Methods
     }
 }

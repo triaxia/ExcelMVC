@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Runtime
 {
@@ -40,22 +38,17 @@ namespace ExcelMvc.Runtime
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
     using Views;
-    
+
     /// <summary>
     /// Subclasses a window
     /// </summary>
     internal sealed class AsyncWindow : NativeWindow
     {
-        #region Fields
 
         private static readonly uint AsyncActionMessage;
         private static readonly uint AsyncMacroMessage;
         private static readonly uint WindowsTimerMessage;
         private static int TimerId;
-    
-        #endregion Fields
-
-        #region Constructors
 
         static AsyncWindow()
         {
@@ -74,10 +67,6 @@ namespace ExcelMvc.Runtime
             CreateHandle(cp);
         }
 
-        #endregion Constructors
-
-        #region Delegates
-
         /// <summary>
         /// Handler for a AsyncAction
         /// </summary>
@@ -92,10 +81,6 @@ namespace ExcelMvc.Runtime
         /// <param name="args">EventArgs</param>
         public delegate void AsyncMacroReceivedHandler(object sender, EventArgs args);
 
-        #endregion Delegates
-
-        #region Events
-
         /// <summary>
         /// Occurs when an async action message is received
         /// </summary>
@@ -106,10 +91,6 @@ namespace ExcelMvc.Runtime
         /// </summary>
         public event AsyncMacroReceivedHandler AsyncMacroReceived = delegate { };
 
-        #endregion Events
-
-        #region Methods
-        
         /// <summary>
         /// Posts an async action message
         /// </summary>
@@ -176,7 +157,6 @@ namespace ExcelMvc.Runtime
 
         [DllImport("user32")]
         private static extern int KillTimer(IntPtr hwnd, int nIDEvent);
-  
-        #endregion Methods
+
     }
 }

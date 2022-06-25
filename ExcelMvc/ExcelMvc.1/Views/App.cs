@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Views
 {
@@ -55,13 +53,8 @@ namespace ExcelMvc.Views
     /// </summary>
     public class App : View
     {
-        #region Fields
 
         private static readonly Dictionary<Workbook, Book> Books = new Dictionary<Workbook, Book>();
-
-        #endregion Fields
-
-        #region Constructors
 
         static App()
         {
@@ -74,10 +67,6 @@ namespace ExcelMvc.Views
         private App()
         {
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// 
@@ -153,10 +142,6 @@ namespace ExcelMvc.Views
             get;
             private set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// Disposes resources
@@ -406,6 +391,5 @@ namespace ExcelMvc.Views
             }
         }
 
-        #endregion Methods
     }
 }

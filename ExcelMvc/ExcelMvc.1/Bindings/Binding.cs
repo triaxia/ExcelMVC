@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Bindings
 {
@@ -46,7 +44,6 @@ namespace ExcelMvc.Bindings
     /// </summary>
     public class Binding
     {
-        #region Constructors
 
         /// <summary>
         /// Initialises an instance of ExcelMvc.Binding
@@ -59,10 +56,6 @@ namespace ExcelMvc.Bindings
             Path = string.Empty;
             Visible = true;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Start cell 
@@ -138,10 +131,6 @@ namespace ExcelMvc.Bindings
             set;
         }
 
-        #endregion Properties
-
-        #region Methods
-
         /// <summary>
         /// Makes a range from the binding cell
         /// </summary>
@@ -157,6 +146,5 @@ namespace ExcelMvc.Bindings
             return StartCell.Worksheet.Range[start, end];
         }
 
-        #endregion Methods
     }
 }

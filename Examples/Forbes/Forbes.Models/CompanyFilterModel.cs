@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Models
 {
@@ -40,22 +38,13 @@ namespace Forbes.Models
 
     public class CompanyFilterModel
     {
-        #region Constructors
 
         public CompanyFilterModel()
         {
             NameLike = string.Empty;
         }
 
-        #endregion Constructors
-
-        #region Properties
-
         public string NameLike { get; set; }
-
-        #endregion Properties
-
-        #region Methods
 
         public bool IsSelected(CompanyModel company)
         {
@@ -63,6 +52,5 @@ namespace Forbes.Models
                 && (NameLike == "*" || company.Name.IndexOf(NameLike, StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
-        #endregion 
     }
 }

@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Application.Sessions
 {
@@ -43,13 +41,8 @@ namespace Forbes.Application.Sessions
 
     public class Session : ISession
     {
-        #region Fields
 
         private const string ViewName = "Forbes2000";
-
-        #endregion Fields
-
-        #region Constructors
 
         public Session()
         {
@@ -58,10 +51,6 @@ namespace Forbes.Application.Sessions
             App.Instance.Closing += Book_Closing;
             App.Instance.Closed += Book_Closed;
         }
-
-        #endregion Constructors
-
-        #region Methods
 
         public void Dispose()
         {
@@ -106,6 +95,5 @@ namespace Forbes.Application.Sessions
             MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        #endregion Methods
     }
 }

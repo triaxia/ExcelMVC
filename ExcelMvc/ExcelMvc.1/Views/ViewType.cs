@@ -1,8 +1,6 @@
-﻿namespace ExcelMvc.Views
+namespace ExcelMvc.Views
 {
     using System;
-
-    #region Enumerations
 
     /// <summary>
     /// View types
@@ -45,5 +43,4 @@
         App
     }
 
-    #endregion Enumerations
 }

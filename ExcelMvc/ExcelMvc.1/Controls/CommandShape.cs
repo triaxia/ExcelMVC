@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Controls
 {
     using Extensions;
@@ -47,13 +44,8 @@ namespace ExcelMvc.Controls
     /// </summary>
     internal class CommandShape : Command
     {
-        #region Fields
 
         private bool enabled;
-
-        #endregion Fields
-
-        #region Constructors
 
         /// <summary>
         /// 
@@ -68,10 +60,6 @@ namespace ExcelMvc.Controls
             Underlying.OnAction = MacroNames.CommandActionName;
             enabled = true;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         public override string Caption
         {
@@ -114,16 +102,11 @@ namespace ExcelMvc.Controls
             get; set;
         }
 
-        #endregion Properties
-
-        #region Methods
-
         public override void Dispose()
         {
             base.Dispose();
             Underlying = null;
         }
 
-        #endregion Methods
     }
 }

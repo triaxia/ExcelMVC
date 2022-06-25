@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Controls
 {
     using System;
@@ -44,7 +41,6 @@ namespace ExcelMvc.Controls
 
     internal class CommandOptionButton : Command
     {
-        #region Constructors
 
         public CommandOptionButton(View host, OptionButton button, string name)
             : base(host, name)
@@ -52,10 +48,6 @@ namespace ExcelMvc.Controls
             Underlying = button;
             Underlying.OnAction = MacroNames.CommandActionName;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         public override string Caption
         {
@@ -91,16 +83,11 @@ namespace ExcelMvc.Controls
             set { Underlying.Value = Convert.ToBoolean(value) ? Constants.xlOn : Constants.xlOff; }
         }
 
-        #endregion Properties
-
-        #region Methods
-
         public override void Dispose()
         {
             base.Dispose();
             Underlying = null;
         }
 
-        #endregion Methods
     }
 }

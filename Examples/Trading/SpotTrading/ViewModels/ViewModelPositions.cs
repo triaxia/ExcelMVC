@@ -1,4 +1,4 @@
-﻿namespace SpotTrading.ViewModels
+namespace SpotTrading.ViewModels
 {
     using System.Collections.Generic;
     using System.Collections.Specialized;

@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Extensions
 {
     using System.Collections;
@@ -46,7 +43,6 @@ namespace ExcelMvc.Extensions
     /// </summary>
     public static class EnumerableExtensions
     {
-        #region Methods
 
         /// <summary>
         /// Gets the index of an item from an IEnumerable
@@ -106,6 +102,5 @@ namespace ExcelMvc.Extensions
             return items;
         }
 
-        #endregion Methods
     }
 }

@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Views
 {
     using System;
@@ -56,7 +53,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Table : BindingView
     {
-        #region Fields
 
         private readonly List<string> categoryIds = new List<string>();
         private bool orderingAllowed;
@@ -65,10 +61,6 @@ namespace ExcelMvc.Views
         private IList<object> itemsBound;
         private INotifyCollectionChanged notifyCollectionChanged;
         private INotifyPropertyChanged notifyPropertyChanged;
-
-        #endregion Fields
-
-        #region Constructors
 
         /// <summary>
         /// Initialises an instances of ExcelMvc.Views.Table
@@ -83,10 +75,6 @@ namespace ExcelMvc.Views
             SelectedBindings = new List<Binding>();
             SetCategoryVisibility();
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Sets the underlying model
@@ -159,10 +147,6 @@ namespace ExcelMvc.Views
                 }
             }
         }
-
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// Disposes resources
@@ -762,21 +746,14 @@ namespace ExcelMvc.Views
             }
         }
 
-        #endregion Methods
-
-        #region Nested Types
-
         private struct RangeObjects
         {
-            #region Fields
 
             public IEnumerable<Binding> Bindings;
             public Range Intersection;
             public IEnumerable<object> Items;
 
-            #endregion Fields
         }
 
-        #endregion Nested Types
     }
 }

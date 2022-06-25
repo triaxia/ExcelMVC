@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Application.Sessions
 {
@@ -47,7 +45,6 @@ namespace Forbes.Application.Sessions
 
     internal class Forbes2000
     {
-        #region Constructors
 
         public Forbes2000(View grandparent, View parent, Settings settings, string companyTableName, string companyFormName)
         {
@@ -78,10 +75,6 @@ namespace Forbes.Application.Sessions
 
             EnableControls();
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         private View ParentView
         {
@@ -128,10 +121,6 @@ namespace Forbes.Application.Sessions
             get;
             set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         private void ClearAllClicked(object sender, CommandEventArgs args)
         {
@@ -210,6 +199,5 @@ namespace Forbes.Application.Sessions
             IsUpdating = update;
             EnableControls();
         }
-        #endregion Methods
     }
 }

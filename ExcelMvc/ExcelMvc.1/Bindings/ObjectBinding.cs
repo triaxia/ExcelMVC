@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Bindings
 {
@@ -42,8 +40,6 @@ namespace ExcelMvc.Bindings
     using System.Reflection;
     using System.Text.RegularExpressions;
 
-    #region Delegates
-
     /// <summary>
     /// 
     /// </summary>
@@ -51,14 +47,11 @@ namespace ExcelMvc.Bindings
     /// <param name="args"></param>
     public delegate void BindingFailedHandler(object sender, BindingFailedEventArgs args);
 
-    #endregion Delegates
-
     /// <summary>
     /// Encapsulates binding functions between View models and Views
     /// </summary>
     internal static class ObjectBinding
     {
-        #region Fields
 
         private const string NoQuoteCommaPattern = "[^\",]*";
         private const string QuotedStringPattern = "\"([^\"]*|\"\")*\"";
@@ -66,10 +59,6 @@ namespace ExcelMvc.Bindings
         private static readonly Regex IndexerPattern = new Regex(string.Format("({0}|{1})(,({0}|{1}))*", QuotedStringPattern, NoQuoteCommaPattern));
         private static readonly Type MatrixType = typeof(object[,]);
         private static readonly char[] PathSeparators = { '.', '[' };
-
-        #endregion Fields
-
-        #region Methods
 
         /// <summary>
         /// Changes the lower bounds of an array
@@ -253,6 +242,5 @@ namespace ExcelMvc.Bindings
             }
         }
 
-        #endregion Methods
     }
 }

@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Views
 {
     using System.Collections.Generic;
@@ -51,23 +48,14 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Book : View
     {
-        #region Fields
 
         private readonly Dictionary<Worksheet, Sheet> sheets = new Dictionary<Worksheet, Sheet>();
-
-        #endregion Fields
-
-        #region Constructors
 
         internal Book(View parent, Workbook book)
         {
             Parent = parent;
             Underlying = book;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Gets the child views
@@ -125,10 +113,6 @@ namespace ExcelMvc.Views
         {
             get; private set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// Disposes resources
@@ -208,6 +192,5 @@ namespace ExcelMvc.Views
             OnDeactivated(new ViewEventArgs(sheets[(Worksheet)sh]));
         }
 
-        #endregion Methods
     }
 }

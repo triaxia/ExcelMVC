@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,14 +33,10 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Views
 {
     using System;
     using System.Collections.Generic;
-
-    #region Delegates
 
     /// <summary>
     /// Handler for the Destroyed event
@@ -70,14 +65,11 @@ namespace ExcelMvc.Views
     /// <param name="args">Event Args</param>
     public delegate void ViewEventHandler(object sender, ViewEventArgs args);
 
-    #endregion Delegates
-
     /// <summary>
     /// Represents the EventArgs for a ObjectChanged event
     /// </summary>
     public class ObjectChangedArgs : EventArgs
     {
-        #region Constructors
 
         /// <summary>
         /// Initialises an instance of ObjectChangedArgs
@@ -89,10 +81,6 @@ namespace ExcelMvc.Views
             Items = items;
             Paths = paths;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Items changed
@@ -110,6 +98,5 @@ namespace ExcelMvc.Views
             get; private set;
         }
 
-        #endregion Properties
     }
 }

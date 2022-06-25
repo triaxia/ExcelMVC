@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Views
 {
     using System;
@@ -48,7 +45,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public class SelectionChangedArgs : EventArgs
     {
-        #region Constructors
 
         /// <summary>
         /// Initialises an instance of SelectionChangedArgs
@@ -60,10 +56,6 @@ namespace ExcelMvc.Views
             Items = items;
             Bindings = bindings;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Bindings selected
@@ -83,6 +75,5 @@ namespace ExcelMvc.Views
             private set;
         }
 
-        #endregion Properties
     }
 }

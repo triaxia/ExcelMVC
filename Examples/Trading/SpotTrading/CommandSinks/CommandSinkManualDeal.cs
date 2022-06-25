@@ -1,4 +1,4 @@
-﻿namespace SpotTrading.CommandSinks
+namespace SpotTrading.CommandSinks
 {
     using System;
     using System.Windows.Input;

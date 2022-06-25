@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Bindings
 {
     using System;
@@ -46,13 +43,8 @@ namespace ExcelMvc.Bindings
     /// </summary>
     internal static class RangeConversion
     {
-        #region Fields
 
         private static readonly int[] OneBased = { 1, 1 };
-
-        #endregion Fields
-
-        #region Methods
 
         /// <summary>
         /// Merges the value of a range to the value of another range
@@ -154,23 +146,16 @@ namespace ExcelMvc.Bindings
             return result;
         }
 
-        #endregion Methods
-
-        #region Nested Types
-
         /// <summary>
         /// Struct that captures range values and error codes
         /// </summary>
         private struct Matrix
         {
-            #region Fields
 
             public ErrorCode?[,] Error;
             public object[,] Value;
 
-            #endregion Fields
         }
 
-        #endregion Nested Types
     }
 }

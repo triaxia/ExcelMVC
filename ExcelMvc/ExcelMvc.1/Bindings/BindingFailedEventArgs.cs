@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Bindings
 {
@@ -44,7 +42,6 @@ namespace ExcelMvc.Bindings
     /// </summary>
     public class BindingFailedEventArgs : EventArgs
     {
-        #region Constructors
 
         /// <summary>
         /// Initialises an instance of BindingFailedEventArgs
@@ -56,10 +53,6 @@ namespace ExcelMvc.Bindings
             View = view;
             Exception = exception;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Gets the exception object
@@ -77,6 +70,5 @@ namespace ExcelMvc.Bindings
             get; private set;
         }
 
-        #endregion Properties
     }
 }

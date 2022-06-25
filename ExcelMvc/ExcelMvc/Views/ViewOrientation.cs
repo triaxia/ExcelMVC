@@ -1,6 +1,5 @@
-﻿namespace ExcelMvc.Views
+namespace ExcelMvc.Views
 {
-    #region Enumerations
 
     internal enum ViewOrientation
     {
@@ -8,5 +7,4 @@
         Landscape
     }
 
-    #endregion Enumerations
 }

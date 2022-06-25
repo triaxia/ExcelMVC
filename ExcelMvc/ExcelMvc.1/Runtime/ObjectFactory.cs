@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Runtime
 {
     using System;
@@ -54,16 +51,11 @@ namespace ExcelMvc.Runtime
     /// <typeparam name="T">Type of object</typeparam>
     public static class ObjectFactory<T>
     {
-        #region Properties
 
         private static List<T> Instances
         {
             get; set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// Create instances of type T in the current AppDomain
@@ -111,7 +103,7 @@ namespace ExcelMvc.Runtime
                 return string.IsNullOrEmpty(asmPath);
             };
             var nonDynamicAsms = asms.Where(x=> !isDynamic(x));
-    
+
             // exclude files already loaded
             files = files.Where(x => nonDynamicAsms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0)).ToArray();
             foreach (var file in files)
@@ -157,6 +149,5 @@ namespace ExcelMvc.Runtime
             });
         }
 
-        #endregion Methods
     }
 }

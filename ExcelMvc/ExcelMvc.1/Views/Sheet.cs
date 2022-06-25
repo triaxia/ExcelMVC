@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Views
 {
@@ -51,20 +49,15 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Sheet : View
     {
-        #region Fields
 
         private readonly Dictionary<string, Command> commands = 
             new Dictionary<string, Command>(StringComparer.OrdinalIgnoreCase);
 
         private readonly Dictionary<string, Form> forms = 
             new Dictionary<string, Form>(StringComparer.OrdinalIgnoreCase);
-        
+
         private readonly Dictionary<string, Table> tables = 
             new Dictionary<string, Table>(StringComparer.OrdinalIgnoreCase);
-
-        #endregion Fields
-
-        #region Constructors
 
         /// <summary>
         /// Initiaalises an instance of ExcelMvc.Views.Workspace
@@ -77,18 +70,10 @@ namespace ExcelMvc.Views
             Underlying = sheet;
         }
 
-        #endregion Constructors
-
-        #region Events
-
         /// <summary>
         /// Occurs when a command is clicked
         /// </summary>
         public event ClickedHandler Clicked = delegate { };
-
-        #endregion Events
-
-        #region Properties
 
         /// <summary>
         /// Gets the child views
@@ -144,10 +129,6 @@ namespace ExcelMvc.Views
         {
             get; private set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// Disposes resources
@@ -237,6 +218,5 @@ namespace ExcelMvc.Views
             }
         }
 
-        #endregion Methods
     }
 }

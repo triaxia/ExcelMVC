@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Application.ViewModels
 {
@@ -42,22 +40,13 @@ namespace Forbes.Application.ViewModels
 
     public class CompanyFilterList : List<CompanyFilter>, INotifyCollectionChanged
     {
-        #region Constructors
 
         public CompanyFilterList(int numberOfFilters)
         {
             Load(numberOfFilters);
         }
 
-        #endregion Constructors
-
-        #region Events
-
         public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };
-
-        #endregion Events
-
-        #region Methods
 
         public void Load(int count)
         {
@@ -70,6 +59,5 @@ namespace Forbes.Application.ViewModels
             CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        #endregion Methods
     }
 }

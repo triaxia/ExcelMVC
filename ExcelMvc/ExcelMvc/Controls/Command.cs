@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Controls
 {
@@ -46,13 +44,8 @@ namespace ExcelMvc.Controls
     /// </summary>
     public abstract class Command : IDisposable
     {
-        #region Fields
 
         private ICommand model;
-
-        #endregion Fields
-
-        #region Constructors
 
         /// <summary>
         /// Constructs an instance
@@ -65,18 +58,10 @@ namespace ExcelMvc.Controls
             Name = name;
         }
 
-        #endregion Constructors
-
-        #region Events
-
         /// <summary>
         /// Occurs when the command is clicked
         /// </summary>
         public event ClickedHandler Clicked = delegate { };
-
-        #endregion Events
-
-        #region Properties
 
         /// <summary>
         /// Caption of the command
@@ -163,10 +148,6 @@ namespace ExcelMvc.Controls
             set;
         }
 
-        #endregion Properties
-
-        #region Methods
-
         /// <summary>
         /// Disposes resources
         /// </summary>
@@ -206,6 +187,5 @@ namespace ExcelMvc.Controls
             });
         }
 
-        #endregion Methods
     }
 }

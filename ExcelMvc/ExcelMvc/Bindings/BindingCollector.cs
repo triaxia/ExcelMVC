@@ -1,4 +1,4 @@
-﻿namespace ExcelMvc.Bindings
+namespace ExcelMvc.Bindings
 {
     using System;
     using System.Collections.Generic;
@@ -11,16 +11,11 @@
     using Range = Microsoft.Office.Interop.Excel.Range;
     internal class BindingCollector
     {
-        #region Constructors
 
         public BindingCollector(Workbook book)
         {
             Book = book;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         private string BindingPath
         {
@@ -99,10 +94,6 @@
             get;
             set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         public Dictionary<Worksheet, List<Binding>> Process()
         {
@@ -300,13 +291,8 @@
             return result;
         }
 
-        #endregion Methods
-
-        #region Nested Types
-
         private struct Indices
         {
-            #region Fields
 
             public int IndexOfStartCell;
             public int IndexOfEndCell;
@@ -316,9 +302,7 @@
             public int IndexOfValidation;
             public int IndexOfVisibility;
 
-            #endregion Fields
         }
 
-        #endregion Nested Types
     }
 }

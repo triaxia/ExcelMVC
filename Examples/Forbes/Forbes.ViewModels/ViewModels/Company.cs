@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Application.ViewModels
 {
@@ -41,22 +39,13 @@ namespace Forbes.Application.ViewModels
 
     public class Company : INotifyPropertyChanged
     {
-        #region Constructors
 
         public Company()
         {
             Model = new CompanyModel();
         }
 
-        #endregion Constructors
-
-        #region Events
-
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        #endregion Events
-
-        #region Properties
 
         public double Assets
         {
@@ -117,10 +106,6 @@ namespace Forbes.Application.ViewModels
             set { Model.Sales = value; }
         }
 
-        #endregion Properties
-
-        #region Methods
-
         public void RaiseChanged(string propertyName)
         {
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
@@ -139,6 +124,5 @@ namespace Forbes.Application.ViewModels
             RaiseChanged("Listed");
         }
 
-        #endregion Methods
     }
 }

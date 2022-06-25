@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Views
 {
@@ -44,10 +42,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Root : NativeWindow
     {
-        #region Fields
-        #endregion Fields
-
-        #region Constructors
 
         /// <summary>
         /// Intialises an instance of Window
@@ -58,10 +52,6 @@ namespace ExcelMvc.Views
             AssignHandle(new IntPtr(hwnd));
         }
 
-        #endregion Constructors
-
-        #region Delegates
-
         /// <summary>
         /// Handler for a Destroyed event
         /// </summary>
@@ -69,19 +59,11 @@ namespace ExcelMvc.Views
         /// <param name="args">EventArgs</param>
         public delegate void DestroyedHandler(object sender, EventArgs args);
 
-        #endregion Delegates
-
-        #region Events
-
         /// <summary>
         /// Occurs when a Window has been destroyed
         /// </summary>
         public event DestroyedHandler Destroyed = delegate { };
 
-        #endregion Events
-
-        #region Methods
-        
         /// <summary>
         /// Windows proc
         /// </summary>
@@ -95,6 +77,5 @@ namespace ExcelMvc.Views
             }
             base.WndProc(ref m);
         }
-        #endregion Methods
     }
 }

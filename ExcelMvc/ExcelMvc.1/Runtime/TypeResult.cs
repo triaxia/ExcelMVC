@@ -1,4 +1,4 @@
-﻿namespace ExcelMvc.Runtime
+namespace ExcelMvc.Runtime
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,6 @@
     [Serializable]
     internal class TypeResult
     {
-        #region Properties
 
         public Exception Error
         {
@@ -20,6 +19,5 @@
             set;
         }
 
-        #endregion Properties
     }
 }

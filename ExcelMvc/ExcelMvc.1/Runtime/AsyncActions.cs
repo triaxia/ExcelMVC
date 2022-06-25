@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Runtime
 {
@@ -47,7 +45,6 @@ namespace ExcelMvc.Runtime
     /// </summary>
     internal static class AsyncActions
     {
-        #region Fields
 
         private class Item
         {
@@ -58,10 +55,6 @@ namespace ExcelMvc.Runtime
         private static AsyncWindow Context { get; set; }
         private static Queue<Item> Actions { get; set; }
         private static Queue<Item> Macros { get; set; }
-    
-        #endregion Fields
-
-        #region Constructors
 
         static AsyncActions()
         {
@@ -82,10 +75,6 @@ namespace ExcelMvc.Runtime
             ActionExtensions.Try(() => App.Instance.Underlying.Run("ExcelMvcRun"));
         }
 
-        #endregion Constructors
-
-        #region Properties
-
         /// <summary>
         /// Gets the number of outstanding actions
         /// </summary>
@@ -105,10 +94,6 @@ namespace ExcelMvc.Runtime
         {
             return Actions.Count;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// Initialise class static states
@@ -156,6 +141,5 @@ namespace ExcelMvc.Runtime
                 item.Action(item.State);
         }
 
-        #endregion Methods
     }
 }

@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Views
 {
@@ -52,7 +50,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public abstract class View : IDisposable
     {
-        #region Events
 
         /// <summary>
         /// Occurs after a View is activated. 
@@ -108,10 +105,6 @@ namespace ExcelMvc.Views
         /// Occurs before a View is unprotected. 
         /// </summary>
         public event ViewEventHandler Unprotecting = delegate { };
-
-        #endregion Events
-
-        #region Properties
 
         /// <summary>
         /// Gets the child views
@@ -199,10 +192,6 @@ namespace ExcelMvc.Views
             get;
             set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// Disposes resources
@@ -519,6 +508,5 @@ namespace ExcelMvc.Views
             }
         }
 
-        #endregion Methods
     }
 }

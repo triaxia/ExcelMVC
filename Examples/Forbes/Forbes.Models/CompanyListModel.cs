@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Models
 {
@@ -45,13 +43,8 @@ namespace Forbes.Models
 
     public class CompanyListModel : List<CompanyModel>
     {
-        #region Fields
 
         private static readonly Regex CellPattern = new Regex("([^\",]*,)|(\"(([^\"]*)|(\"\"))*\",)");
-
-        #endregion Fields
-
-        #region Methods
 
         public void Load(IEnumerable<CompanyFilterModel> filters)
         {
@@ -141,13 +134,8 @@ namespace Forbes.Models
             return result;
         }
 
-        #endregion Methods
-
-        #region Nested Types
-
         private struct HeadingIndices
         {
-            #region Fields
 
             public int IndexOfAssets;
             public int IndexOfCompany;
@@ -158,9 +146,7 @@ namespace Forbes.Models
             public int IndexOfRank;
             public int IndexOfSales;
 
-            #endregion Fields
         }
 
-        #endregion Nested Types
     }
 }

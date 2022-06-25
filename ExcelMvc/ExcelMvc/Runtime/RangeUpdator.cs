@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -47,21 +47,12 @@ namespace ExcelMvc.Runtime
     /// </summary>
     internal class RangeUpdator
     {
-        #region Fields
 
         private static readonly Lazy<RangeUpdator> LazyInstance = new Lazy<RangeUpdator>(() => new RangeUpdator());
-
-        #endregion Fields
-
-        #region Constructors
 
         private RangeUpdator()
         {
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Singleton
@@ -75,10 +66,6 @@ namespace ExcelMvc.Runtime
         {
             get { return "ExcelMvcAsynUpdateThread"; }
         }
-
-        #endregion Properties
-
-        #region Methods
 
         public void Update(Range range, int rowOffset, int rows, int columnOffset, int columns, object value)
         {
@@ -250,13 +237,8 @@ namespace ExcelMvc.Runtime
             }
         }
 
-        #endregion Methods
-
-        #region Nested Types
-
         private class Item
         {
-            #region Properties
 
             public int ColCount
             {
@@ -336,9 +318,7 @@ namespace ExcelMvc.Runtime
                 set;
             }
 
-            #endregion Properties
         }
 
-        #endregion Nested Types
     }
 }

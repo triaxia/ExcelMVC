@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Extensions
 {
     using System;
@@ -45,7 +42,6 @@ namespace ExcelMvc.Extensions
     /// </summary>
     public static class StringExtensions
     {
-        #region Methods
 
         /// <summary>
         /// Compases two string with OrdinalIgnoreCase 
@@ -58,6 +54,5 @@ namespace ExcelMvc.Extensions
             return string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase);
         }
 
-        #endregion Methods
     }
 }

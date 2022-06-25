@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Runtime
 {
     using System;
@@ -50,7 +47,6 @@ namespace ExcelMvc.Runtime
     /// </summary>
     public static class Interface
     {
-        #region Methods
 
         /// <summary>
         /// Attaches the current Excel session to ExcelMvc
@@ -140,6 +136,5 @@ namespace ExcelMvc.Runtime
             AsyncActions.Execute(true);
             return null;
         }
-        #endregion Methods
     }
 }

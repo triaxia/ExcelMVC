@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Views
 {
@@ -50,13 +48,8 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Form : BindingView
     {
-        #region Fields
 
         private INotifyPropertyChanged notifyPropertyChanged;
-
-        #endregion Fields
-
-        #region Constructors
 
         /// <summary>
         /// Initialises an instances of ExcelMvc.Views.Form
@@ -68,10 +61,6 @@ namespace ExcelMvc.Views
         {
             SelectedBindings = new List<Binding>();
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// 
@@ -102,10 +91,6 @@ namespace ExcelMvc.Views
             get { return ViewType.Form; }
         }
 
-        #endregion Properties
-
-        #region Methods
-
         /// <summary>
         /// Disposes resources
         /// </summary>
@@ -129,7 +114,7 @@ namespace ExcelMvc.Views
                 // clear current view
                 var current = Model;
                 Model = null;
-                
+
                 // rebind
                 Bindings = sheetBindings.Where(x => x.Type == Type && x.Name.CompareOrdinalIgnoreCase(Name) == 0).ToList();
                 Model = current;
@@ -262,6 +247,5 @@ namespace ExcelMvc.Views
                 });
         }
 
-        #endregion Methods
     }
 }

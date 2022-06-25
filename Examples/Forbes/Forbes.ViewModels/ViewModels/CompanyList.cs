@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace Forbes.Application.ViewModels
 {
@@ -45,14 +43,9 @@ namespace Forbes.Application.ViewModels
 
     public class CompanyList : List<Company>, INotifyCollectionChanged
     {
-        #region Fields
 
         private ManualResetEvent stopEvent;
         private Thread updateThread;
-
-        #endregion Fields
-
-        #region Constructors
 
         public CompanyList()
         {
@@ -60,15 +53,7 @@ namespace Forbes.Application.ViewModels
             IndustryList = new List<string>();
         }
 
-        #endregion Constructors
-
-        #region Events
-
         public event NotifyCollectionChangedEventHandler CollectionChanged = delegate { };
-
-        #endregion Events
-
-        #region Properties
 
         public List<string> CountryList
         {
@@ -79,10 +64,6 @@ namespace Forbes.Application.ViewModels
         {
             get; private set;
         }
-
-        #endregion Properties
-
-        #region Methods
 
         public void Load(IEnumerable<CompanyFilter> filters)
         {
@@ -143,6 +124,5 @@ namespace Forbes.Application.ViewModels
             }
         }
 
-        #endregion Methods
     }
 }

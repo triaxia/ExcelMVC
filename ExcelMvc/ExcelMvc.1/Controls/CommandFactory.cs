@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Controls
 {
     using System;
@@ -53,17 +50,12 @@ namespace ExcelMvc.Controls
     /// </summary>
     internal static class CommandFactory
     {
-        #region Fields
 
         /// <summary>
         /// command names may be prefixed 
         /// </summary>
         private const string CommandPrefix = "ExcelMvc.";
         private const string CommandFullPrefix = "ExcelMvc.Command.";
-
-        #endregion Fields
-
-        #region Methods
 
         /// <summary>
         /// Creates commands on a sheet
@@ -215,6 +207,5 @@ namespace ExcelMvc.Controls
             return name.StartsWith(CommandFullPrefix, StringComparison.OrdinalIgnoreCase);
         }
 
-        #endregion Methods
     }
 }

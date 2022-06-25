@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
@@ -41,17 +41,12 @@ namespace ExcelMvc.Runtime
     /// <typeparam name="T">Specifies the type of object that is being lazily initialized.</typeparam>
     public sealed class Lazy<T>
     {
-        #region Fields
 
         private readonly Func<T> createValue;
         private readonly object padlock = new object();
 
         private bool isValueCreated;
         private T value;
-
-        #endregion Fields
-
-        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the Lazy{T} class.
@@ -63,10 +58,6 @@ namespace ExcelMvc.Runtime
 
             this.createValue = createValue;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Gets a value that indicates whether a value has been created for this Lazy{T} instance.
@@ -105,10 +96,6 @@ namespace ExcelMvc.Runtime
             }
         }
 
-        #endregion Properties
-
-        #region Methods
-
         /// <summary>
         /// Creates and returns a string representation of the Lazy{T}.Value.
         /// </summary>
@@ -118,6 +105,5 @@ namespace ExcelMvc.Runtime
             return Value.ToString();
         }
 
-        #endregion Methods
     }
 }

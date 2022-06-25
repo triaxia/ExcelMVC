@@ -1,6 +1,5 @@
-﻿namespace ExcelMvc.Bindings
+namespace ExcelMvc.Bindings
 {
-    #region Enumerations
 
     /// <summary>
     /// Binding mode types
@@ -23,5 +22,4 @@
         TwoWay
     }
 
-    #endregion Enumerations
 }

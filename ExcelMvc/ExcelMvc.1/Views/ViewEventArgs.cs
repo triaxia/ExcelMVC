@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Views
 {
     using System;
@@ -45,14 +42,10 @@ namespace ExcelMvc.Views
     /// </summary>
     public class ViewEventArgs : EventArgs
     {
-        #region Fields
         private int acceptedCount;
 
         // [Obsolete]
         private bool? cancelled;
-        #endregion Fields
-        
-        #region Constructors
 
         /// <summary>
         /// Initialies an instance of  ExcelMvc.Views.ViewEventArgs
@@ -63,10 +56,6 @@ namespace ExcelMvc.Views
             View = view;
             acceptedCount = 0;
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         /// <summary>
         /// Indicates at least one event sink accepted the view
@@ -94,10 +83,6 @@ namespace ExcelMvc.Views
             private set;
         }
 
-        #endregion Properties
-
-        #region Methods
-
         /// <summary>
         /// Indicates the calling sink is not interested in the event
         /// </summary>
@@ -115,6 +100,5 @@ namespace ExcelMvc.Views
             acceptedCount++;
         }
 
-        #endregion Methods
     }
 }

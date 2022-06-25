@@ -1,4 +1,4 @@
-﻿namespace ExcelMvc.Diagnostics
+namespace ExcelMvc.Diagnostics
 {
     using System;
     using System.ComponentModel;
@@ -12,7 +12,6 @@
     /// </summary>
     public partial class MessageWindow
     {
-        #region Constructors
         private MessageWindow()
         {
             InitializeComponent();
@@ -20,19 +19,12 @@
             Closing += MessageWindow_Closing;
         }
 
-        #endregion
-
-        #region Properties
         private static MessageWindow Instance { get; set; }
 
         private Message Model
         {
             get { return (Message)LayoutRoot.DataContext; }
         }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// Creates and shows to the status window
@@ -140,7 +132,6 @@
             if (ReferenceEquals(sender, Instance))
                 Instance = null;
         }
-        #endregion
 
         private void ButtonClear_OnClick(object sender, RoutedEventArgs e)
         {

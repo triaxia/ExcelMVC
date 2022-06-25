@@ -1,4 +1,4 @@
-﻿namespace SpotTrading.BusinessModels
+namespace SpotTrading.BusinessModels
 {
     public class CcyPair
     {

@@ -1,4 +1,4 @@
-﻿namespace SpotTrading.ApplicationModels
+namespace SpotTrading.ApplicationModels
 {
     using System.Linq;
     using BusinessModels;

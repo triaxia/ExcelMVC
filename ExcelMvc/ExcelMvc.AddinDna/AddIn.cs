@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.AddinDna
 {
     using ExcelDna.Integration;
@@ -46,7 +43,6 @@ namespace ExcelMvc.AddinDna
     /// </summary>
     public class AddIn : IExcelAddIn
     {
-        #region Methods
 
         /// <summary>
         /// Called when the DNA Addin is closed
@@ -64,6 +60,5 @@ namespace ExcelMvc.AddinDna
             Interface.Attach(ExcelDnaUtil.Application);
         }
 
-        #endregion Methods
     }
 }

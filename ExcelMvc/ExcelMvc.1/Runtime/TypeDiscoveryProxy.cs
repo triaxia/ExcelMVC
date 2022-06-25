@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Runtime
 {
     using System;
@@ -44,7 +41,6 @@ namespace ExcelMvc.Runtime
 
     internal class TypeDiscoveryProxy : MarshalByRefObject
     {
-        #region Methods
 
         public TypeResult Discover(string assemblyPath, Type type)
         {
@@ -81,6 +77,5 @@ namespace ExcelMvc.Runtime
             return null;    // null for long-live proxy
         }
 
-        #endregion Methods
     }
 }

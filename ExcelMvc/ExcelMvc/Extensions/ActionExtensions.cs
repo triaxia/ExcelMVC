@@ -1,4 +1,3 @@
-﻿#region Header
 /*
 Copyright (C) 2013 =>
 
@@ -32,7 +31,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-#endregion Header
 
 namespace ExcelMvc.Extensions
 {
@@ -44,17 +42,12 @@ namespace ExcelMvc.Extensions
     /// </summary>
     public static class ActionExtensions
     {
-        #region Delegates
 
         /// <summary>
         /// Defines an Exception handler
         /// </summary>
         /// <param name="ex">Exception to be handled</param>
         public delegate void ExceptionHandler(Exception ex);
-
-        #endregion Delegates
-
-        #region Methods
 
         /// <summary>
         /// Executes an action, catches and/or handles any exceptions
@@ -98,6 +91,5 @@ namespace ExcelMvc.Extensions
             return status;
         }
 
-        #endregion Methods
     }
 }

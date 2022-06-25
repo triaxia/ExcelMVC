@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace ExcelMvc.Extensions
 {
     using Microsoft.Office.Interop.Excel;
@@ -46,7 +43,6 @@ namespace ExcelMvc.Extensions
     /// </summary>
     internal static class RangeExtentions
     {
-        #region Methods
 
         /// <summary>
         /// Executes an action on a protected host
@@ -104,6 +100,5 @@ namespace ExcelMvc.Extensions
             return range.Worksheet.Range[start, end];
         }
 
-        #endregion Methods
     }
 }

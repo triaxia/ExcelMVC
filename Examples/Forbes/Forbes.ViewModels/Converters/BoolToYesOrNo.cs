@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace Forbes.Application.Converters
 {
     using System;
@@ -44,7 +41,6 @@ namespace Forbes.Application.Converters
 
     public class BoolToYesOrNo : IValueConverter
     {
-        #region Methods
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -57,6 +53,5 @@ namespace Forbes.Application.Converters
             return svalue.StartsWith("Y") || svalue.StartsWith("y");
         }
 
-        #endregion Methods
     }
 }

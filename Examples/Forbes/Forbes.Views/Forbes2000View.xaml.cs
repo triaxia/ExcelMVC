@@ -1,4 +1,3 @@
-﻿#region Header
 
 /*
 Copyright (C) 2013 =>
@@ -34,8 +33,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-#endregion Header
-
 namespace Forbes.Views
 {
     using System.Collections;
@@ -46,16 +43,11 @@ namespace Forbes.Views
     /// </summary>
     public partial class Forbes2000View : Window
     {
-        #region Constructors
 
         public Forbes2000View()
         {
             InitializeComponent();
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         public IEnumerable Model
         {
@@ -70,6 +62,5 @@ namespace Forbes.Views
             }
         }
 
-        #endregion Properties
     }
 }
