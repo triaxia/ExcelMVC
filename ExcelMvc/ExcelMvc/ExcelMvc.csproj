@@ -14,6 +14,10 @@
 		<Configurations>Debug;Release;Package</Configurations>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageOutputPath>bin\NuGet</PackageOutputPath>
+		<PackageProjectUrl>https://github.com/triaxia/ExcelMVC</PackageProjectUrl>
+		<PackageIcon>ExcelMvcIcon64.png</PackageIcon>
+		<PackageTags>Excel;MVC;MVVM</PackageTags>
+		<PackageReleaseNotes>https://github.com/triaxia/ExcelMVC/blob/master/Docs/Getting%20Started%20with%20ExcelMVC.docx</PackageReleaseNotes>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="ExcelMvc.targets" />
@@ -80,6 +84,13 @@
 		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration) (x64)\ExcelMvc.Addin (x64).xll">
 			<PackagePath>Build</PackagePath>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\Docs\Label\Icon\ExcelMvcIcon64.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 </Project>
