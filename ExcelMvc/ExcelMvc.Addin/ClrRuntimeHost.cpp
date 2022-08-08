@@ -1,11 +1,6 @@
 /****************************** Module Header ******************************\
-* Module Name:  RuntimeHostV4.cpp
-* Project:      CppHostCLR
+* Module Name:  ClrRuntimeHost.cpp
 * Copyright (c) Microsoft Corporation.
-*
-* The code in this file demonstrates using .NET Framework 4.0 Hosting
-* Interfaces (http://msdn.microsoft.com/en-us/library/dd380851.aspx) to host
-* .NET runtime 4.0, load a .NET assebmly, and invoke a type in the assembly.
 *
 * This source is subject to the Microsoft Public License.
 * See http://www.microsoft.com/en-us/openness/licenses.aspx#MPL.
