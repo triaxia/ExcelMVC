@@ -100,13 +100,15 @@ static LPWSTR rgFuncs[][NumberOfParameters] =
 
 BOOL StartAddinClrHost()
 {
-	TCHAR buffer[256] = { 0 };
+	TCHAR buffer[MAX_PATH] = { 0 };
 	::GetModuleFileName(Constants::Dll, buffer, sizeof(buffer) / sizeof(WCHAR));
 
 	// trim off file name
 	int pos = wcslen(buffer);
 	while (--pos >= 0 && buffer[pos] != '\\');
-	buffer[pos] = 0;
+    buffer[pos] = 0;
+
+// challenge! https://docs.microsoft.com/en-us/dotnet/core/tutorials/netcore-hosting
 
 #if CLR2
     static LPCTSTR clrVersion = L"v2.0.50727";

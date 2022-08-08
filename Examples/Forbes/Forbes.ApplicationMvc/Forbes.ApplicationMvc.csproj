@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net471</TargetFramework>
+		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<AssemblyTitle>Forbes.ApplicationMvc</AssemblyTitle>
 		<Product>Forbes.ApplicationMvc</Product>
 		<Copyright>Copyright © 2013 Peter Gu &amp; Wolfgang Stamm</Copyright>
