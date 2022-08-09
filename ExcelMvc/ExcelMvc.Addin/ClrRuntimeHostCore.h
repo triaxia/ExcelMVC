@@ -1,3 +1,8 @@
+#ifndef _ClrRuntimeHostCore_h
+#define _ClrRuntimeHostCore_h
+
+#include "ClrRuntimeHost.h"
+
 class ClrRuntimeHostCore : public ClrRuntimeHost
 {
 public:
@@ -6,3 +11,5 @@ public:
 	virtual void CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName,
         VARIANT *pArg1 = NULL, VARIANT *pArg2 = NULL, VARIANT *pArg3 = NULL);
 };
+
+#endif

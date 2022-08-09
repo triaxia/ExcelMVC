@@ -32,6 +32,9 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 #include "pch.h"
+#include <XLCALL.H>
+#include <framewrk.H>
+#include "ClrRuntimeHostFactory.h"
 
 extern "C" const GUID __declspec(selectany) DIID__Workbook =
 { 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
@@ -96,7 +99,7 @@ static LPWSTR rgFuncs[][NumberOfParameters] =
 	{ L"ExcelMvcRun", L"I", L"ExcelMvcRun", L"", L"0", L"ExcelMvc", L"", L"", L"Runs the next action in the async queue", L"", L"" }
 };
 
-ClrRuntimeHost* pClrHost = new ClrRuntimeHost();
+ClrRuntimeHost* pClrHost = nullptr;
 
 BOOL StartAddinClrHost()
 {
@@ -105,6 +108,8 @@ BOOL StartAddinClrHost()
 #elif CLR4
 	static LPCTSTR clrVersion = L"v4.0.30319";
 #endif
+	delete pClrHost;
+	pClrHost = ClrRuntimeHostFactory::Create();
 	pClrHost->Start(clrVersion, L"ExcelMvc");
 	BOOL result = pClrHost->TestAndDisplayError();
 	if (result)
