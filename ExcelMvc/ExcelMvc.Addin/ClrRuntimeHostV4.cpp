@@ -159,14 +159,14 @@ ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 	hr = pAppDomainThunk->QueryInterface(IID_PPV_ARGS(&pAppDomain));
 	if (FAILED(hr))
 	{
-        FormatError(L"Failed to get AppDomain w/hr 0x%08lx\n", hr);
+        FormatError(L"Failed to get AppDomain \"ExcelMvc\" w/hr 0x%08lx\n", hr);
 		goto Cleanup;
 	}
 
 	hr = pAppDomain->Load_2(bstrAssemblyName, &pAssembly);
 	if (FAILED(hr))
 	{
-        FormatError(L"Failed to load the assembly w/hr 0x%08lx\n", hr);
+        FormatError(L"Failed to load assembly \"%s\" w/hr 0x%08lx\n", bstrAssemblyName, hr);
 		goto Cleanup;
 	}
 
@@ -193,7 +193,7 @@ ClrRuntimeHostV4::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName
 	HRESULT hr = pAssembly->GetType_2(bstrClassName, &spType);
 	if (FAILED(hr))
 	{
-        FormatError(L"Failed to get the type %s w/hr 0x%08lx\n", pszClassName, hr);
+        FormatError(L"Failed to get the type \"%s\" w/hr 0x%08lx\n", pszClassName, hr);
 		goto Cleanup;
 	}
 

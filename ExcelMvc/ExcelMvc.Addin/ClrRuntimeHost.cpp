@@ -11,15 +11,27 @@ ClrRuntimeHost::FormatError(PCWSTR format, HRESULT hr)
 }
 
 void
+ClrRuntimeHost::FormatError(PCWSTR format, PCWSTR arg, HRESULT hr)
+{
+    swprintf(ErrorBuffer, sizeof(ErrorBuffer) / sizeof(WCHAR), format, arg, hr);
+}
+
+void
+ClrRuntimeHost::FormatError(PCWSTR format, PCWSTR arg1, PCWSTR arg2, HRESULT hr)
+{
+    swprintf(ErrorBuffer, sizeof(ErrorBuffer) / sizeof(WCHAR), format, arg1, arg2, hr);
+}
+
+void
 ClrRuntimeHost::FormatError(PCWSTR format, PCWSTR arg)
 {
     swprintf(ErrorBuffer, sizeof(ErrorBuffer) / sizeof(WCHAR), format, arg);
 }
 
 void
-ClrRuntimeHost::FormatError(PCWSTR format, PCWSTR arg, HRESULT hr)
+ClrRuntimeHost::FormatError(PCWSTR format, PCWSTR arg1, PCWSTR arg2)
 {
-    swprintf(ErrorBuffer, sizeof(ErrorBuffer) / sizeof(WCHAR), format, arg, hr);
+    swprintf(ErrorBuffer, sizeof(ErrorBuffer) / sizeof(WCHAR), format, arg1, arg2);
 }
 
 BOOL

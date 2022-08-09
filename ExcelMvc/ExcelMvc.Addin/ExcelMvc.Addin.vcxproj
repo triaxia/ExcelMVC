@@ -108,7 +108,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>.\Sdk\Lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libnethost.lib;XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nethost.lib;libnethost.lib;XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).xll</OutputFile>
       <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
     </Link>
@@ -137,7 +137,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>.\Sdk\Lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libnethost.lib;XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nethost.lib;libnethost.lib;XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).xll</OutputFile>
       <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
     </Link>
@@ -162,7 +162,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>.\Sdk\Lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libnethost.lib;XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nethost.lib;libnethost.lib;XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName) (x64).xll</OutputFile>
       <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
     </Link>
@@ -187,7 +187,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>.\Sdk\Lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libnethost.lib;XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nethost.lib;libnethost.lib;XLCALL32.LIB;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName) (x64).xll</OutputFile>
       <ModuleDefinitionFile>Addin.def</ModuleDefinitionFile>
     </Link>
@@ -212,8 +212,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ClrRuntimeHost.h" />
-    <ClInclude Include="ClrRuntimeHostV4.h" />
     <ClInclude Include="ClrRuntimeHostCore.h" />
+    <ClInclude Include="ClrRuntimeHostV4.h" />
     <ClInclude Include="ClrRuntimeHostFactory.h" />
     <ClInclude Include="Framewrk.h" />
     <ClInclude Include="MemoryManager.h" />

@@ -7,9 +7,6 @@
     <ClCompile Include="ClrRuntimeHostV4.cpp">
       <Filter>Runtime</Filter>
     </ClCompile>
-    <ClCompile Include="ClrRuntimeHostCore.cpp">
-      <Filter>Runtime</Filter>
-    </ClCompile>
     <ClCompile Include="Framewrk.cpp">
       <Filter>XlCall</Filter>
     </ClCompile>
@@ -25,14 +22,14 @@
     <ClCompile Include="ClrRuntimeHost.cpp">
       <Filter>Runtime</Filter>
     </ClCompile>
+    <ClCompile Include="ClrRuntimeHostCore.cpp">
+      <Filter>Runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ClrRuntimeHostV4.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="ClrRuntimeHostCore.h">
       <Filter>Runtime</Filter>
     </ClInclude>
     <ClInclude Include="Framewrk.h">
@@ -48,6 +45,9 @@
       <Filter>Runtime</Filter>
     </ClInclude>
     <ClInclude Include="ClrRuntimeHost.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="ClrRuntimeHostCore.h">
       <Filter>Runtime</Filter>
     </ClInclude>
   </ItemGroup>

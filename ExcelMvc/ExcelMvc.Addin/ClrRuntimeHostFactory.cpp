@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "ClrRuntimeHostFactory.h"
 #include "ClrRuntimeHostV4.h"
-//#include "ClrRuntimeHostCore.h"
+#include "ClrRuntimeHostCore.h"
 
 ClrRuntimeHost* ClrRuntimeHostFactory ::Create()
 {
-	return new ClrRuntimeHostV4();
+	return new ClrRuntimeHostCore();
 }
 
 
