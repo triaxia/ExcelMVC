@@ -81,10 +81,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\ExcelMvc.Addin.xll">
+		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\x86\ExcelMvc.Addin.x86.xll">
 			<PackagePath>Build</PackagePath>
 		</Content>
-		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration) (x64)\ExcelMvc.Addin (x64).xll">
+		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\x64\ExcelMvc.Addin.x64.xll">
 			<PackagePath>Build</PackagePath>
 		</Content>
 	</ItemGroup>

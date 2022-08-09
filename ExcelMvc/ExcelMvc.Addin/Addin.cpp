@@ -33,7 +33,7 @@ Boston, MA 02110-1301 USA.
 */
 #include "pch.h"
 #include <XLCALL.H>
-#include <framewrk.H>
+#include "framewrk.h"
 #include "ClrRuntimeHostFactory.h"
 
 extern "C" const GUID __declspec(selectany) DIID__Workbook =
@@ -89,7 +89,7 @@ LPXLOPER12 pxArgumentHelp255
 */
 
 const int NumberOfParameters = 11;
-static LPWSTR rgFuncs[][NumberOfParameters] =
+static LPCWSTR rgFuncs[][NumberOfParameters] =
 {
 	{ L"ExcelMvcRunCommandAction", L"I", L"ExcelMvcRunCommandAction", L"", L"0", L"ExcelMvc", L"", L"", L"Called by a command", L"", L"" },
 	{ L"ExcelMvcAttach", L"I", L"ExcelMvcAttach", L"", L"2", L"ExcelMvc", L"", L"", L"Attach Excel to ExcelMvc", L"", L"" },
@@ -103,11 +103,7 @@ ClrRuntimeHost* pClrHost = nullptr;
 
 BOOL StartAddinClrHost()
 {
-#if CLR2
-	static LPCTSTR clrVersion = L"v2.0.50727";
-#elif CLR4
 	static LPCTSTR clrVersion = L"v4.0.30319";
-#endif
 	delete pClrHost;
 	pClrHost = ClrRuntimeHostFactory::Create();
 	pClrHost->Start(clrVersion, L"ExcelMvc");

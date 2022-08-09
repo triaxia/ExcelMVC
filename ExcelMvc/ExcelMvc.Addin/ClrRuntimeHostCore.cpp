@@ -2,9 +2,11 @@
 #include "pch.h"
 #include "ClrRuntimeHostCore.h"
 
+#define NETHOST_USE_AS_STATIC
+#include <nethost.h>
+
 #include <coreclr_delegates.h>
 #include <hostfxr.h>
-#include <nethost.h>
 #include <string>
 
 using string_t = std::basic_string<char_t>;

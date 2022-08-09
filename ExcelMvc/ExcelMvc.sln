@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelMvc.Addin", "ExcelMvc.Addin\ExcelMvc.Addin.vcxproj", "{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelMvc", "ExcelMvc\ExcelMvc.csproj", "{C5B20430-E071-475E-B334-6CFF47BB2344}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelMvc.Addin", "ExcelMvc.Addin\ExcelMvc.Addin.vcxproj", "{A9887347-3E93-4E4E-96DF-227648E57B60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,14 +15,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}.Debug|Win32.ActiveCfg = Debug|Win32
-		{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}.Debug|Win32.Build.0 = Debug|Win32
-		{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}.Debug|x64.ActiveCfg = Debug|x64
-		{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}.Debug|x64.Build.0 = Debug|x64
-		{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}.Release|Win32.ActiveCfg = Release|Win32
-		{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}.Release|Win32.Build.0 = Release|Win32
-		{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}.Release|x64.ActiveCfg = Release|x64
-		{24509A78-7FFD-44AF-8E9B-9A215BEAD2EB}.Release|x64.Build.0 = Release|x64
 		{C5B20430-E071-475E-B334-6CFF47BB2344}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{C5B20430-E071-475E-B334-6CFF47BB2344}.Debug|Win32.Build.0 = Debug|Any CPU
 		{C5B20430-E071-475E-B334-6CFF47BB2344}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -31,6 +23,14 @@ Global
 		{C5B20430-E071-475E-B334-6CFF47BB2344}.Release|Win32.Build.0 = Release|Any CPU
 		{C5B20430-E071-475E-B334-6CFF47BB2344}.Release|x64.ActiveCfg = Release|Any CPU
 		{C5B20430-E071-475E-B334-6CFF47BB2344}.Release|x64.Build.0 = Release|Any CPU
+		{A9887347-3E93-4E4E-96DF-227648E57B60}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A9887347-3E93-4E4E-96DF-227648E57B60}.Debug|Win32.Build.0 = Debug|Win32
+		{A9887347-3E93-4E4E-96DF-227648E57B60}.Debug|x64.ActiveCfg = Debug|x64
+		{A9887347-3E93-4E4E-96DF-227648E57B60}.Debug|x64.Build.0 = Debug|x64
+		{A9887347-3E93-4E4E-96DF-227648E57B60}.Release|Win32.ActiveCfg = Release|Win32
+		{A9887347-3E93-4E4E-96DF-227648E57B60}.Release|Win32.Build.0 = Release|Win32
+		{A9887347-3E93-4E4E-96DF-227648E57B60}.Release|x64.ActiveCfg = Release|x64
+		{A9887347-3E93-4E4E-96DF-227648E57B60}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

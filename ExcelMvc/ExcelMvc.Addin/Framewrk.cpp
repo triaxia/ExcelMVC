@@ -74,8 +74,8 @@
 #include <wchar.h>
 #include <xlcall.h>
 #include <xlcall.cpp>
-#include <framewrk.h>
-#include <memorymanager.h>
+#include "framewrk.h"
+#include "memorymanager.h"
 #include <stdarg.h>
 
 

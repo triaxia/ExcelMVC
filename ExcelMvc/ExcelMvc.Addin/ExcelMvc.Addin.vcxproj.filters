@@ -1,10 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="Addin.cpp" />
-    <ClCompile Include="ClrRuntimeHostV4.cpp">
+    <Filter Include="Runtime">
+      <UniqueIdentifier>{05cdb28a-2204-4474-8373-f51f786c5ccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XlCall">
+      <UniqueIdentifier>{ad34e3a5-dcb8-4297-865d-c8fd531b1d9d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ClrRuntimeHost.cpp">
+      <Filter>Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="ClrRuntimeHostCore.cpp">
+      <Filter>Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="ClrRuntimeHostFactory.cpp">
       <Filter>Runtime</Filter>
     </ClCompile>
     <ClCompile Include="Framewrk.cpp">
@@ -16,20 +27,18 @@
     <ClCompile Include="MemoryPool.cpp">
       <Filter>XlCall</Filter>
     </ClCompile>
-    <ClCompile Include="ClrRuntimeHostFactory.cpp">
-      <Filter>Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="ClrRuntimeHost.cpp">
-      <Filter>Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="ClrRuntimeHostCore.cpp">
-      <Filter>Runtime</Filter>
-    </ClCompile>
+    <ClCompile Include="Addin.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="ClrRuntimeHostV4.h">
+    <ClInclude Include="ClrRuntimeHost.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="ClrRuntimeHostCore.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="ClrRuntimeHostFactory.h">
       <Filter>Runtime</Filter>
     </ClInclude>
     <ClInclude Include="Framewrk.h">
@@ -41,25 +50,10 @@
     <ClInclude Include="MemoryPool.h">
       <Filter>XlCall</Filter>
     </ClInclude>
-    <ClInclude Include="ClrRuntimeHostFactory.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="ClrRuntimeHost.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="ClrRuntimeHostCore.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Addin.def" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Runtime">
-      <UniqueIdentifier>{08d7efc1-4310-472f-b1bc-ed2b04c7f2f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="XlCall">
-      <UniqueIdentifier>{e8836529-5fb4-474d-8d60-4277fbc7f08b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>
