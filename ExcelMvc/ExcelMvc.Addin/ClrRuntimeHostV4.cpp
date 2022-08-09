@@ -8,7 +8,8 @@
 // Import mscorlib.tlb (Microsoft Common Language Runtime Class Library).
 #import "mscorlib.tlb" raw_interfaces_only				\
 	high_property_prefixes("_get", "_put", "_putref")		\
-	rename("ReportEvent", "InteropServices_ReportEvent")
+	rename("ReportEvent", "InteropServices_ReportEvent") \
+    rename("or", "or_arg")
 using namespace mscorlib;
 #pragma endregion
 

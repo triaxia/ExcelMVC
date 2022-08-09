@@ -1,9 +1,9 @@
 ﻿<Project>
 	<ItemGroup>
-		<Content Include="$(MSBuildThisFileDirectory)ExcelMvc.Addin.xll">
+		<Content Include="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="$(MSBuildThisFileDirectory)ExcelMvc.Addin (x64).xll">
+		<Content Include="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x64.xll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

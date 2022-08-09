@@ -30,6 +30,9 @@
     <ClCompile Include="Addin.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="ClrRuntimeHostV4.cpp">
+      <Filter>Runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClrRuntimeHost.h">
@@ -52,6 +55,9 @@
     </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ClrRuntimeHostV4.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Addin.def" />
