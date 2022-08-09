@@ -16,6 +16,8 @@
 
 #include <XLCALL.H>
 #include <framewrk.H>
+#include "ClrRuntimeHost.h"
+#include "ClrRuntimeHostCore.h"
 
 class Constants
 {

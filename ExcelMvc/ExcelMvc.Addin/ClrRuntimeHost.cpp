@@ -14,7 +14,6 @@
 #include "pch.h"
 #include <windows.h>
 #include <metahost.h>
-#include "ClrRuntimeHost.h"
 
 #pragma region Includes and Imports
 #pragma comment(lib, "mscoree.lib")
@@ -69,8 +68,10 @@ ClrRuntimeHost::FormatError(PCWSTR format, PCWSTR arg, HRESULT hr)
 }
 
 BOOL 
-ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath)
+ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 {
+	WCHAR basePath[MAX_PATH];
+	GetBasePath(basePath, sizeof(basePath)/sizeof(WCHAR));
     ErrorBuffer[0] = 0;
 	bstr_t bstrAssemblyName(pszAssemblyName);
 	bstr_t bstrBasePath(basePath);
@@ -123,7 +124,6 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 		goto Cleanup;
 	}
 
-
 	/*
 	
 	// Load the CLR into the current process and return a runtime interface 
@@ -139,7 +139,6 @@ ClrRuntimeHost::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName, PCWSTR basePath
 	}
 
 	*/
-
 
 	// Start the CLR.
 	hr = pCorRuntimeHost->Start();
@@ -211,7 +210,8 @@ Cleanup:
 }
 
 void
-ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, VARIANT *pArg1, VARIANT *pArg2, VARIANT *pArg3)
+ClrRuntimeHost::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName
+	, VARIANT *pArg1, VARIANT *pArg2, VARIANT *pArg3)
 {
 	ErrorBuffer[0] = 0;
 
@@ -342,8 +342,7 @@ BOOL
 ClrRuntimeHost::TestAndDisplayError()
 {
 	BOOL result = wcslen(ErrorBuffer) == 0;
-	if (!result)
-        MessageBox(0, ErrorBuffer, L"ExcelMvc", MB_OK + MB_ICONERROR);
+	if (!result) MessageBox(0, ErrorBuffer, L"ExcelMvc", MB_OK + MB_ICONERROR);
 	return result;
 }
 
@@ -363,5 +362,14 @@ BOOL ClrRuntimeHost::FindAppConfig(PCWSTR basePath, TCHAR *buffer, DWORD size)
     return false;
 }
 
+void ClrRuntimeHost::GetBasePath(TCHAR* buffer, DWORD size)
+{
+	::GetModuleFileName(Constants::Dll, buffer, size);
+
+	// trim off file name
+	int pos = wcslen(buffer);
+	while (--pos >= 0 && buffer[pos] != '\\');
+	buffer[pos] = 0;
+}
 
 

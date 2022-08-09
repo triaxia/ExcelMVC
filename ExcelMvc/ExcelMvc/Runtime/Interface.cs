@@ -101,7 +101,7 @@ namespace ExcelMvc.Runtime
             {
                 result = status.Message + Environment.NewLine + status.StackTrace;
                 MessageWindow.AddErrorLine(status);
-                System.Windows.MessageBox.Show(result, typeof(Interface).Namespace, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(result, typeof(Interface).Namespace, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return result;

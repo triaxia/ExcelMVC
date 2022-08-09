@@ -8,7 +8,6 @@
     <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="ClrRuntimeHost.cpp" />
     <ClCompile Include="Addin.cpp" />
-    <ClCompile Include="ClrRuntimeHost.Demo.cpp" />
     <ClCompile Include="ClrRuntimeHostCore.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -17,8 +16,8 @@
     <ClInclude Include="MemoryManager.h" />
     <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="ClrRuntimeHost.h" />
     <ClInclude Include="ClrRuntimeHostCore.h" />
+    <ClInclude Include="ClrRuntimeHost.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Addin.def" />
