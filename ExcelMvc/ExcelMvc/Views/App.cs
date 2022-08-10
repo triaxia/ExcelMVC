@@ -286,8 +286,7 @@ namespace ExcelMvc.Views
                     var excel = result as Application;
                     if (excel != null)
                     {
-                        uint excelpid;
-                        GetWindowThreadProcessId(new IntPtr(excel.Hwnd), out excelpid);
+                        GetWindowThreadProcessId(new IntPtr(excel.Hwnd), out uint excelpid);
                         if (pid == excelpid)
                             return excel;
                     }
