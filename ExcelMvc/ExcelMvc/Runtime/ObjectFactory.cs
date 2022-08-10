@@ -42,13 +42,19 @@ namespace ExcelMvc.Runtime
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using Extensions;
-
+#if NET6_0_OR_GREATER
+    using System.Runtime.Loader;
+#endif
     /// <summary>
     /// Generic object factory
     /// </summary>
     /// <typeparam name="T">Type of object</typeparam>
     public static class ObjectFactory<T>
     {
+#if NET6_0_OR_GREATER
+        private static AssemblyLoadContext LoadContext =
+            new AssemblyLoadContext(nameof(ObjectFactory<T>), true);
+#endif
 
         private static List<T> Instances
         {
@@ -57,8 +63,22 @@ namespace ExcelMvc.Runtime
 
         static ObjectFactory()
         {
+#if NET6_0_OR_GREATER
+            LoadContext.Resolving +=(sender, args) =>
+            {
+                var file = sender.Assemblies.Where(x => !x.IsDynamic)
+                    .Select(x => Path.GetDirectoryName(x.Location))
+                    .Distinct()
+                    .Select(x => Path.ChangeExtension(Path.Combine(x!, args.Name!), ".dll"))
+                    .Where(File.Exists)
+                    .OrderByDescending(File.GetLastWriteTimeUtc)
+                    .FirstOrDefault();
+                return file == null ? null : sender.LoadFromAssemblyPath(file);
+            };
+#else
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve +=
                 (_, args) => Assembly.ReflectionOnlyLoad(args.Name);
+#endif
         }
 
         /// <summary>
@@ -119,7 +139,7 @@ namespace ExcelMvc.Runtime
             var types = Enumerable.Empty<string>(); 
             var ex = ActionExtensions.Try(() =>
             {
-                var asm = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
+                var asm = LoadFrom(assemblyPath);
                 types = types.Concat(GetTypes(asm));
             });
 
@@ -146,5 +166,15 @@ namespace ExcelMvc.Runtime
                 || type.GetInterfaces().Any(x => IsEqual(x, baseType) || IsDerivedFrom(x, baseType));
         }
 
+        private static Assembly LoadFrom(string assemblyPath)
+        {
+#if NET5_0_OR_GREATER
+            var loaded = LoadContext.Assemblies
+                .SingleOrDefault(a => !a.IsDynamic && StringComparer.InvariantCultureIgnoreCase.Equals(a.Location, assemblyPath));
+            return loaded ?? LoadContext.LoadFromAssemblyPath(assemblyPath);
+#else
+            return Assembly.ReflectionOnlyLoadFrom(assemblyPath);
+#endif
+        }
     }
 }

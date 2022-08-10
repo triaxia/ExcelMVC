@@ -135,6 +135,8 @@ namespace ExcelMvc.Runtime
             AsyncActions.Execute(true);
             return null;
         }
+
+#if NET5_0_OR_GREATER
         [StructLayout(LayoutKind.Sequential)]
         public struct LibArgs
         {
@@ -172,21 +174,22 @@ namespace ExcelMvc.Runtime
             Hide();
             return 1;
         }
+        public static int Run(IntPtr arg, int args)
+        {
+            Run();
+            return 1;
+        }
 
         private static void PrintLibArgs(LibArgs libArgs)
         {
-#if NET5_0_OR_GREATER
             string ToString(IntPtr ptr) =>
                 ptr == IntPtr.Zero ? null :
                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Marshal.PtrToStringUni(ptr)
                 : Marshal.PtrToStringUTF8(ptr);
-#else
-            string ToString(IntPtr ptr) =>
-                ptr == IntPtr.Zero ? null : Marshal.PtrToStringUni(ptr);
-#endif
             Console.WriteLine($"Arg1:{ToString(libArgs.Arg1)}");
             Console.WriteLine($"Arg2:{ToString(libArgs.Arg2)}");
             Console.WriteLine($"Arg3:{ToString(libArgs.Arg3)}");
         }
+#endif
     }
 }

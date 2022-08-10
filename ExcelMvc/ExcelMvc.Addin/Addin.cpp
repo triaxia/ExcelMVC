@@ -206,10 +206,6 @@ BOOL __stdcall ExcelMvcHide(void)
 
 BOOL __stdcall ExcelMvcRun(void)
 {
-	/*VARIANT arg1;
-	VariantInit(&arg1);
-	arg1.vt = VT_INT;
-	arg1.intVal = action;*/
 	pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Run");
 	return pClrHost->TestAndDisplayError();
 }
