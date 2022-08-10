@@ -95,12 +95,11 @@ ClrRuntimeHostCore::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 }
 
 void
-ClrRuntimeHostCore::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, PCWSTR* pArg1, PCWSTR* pArg2, PCWSTR* pArg3)
+ClrRuntimeHostCore::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, PCWSTR pArg1, PCWSTR pArg2, PCWSTR pArg3)
 {
 	ClearError();
-
 	const string_t dotnetlib_path = BasePath + +L"\\" + AssemblyName + L".dll";
-	const string_t dotnet_type = string_t(pszClassName) + L",ExcelMvc";
+	const string_t dotnet_type = string_t(pszClassName) + L"," + AssemblyName;
 	component_entry_point_fn method = nullptr;
 	int rc = load_fptr(
 		dotnetlib_path.c_str(),
@@ -115,8 +114,19 @@ ClrRuntimeHostCore::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, 
 		return;
 	}
 
-	struct lib_args {};
-	lib_args args;
+	struct lib_args 
+	{
+		PCWSTR arg1;
+		PCWSTR arg2;
+		PCWSTR arg3;
+	};
+
+	lib_args args
+	{
+		pArg1,
+		pArg2,
+		pArg3,
+	};
 	method(&args, sizeof(args));
 }
 

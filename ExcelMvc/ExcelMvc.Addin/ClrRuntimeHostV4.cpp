@@ -179,7 +179,7 @@ Cleanup:
 
 void
 ClrRuntimeHostV4::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName
-	, PCWSTR *pArg1, PCWSTR *pArg2, PCWSTR *pArg3)
+	, PCWSTR pArg1, PCWSTR pArg2, PCWSTR pArg3)
 {
 	ClearError();
 
@@ -306,7 +306,7 @@ ClrRuntimeHostV4::Stop()
 	}
 }
 
-void ClrRuntimeHostV4::PutElement(SAFEARRAY* pa, long idx[], PCWSTR* pArg)
+void ClrRuntimeHostV4::PutElement(SAFEARRAY* pa, long idx[], PCWSTR pArg)
 {
 	variant_t varg(pArg);
 	VARIANT v = varg;

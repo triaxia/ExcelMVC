@@ -32,11 +32,11 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-
 namespace ExcelMvc.Runtime
 {
     using System;
     using System.Windows;
+    using System.Runtime.InteropServices;
 
     using Diagnostics;
     using Extensions;
@@ -47,7 +47,6 @@ namespace ExcelMvc.Runtime
     /// </summary>
     public static class Interface
     {
-
         /// <summary>
         /// Attaches the current Excel session to ExcelMvc
         /// </summary>
@@ -135,6 +134,59 @@ namespace ExcelMvc.Runtime
         {
             AsyncActions.Execute(true);
             return null;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct LibArgs
+        {
+            public IntPtr Arg1;
+            public IntPtr Arg2;
+            public IntPtr Arg3;
+        }
+
+        public static int Attach(IntPtr arg, int args)
+        {
+            Attach();
+            return 1;
+        }
+
+        public static int Detach(IntPtr arg, int args)
+        {
+            Detach();
+            return 1;
+        }
+
+        public static int FireClicked(IntPtr arg, int args)
+        {
+            FireClicked();
+            return 1;
+        }
+
+        public static int Show(IntPtr arg, int args)
+        {
+            Show();
+            return 1;
+        }
+
+        public static int Hide(IntPtr arg, int args)
+        {
+            Hide();
+            return 1;
+        }
+
+        private static void PrintLibArgs(LibArgs libArgs)
+        {
+#if NET5_0_OR_GREATER
+            string ToString(IntPtr ptr) =>
+                ptr == IntPtr.Zero ? null :
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Marshal.PtrToStringUni(ptr)
+                : Marshal.PtrToStringUTF8(ptr);
+#else
+            string ToString(IntPtr ptr) =>
+                ptr == IntPtr.Zero ? null : Marshal.PtrToStringUni(ptr);
+#endif
+            Console.WriteLine($"Arg1:{ToString(libArgs.Arg1)}");
+            Console.WriteLine($"Arg2:{ToString(libArgs.Arg2)}");
+            Console.WriteLine($"Arg3:{ToString(libArgs.Arg3)}");
         }
     }
 }
