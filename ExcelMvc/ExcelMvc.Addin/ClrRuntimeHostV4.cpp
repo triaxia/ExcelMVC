@@ -38,11 +38,11 @@ static _AssemblyPtr pAssembly = NULL;
 BOOL 
 ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 {
-	WCHAR basePath[MAX_PATH];
-	GetBasePath(basePath, sizeof(basePath)/sizeof(WCHAR));
-    ErrorBuffer[0] = 0;
+	ClearError();
+
+	auto basePath = GetBasePath();
 	bstr_t bstrAssemblyName(pszAssemblyName);
-	bstr_t bstrBasePath(basePath);
+	bstr_t bstrBasePath(basePath.c_str());
 
 	HRESULT hr;
 	hr = CLRCreateInstance(CLSID_CLRMetaHost, IID_PPV_ARGS(&pMetaHost));
@@ -137,7 +137,7 @@ ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 
     // set app config file is there is one matching *.dll.config in the base path
     TCHAR configFile[MAX_PATH];
-    if (FindAppConfig(basePath, configFile, MAX_PATH))
+    if (FindAppConfig(basePath.c_str(), configFile, MAX_PATH))
     {
         bstr_t bstrconfigFile(configFile);
         hr = pAppDomainSetup->put_ConfigurationFile(bstrconfigFile);
@@ -179,9 +179,9 @@ Cleanup:
 
 void
 ClrRuntimeHostV4::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName
-	, VARIANT *pArg1, VARIANT *pArg2, VARIANT *pArg3)
+	, PCWSTR *pArg1, PCWSTR *pArg2, PCWSTR *pArg3)
 {
-	ErrorBuffer[0] = 0;
+	ClearError();
 
 	bstr_t bstrClassName(pszClassName);
 	bstr_t bstrMethodName(pszMethodName);
@@ -207,17 +207,17 @@ ClrRuntimeHostV4::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName
     {
         psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, args);
         long idx [] = { 0 };
-        SafeArrayPutElement(psaMethodArgs, idx, pArg1);
+		PutElement(psaMethodArgs, idx, pArg1);
         if (args == 2)
         {
             idx[0] = 1;
-            SafeArrayPutElement(psaMethodArgs, idx, pArg2);
+			PutElement(psaMethodArgs, idx, pArg2);
         }
         if (args == 3)
         {
-            idx[0] = 1;
-            SafeArrayPutElement(psaMethodArgs, idx, pArg2);
-        }
+            idx[0] = 2;
+			PutElement(psaMethodArgs, idx, pArg3);
+		}
     }
 
 	hr = spType->InvokeMember_3(
@@ -304,4 +304,11 @@ ClrRuntimeHostV4::Stop()
 		pAssembly->Release();
 		pAssembly = NULL;
 	}
+}
+
+void ClrRuntimeHostV4::PutElement(SAFEARRAY* pa, long idx[], PCWSTR* pArg)
+{
+	variant_t varg(pArg);
+	VARIANT v = varg;
+	SafeArrayPutElement(pa, idx, &v);
 }

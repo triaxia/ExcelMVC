@@ -5,6 +5,12 @@
 WCHAR ClrRuntimeHost::ErrorBuffer[1024] = {};
 
 void
+ClrRuntimeHost::ClearError()
+{
+    ErrorBuffer[0] = 0;
+}
+
+void
 ClrRuntimeHost::FormatError(PCWSTR format, HRESULT hr)
 {
     swprintf(ErrorBuffer, sizeof(ErrorBuffer) / sizeof(WCHAR), format, hr);
@@ -58,14 +64,16 @@ BOOL ClrRuntimeHost::FindAppConfig(PCWSTR basePath, TCHAR *buffer, DWORD size)
     return false;
 }
 
-void ClrRuntimeHost::GetBasePath(TCHAR* buffer, DWORD size)
+string_t ClrRuntimeHost::GetBasePath()
 {
-	::GetModuleFileName(Constants::Dll, buffer, size);
-
-	// trim off file name
-	int pos = wcslen(buffer);
-	while (--pos >= 0 && buffer[pos] != '\\');
-	buffer[pos] = 0;
+    WCHAR buffer[MAX_PATH];
+    ::GetModuleFileName(Constants::Dll, buffer, sizeof(buffer) / sizeof(WCHAR));
+    string_t path = buffer;
+    auto pos = path.find_last_of(L"\\");
+    return path.substr(0, pos);
 }
 
-
+string_t ClrRuntimeHost::GetRuntimeConfigFile()
+{
+    return ClrRuntimeHost::GetBasePath() + L"\\ExcelMvc.runtimeconfig.json";
+}

@@ -73,10 +73,9 @@ string_t BasePath;
 BOOL
 ClrRuntimeHostCore::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 {
+	ClearError();
 	AssemblyName = pszAssemblyName;
-	WCHAR buffer[MAX_PATH];
-	GetBasePath(buffer, sizeof(buffer) / sizeof(WCHAR));
-	BasePath = buffer;
+	BasePath = GetBasePath();
 
 	if (!load_hostfxr())
 	{
@@ -84,11 +83,11 @@ ClrRuntimeHostCore::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 		return FALSE;
 	}
 
-	const string_t config_path = BasePath + L"\\test.runtimeconfig.json";
+	const string_t config_path = ClrRuntimeHost::GetRuntimeConfigFile();
 	load_fptr = get_dotnet_load_assembly(config_path.c_str());
 	if (load_fptr == nullptr)
 	{
-		FormatError(L"%s failed (%s)", config_path.c_str());
+		FormatError(L"%s failed (%s)", L"get_dotnet_load_assembly", config_path.c_str());
 		return FALSE;
 	}
 
@@ -96,8 +95,10 @@ ClrRuntimeHostCore::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 }
 
 void
-ClrRuntimeHostCore::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, VARIANT* pArg1, VARIANT* pArg2, VARIANT* pArg3)
+ClrRuntimeHostCore::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, PCWSTR* pArg1, PCWSTR* pArg2, PCWSTR* pArg3)
 {
+	ClearError();
+
 	const string_t dotnetlib_path = BasePath + +L"\\" + AssemblyName + L".dll";
 	const string_t dotnet_type = string_t(pszClassName) + L",ExcelMvc";
 	component_entry_point_fn method = nullptr;
@@ -110,7 +111,7 @@ ClrRuntimeHostCore::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, 
 		(void**)&method);
 	if (method == nullptr)
 	{
-		FormatError(L"%s not found (%s)", dotnet_type.c_str());
+		FormatError(L"%s not found (%s)", pszMethodName, dotnet_type.c_str());
 		return;
 	}
 

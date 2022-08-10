@@ -9,7 +9,9 @@ public:
     virtual BOOL Start(PCWSTR pszVersion, PCWSTR pszAssemblyName);
     virtual void Stop();
     virtual void CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName,
-        VARIANT *pArg1 = NULL, VARIANT *pArg2 = NULL, VARIANT *pArg3 = NULL);
+        PCWSTR *pArg1 = NULL, PCWSTR *pArg2 = NULL, PCWSTR *pArg3 = NULL);
+private:
+    static void PutElement(SAFEARRAY* pa, long idx[], PCWSTR* pArg);
 };
 
 #endif

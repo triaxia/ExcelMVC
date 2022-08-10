@@ -23,10 +23,12 @@
 		<Company>Peter G &amp; Wolfgang Stamm</Company>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="ExcelMvc.runtimeconfig.json" />
 		<None Remove="ExcelMvc.targets" />
 		<None Remove="Resources\ExcelMvc.ico" />
 	</ItemGroup>
 	<ItemGroup>
+		<Content Include="ExcelMvc.runtimeconfig.json" />
 		<Content Include="ExcelMvc.targets">
 			<PackagePath>Build</PackagePath>
 		</Content>
@@ -85,6 +87,9 @@
 			<PackagePath>Build</PackagePath>
 		</Content>
 		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\x64\ExcelMvc.Addin.x64.xll">
+			<PackagePath>Build</PackagePath>
+		</Content>
+		<Content Include="ExcelMvc.runtimeconfig.json">
 			<PackagePath>Build</PackagePath>
 		</Content>
 	</ItemGroup>
