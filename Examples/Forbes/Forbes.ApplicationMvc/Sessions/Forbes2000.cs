@@ -45,7 +45,6 @@ namespace Forbes.Application.Sessions
 
     internal class Forbes2000
     {
-
         public Forbes2000(View grandparent, View parent, Settings settings, string companyTableName, string companyFormName)
         {
             ParentView = parent;

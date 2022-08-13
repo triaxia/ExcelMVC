@@ -148,6 +148,7 @@ namespace ExcelMvc.Views
         /// </summary>
         public override void Dispose()
         {
+            Detach();
             Underlying = null;
         }
 
@@ -166,38 +167,46 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Attach(object app)
         {
-            Try(() =>
+            void Do(object state)
             {
-                Detach();
-                Underlying = (app as Application) ?? Find();
-                if (Underlying == null)
-                    throw new Exception(Resource.ErrorExcelAppFound);
-
-                AsyncActions.Initialise();
-                ObjectFactory<ISession>.CreateAll();
-                ObjectFactory<IValueConverter>.CreateAll();
-
-                Underlying.WorkbookOpen += OpenBook;
-                Underlying.WorkbookBeforeClose += ClosingBook;
-                Underlying.WorkbookActivate += Activate;
-                Underlying.WorkbookDeactivate += Deactivate;
-
-                MainWindow = new Root(Underlying.Hwnd);
-                MainWindow.Destroyed += MainWindow_Destroyed;
-
-                foreach (Workbook item in Underlying.Workbooks)
+                Try(() =>
                 {
-                    var view = new Book(this, item);
-                    var args = new ViewEventArgs(view);
-                    OnOpening(args);
-                    if (args.IsAccepted)
+                    Detach();
+                    Underlying = (state as Application) ?? Find();
+                    if (Underlying == null)
+                        throw new Exception(Resource.ErrorExcelAppFound);
+
+                    AsyncActions.Initialise();
+                    ObjectFactory<ISession>.CreateAll();
+                    ObjectFactory<IValueConverter>.CreateAll();
+
+                    Underlying.WorkbookOpen += OpenBook;
+                    Underlying.WorkbookBeforeClose += ClosingBook;
+                    Underlying.WorkbookActivate += Activate;
+                    Underlying.WorkbookDeactivate += Deactivate;
+
+                    MainWindow = new Root(Underlying.Hwnd);
+                    MainWindow.Destroyed += MainWindow_Destroyed;
+
+                    foreach (Workbook item in Underlying.Workbooks)
                     {
-                        view.Initialise();
-                        Books[item] = view;
-                        ExecuteBinding(() => OnOpened(new ViewEventArgs(view)));
+                        var view = new Book(this, item);
+                        var args = new ViewEventArgs(view);
+                        OnOpening(args);
+                        if (args.IsAccepted)
+                        {
+                            view.Initialise();
+                            Books[item] = view;
+                            ExecuteBinding(() => OnOpened(new ViewEventArgs(view)));
+                        }
                     }
-                }
-            });
+                });
+            }
+
+            if (Underlying == null)
+                Do(app);
+            else
+                AsyncActions.Post(a => Do(a), app, true);
         }
 
         /// <summary>
@@ -213,13 +222,15 @@ namespace ExcelMvc.Views
                     Underlying.WorkbookBeforeClose -= ClosingBook;
                     Underlying.WorkbookActivate -= Activate;
                     Underlying.WorkbookDeactivate -= Deactivate;
-                    Underlying = null;
+                    
+                    // Underlying is needed when Attach is invoked from the surface of the sheet
+                    // Underlying = null;
                 }
 
                 MainWindow = null;
 
-                foreach (var space in Books.Values)
-                    space.Dispose();
+                foreach (var book in Books.Values)
+                    book.Dispose();
                 Books.Clear();
 
                 ObjectFactory<ISession>.DeleteAll(x => x.Dispose());

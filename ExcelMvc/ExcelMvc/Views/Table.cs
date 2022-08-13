@@ -53,7 +53,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Table : BindingView
     {
-
         private readonly List<string> categoryIds = new List<string>();
         private bool orderingAllowed;
 

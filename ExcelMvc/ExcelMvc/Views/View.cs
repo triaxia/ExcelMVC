@@ -459,8 +459,7 @@ namespace ExcelMvc.Views
             }
             finally
             {
-                if (final != null)
-                    final();
+                final?.Invoke();
             }
         }
 

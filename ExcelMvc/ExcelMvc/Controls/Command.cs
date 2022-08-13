@@ -186,6 +186,5 @@ namespace ExcelMvc.Controls
                 IsEnabled = Model.CanExecute(new CommandEventArgs { Source = this });
             });
         }
-
     }
 }

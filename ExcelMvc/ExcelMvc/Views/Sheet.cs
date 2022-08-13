@@ -49,7 +49,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Sheet : View
     {
-
         private readonly Dictionary<string, Command> commands = 
             new Dictionary<string, Command>(StringComparer.OrdinalIgnoreCase);
 
@@ -136,7 +135,10 @@ namespace ExcelMvc.Views
         public override void Dispose()
         {
             foreach (var cmd in commands.Values)
+            {
+                cmd.Clicked -= Cmd_Clicked;
                 cmd.Dispose();
+            }
             commands.Clear();
 
             foreach (var form in forms.Values)

@@ -301,8 +301,6 @@ namespace ExcelMvc.Bindings
             public int IndexOfPath;
             public int IndexOfValidation;
             public int IndexOfVisibility;
-
         }
-
     }
 }

@@ -48,8 +48,8 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Book : View
     {
-
-        private readonly Dictionary<Worksheet, Sheet> sheets = new Dictionary<Worksheet, Sheet>();
+        private readonly Dictionary<Worksheet, Sheet> sheets
+            = new Dictionary<Worksheet, Sheet>();
 
         internal Book(View parent, Workbook book)
         {
@@ -153,8 +153,7 @@ namespace ExcelMvc.Views
         internal Command FindCommand(Worksheet sheet, string name)
         {
             Command cmd = null;
-            Sheet item;
-            if (sheets.TryGetValue(sheet, out item))
+            if (sheets.TryGetValue(sheet, out Sheet item))
                 cmd = item.FindCommand(name);
             return cmd;
         }
@@ -171,8 +170,7 @@ namespace ExcelMvc.Views
                 foreach (Worksheet item in Underlying.Worksheets)
                 {
                     var view = new Sheet(this, item);
-                    List<Binding> sheetBindings;
-                    bindings.TryGetValue(item, out sheetBindings);
+                    bindings.TryGetValue(item, out List<Binding> sheetBindings);
                     view.Initialise(sheetBindings);
                     sheets[item] = view;
                 }
@@ -191,6 +189,5 @@ namespace ExcelMvc.Views
         {
             OnDeactivated(new ViewEventArgs(sheets[(Worksheet)sh]));
         }
-
     }
 }
