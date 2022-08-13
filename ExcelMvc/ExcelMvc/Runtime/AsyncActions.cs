@@ -35,6 +35,7 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Runtime
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
     using Extensions;
@@ -45,7 +46,6 @@ namespace ExcelMvc.Runtime
     /// </summary>
     internal static class AsyncActions
     {
-
         private class Item
         {
             public Action<object> Action { get; set; }
@@ -53,14 +53,14 @@ namespace ExcelMvc.Runtime
         }
 
         private static AsyncWindow Context { get; set; }
-        private static Queue<Item> Actions { get; set; }
-        private static Queue<Item> Macros { get; set; }
+        private static ConcurrentQueue<Item> Actions { get; set; }
+        private static ConcurrentQueue<Item> Macros { get; set; }
 
         static AsyncActions()
         {
             Context = new AsyncWindow();
-            Actions = new Queue<Item>();
-            Macros = new Queue<Item>();
+            Actions = new ConcurrentQueue<Item>();
+            Macros = new ConcurrentQueue<Item>();
             Context.AsyncActionReceived += MainWindow_AsyncActionReceived;
             Context.AsyncMacroReceived += MainWindow_AsyncMacroReceived;
         }
@@ -134,12 +134,17 @@ namespace ExcelMvc.Runtime
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void Execute(bool exectueMacro)
         {
-            var item = exectueMacro
-                ? (Macros.Count == 0 ? null : Macros.Dequeue())
-                : Actions.Count == 0 ? null : Actions.Dequeue();
+            Item item = null;
+            if (exectueMacro)
+                Macros.TryDequeue(out item);
+            else
+                Actions.TryDequeue(out item);
             if (item != null)
                 item.Action(item.State);
         }
 
+        private class CurrentQueue<T>
+        {
+        }
     }
 }

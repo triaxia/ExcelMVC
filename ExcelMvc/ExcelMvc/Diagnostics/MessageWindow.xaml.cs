@@ -35,9 +35,7 @@ namespace ExcelMvc.Diagnostics
             AsyncActions.Post(
                 state =>
                 {
-                    if (Instance == null)
-                        Instance = new MessageWindow();
-
+                    CreateInstance();
                     // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
                     Instance.Show();
                 },
@@ -53,9 +51,8 @@ namespace ExcelMvc.Diagnostics
         {
             AsyncActions.Post(
                 state =>
-                {
-                    if (Instance != null)
-                        Instance.Hide();
+                { 
+                    Instance?.Hide(); 
                 },
                 null,
                 false);
@@ -73,7 +70,7 @@ namespace ExcelMvc.Diagnostics
                 {
                     CreateInstance();
                     Instance.Model.AddErrorLine((Exception)state);
-                }, 
+                },
                 ex,
                 false);
         }
@@ -107,15 +104,14 @@ namespace ExcelMvc.Diagnostics
                 {
                     CreateInstance();
                     Instance.Model.AddInfoLine((string)state);
-                }, 
+                },
                 message,
                 false);
         }
 
         private static void CreateInstance()
         {
-            if (Instance == null)
-                Instance = new MessageWindow();
+            Instance = Instance ?? new MessageWindow();
         }
 
         private static void MessageWindow_Closing(object sender, CancelEventArgs e)
