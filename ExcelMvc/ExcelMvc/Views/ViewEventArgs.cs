@@ -44,9 +44,6 @@ namespace ExcelMvc.Views
     {
         private int acceptedCount;
 
-        // [Obsolete]
-        private bool? cancelled;
-
         /// <summary>
         /// Initialies an instance of  ExcelMvc.Views.ViewEventArgs
         /// </summary>
@@ -60,10 +57,7 @@ namespace ExcelMvc.Views
         /// <summary>
         /// Indicates at least one event sink accepted the view
         /// </summary>
-        public bool IsAccepted
-        {
-            get { return cancelled == null || acceptedCount > 0; }
-        }
+        public bool IsAccepted => acceptedCount > 0;
 
         /// <summary>
         /// Gets and sets the event specific state object
@@ -84,21 +78,11 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Indicates the calling sink is not interested in the event
-        /// </summary>
-        [Obsolete("This method is superseded by the Accept method. Affected application logic needs to be inversed. See sample session for the correct usages")]
-        public void Cancel()
-        {
-            cancelled = true;
-        }
-
-        /// <summary>
         /// Indicates the calling sink is interested in the view
         /// </summary>
         public void Accept()
         {
             acceptedCount++;
         }
-
     }
 }

@@ -104,7 +104,15 @@ namespace ExcelMvc.Runtime
                 var dllTypes = files.SelectMany(x => DiscoverTypes(x));
                 types = types.Concat(dllTypes);
             }
-            Instances.AddRange(types.Select(x => (T)Activator.CreateInstance(Type.GetType(x))));
+
+            foreach (var type in types)
+            {
+                ActionExtensions.Try(() =>
+                {
+                    var obj = (T)Activator.CreateInstance(Type.GetType(type));
+                    Instances.Add(obj);
+                }, ex => Messages.Instance.AddErrorLine(ex));
+            }
         }
 
         /// <summary>
@@ -137,15 +145,12 @@ namespace ExcelMvc.Runtime
 
         private static IEnumerable<string> DiscoverTypes(string assemblyPath)
         {
-            var types = Enumerable.Empty<string>(); 
-            var ex = ActionExtensions.Try(() =>
+            var types = Enumerable.Empty<string>();
+            ActionExtensions.Try(() =>
             {
                 var asm = LoadFrom(assemblyPath);
                 types = types.Concat(GetTypes(asm));
-            });
-
-            if (ex != null)
-                Messages.Instance.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex));
+            }, ex => Messages.Instance.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex)));
             return types;
         }
 
