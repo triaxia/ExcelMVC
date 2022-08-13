@@ -17,14 +17,10 @@ namespace ExcelMvc.Diagnostics
             InitializeComponent();
             Closed += MessageWindow_Closed;
             Closing += MessageWindow_Closing;
+            LayoutRoot.DataContext = Messages.Instance;
         }
 
         private static MessageWindow Instance { get; set; }
-
-        private Message Model
-        {
-            get { return (Message)LayoutRoot.DataContext; }
-        }
 
         /// <summary>
         /// Creates and shows to the status window
@@ -58,57 +54,6 @@ namespace ExcelMvc.Diagnostics
                 false);
         }
 
-        /// <summary>
-        /// Adds an exception to the status window
-        /// </summary>
-        /// <param name="ex">Exception to be addded</param>
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public static void AddErrorLine(Exception ex)
-        {
-            AsyncActions.Post(
-                state =>
-                {
-                    CreateInstance();
-                    Instance.Model.AddErrorLine((Exception)state);
-                },
-                ex,
-                false);
-        }
-
-        /// <summary>
-        /// Adds an error to  to the status window
-        /// </summary>
-        /// <param name="error">Error to be added</param>
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public static void AddErrorLine(string error)
-        {
-            AsyncActions.Post(
-                state =>
-                {
-                    CreateInstance();
-                    Instance.Model.AddErrorLine((string)state);
-                },
-                error,
-                false);
-        }
-
-        /// <summary>
-        /// Adds a message to  to the status window
-        /// </summary>
-        /// <param name="message">Message to be added</param>
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public static void AddInfoLine(string message)
-        {
-            AsyncActions.Post(
-                state =>
-                {
-                    CreateInstance();
-                    Instance.Model.AddInfoLine((string)state);
-                },
-                message,
-                false);
-        }
-
         private static void CreateInstance()
         {
             Instance = Instance ?? new MessageWindow();
@@ -131,7 +76,7 @@ namespace ExcelMvc.Diagnostics
 
         private void ButtonClear_OnClick(object sender, RoutedEventArgs e)
         {
-            Model.Clear();
+            Messages.Instance.Clear();
         }
 
         private void ButtonHide_OnClick(object sender, RoutedEventArgs e)

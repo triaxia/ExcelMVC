@@ -43,7 +43,6 @@ namespace Forbes.Application.Sessions
 
     internal class Forbes
     {
-
         public Forbes(View view)
         {
             view.HookBindingFailed(View_BindingFailed, true);

@@ -41,6 +41,7 @@ namespace ExcelMvc.Runtime
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
+    using ExcelMvc.Diagnostics;
     using Extensions;
 #if NET6_0_OR_GREATER
     using System.Runtime.Loader;
@@ -144,7 +145,7 @@ namespace ExcelMvc.Runtime
             });
 
             if (ex != null)
-                Diagnostics.MessageWindow.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex));
+                Messages.Instance.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex));
             return types;
         }
 

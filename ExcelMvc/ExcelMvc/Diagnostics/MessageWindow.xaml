@@ -5,7 +5,7 @@
         Title="ExcelMVC Exceptions &amp; Messages" Height="400" Width="800"
         xmlns:diag="clr-namespace:ExcelMvc.Diagnostics" Icon="/ExcelMvc;component/Resources/ExcelMvc.ico">
     <Window.Resources>
-        <diag:Message x:Key="Model"></diag:Message>
+        <diag:Messages x:Key="Model"></diag:Messages>
     </Window.Resources>
     <Grid x:Name="LayoutRoot" DataContext="{StaticResource Model}">
         <Grid.RowDefinitions>

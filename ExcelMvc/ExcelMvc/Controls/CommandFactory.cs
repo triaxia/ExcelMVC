@@ -78,7 +78,7 @@ namespace ExcelMvc.Controls
             Create(sheet, host, sheet.Shapes, names, commands);
 
             foreach (var cmd in commands.Values)
-                MessageWindow.AddInfoLine(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
+                Messages.Instance.AddInfoLine(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
         }
 
         /// <summary>

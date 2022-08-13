@@ -35,33 +35,37 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Diagnostics
 {
     using System;
+    using System.Collections.Concurrent;
     using System.ComponentModel;
 
-    internal class Message : INotifyPropertyChanged
+    internal class Messages : INotifyPropertyChanged
     {
-        public Message()
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        public string Error =>
+            string.Join(System.Environment.NewLine, ErrorLines.ToArray());
+
+        public string Info =>
+            string.Join(System.Environment.NewLine, InfoLines.ToArray());
+
+        public int LineLimit { get; set; }
+
+        private ConcurrentQueue<string> ErrorLines { get; }
+            = new ConcurrentQueue<string>();
+        public ConcurrentQueue<string> InfoLines { get; }
+            = new ConcurrentQueue<string>();
+
+        public static readonly Messages Instance = new Messages();
+
+        public Messages()
         {
             LineLimit = 2000;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { }; 
-
-        public string Error { get; private set; }
-
-        public string Info { get; private set; }
-
-        public int LineLimit { get; set; }
-
-        public int ErrorLines { get; set; }
-
-        public int InfoLines { get;  set; }
-
         public void Clear()
         {
-            Error = null;
-            Info = null;
-            ErrorLines = 0;
-            InfoLines = 0;
+            while (ErrorLines.TryDequeue(out var _)) ;
+            while (InfoLines.TryDequeue(out var _)) ;
             RaiseErrorChanged();
             RaiseInfoChanged();
         }
@@ -73,25 +77,15 @@ namespace ExcelMvc.Diagnostics
 
         public void AddErrorLine(string message)
         {
-            if (ErrorLines > LineLimit)
-            {
-                ErrorLines = 0;
-                Error = null;
-            }
-
-            Error = (Error ?? string.Empty) + $"{DateTime.Now:O} {message}{Environment.NewLine}";
+            ErrorLines.Enqueue($"{DateTime.Now:O} {message}{Environment.NewLine}");
+            while (ErrorLines.Count > LineLimit) ErrorLines.TryDequeue(out var _);
             RaiseErrorChanged();
         }
 
         public void AddInfoLine(string message)
         {
-            if (InfoLines > LineLimit)
-            {
-                InfoLines = 0;
-                Info = null;
-            }
-
-            Info = (Info ?? string.Empty) + message + Environment.NewLine;
+            InfoLines.Enqueue($"{DateTime.Now:O} {message}{Environment.NewLine}");
+            while (InfoLines.Count > LineLimit) InfoLines.TryDequeue(out var _);
             RaiseInfoChanged();
         }
 

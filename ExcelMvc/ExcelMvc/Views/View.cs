@@ -306,7 +306,7 @@ namespace ExcelMvc.Views
         public void OnBindingFailed(BindingFailedEventArgs args)
         {
             BindingFailed(this, args);
-            MessageWindow.AddErrorLine(args.Exception);
+            Messages.Instance.AddErrorLine(args.Exception);
         }
 
         /// <summary>
@@ -384,7 +384,8 @@ namespace ExcelMvc.Views
         public void OnOpened(ViewEventArgs args)
         {
             Opened(this, args);
-            MessageWindow.AddInfoLine(string.Format(Resource.InfoViewCreated, args.View.Name, args.View.Type, args.View.Parent == null ? string.Empty : args.View.Parent.Name));
+            Messages.Instance.AddInfoLine(string.Format(Resource.InfoViewCreated, args.View.Name
+                , args.View.Type, args.View.Parent == null ? string.Empty : args.View.Parent.Name));
         }
 
         /// <summary>

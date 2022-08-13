@@ -37,6 +37,8 @@ namespace Forbes.Models
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Configuration;
+    using System.IO;
+    using System.Linq;
 
     public class AppConfigSettings : List<string>
     {
@@ -48,9 +50,14 @@ namespace Forbes.Models
         public void Load()
         {
             Clear();
-            var values = (NameValueCollection)ConfigurationManager.GetSection("settings");
-            foreach (var key in values.AllKeys)
-                Add(string.Format("{0}, {1}", key, values[key]));
+
+            var file = Directory.GetFiles(Path.GetDirectoryName(GetType().Assembly.Location), "*.dll.config")
+                .SingleOrDefault();
+            var map = new ExeConfigurationFileMap { ExeConfigFilename = file };
+            var config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
+            var section = (AppSettingsSection) config.GetSection("settings");
+            foreach (var key in section.Settings.AllKeys)
+                Add(string.Format("{0}, {1}", key, section.Settings[key].Value));
         }
     }
 }

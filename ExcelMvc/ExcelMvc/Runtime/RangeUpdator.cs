@@ -192,13 +192,13 @@ namespace ExcelMvc.Runtime
                 {
                     item.AgeMilliseconds += 100;
                     if ( item.AgeMilliseconds > 10000)
-                        MessageWindow.AddErrorLine(ex);
+                        Messages.Instance.AddErrorLine(ex);
                     else
                         Enqueue(item, 100);
                 }
                 else
                 {
-                    MessageWindow.AddErrorLine(ex);
+                    Messages.Instance.AddErrorLine(ex);
                 }
             }
         }
