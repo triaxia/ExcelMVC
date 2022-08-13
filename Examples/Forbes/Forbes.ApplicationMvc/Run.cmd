@@ -3,7 +3,8 @@ pushd "%~dp0"
 set addin=ExcelMvc.Addin.x86.xll
 REM set addin=ExcelMvc.Addin.x64.xll
 
-REM workbooks passed to Excel require FULL path
+REM Use full path for Workbook argments. ExcelMvc gets upset with relative Workbook
+REM paths... 
 START Excel /X "%cd%\%addin%" "%cd%\Forbes2000.xlsx"
 
 popd
