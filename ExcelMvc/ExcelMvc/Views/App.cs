@@ -281,15 +281,17 @@ namespace ExcelMvc.Views
                 var fetched = IntPtr.Zero;
                 while (pMonkEnum.Next(1, pmon, fetched) == 0)
                 {
-                    object result;
-                    prot.GetObject(pmon[0], out result);
+                    prot.GetObject(pmon[0], out object result);
+                    var book = result as Workbook;
                     var excel = result as Application;
+                    if (excel == null) excel = (result as Workbook)?.Application;
                     if (excel != null)
                     {
                         GetWindowThreadProcessId(new IntPtr(excel.Hwnd), out uint excelpid);
                         if (pid == excelpid)
                             return excel;
                     }
+                    Marshal.ReleaseComObject(result);
                 }
             }
             finally

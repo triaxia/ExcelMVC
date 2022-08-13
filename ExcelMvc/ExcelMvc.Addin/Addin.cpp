@@ -110,16 +110,19 @@ BOOL StartAddinClrHost()
 	BOOL result = pClrHost->TestAndDisplayError();
 	if (result)
 	{
-		// create and remove a book just to get Excel registered with the ROT
+		// insert a book to get Excel registered with the ROT
 		Excel12f(xlcEcho, 0, 1, (LPXLOPER12)TempBool12(false));
 		Excel12f(xlcNew, 0, 1, (LPXLOPER12)TempInt12(5));
 		Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12)TempInt12(6));
-		Excel12f(xlcFileClose, 0, 1, (LPXLOPER12)TempBool12(false));
-		Excel12f(xlcEcho, 0, 1, (LPXLOPER12)TempBool12(true));
 
 		// attach to ExcelMVC
 		pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Attach");
 		result = pClrHost->TestAndDisplayError();
+
+		// close the book
+		Excel12f(xlcFileClose, 0, 1, (LPXLOPER12)TempBool12(false));
+		Excel12f(xlcEcho, 0, 1, (LPXLOPER12)TempBool12(true));
+
 	}
 	return result;
 }
