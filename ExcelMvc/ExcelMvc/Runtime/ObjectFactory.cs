@@ -158,7 +158,7 @@ namespace ExcelMvc.Runtime
         {
             var itype = typeof(T);
             return asm.GetTypes()
-                .Where(x => !x.IsInterface && !x.IsAbstract && IsDerivedFrom(x, itype))
+                .Where(x => !x.IsGenericType && !x.IsInterface && !x.IsAbstract && IsDerivedFrom(x, itype))
                 .Where(x => x.GetConstructor(Type.EmptyTypes) != null)
                 .Select(x => x.AssemblyQualifiedName);
         }

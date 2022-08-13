@@ -117,7 +117,7 @@ namespace ExcelMvc.Views
         /// <param name="numberItems">Number of rows to unbind</param>
         protected void BindValidationLists(int numberItems)
         {
-            foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
+            foreach (var binding in Bindings.Where(binding => !string.IsNullOrWhiteSpace(binding.ValidationList)))
             {
                 if (IsBoolValidationList(binding.ValidationList))
                     BindCheckBoxes(binding, numberItems);
@@ -132,7 +132,7 @@ namespace ExcelMvc.Views
         /// <param name="numberItems">Number of rows to unbind</param>
         protected void UnbindValidationLists(int numberItems)
         {
-            foreach (var binding in Bindings.Where(binding => !string.IsNullOrEmpty(binding.ValidationList)))
+            foreach (var binding in Bindings.Where(binding => !string.IsNullOrWhiteSpace(binding.ValidationList)))
             {
                 if (IsBoolValidationList(binding.ValidationList))
                     UnbindCheckBoxes(binding, numberItems);

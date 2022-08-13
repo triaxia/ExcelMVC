@@ -25,7 +25,6 @@ namespace ExcelMvc.Diagnostics
         /// <summary>
         /// Creates and shows to the status window
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public static void ShowInstance()
         {
             AsyncActions.Post(
@@ -42,7 +41,6 @@ namespace ExcelMvc.Diagnostics
         /// <summary>
         /// Hides the singleton
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public static void HideInstance()
         {
             AsyncActions.Post(
@@ -54,7 +52,7 @@ namespace ExcelMvc.Diagnostics
                 false);
         }
 
-        private static void CreateInstance()
+        public static void CreateInstance()
         {
             Instance = Instance ?? new MessageWindow();
         }

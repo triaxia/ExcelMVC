@@ -222,7 +222,7 @@ namespace ExcelMvc.Views
         {
             ExecuteBinding(() =>
             {
-                var match = string.IsNullOrEmpty(path) ? null : Bindings.FirstOrDefault(x => x.Path == path);
+                var match = string.IsNullOrWhiteSpace(path) ? null : Bindings.FirstOrDefault(x => x.Path == path);
                 if (match != null)
                 {
                     UpdateView(match);

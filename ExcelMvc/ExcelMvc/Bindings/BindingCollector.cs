@@ -154,7 +154,7 @@ namespace ExcelMvc.Bindings
                     continue;
 
                 StartRange = GetRange(StartCell, nm);
-                EndRange = string.IsNullOrEmpty(EndCell) ? null : GetRange(EndCell, nm);
+                EndRange = string.IsNullOrWhiteSpace(EndCell) ? null : GetRange(EndCell, nm);
 
                 ModeType = ((value[idx, indices.IndexOfMode] as string) ?? string.Empty).Trim();
                 IsVisible = GetVisibility(value, indices, idx);
@@ -199,7 +199,7 @@ namespace ExcelMvc.Bindings
             if (indices.IndexOfConverter >= 0)
             {
                 var typeName = value[idx, indices.IndexOfConverter] as string;
-                if (!string.IsNullOrEmpty(typeName))
+                if (!string.IsNullOrWhiteSpace(typeName))
                     return ObjectFactory<IValueConverter>.Find(typeName);
             }
 
@@ -251,7 +251,7 @@ namespace ExcelMvc.Bindings
         private void CheckSecondPartOfName(string[] parts)
         {
             ViewName = parts[2] ?? string.Empty;
-            if (string.IsNullOrEmpty(ViewName))
+            if (string.IsNullOrWhiteSpace(ViewName))
                 throw new Exception(string.Format(Resource.ErrorNoViewNameFound, ViewName));
         }
 

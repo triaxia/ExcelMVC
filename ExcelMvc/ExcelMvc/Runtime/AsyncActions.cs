@@ -38,6 +38,7 @@ namespace ExcelMvc.Runtime
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
+    using ExcelMvc.Diagnostics;
     using Extensions;
     using Views;
 
@@ -100,7 +101,7 @@ namespace ExcelMvc.Runtime
         /// </summary>
         public static void Initialise()
         {
-            // nothing needs to be done, as the static contructor will be called
+            MessageWindow.CreateInstance();
         }
 
         /// <summary>

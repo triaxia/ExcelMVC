@@ -141,7 +141,7 @@ namespace ExcelMvc.Runtime
         private static bool IsAsyncUpdateThread()
         {
             var threadName = Thread.CurrentThread.Name;
-            return !string.IsNullOrEmpty(threadName) && threadName.CompareOrdinalIgnoreCase(NameOfAsynUpdateThread) == 0;
+            return !string.IsNullOrWhiteSpace(threadName) && threadName.CompareOrdinalIgnoreCase(NameOfAsynUpdateThread) == 0;
         }
 
         private static int RowOffsetFromRowId(Range start, int count, string rowId)
