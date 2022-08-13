@@ -77,14 +77,14 @@ namespace ExcelMvc.Diagnostics
 
         public void AddErrorLine(string message)
         {
-            ErrorLines.Enqueue($"{DateTime.Now:O} {message}{Environment.NewLine}");
+            ErrorLines.Enqueue($"{DateTime.Now:O} {message}");
             while (ErrorLines.Count > LineLimit) ErrorLines.TryDequeue(out var _);
             RaiseErrorChanged();
         }
 
         public void AddInfoLine(string message)
         {
-            InfoLines.Enqueue($"{DateTime.Now:O} {message}{Environment.NewLine}");
+            InfoLines.Enqueue($"{DateTime.Now:O} {message}");
             while (InfoLines.Count > LineLimit) InfoLines.TryDequeue(out var _);
             RaiseInfoChanged();
         }

@@ -98,7 +98,6 @@ namespace ExcelMvc.Runtime
         /// <summary>
         /// Initialise class static states
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public static void Initialise()
         {
             // nothing needs to be done, as the static contructor will be called
@@ -141,10 +140,6 @@ namespace ExcelMvc.Runtime
                 Actions.TryDequeue(out item);
             if (item != null)
                 item.Action(item.State);
-        }
-
-        private class CurrentQueue<T>
-        {
         }
     }
 }

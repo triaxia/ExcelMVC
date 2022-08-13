@@ -1,9 +1,12 @@
 ﻿<Window x:Class="ExcelMvc.Diagnostics.MessageWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        WindowStartupLocation="CenterScreen"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
         Title="ExcelMVC Exceptions &amp; Messages" Height="400" Width="800"
-        xmlns:diag="clr-namespace:ExcelMvc.Diagnostics" Icon="/ExcelMvc;component/Resources/ExcelMvc.ico">
+        xmlns:diag="clr-namespace:ExcelMvc.Diagnostics"
+        Icon="/ExcelMvc;component/Resources/ExcelMvc.ico">
     <Window.Resources>
         <diag:Messages x:Key="Model"></diag:Messages>
     </Window.Resources>
@@ -14,8 +17,10 @@
             <RowDefinition Height="0.5*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        <TextBox HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Foreground="#FFFF0000" Grid.Row="0" Margin="0,2,0,2" BorderThickness="1,1,1,1" Text="{Binding Mode=OneWay, Path=Error}" ToolTip="Exceptions"/>
-        <TextBox HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Foreground="#FF0000FF" Grid.Row="2" Margin="0,2,0,2" BorderThickness="1,1,1,1" Text ="{Binding Mode=OneWay, Path=Info}"  ToolTip="Messages"/>
+        <TextBox HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Foreground="#FFFF0000" Grid.Row="0" 
+                 Margin="0,2,0,2" BorderThickness="1,1,1,1" Text="{Binding Mode=OneWay, Path=Error}" ToolTip="Exceptions"/>
+        <TextBox HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Foreground="#FF0000FF" Grid.Row="2"
+                 Margin="0,2,0,2" BorderThickness="1,1,1,1" Text ="{Binding Mode=OneWay, Path=Info}"  ToolTip="Messages"/>
         <Grid Grid.Row="3" VerticalAlignment="Center">
              <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>

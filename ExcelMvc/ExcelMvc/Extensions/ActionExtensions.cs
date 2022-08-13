@@ -42,7 +42,6 @@ namespace ExcelMvc.Extensions
     /// </summary>
     public static class ActionExtensions
     {
-
         /// <summary>
         /// Defines an Exception handler
         /// </summary>

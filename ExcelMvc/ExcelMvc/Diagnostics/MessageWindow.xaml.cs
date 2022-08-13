@@ -10,9 +10,9 @@ namespace ExcelMvc.Diagnostics
     /// <summary>
     /// Implements a visual sink for exception and information messages
     /// </summary>
-    public partial class MessageWindow
+    public partial class MessageWindow : Window
     {
-        private MessageWindow()
+        public MessageWindow()
         {
             InitializeComponent();
             Closed += MessageWindow_Closed;
