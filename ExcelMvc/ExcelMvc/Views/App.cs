@@ -317,13 +317,10 @@ namespace ExcelMvc.Views
             var toCancel = cancel;
             Try(() =>
             {
-                Book view;
-                if (Books.TryGetValue(book, out view))
+                if (Books.TryGetValue(book, out Book view))
                 {
                     var args = new ViewEventArgs(view);
                     OnClosing(args);
-
-                    // toCancel = toCancel | !args.IsAccepted;
                 }
             });
             cancel = toCancel;
@@ -342,8 +339,7 @@ namespace ExcelMvc.Views
             {
                 Purge();
 
-                Book view;
-                var isCreated = Books.TryGetValue(book, out view);
+                var isCreated = Books.TryGetValue(book, out Book view);
                 if (isCreated)
                     return;
                 view = new Book(this, book);
@@ -391,6 +387,5 @@ namespace ExcelMvc.Views
                 OnBindingFailed(new BindingFailedEventArgs(this, ex));
             }
         }
-
     }
 }
