@@ -41,19 +41,34 @@ namespace Forbes.Application.Sessions
 
     public class Session : ISession
     {
-
         private const string ViewName = "Forbes2000";
 
         public Session()
         {
-            App.Instance.Opening += Book_Opening;
-            App.Instance.Opened += Book_Opened;
-            App.Instance.Closing += Book_Closing;
-            App.Instance.Closed += Book_Closed;
+            HookEvents(true);
         }
 
         public void Dispose()
         {
+            HookEvents(false);
+        }
+
+        private void HookEvents(bool isHook)
+        {
+            if (isHook)
+            {
+                App.Instance.Opening += Book_Opening;
+                App.Instance.Opened += Book_Opened;
+                App.Instance.Closing += Book_Closing;
+                App.Instance.Closed += Book_Closed;
+            }
+            else
+            {
+                App.Instance.Opening -= Book_Opening;
+                App.Instance.Opened -= Book_Opened;
+                App.Instance.Closing -= Book_Closing;
+                App.Instance.Closed -= Book_Closed;
+            }
         }
 
         private void Book_Closed(object sender, ViewEventArgs args)
@@ -94,6 +109,5 @@ namespace Forbes.Application.Sessions
         {
             MessageBox.Show(args.Exception.Message, args.View.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-
     }
 }

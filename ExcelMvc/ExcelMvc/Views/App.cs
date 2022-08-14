@@ -167,27 +167,30 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Attach(object app)
         {
-            void Do(object state)
+            Try(() =>
+            {
+                Detach();
+                Underlying = (app as Application) ?? Find();
+                if (Underlying == null)
+                    throw new Exception(Resource.ErrorExcelAppFound);
+
+                AsyncActions.Initialise();
+                ObjectFactory<ISession>.CreateAll();
+                ObjectFactory<IValueConverter>.CreateAll();
+
+                Underlying.WorkbookOpen += OpenBook;
+                Underlying.WorkbookBeforeClose += ClosingBook;
+                Underlying.WorkbookActivate += Activate;
+                Underlying.WorkbookDeactivate += Deactivate;
+
+                MainWindow = new Root(Underlying.Hwnd);
+                MainWindow.Destroyed += MainWindow_Destroyed;
+            });
+
+            void Bind()
             {
                 Try(() =>
                 {
-                    Detach();
-                    Underlying = (state as Application) ?? Find();
-                    if (Underlying == null)
-                        throw new Exception(Resource.ErrorExcelAppFound);
-
-                    AsyncActions.Initialise();
-                    ObjectFactory<ISession>.CreateAll();
-                    ObjectFactory<IValueConverter>.CreateAll();
-
-                    Underlying.WorkbookOpen += OpenBook;
-                    Underlying.WorkbookBeforeClose += ClosingBook;
-                    Underlying.WorkbookActivate += Activate;
-                    Underlying.WorkbookDeactivate += Deactivate;
-
-                    MainWindow = new Root(Underlying.Hwnd);
-                    MainWindow.Destroyed += MainWindow_Destroyed;
-
                     foreach (Workbook item in Underlying.Workbooks)
                     {
                         var view = new Book(this, item);
@@ -204,9 +207,9 @@ namespace ExcelMvc.Views
             }
 
             if (Underlying == null)
-                Do(app);
+                Bind();
             else
-                AsyncActions.Post(a => Do(a), app, true);
+                AsyncActions.Post(a => Bind(), null, true);
         }
 
         /// <summary>

@@ -42,7 +42,6 @@ namespace ExcelMvc.Extensions
     /// </summary>
     public static class StringExtensions
     {
-
         /// <summary>
         /// Compases two string with OrdinalIgnoreCase 
         /// </summary>

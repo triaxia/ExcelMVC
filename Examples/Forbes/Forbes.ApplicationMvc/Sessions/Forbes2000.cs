@@ -183,8 +183,8 @@ namespace Forbes.Application.Sessions
         private void ShowDialogClicked(object sender, CommandEventArgs args)
         {
             var v = new Forbes2000View { Model = (IEnumerable)CompanyTable.Model };
-            var interop = new WindowInteropHelper(v) { Owner = App.Instance.MainWindow.Handle };
-            v.ShowDialog(); // or v.Show();
+            _ = new WindowInteropHelper(v) { Owner = App.Instance.MainWindow.Handle };
+            v.ShowDialog(); // or v.Show() for a floating dialog;
         }
 
         private void StartUpdateClicked(object sender, CommandEventArgs args)

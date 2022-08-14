@@ -9,14 +9,32 @@ namespace SpotTrading.ApplicationModels
         private const string BookId = "SpotTrading";
         public ViewModelSession()
         {
-            // hook notificaton events
-            App.Instance.Opening += Instance_Opening;
-            App.Instance.Opened += Instance_Opened;
-            App.Instance.Closing += Instance_Closing;
-            App.Instance.Closed += Instance_Closed;
+            HookEvents(true);
+        }
+        public void Dispose()
+        {
+            HookEvents(false);
         }
 
-        void Instance_Opening(object sender, ViewEventArgs args)
+        private void HookEvents(bool isHook)
+        {
+            if (isHook)
+            {
+                App.Instance.Opening += Book_Opening;
+                App.Instance.Opened += Book_Opened;
+                App.Instance.Closing += Book_Closing;
+                App.Instance.Closed += Book_Closed;
+            }
+            else
+            {
+                App.Instance.Opening -= Book_Opening;
+                App.Instance.Opened -= Book_Opened;
+                App.Instance.Closing -= Book_Closing;
+                App.Instance.Closed -= Book_Closed;
+            }
+        }
+
+        void Book_Opening(object sender, ViewEventArgs args)
         {
             if (IsMybook(args))
             {
@@ -25,7 +43,7 @@ namespace SpotTrading.ApplicationModels
             }
         }
 
-        void Instance_Opened(object sender, ViewEventArgs args)
+        void Book_Opened(object sender, ViewEventArgs args)
         {
             if (IsMybook(args))
             {
@@ -35,7 +53,7 @@ namespace SpotTrading.ApplicationModels
             }
         }
 
-        void Instance_Closing(object sender, ViewEventArgs args)
+        void Book_Closing(object sender, ViewEventArgs args)
         {
             if (IsMybook(args))
             {
@@ -44,7 +62,7 @@ namespace SpotTrading.ApplicationModels
             }
         }
 
-        void Instance_Closed(object sender, ViewEventArgs args)
+        void Book_Closed(object sender, ViewEventArgs args)
         {
             if (IsMybook(args))
             {
@@ -56,10 +74,6 @@ namespace SpotTrading.ApplicationModels
         private bool IsMybook(ViewEventArgs args)
         {
             return args.View.Id.CompareOrdinalIgnoreCase(BookId) == 0;
-        }
-
-        public void Dispose()
-        {
         }
     }
 }

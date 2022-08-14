@@ -52,35 +52,7 @@ namespace ExcelMvc.Runtime
     /// <typeparam name="T">Type of object</typeparam>
     public static class ObjectFactory<T>
     {
-#if NET6_0_OR_GREATER
-        private static AssemblyLoadContext LoadContext =
-            new AssemblyLoadContext(nameof(ObjectFactory<T>), true);
-#endif
-
-        private static List<T> Instances
-        {
-            get; set;
-        }
-
-        static ObjectFactory()
-        {
-#if NET6_0_OR_GREATER
-            LoadContext.Resolving +=(sender, args) =>
-            {
-                var file = sender.Assemblies.Where(x => !x.IsDynamic)
-                    .Select(x => Path.GetDirectoryName(x.Location))
-                    .Distinct()
-                    .Select(x => Path.ChangeExtension(Path.Combine(x!, args.Name!), ".dll"))
-                    .Where(File.Exists)
-                    .OrderByDescending(File.GetLastWriteTimeUtc)
-                    .FirstOrDefault();
-                return file == null ? null : sender.LoadFromAssemblyPath(file);
-            };
-#else
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve +=
-                (_, args) => Assembly.ReflectionOnlyLoad(args.Name);
-#endif
-        }
+        private static List<T> Instances { get; set; }
 
         /// <summary>
         /// Create instances of type T in the current AppDomain
@@ -88,30 +60,40 @@ namespace ExcelMvc.Runtime
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void CreateAll()
         {
-            Instances = new List<T>();
-            Instances.Clear();
-
-            var asms = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => !x.IsDynamic);
-
-            var types = asms.SelectMany(x => GetTypes(x));
-            var location = typeof(ObjectFactory<T>).Assembly.Location;
-            if (!string.IsNullOrWhiteSpace(location))
+            try
             {
-                var path = Path.GetDirectoryName(location);
-                var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
-                    .Where(x => asms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0));
-                var dllTypes = files.SelectMany(x => DiscoverTypes(x));
-                types = types.Concat(dllTypes);
-            }
+                LoadContext();
+                Instances = new List<T>();
+                Instances.Clear();
 
-            foreach (var type in types)
-            {
-                ActionExtensions.Try(() =>
+                var asms = AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(x => !x.IsDynamic);
+#if NET6_0_OR_GREATER
+                asms = asms.Where(x => !x.IsCollectible);
+#endif
+                var types = asms.SelectMany(x => GetTypes(x));
+                var location = typeof(ObjectFactory<T>).Assembly.Location;
+                if (!string.IsNullOrWhiteSpace(location))
                 {
-                    var obj = (T)Activator.CreateInstance(Type.GetType(type));
-                    Instances.Add(obj);
-                }, ex => Messages.Instance.AddErrorLine(ex));
+                    var path = Path.GetDirectoryName(location);
+                    var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
+                        .Where(x => asms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0));
+                    var dllTypes = files.SelectMany(x => DiscoverTypes(x));
+                    types = types.Concat(dllTypes);
+                }
+
+                foreach (var type in types)
+                {
+                    ActionExtensions.Try(() =>
+                    {
+                        var obj = (T)Activator.CreateInstance(Type.GetType(type));
+                        Instances.Add(obj);
+                    }, ex => Messages.Instance.AddErrorLine(ex));
+                }
+            }
+            finally
+            {
+                UnloadContext();
             }
         }
 
@@ -172,12 +154,44 @@ namespace ExcelMvc.Runtime
                 || type.GetInterfaces().Any(x => IsEqual(x, baseType) || IsDerivedFrom(x, baseType));
         }
 
+#if NET6_0_OR_GREATER
+        private static AssemblyLoadContext AssemblyContext {get; set;}
+#endif
+        private static void LoadContext()
+        {
+#if NET6_0_OR_GREATER
+            UnloadContext();
+            AssemblyContext = new AssemblyLoadContext(nameof(ObjectFactory<T>), true);
+            AssemblyContext.Resolving +=(sender, args) =>
+            {
+                var file = sender.Assemblies.Where(x => !x.IsDynamic)
+                    .Select(x => Path.GetDirectoryName(x.Location))
+                    .Distinct()
+                    .Select(x => Path.ChangeExtension(Path.Combine(x!, args.Name!), ".dll"))
+                    .Where(File.Exists)
+                    .OrderByDescending(File.GetLastWriteTimeUtc)
+                    .FirstOrDefault();
+                return file == null ? null : sender.LoadFromAssemblyPath(file);
+            };
+#else
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve +=
+                (_, args) => Assembly.ReflectionOnlyLoad(args.Name);
+#endif
+        }
+        private static void UnloadContext()
+        {
+#if NET6_0_OR_GREATER
+            AssemblyContext?.Unload();
+            AssemblyContext = null;
+#endif
+        }
+
         private static Assembly LoadFrom(string assemblyPath)
         {
 #if NET5_0_OR_GREATER
-            var loaded = LoadContext.Assemblies
+            var loaded = AssemblyContext.Assemblies
                 .SingleOrDefault(a => !a.IsDynamic && StringComparer.InvariantCultureIgnoreCase.Equals(a.Location, assemblyPath));
-            return loaded ?? LoadContext.LoadFromAssemblyPath(assemblyPath);
+            return loaded ?? AssemblyContext.LoadFromAssemblyPath(assemblyPath);
 #else
             return Assembly.ReflectionOnlyLoadFrom(assemblyPath);
 #endif

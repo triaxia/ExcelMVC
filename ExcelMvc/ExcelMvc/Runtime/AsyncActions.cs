@@ -50,9 +50,8 @@ namespace ExcelMvc.Runtime
         private class Item
         {
             public Action<object> Action { get; set; }
-            public object State  { get; set; }
+            public object State { get; set; }
         }
-
         private static AsyncWindow Context { get; set; }
         private static ConcurrentQueue<Item> Actions { get; set; }
         private static ConcurrentQueue<Item> Macros { get; set; }
@@ -109,13 +108,14 @@ namespace ExcelMvc.Runtime
         /// </summary>
         /// <param name="action">Action to be executed</param>
         /// <param name="state">State object</param>
-        /// <param name="exectueAsMacro">Execute as a macro</param>
+        /// <param name="asMacro">Execute as a macro</param>
         /// <param name="pumpMilliseconds">Pumping message</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public static void Post(Action<object> action, object state, bool exectueAsMacro, int pumpMilliseconds = 0)
+        public static void Post(Action<object> action, object state
+            , bool asMacro, int pumpMilliseconds = 0)
         {
-            var item = new Item {Action = action, State = state};
-            if (exectueAsMacro)
+            var item = new Item { Action = action, State = state };
+            if (asMacro)
             {
                 Macros.Enqueue(item);
                 Context.PostAsyncMacroMessage(pumpMilliseconds);
@@ -134,13 +134,16 @@ namespace ExcelMvc.Runtime
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void Execute(bool exectueMacro)
         {
-            Item item = null;
+            void Do(ConcurrentQueue<Item> queue)
+            {
+                //while (queue.TryDequeue(out var item))
+                if (queue.TryDequeue(out var item))
+                    item.Action(item.State);
+            }
             if (exectueMacro)
-                Macros.TryDequeue(out item);
+                Do(Macros);
             else
-                Actions.TryDequeue(out item);
-            if (item != null)
-                item.Action(item.State);
+                Do(Actions);
         }
     }
 }
