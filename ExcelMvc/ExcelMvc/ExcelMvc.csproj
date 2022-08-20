@@ -21,6 +21,7 @@
 		<Authors>Peter Gu,Wolfgang Stamm</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Company>Peter G &amp; Wolfgang Stamm</Company>
+		<PackageId>ExcelMVC.Net</PackageId>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="ExcelMvc.runtimeconfig.json" />
