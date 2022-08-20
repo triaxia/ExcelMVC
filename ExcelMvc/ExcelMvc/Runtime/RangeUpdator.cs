@@ -69,6 +69,7 @@ namespace ExcelMvc.Runtime
 
         public void Update(Range range, int rowOffset, int rows, int columnOffset, int columns, object value)
         {
+            if (range.HasFormula) return;
             if (IsAsyncUpdateThread())
                 Enqueue(new Item { Range = range, RowOffset = rowOffset, Rows = rows, ColumnOffset = columnOffset, Columns = columns, Value = value });
             else
@@ -77,6 +78,8 @@ namespace ExcelMvc.Runtime
 
         public void Update(Range range, Range rowIdStart, int rowCount, string rowId, int rows, int columnOffset, int columns, object value)
         {
+            if (range.HasFormula) return;
+
             if (IsAsyncUpdateThread())
                 Enqueue(new Item
                 {
@@ -96,6 +99,8 @@ namespace ExcelMvc.Runtime
 
         public void Update(Range range, int rowOffset, int rows, Range colIdStart, int colCount, string colId, int columns, object value)
         {
+            if (range.HasFormula) return;
+
             if (IsAsyncUpdateThread())
                 Enqueue(new Item
                 {
@@ -218,7 +223,7 @@ namespace ExcelMvc.Runtime
             }
         }
 
-        static bool IsRecoverable(COMException ex)
+        private static bool IsRecoverable(COMException ex)
         {
             const uint RPC_E_SERVERCALL_RETRYLATER = 0x8001010A;
             const uint RPC_E_CALL_REJECTED = 0x80010001;
@@ -319,6 +324,5 @@ namespace ExcelMvc.Runtime
             }
 
         }
-
     }
 }

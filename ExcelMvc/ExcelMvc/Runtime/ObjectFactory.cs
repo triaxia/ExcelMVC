@@ -63,18 +63,7 @@ namespace ExcelMvc.Runtime
         public static void CreateAll()
         {
             var types = GetTypes(out var context);
-            if (context != null)
-            {
-                var timeout = TimeSpan.FromSeconds(10);
-                var start = DateTime.UtcNow;
-                while (context.IsAlive && (DateTime.UtcNow - start) < timeout)
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                }
-                if (context.IsAlive)
-                    throw new TimeoutException($"ObjectFactory<{typeof(T)}>.CreateAll timed out {timeout}");
-            }
+            FreeReference(context);
 
             Instances.Clear();
             foreach (var type in types)
@@ -209,7 +198,6 @@ namespace ExcelMvc.Runtime
             AssemblyContext = null;
 #endif
         }
-
         private static Assembly LoadFrom(string assemblyPath)
         {
 #if NET5_0_OR_GREATER
@@ -219,6 +207,21 @@ namespace ExcelMvc.Runtime
 #else
             return Assembly.ReflectionOnlyLoadFrom(assemblyPath);
 #endif
+        }
+
+        private static void FreeReference(WeakReference reference)
+        {
+            if (reference == null) return;
+
+            var timeout = TimeSpan.FromSeconds(10);
+            var start = DateTime.UtcNow;
+            while (reference.IsAlive && (DateTime.UtcNow - start) < timeout)
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+            if (reference.IsAlive)
+                throw new TimeoutException($"ObjectFactory<{typeof(T)}>.CreateAll timed out {timeout}");
         }
     }
 }

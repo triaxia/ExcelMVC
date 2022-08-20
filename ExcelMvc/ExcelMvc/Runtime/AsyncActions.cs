@@ -136,8 +136,8 @@ namespace ExcelMvc.Runtime
         {
             void Do(ConcurrentQueue<Item> queue)
             {
-                //while (queue.TryDequeue(out var item))
-                if (queue.TryDequeue(out var item))
+                while (queue.TryDequeue(out var item))
+                //if (queue.TryDequeue(out var item))
                     item.Action(item.State);
             }
             if (exectueMacro)

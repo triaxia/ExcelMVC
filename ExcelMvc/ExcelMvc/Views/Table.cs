@@ -636,6 +636,9 @@ namespace ExcelMvc.Views
 
         private void UpdateRangeObjects(Range target)
         {
+            UpdateObjects(target);
+
+            /* it does not make any sense to touch dependents or precedents!
             var from = target;
             while (target != null)
             {
@@ -651,6 +654,7 @@ namespace ExcelMvc.Views
                 if (target != null && from.Application.Intersect(from, target) != null)
                     break;
             }
+            */
         }
 
         private void UpdateView(bool clearifnull)
