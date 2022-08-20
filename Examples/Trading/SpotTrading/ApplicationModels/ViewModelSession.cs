@@ -73,7 +73,7 @@ namespace SpotTrading.ApplicationModels
 
         private bool IsMybook(ViewEventArgs args)
         {
-            return args.View.Id.CompareOrdinalIgnoreCase(BookId) == 0;
+            return args.View.Id.EqualNoCase(BookId);
         }
     }
 }
