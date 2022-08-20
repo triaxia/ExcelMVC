@@ -108,8 +108,7 @@ namespace ExcelMvc.Views
         /// <param name="recursive"></param>
         internal override void Rebind(Dictionary<Worksheet, List<Binding>> bindings, bool recursive)
         {
-            List<Binding> sheetBindings;
-            if (bindings.TryGetValue(((Sheet)Parent).Underlying, out sheetBindings))
+            if (bindings.TryGetValue(((Sheet)Parent).Underlying, out List<Binding> sheetBindings))
             {
                 // clear current view
                 var current = Model;
