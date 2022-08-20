@@ -60,8 +60,8 @@ namespace Forbes.Application.Sessions
             ForbesTest = new Forbes2000(view, parent, settingsModel, "Company", "Company");
 
             // landscape/transposed
-            // parent = view.Find(ViewType.Sheet, "Forbes_transposed");
-            // ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
+            parent = view.Find(ViewType.Sheet, "Forbes_transposed");
+            ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
         }
 
         private Forbes2000 ForbesTest

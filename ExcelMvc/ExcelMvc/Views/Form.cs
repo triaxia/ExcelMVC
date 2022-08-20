@@ -241,10 +241,10 @@ namespace ExcelMvc.Views
                 return;
 
             ExecuteBinding(() =>
-                {
-                    var value = ObjectBinding.GetPropertyValue(Model, binding);
-                    RangeUpdator.Instance.Update(binding.StartCell, 0, 1, 0, 1, value);
-                });
+            {
+                var value = ObjectBinding.GetPropertyValue(Model, binding);
+                RangeUpdator.Instance.Update(binding.StartCell, 0, 1, 0, 1, value);
+            });
         }
 
     }

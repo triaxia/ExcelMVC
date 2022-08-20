@@ -636,46 +636,44 @@ namespace ExcelMvc.Views
 
         private void UpdateRangeObjects(Range target)
         {
-            UpdateObjects(target);
-
-            /* it does not make any sense to touch dependents or precedents!
             var from = target;
             while (target != null)
             {
                 if (UpdateObjects(target))
                     break;
 
+                // propagate to dependents as they don't get Changed notification.
                 Range dependents = null;
-                var ltarget = target;
-                ActionExtensions.Try(() => dependents = ltarget.DirectDependents);
+                // there is no good way to determine if a range has dependents, other
+                // than "OnError Resume Next"...
+                ActionExtensions.Try(() => dependents = target.DirectDependents);
                 target = dependents;
 
                 // break if circular referenced
                 if (target != null && from.Application.Intersect(from, target) != null)
                     break;
             }
-            */
         }
 
         private void UpdateView(bool clearifnull)
         {
             ExecuteBinding(
-                () =>
+            () =>
+            {
+                HookViewEvents(false);
+                HookModelEvents();
+                HookItemsEvents(false);
+                UpdateViewEx(clearifnull);
+            },
+            () =>
+            {
+                if (Model != null)
                 {
-                    HookViewEvents(false);
+                    HookViewEvents(true);
                     HookModelEvents();
-                    HookItemsEvents(false);
-                    UpdateViewEx(clearifnull);
-                },
-                () =>
-                {
-                    if (Model != null)
-                    {
-                        HookViewEvents(true);
-                        HookModelEvents();
-                        HookItemsEvents(true);
-                    }
-                });
+                    HookItemsEvents(true);
+                }
+            });
         }
 
         private void UpdateViewEx(bool clearifnull)
