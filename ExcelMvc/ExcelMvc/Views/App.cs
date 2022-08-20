@@ -53,8 +53,8 @@ namespace ExcelMvc.Views
     /// </summary>
     public class App : View
     {
-        private static readonly Dictionary<Workbook, Book> Books
-            = new Dictionary<Workbook, Book>();
+
+        private static readonly Dictionary<Workbook, Book> Books = new Dictionary<Workbook, Book>();
 
         static App()
         {
@@ -167,30 +167,27 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Attach(object app)
         {
-            Try(() =>
-            {
-                Detach();
-                Underlying = (app as Application) ?? Find();
-                if (Underlying == null)
-                    throw new Exception(Resource.ErrorExcelAppFound);
-
-                AsyncActions.Initialise();
-                ObjectFactory<ISession>.CreateAll();
-                ObjectFactory<IValueConverter>.CreateAll();
-
-                Underlying.WorkbookOpen += OpenBook;
-                Underlying.WorkbookBeforeClose += ClosingBook;
-                Underlying.WorkbookActivate += Activate;
-                Underlying.WorkbookDeactivate += Deactivate;
-
-                MainWindow = new Root(Underlying.Hwnd);
-                MainWindow.Destroyed += MainWindow_Destroyed;
-            });
-
-            void Bind()
+            void Do(object state)
             {
                 Try(() =>
                 {
+                    Detach();
+                    Underlying = (state as Application) ?? Find();
+                    if (Underlying == null)
+                        throw new Exception(Resource.ErrorExcelAppFound);
+
+                    AsyncActions.Initialise();
+                    ObjectFactory<ISession>.CreateAll();
+                    ObjectFactory<IValueConverter>.CreateAll();
+
+                    Underlying.WorkbookOpen += OpenBook;
+                    Underlying.WorkbookBeforeClose += ClosingBook;
+                    Underlying.WorkbookActivate += Activate;
+                    Underlying.WorkbookDeactivate += Deactivate;
+
+                    MainWindow = new Root(Underlying.Hwnd);
+                    MainWindow.Destroyed += MainWindow_Destroyed;
+
                     foreach (Workbook item in Underlying.Workbooks)
                     {
                         var view = new Book(this, item);
@@ -207,9 +204,9 @@ namespace ExcelMvc.Views
             }
 
             if (Underlying == null)
-                Bind();
+                Do(app);
             else
-                AsyncActions.Post(a => Bind(), null, true);
+                AsyncActions.Post(a => Do(a), app, true);
         }
 
         /// <summary>
