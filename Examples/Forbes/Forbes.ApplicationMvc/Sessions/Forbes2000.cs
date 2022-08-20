@@ -78,7 +78,8 @@ namespace Forbes.Application.Sessions
 
         private void Sheet_Unprotecting(object sender, ViewEventArgs args)
         {
-            args.Accept("test");
+            // password protected update is slow...
+            args.Accept(null);
         }
 
         private View Sheet

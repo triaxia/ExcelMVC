@@ -53,8 +53,6 @@ namespace Forbes.Application.Sessions
             var settingsModel = new Settings();
             settingsForms.Model = settingsModel;
 
-            book.Find("Table.AppSettings").Model = new AppConfigSettings();
-
             // portrait
             var sheet = book.Find(ViewType.Sheet, "Forbes");
             ForbesTest = new Forbes2000(book, sheet, settingsModel, "Company", "Company");
@@ -62,6 +60,8 @@ namespace Forbes.Application.Sessions
             // landscape/transposed
             sheet = book.Find(ViewType.Sheet, "Forbes_transposed");
             ForbesTestTransposed = new Forbes2000(book, sheet, settingsModel, "CompanyTransposed", "CompanyTransposed");
+
+            book.Find("Table.AppSettings").Model = new AppConfigSettings();
         }
 
         private Forbes2000 ForbesTest
