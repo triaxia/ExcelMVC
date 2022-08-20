@@ -52,49 +52,73 @@ namespace ExcelMvc.Runtime
     /// <typeparam name="T">Type of object</typeparam>
     public static class ObjectFactory<T>
     {
-        private static List<T> Instances { get; set; }
+        private static List<T> Instances { get; } = new List<T>();
+        private static bool EqualsNoCase(string lhs, string rhs)
+            => StringComparer.InvariantCultureIgnoreCase.Equals(lhs, rhs);
 
         /// <summary>
-        /// Create instances of type T in the current AppDomain
+        /// Create instances of type T in the current AppDomain.
         /// </summary>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void CreateAll()
         {
+            var types = GetTypes(out var context);
+            if (context != null)
+            {
+                var timeout = TimeSpan.FromSeconds(10);
+                var start = DateTime.UtcNow;
+                while (context.IsAlive && (DateTime.UtcNow - start) < timeout)
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+                if (context.IsAlive)
+                    throw new TimeoutException($"ObjectFactory<{typeof(T)}>.CreateAll timed out {timeout}");
+            }
+
+            Instances.Clear();
+            foreach (var type in types)
+            {
+                ActionExtensions.Try(() =>
+                {
+                    var obj = (T)Activator.CreateInstance(Type.GetType(type));
+                    Instances.Add(obj);
+                }, ex => Messages.Instance.AddErrorLine(ex));
+            }
+        }
+
+        public static List<string> GetTypes(out WeakReference context)
+        {
+            List<string> types = new List<string>();
             try
             {
                 LoadContext();
-                Instances = new List<T>();
-                Instances.Clear();
-
                 var asms = AppDomain.CurrentDomain.GetAssemblies()
                     .Where(x => !x.IsDynamic);
 #if NET6_0_OR_GREATER
                 asms = asms.Where(x => !x.IsCollectible);
 #endif
-                var types = asms.SelectMany(x => GetTypes(x));
+                types.AddRange(asms.SelectMany(x => GetTypes(x)));
                 var location = typeof(ObjectFactory<T>).Assembly.Location;
                 if (!string.IsNullOrWhiteSpace(location))
                 {
                     var path = Path.GetDirectoryName(location);
                     var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
-                        .Where(x => asms.All(y => y.Location.CompareOrdinalIgnoreCase(x) != 0));
+                        .Where(x => asms.All(y => !EqualsNoCase(y.Location, x)));
                     var dllTypes = files.SelectMany(x => DiscoverTypes(x));
-                    types = types.Concat(dllTypes);
-                }
-
-                foreach (var type in types)
-                {
-                    ActionExtensions.Try(() =>
-                    {
-                        var obj = (T)Activator.CreateInstance(Type.GetType(type));
-                        Instances.Add(obj);
-                    }, ex => Messages.Instance.AddErrorLine(ex));
+                    types.AddRange(dllTypes);
                 }
             }
             finally
             {
                 UnloadContext();
             }
+#if NET6_0_OR_GREATER
+            context = new WeakReference(AssemblyContext);
+#else
+            context = null;
+#endif
+            return types.Distinct().ToList();
         }
 
         /// <summary>
@@ -161,7 +185,7 @@ namespace ExcelMvc.Runtime
         {
 #if NET6_0_OR_GREATER
             UnloadContext();
-            AssemblyContext = new AssemblyLoadContext(nameof(ObjectFactory<T>), true);
+            AssemblyContext = new AssemblyLoadContext($"ObjectFactory<{typeof(T)}>", true);
             AssemblyContext.Resolving +=(sender, args) =>
             {
                 var file = sender.Assemblies.Where(x => !x.IsDynamic)
@@ -190,7 +214,7 @@ namespace ExcelMvc.Runtime
         {
 #if NET5_0_OR_GREATER
             var loaded = AssemblyContext.Assemblies
-                .SingleOrDefault(a => !a.IsDynamic && StringComparer.InvariantCultureIgnoreCase.Equals(a.Location, assemblyPath));
+                .SingleOrDefault(a => !a.IsDynamic && EqualsNoCase(a.Location, assemblyPath));
             return loaded ?? AssemblyContext.LoadFromAssemblyPath(assemblyPath);
 #else
             return Assembly.ReflectionOnlyLoadFrom(assemblyPath);

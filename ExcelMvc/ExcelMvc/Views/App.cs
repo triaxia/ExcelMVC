@@ -53,8 +53,8 @@ namespace ExcelMvc.Views
     /// </summary>
     public class App : View
     {
-
-        private static readonly Dictionary<Workbook, Book> Books = new Dictionary<Workbook, Book>();
+        private static readonly Dictionary<Workbook, Book> Books
+            = new Dictionary<Workbook, Book>();
 
         static App()
         {
