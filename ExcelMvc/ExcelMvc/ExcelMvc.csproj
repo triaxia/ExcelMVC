@@ -16,10 +16,10 @@
 		<PackageProjectUrl>https://github.com/triaxia/ExcelMVC</PackageProjectUrl>
 		<PackageIcon>ExcelMvcIcon64.png</PackageIcon>
 		<PackageTags>Excel;MVC;MVVM</PackageTags>
-		<PackageReleaseNotes>https://github.com/triaxia/ExcelMVC/blob/master/Docs/Getting%20Started%20with%20ExcelMVC.docx</PackageReleaseNotes>
+		<PackageReleaseNotes>See the Releases folder under https://github.com/triaxia/ExcelMVC</PackageReleaseNotes>
 		<Authors>Peter Gu,Wolfgang Stamm</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Company>Peter G &amp; Wolfgang Stamm</Company>
+		<Company>Triaxia Pty Limited</Company>
 		<PackageId>ExcelMvc.Net</PackageId>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
