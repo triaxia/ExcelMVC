@@ -5,13 +5,12 @@
 		<!--<Nullable>enable</Nullable>-->
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>2.0.0-beta</Version>
-		<Description>Writing Excel applications in .NET using MVC/MVVM pattern</Description>
+		<Version>2.0.1-beta</Version>
+		<Description>Writing Excel applications in .NET using MVC/MVVM pattern. This package supercedes ExcelMvc.</Description>
 		<Copyright>Copyright © 2013 Peter Gu &amp; Wolfgang Stamm</Copyright>
 		<RepositoryUrl>https://github.com/triaxia/ExcelMVC</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<DebugType>embedded</DebugType>
-		<Configurations>Debug;Release;Package</Configurations>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageOutputPath>bin\NuGet</PackageOutputPath>
 		<PackageProjectUrl>https://github.com/triaxia/ExcelMVC</PackageProjectUrl>
@@ -21,21 +20,12 @@
 		<Authors>Peter Gu,Wolfgang Stamm</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Company>Peter G &amp; Wolfgang Stamm</Company>
-		<PackageId>ExcelMVC.Net</PackageId>
+		<PackageId>ExcelMvc.Net</PackageId>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<ContinuousIntegrationBuild Condition=" '$(Configuration)' == 'Release' ">true</ContinuousIntegrationBuild>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 	</PropertyGroup>
-	<ItemGroup>
-		<None Remove="ExcelMvc.runtimeconfig.json" />
-		<None Remove="ExcelMvc.targets" />
-		<None Remove="Resources\ExcelMvc.ico" />
-	</ItemGroup>
-	<ItemGroup>
-		<Content Include="ExcelMvc.runtimeconfig.json" />
-		<Content Include="ExcelMvc.targets">
-			<PackagePath>Build</PackagePath>
-		</Content>
-	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="Microsoft.Office.Interop.Excel">
@@ -93,6 +83,9 @@
 			<PackagePath>Build</PackagePath>
 		</Content>
 		<Content Include="ExcelMvc.runtimeconfig.json">
+			<PackagePath>Build</PackagePath>
+		</Content>
+		<Content Include="ExcelMvc.Net.targets">
 			<PackagePath>Build</PackagePath>
 		</Content>
 	</ItemGroup>
