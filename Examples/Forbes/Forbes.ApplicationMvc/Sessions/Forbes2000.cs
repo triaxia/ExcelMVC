@@ -45,37 +45,43 @@ namespace Forbes.Application.Sessions
 
     internal class Forbes2000
     {
-        public Forbes2000(View grandparent, View parent, Settings settings, string companyTableName, string companyFormName)
+        public Forbes2000(View book, View sheet, Settings settings, string companyTableName, string companyFormName)
         {
-            ParentView = parent;
+            Sheet = sheet;
+            Sheet.Unprotecting += Sheet_Unprotecting;
             Settings = settings;
 
-            ParentView.FindCommand("ExcelMvc.Command.LoadForbes").Model = null;
+            Sheet.FindCommand("ExcelMvc.Command.LoadForbes").Model = null;
 
-            ParentView.HookClicked(LoadAllClicked, "LoadForbes", true);
-            ParentView.HookClicked(ClearAllClicked, "ClearForbes", true);
-            ParentView.HookClicked(StartUpdateClicked, "StartUpdate", true);
-            ParentView.HookClicked(ShowColumnClicked, "ShowIndustry", true);
-            ParentView.HookClicked(ShowDialogClicked, "ShowDialog", true);
+            Sheet.HookClicked(LoadAllClicked, "LoadForbes", true);
+            Sheet.HookClicked(ClearAllClicked, "ClearForbes", true);
+            Sheet.HookClicked(StartUpdateClicked, "StartUpdate", true);
+            Sheet.HookClicked(ShowColumnClicked, "ShowIndustry", true);
+            Sheet.HookClicked(ShowDialogClicked, "ShowDialog", true);
 
-            CompanyTable = (Table)ParentView.Find(ViewType.Table, companyTableName);
+            CompanyTable = (Table)Sheet.Find(ViewType.Table, companyTableName);
             CompanyTable.SelectionChanged += CompanyTable_SelectionChanged;
             CompanyTable.ObjectChanged += CompanyTable_ObjectChanged;
             CompanyTable.Model = new CompanyList();
 
-            CompanyForm = (Form)ParentView.Find(ViewType.Form, companyFormName);
+            CompanyForm = (Form)Sheet.Find(ViewType.Form, companyFormName);
             CompanyForm.ObjectChanged += CompanyForm_ObjectChanged;
 
-            CountryTable = (Table)grandparent.Find(ViewType.Table, "ExcelMvc.Table.Country");
-            IndustryTable = (Table)grandparent.Find("Table.Industry");
+            CountryTable = (Table)book.Find(ViewType.Table, "ExcelMvc.Table.Country");
+            IndustryTable = (Table)book.Find("Table.Industry");
 
-            CompanyFilterTable = (Table)grandparent.Find(ViewType.Table, "CompanyFilters");
+            CompanyFilterTable = (Table)book.Find(ViewType.Table, "CompanyFilters");
             CompanyFilterTable.Model = new CompanyFilterList(CompanyFilterTable.MaxItemsToBind);
 
             EnableControls();
         }
 
-        private View ParentView
+        private void Sheet_Unprotecting(object sender, ViewEventArgs args)
+        {
+            args.Accept("test");
+        }
+
+        private View Sheet
         {
             get; set;
         }
@@ -150,9 +156,9 @@ namespace Forbes.Application.Sessions
 
         private void EnableControls()
         {
-            ParentView.FindCommand("LoadForbes").IsEnabled = !IsLoaded && !IsUpdating;
-            ParentView.FindCommand("ClearForbes").IsEnabled = IsLoaded && !IsUpdating;
-            ParentView.FindCommand("StartUpdate").IsEnabled = IsLoaded;
+            Sheet.FindCommand("LoadForbes").IsEnabled = !IsLoaded && !IsUpdating;
+            Sheet.FindCommand("ClearForbes").IsEnabled = IsLoaded && !IsUpdating;
+            Sheet.FindCommand("StartUpdate").IsEnabled = IsLoaded;
         }
 
         private void LoadAllClicked(object sender, CommandEventArgs args)

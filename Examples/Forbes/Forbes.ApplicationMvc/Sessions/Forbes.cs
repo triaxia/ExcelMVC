@@ -43,25 +43,25 @@ namespace Forbes.Application.Sessions
 
     internal class Forbes
     {
-        public Forbes(View view)
+        public Forbes(View book)
         {
-            view.HookBindingFailed(View_BindingFailed, true);
+            book.HookBindingFailed(View_BindingFailed, true);
 
-            Tests = new CommandTests((Sheet)view.Find(ViewType.Sheet, "Tests"));
+            Tests = new CommandTests((Sheet)book.Find(ViewType.Sheet, "Tests"));
 
-            var settingsForms = (ExcelMvc.Views.Form)view.Find(ViewType.Form, "Settings");
+            var settingsForms = (ExcelMvc.Views.Form)book.Find(ViewType.Form, "Settings");
             var settingsModel = new Settings();
             settingsForms.Model = settingsModel;
 
-            view.Find("Table.AppSettings").Model = new AppConfigSettings();
+            book.Find("Table.AppSettings").Model = new AppConfigSettings();
 
             // portrait
-            var parent = view.Find(ViewType.Sheet, "Forbes");
-            ForbesTest = new Forbes2000(view, parent, settingsModel, "Company", "Company");
+            var sheet = book.Find(ViewType.Sheet, "Forbes");
+            ForbesTest = new Forbes2000(book, sheet, settingsModel, "Company", "Company");
 
             // landscape/transposed
-            parent = view.Find(ViewType.Sheet, "Forbes_transposed");
-            ForbesTestTransposed = new Forbes2000(view, parent, settingsModel, "CompanyTransposed", "CompanyTransposed");
+            sheet = book.Find(ViewType.Sheet, "Forbes_transposed");
+            ForbesTestTransposed = new Forbes2000(book, sheet, settingsModel, "CompanyTransposed", "CompanyTransposed");
         }
 
         private Forbes2000 ForbesTest

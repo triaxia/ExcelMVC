@@ -38,7 +38,14 @@ namespace ExcelMvc.Views
     using System;
 
     /// <summary>
-    /// Represents the EventArgs for a View event
+    /// Handler for a view event
+    /// </summary>
+    /// <param name="sender">Event sender</param>
+    /// <param name="args">Event Args</param>
+    public delegate void ViewEventHandler(object sender, ViewEventArgs args);
+
+    /// <summary>
+    /// Represents data for a View event
     /// </summary>
     public class ViewEventArgs : EventArgs
     {
@@ -69,6 +76,15 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
+        /// Gets and sets the event specific state object
+        /// </summary>
+        public object Password
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Gets the View associated with the event
         /// </summary>
         public View View
@@ -80,9 +96,11 @@ namespace ExcelMvc.Views
         /// <summary>
         /// Indicates the calling sink is interested in the view
         /// </summary>
-        public void Accept()
+        /// <param name="password">Password used to unprotected the view.</param>
+        public void Accept(object password = null)
         {
             acceptedCount++;
+            Password = password;
         }
     }
 }

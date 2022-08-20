@@ -70,7 +70,7 @@ namespace Forbes.Application.Sessions
                 App.Instance.Closed -= Book_Closed;
             }
         }
-
+     
         private void Book_Closed(object sender, ViewEventArgs args)
         {
             if (args.View.Id == ViewName)

@@ -59,14 +59,7 @@ namespace ExcelMvc.Views
     public delegate void SelectionChangedHandler(object sender, SelectionChangedArgs args);
 
     /// <summary>
-    /// Handler for a view event
-    /// </summary>
-    /// <param name="sender">Event sender</param>
-    /// <param name="args">Event Args</param>
-    public delegate void ViewEventHandler(object sender, ViewEventArgs args);
-
-    /// <summary>
-    /// Represents the EventArgs for a ObjectChanged event
+    /// Represents data for a ObjectChanged event
     /// </summary>
     public class ObjectChangedArgs : EventArgs
     {

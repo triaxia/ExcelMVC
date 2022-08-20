@@ -65,20 +65,21 @@ namespace ExcelMvc.Extensions
                 App.Instance.Underlying.ScreenUpdating = false;
 
                 var args = new ViewEventArgs(host);
-                if (args.State == null)
+                host.OnUnprotecting(args);
+                if (args.Password == null)
                     sheet.Unprotect();
                 else 
-                    sheet.Unprotect(args.State as string);
+                    sheet.Unprotect(args.Password);
                 try
                 {
                     action();
                 }
                 finally
                 {
-                    if (args.State == null)
+                    if (args.Password == null)
                         sheet.Protect();
                     else
-                        sheet.Protect(args.State as string);
+                        sheet.Protect(args.Password);
                     App.Instance.Underlying.ScreenUpdating = updating;
                 }
             });
