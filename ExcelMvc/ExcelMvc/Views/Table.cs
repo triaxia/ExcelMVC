@@ -163,7 +163,7 @@ namespace ExcelMvc.Views
         /// </summary>
         public override void DetachModel()
         {
-           AttachModel(null, false);
+            AttachModel(null, false);
         }
 
         /// <summary>
@@ -207,21 +207,20 @@ namespace ExcelMvc.Views
         /// <param name="recursive"></param>
         internal override void Rebind(Dictionary<Worksheet, List<Binding>> bindings, bool recursive)
         {
-            List<Binding> sheetBindings;
-            if (bindings.TryGetValue(((Sheet)Parent).Underlying, out sheetBindings))
+            if (bindings.TryGetValue(((Sheet)Parent).Underlying, out List<Binding> sheetBindings))
             {
                 // clear previous view
                 var current = Model;
                 Model = null;
 
                 // rebind
-                Bindings = sheetBindings.Where(x => x.Type == Type && x.Name.CompareOrdinalIgnoreCase(Name) == 0).ToList();
+                Bindings = sheetBindings.Where(x => x.Type == Type && x.Name.EqualNoCase(Name)).ToList();
                 DeriveOrientation();
                 Model = current;
             }
         }
 
-        private void AttachModel(object model, bool clearifnull) 
+        private void AttachModel(object model, bool clearifnull)
         {
             base.Model = model;
             UpdateView(clearifnull);
@@ -596,20 +595,21 @@ namespace ExcelMvc.Views
             });
         }
 
-        private bool UpdateObjects(Range target)
+        private int UpdateObjects(Range target)
         {
-            var updated = false;
+            var sum = 0;
             ExecuteBinding(() =>
             {
                 var rangeObjs = GetRangeObjects(target);
                 if (rangeObjs.Items != null)
                 {
-                    updated = true;
-                    if (UpdateObjects(rangeObjs) > 0)
-                        OnObjectChanged(rangeObjs.Items, null);
+                    var updated = UpdateObjects(rangeObjs);
+                    if (updated > 0)
+                        OnObjectChanged(rangeObjs.Items, rangeObjs.Bindings.Select(x => x.Path));
+                    sum += updated;
                 }
             });
-            return updated;
+            return sum;
         }
 
         private int UpdateObjects(RangeObjects rangeItems)
@@ -639,7 +639,7 @@ namespace ExcelMvc.Views
             var from = target;
             while (target != null)
             {
-                if (UpdateObjects(target))
+                if (UpdateObjects(target) > 0)
                     break;
 
                 // propagate to dependents as they don't get Changed notification.

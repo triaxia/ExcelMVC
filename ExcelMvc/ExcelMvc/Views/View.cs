@@ -244,8 +244,7 @@ namespace ExcelMvc.Views
             if (type == ViewType.None)
                 type = impliedType;
 
-            if ((type == ViewType.None || type == Type)
-                && Name.CompareOrdinalIgnoreCase(name) == 0)
+            if ((type == ViewType.None || type == Type) && Name.EqualNoCase(name))
                 return this;
 
             View result = null;
@@ -269,7 +268,7 @@ namespace ExcelMvc.Views
             name = CommandFactory.RemovePrefix(name);
             foreach (var cmd in Commands)
             {
-                if (cmd.Name.CompareOrdinalIgnoreCase(name) == 0)
+                if (cmd.Name.EqualNoCase(name))
                     return cmd;
             }
 
@@ -475,7 +474,7 @@ namespace ExcelMvc.Views
             var count = 0;
             foreach (var cmd in Commands)
             {
-                if (cmd.Name.CompareOrdinalIgnoreCase(name) != 0)
+                if (cmd.Name.EqualNoCase(name))
                     continue;
 
                 count++;

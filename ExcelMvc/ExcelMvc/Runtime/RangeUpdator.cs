@@ -47,8 +47,8 @@ namespace ExcelMvc.Runtime
     /// </summary>
     internal class RangeUpdator
     {
-
-        private static readonly Lazy<RangeUpdator> LazyInstance = new Lazy<RangeUpdator>(() => new RangeUpdator());
+        private static readonly Lazy<RangeUpdator> LazyInstance 
+            = new Lazy<RangeUpdator>(() => new RangeUpdator());
 
         private RangeUpdator()
         {
@@ -146,7 +146,7 @@ namespace ExcelMvc.Runtime
         private static bool IsAsyncUpdateThread()
         {
             var threadName = Thread.CurrentThread.Name;
-            return !string.IsNullOrWhiteSpace(threadName) && threadName.CompareOrdinalIgnoreCase(NameOfAsynUpdateThread) == 0;
+            return !string.IsNullOrWhiteSpace(threadName) && threadName.EqualNoCase(NameOfAsynUpdateThread);
         }
 
         private static int RowOffsetFromRowId(Range start, int count, string rowId)

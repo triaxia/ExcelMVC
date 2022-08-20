@@ -212,7 +212,7 @@ namespace ExcelMvc.Views
             foreach (var item in names)
             {
                 var name = item;
-                var fields = bindings.Where(x => x.Type == type && x.Name.CompareOrdinalIgnoreCase(name) == 0).ToList();
+                var fields = bindings.Where(x => x.Type == type && x.Name.EqualNoCase(name)).ToList();
                 var view = create(this, fields);
                 var args = new ViewEventArgs(view);
                 views[name] = view;

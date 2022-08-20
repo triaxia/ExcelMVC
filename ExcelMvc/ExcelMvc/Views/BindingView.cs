@@ -143,7 +143,7 @@ namespace ExcelMvc.Views
 
         private static bool IsBoolValidationList(string list)
         {
-            return list.CompareOrdinalIgnoreCase("True/False") == 0;
+            return list.EqualNoCase("True/False");
         }
 
         private void BindCheckBoxes(Binding binding, int numberItems)

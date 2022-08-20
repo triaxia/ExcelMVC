@@ -42,16 +42,19 @@ namespace ExcelMvc.Extensions
     /// </summary>
     public static class StringExtensions
     {
+        private static StringComparer NoCaseComparer = StringComparer.InvariantCultureIgnoreCase;
         /// <summary>
         /// Compases two string with OrdinalIgnoreCase 
         /// </summary>
         /// <param name="lhs">left string</param>
         /// <param name="rhs">right string</param>
         /// <returns>see string.Compare </returns>
-        public static int CompareOrdinalIgnoreCase(this string lhs, string rhs)
+        public static int CompareNoCase(this string lhs, string rhs)
         {
-            return string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase);
+            return NoCaseComparer.Compare(lhs, rhs);
         }
 
+        public static bool EqualNoCase(this string lhs, string rhs)
+            => NoCaseComparer.Equals(lhs, rhs);
     }
 }

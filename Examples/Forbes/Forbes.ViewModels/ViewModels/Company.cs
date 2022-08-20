@@ -34,12 +34,13 @@ Boston, MA 02110-1301 USA.
 
 namespace Forbes.Application.ViewModels
 {
+    using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq;
     using Models;
 
     public class Company : INotifyPropertyChanged
     {
-
         public Company()
         {
             Model = new CompanyModel();
@@ -111,18 +112,15 @@ namespace Forbes.Application.ViewModels
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void RaiseChanged()
-        {
-            RaiseChanged("Name");
-            RaiseChanged("Industry");
-            RaiseChanged("Country");
-            RaiseChanged("MarketValue");
-            RaiseChanged("Profits");
-            RaiseChanged("Sales");
-            RaiseChanged("Assets");
-            RaiseChanged("Rank");
-            RaiseChanged("Listed");
-        }
+        private static IEnumerable<string> PropertyNames
+            => typeof(Company).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+            .Select(x => x.Name).ToArray();
 
+        public void RaiseChanged(IEnumerable<string> names)
+        {
+            names = names ?? PropertyNames;
+            foreach (var path in names)
+                RaiseChanged(path);
+        }
     }
 }

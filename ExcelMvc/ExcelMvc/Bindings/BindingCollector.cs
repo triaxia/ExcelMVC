@@ -117,7 +117,7 @@ namespace ExcelMvc.Bindings
             for (var jdx = value.GetLowerBound(1); jdx <= value.GetUpperBound(1); jdx++)
             {
                 var cell = value[idx, jdx] as string;
-                if (cell != null && cell.CompareOrdinalIgnoreCase(heading) == 0)
+                if (cell != null && cell.EqualNoCase(heading))
                     return jdx;
             }
 
@@ -126,7 +126,7 @@ namespace ExcelMvc.Bindings
 
         private static bool IsNotValidExcelMvcName(string[] parts)
         {
-            return parts.Length != 3 || parts[0].CompareOrdinalIgnoreCase("ExcelMvc") != 0;
+            return parts.Length != 3 || !parts[0].EqualNoCase("ExcelMvc");
         }
 
         private void Collect(Name nm)
@@ -242,7 +242,7 @@ namespace ExcelMvc.Bindings
             if (indices.IndexOfVisibility >= 0)
             {
                 var cell = (value[idx, indices.IndexOfVisibility] as string) ?? string.Empty;
-                return cell.CompareOrdinalIgnoreCase("Visible") == 0 || cell.CompareOrdinalIgnoreCase("True") == 0;
+                return cell.EqualNoCase("Visible") || cell.EqualNoCase("True");
             }
 
             return true;
@@ -258,8 +258,7 @@ namespace ExcelMvc.Bindings
         private void CheckFirstPartOfName(string[] parts)
         {
             ViewType = parts[1] ?? string.Empty;
-            if (ViewType.CompareOrdinalIgnoreCase("Form") != 0
-                && ViewType.CompareOrdinalIgnoreCase("Table") != 0)
+            if (!ViewType.EqualNoCase("Form") && !ViewType.EqualNoCase("Table"))
                 throw new Exception(string.Format(Resource.ErrorInvalidViewType, ViewType));
         }
 

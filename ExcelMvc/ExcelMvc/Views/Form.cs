@@ -116,7 +116,7 @@ namespace ExcelMvc.Views
                 Model = null;
 
                 // rebind
-                Bindings = sheetBindings.Where(x => x.Type == Type && x.Name.CompareOrdinalIgnoreCase(Name) == 0).ToList();
+                Bindings = sheetBindings.Where(x => x.Type == Type && x.Name.EqualNoCase(Name)).ToList();
                 Model = current;
             }
         }
@@ -151,7 +151,7 @@ namespace ExcelMvc.Views
 
         private void Underlying_Change(Range target)
         {
-            UpdateObject(target);
+            UpdateRangeObject(target);
         }
 
         private void Underlying_SelectionChange(Range target)
@@ -176,15 +176,36 @@ namespace ExcelMvc.Views
             sheet.Underlying.SelectionChange -= Underlying_SelectionChange;
         }
 
-        private void UpdateObject(Range target)
+        private void UpdateRangeObject(Range target)
         {
-            var toSource = Bindings.Where(x => (x.Mode == ModeType.TwoWay || x.Mode == ModeType.OneWayToSource));
-            foreach (var binding in toSource)
-                UpdateObject(binding, target);
+            var from = target;
+            while (target != null)
+            {
+                if (UpdateObject(target) != 0)
+                    break;
+
+                // propagate to dependents as they don't get Changed notification.
+                Range dependents = null;
+                // there is no good way to determine if a range has dependents, other
+                // than "OnError Resume Next"...
+                ActionExtensions.Try(() => dependents = target.DirectDependents);
+                target = dependents;
+
+                // break if circular referenced
+                if (target != null && from.Application.Intersect(from, target) != null)
+                    break;
+            }
         }
 
-        private void UpdateObject(Binding binding, Range target)
+        private int UpdateObject(Range target)
         {
+            var toSource = Bindings.Where(x => (x.Mode == ModeType.TwoWay || x.Mode == ModeType.OneWayToSource));
+            return toSource.Sum(x => UpdateObject(x, target));
+        }
+
+        private int UpdateObject(Binding binding, Range target)
+        {
+            var count = 0;
             ExecuteBinding(() =>
             {
                 var range = binding.StartCell;
@@ -197,25 +218,27 @@ namespace ExcelMvc.Views
                         ObjectBinding.SetPropertyValue(Model, binding, value.Value);
                         OnObjectChanged(new[] { Model }, new[] { binding.Path });
                     }
+                    count++;
                 }
             });
+            return count;
         }
 
         private void UpdateView()
         {
             ExecuteBinding(
-                () =>
-                {
-                    UnhookViewEvents();
-                    UnhookModelEvents();
-                    UpdateView("*");
-                    BindValidationLists(1);
-                }, 
-                () =>
-                {
-                    HookViewEvents();
-                    HookModelEvents();
-                });
+            () =>
+            {
+                UnhookViewEvents();
+                UnhookModelEvents();
+                UpdateView("*");
+                BindValidationLists(1);
+            }, 
+            () =>
+            {
+                HookViewEvents();
+                HookModelEvents();
+            });
         }
 
         private void UpdateView(string path)

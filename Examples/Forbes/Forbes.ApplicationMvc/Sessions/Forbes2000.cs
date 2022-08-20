@@ -132,16 +132,15 @@ namespace Forbes.Application.Sessions
 
         private void CompanyForm_ObjectChanged(object sender, ObjectChangedArgs args)
         {
-            // this is just for demo purpose, just to get the table to update, careful with
-            // recursive update
-            (args.Items.First() as Company).RaiseChanged();
+            foreach (var item in args.Items.Cast<Company>())
+                item.RaiseChanged(args.Paths);
         }
 
         private void CompanyTable_ObjectChanged(object sender, ObjectChangedArgs args)
         {
             var model = args.Items.Last();
             if (model == CompanyForm.Model)
-                ((Company)model).RaiseChanged();
+                ((Company)model).RaiseChanged(args.Paths);
         }
 
         private void CompanyTable_SelectionChanged(object sender, SelectionChangedArgs args)
