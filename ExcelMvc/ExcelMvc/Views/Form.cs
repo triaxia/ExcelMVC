@@ -181,8 +181,7 @@ namespace ExcelMvc.Views
             var from = target;
             while (target != null)
             {
-                if (UpdateObject(target) != 0)
-                    break;
+                UpdateObject(target);
 
                 // propagate to dependents as they don't get Changed notification.
                 Range dependents = null;

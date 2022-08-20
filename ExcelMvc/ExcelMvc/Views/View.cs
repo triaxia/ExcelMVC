@@ -474,7 +474,7 @@ namespace ExcelMvc.Views
             var count = 0;
             foreach (var cmd in Commands)
             {
-                if (cmd.Name.EqualNoCase(name))
+                if (!cmd.Name.EqualNoCase(name))
                     continue;
 
                 count++;
