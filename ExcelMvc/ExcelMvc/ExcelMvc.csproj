@@ -5,9 +5,9 @@
 		<!--<Nullable>enable</Nullable>-->
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>2.0.1-beta</Version>
+		<Version>2.0.1</Version>
 		<Description>Writing Excel applications in .NET using MVC/MVVM pattern. This package supercedes ExcelMvc.</Description>
-		<Copyright>Copyright © 2013 Peter Gu &amp; Wolfgang Stamm</Copyright>
+		<Copyright>Copyright © 2013 Peter Gu (Creator) &amp; Wolfgang Stamm (Contributor)</Copyright>
 		<RepositoryUrl>https://github.com/triaxia/ExcelMVC</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<DebugType>embedded</DebugType>
@@ -17,7 +17,7 @@
 		<PackageIcon>ExcelMvcIcon64.png</PackageIcon>
 		<PackageTags>Excel;MVC;MVVM</PackageTags>
 		<PackageReleaseNotes>See the Releases folder under https://github.com/triaxia/ExcelMVC</PackageReleaseNotes>
-		<Authors>Peter Gu,Wolfgang Stamm</Authors>
+		<Authors>Peter Gu (Creator),Wolfgang Stamm (Contributor)</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Company>Triaxia Pty Limited</Company>
 		<PackageId>ExcelMvc.Net</PackageId>
