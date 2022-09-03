@@ -63,8 +63,8 @@ namespace ExcelMvc.Runtime
         /// </summary>
         public AsyncWindow()
         {
-            //var cp = new CreateParams {Parent = new IntPtr(App.Instance.Underlying.Application.Hwnd)};
-            var cp = new CreateParams();
+            var cp = new CreateParams {Parent = new IntPtr(App.Instance.Underlying.Application.Hwnd)};
+            //var cp = new CreateParams();
             CreateHandle(cp);
         }
 
