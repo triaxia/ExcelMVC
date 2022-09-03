@@ -59,10 +59,12 @@ namespace ExcelMvc.Runtime
         /// <summary>
         /// Create instances of type T in the current AppDomain.
         /// </summary>
+        /// <param name="selectAssembly">A function (assembly name or file name, loaded or npt) that
+        /// returns true or false to indicate if an assembly should be included in the discover process</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public static void CreateAll()
+        public static void CreateAll(Func<string, bool, bool> selectAssembly = null)
         {
-            var types = GetTypes(out var context);
+            var types = GetTypes(out var context, selectAssembly);
             FreeReference(context);
 
             Instances.Clear();
@@ -76,7 +78,14 @@ namespace ExcelMvc.Runtime
             }
         }
 
-        public static List<string> GetTypes(out WeakReference context)
+        /// <summary>
+        /// Discovers 
+        /// </summary>
+        /// <param name="selectedAssembly">A function (assembly name or file name, loaded or npt) that
+        /// returns true or false to indicate if an assembly should be included in the discover process</param>
+        /// <returns></returns>
+        public static List<string> GetTypes(out WeakReference context
+            , Func<string, bool, bool> selectAssembly = null)
         {
             List<string> types = new List<string>();
             try
@@ -84,6 +93,8 @@ namespace ExcelMvc.Runtime
                 LoadContext();
                 var asms = AppDomain.CurrentDomain.GetAssemblies()
                     .Where(x => !x.IsDynamic);
+                if (selectAssembly != null)
+                    asms = asms.Where(x => selectAssembly(x.GetName().Name, true));
 #if NET6_0_OR_GREATER
                 asms = asms.Where(x => !x.IsCollectible);
 #endif
@@ -94,6 +105,8 @@ namespace ExcelMvc.Runtime
                     var path = Path.GetDirectoryName(location);
                     var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
                         .Where(x => asms.All(y => !EqualsNoCase(y.Location, x)));
+                    if (selectAssembly != null)
+                        files = files.Where(x => selectAssembly(Path.GetFileNameWithoutExtension(x), true));
                     var dllTypes = files.SelectMany(x => DiscoverTypes(x));
                     types.AddRange(dllTypes);
                 }
@@ -177,7 +190,8 @@ namespace ExcelMvc.Runtime
             AssemblyContext = new AssemblyLoadContext($"ObjectFactory<{typeof(T)}>", true);
             AssemblyContext.Resolving +=(sender, args) =>
             {
-                var file = sender.Assemblies.Where(x => !x.IsDynamic)
+                var file = sender.Assemblies
+                    .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
                     .Select(x => Path.GetDirectoryName(x.Location))
                     .Distinct()
                     .Select(x => Path.ChangeExtension(Path.Combine(x!, args.Name!), ".dll"))
@@ -187,8 +201,18 @@ namespace ExcelMvc.Runtime
                 return file == null ? null : sender.LoadFromAssemblyPath(file);
             };
 #else
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve +=
-                (_, args) => Assembly.ReflectionOnlyLoad(args.Name);
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += (_, args) =>
+            {
+                var file = AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
+                    .Select(x => Path.GetDirectoryName(x.Location))
+                    .Distinct()
+                    .Select(x => Path.ChangeExtension(Path.Combine(x, args.Name), ".dll"))
+                    .Where(File.Exists)
+                    .OrderByDescending(File.GetLastWriteTimeUtc)
+                    .FirstOrDefault();
+                return file == null ? null : Assembly.ReflectionOnlyLoadFrom(file);
+            };
 #endif
         }
         private static void UnloadContext()
@@ -200,7 +224,7 @@ namespace ExcelMvc.Runtime
         }
         private static Assembly LoadFrom(string assemblyPath)
         {
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
             var loaded = AssemblyContext.Assemblies
                 .SingleOrDefault(a => !a.IsDynamic && EqualsNoCase(a.Location, assemblyPath));
             return loaded ?? AssemblyContext.LoadFromAssemblyPath(assemblyPath);
