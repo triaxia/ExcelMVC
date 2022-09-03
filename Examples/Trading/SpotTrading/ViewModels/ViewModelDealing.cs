@@ -45,18 +45,14 @@ namespace SpotTrading.ViewModels
 
         private void MaketDeal()
         {
+            var idx = 0;
+            var jdx = 0;
             var random = new Random();
-
-            var idx = (int)(random.NextDouble() * Ccys.Count);
-            if (idx >= Ccys.Count) idx = 0;
-
-            var jdx = (int)(random.NextDouble() * Ccys.Count);
-            if (jdx >= Ccys.Count) jdx = 0;
-
-            if (jdx == idx)
-                jdx = idx + 1;
-            if (jdx >= Ccys.Count) jdx = 0;
-
+            while (idx == jdx || idx >= Ccys.Count || jdx >= Ccys.Count)
+            {
+                idx = (int)(random.NextDouble() * Ccys.Count);
+                jdx = (int)(random.NextDouble() * Ccys.Count);
+            }
             Deal.BuyCcy = Ccys[idx];
             Deal.SellCcy = Ccys[jdx];
             Deal.BuyAmount = (random.NextDouble() + 0.1)*1000000;
