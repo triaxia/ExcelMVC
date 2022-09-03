@@ -68,13 +68,13 @@ namespace ExcelMvc.Controls
             var names = (from Comment item in sheet.Comments select item.Shape.Name).ToList();
             names.Sort();
 
-            Create(sheet, host, (GroupObjects)sheet.GroupObjects(), names, commands);
-            Create(sheet, host, (Buttons)sheet.Buttons(), names, commands);
-            Create(sheet, host, (CheckBoxes)sheet.CheckBoxes(), names, commands);
-            Create(sheet, host, (OptionButtons)sheet.OptionButtons(), names, commands);
-            Create(sheet, host, (ListBoxes)sheet.ListBoxes(), names, commands);
-            Create(sheet, host, (DropDowns)sheet.DropDowns(), names, commands);
-            Create(sheet, host, (Spinners)sheet.Spinners(), names, commands);
+            Create(sheet, host, sheet.GroupObjects(), names, commands);
+            Create(sheet, host, sheet.Buttons(), names, commands);
+            Create(sheet, host, sheet.CheckBoxes(), names, commands);
+            Create(sheet, host, sheet.OptionButtons(), names, commands);
+            Create(sheet, host, sheet.ListBoxes(), names, commands);
+            Create(sheet, host, sheet.DropDowns(), names, commands);
+            Create(sheet, host, sheet.Spinners(), names, commands);
             Create(sheet, host, sheet.Shapes, names, commands);
 
             foreach (var cmd in commands.Values)
@@ -93,10 +93,12 @@ namespace ExcelMvc.Controls
             return StartsWithPrefix(name) ? name.Substring(CommandPrefix.Length) : name;
         }
 
-        private static void Create(Worksheet sheet, View host, IEnumerable items, List<string> names, Dictionary<string, Command> commands)
+        private static void Create(Worksheet sheet, View host, dynamic items, List<string> names, Dictionary<string, Command> commands)
         {
-            foreach (var item in items)
+            var count = items.Count;
+            for(var idx = 1; idx <= count; idx++)
             {
+               var item = items[idx];
                var button = item as Button;
                if (Create(button, () => button.Name, () => new CommandButton(host, button, RemovePrefix(button.Name)), commands, names))
                    continue;
