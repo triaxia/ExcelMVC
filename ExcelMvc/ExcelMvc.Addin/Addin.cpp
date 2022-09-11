@@ -2,7 +2,7 @@
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
-Developer:         Wolfgang Stamm, Germany
+Contributor:       Wolfgang Stamm, Germany
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -73,6 +73,8 @@ BOOL IsExcelThere()
 }
 
 /*
+
+https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 LPXLOPER12 pxProcedure
 LPXLOPER12 pxTypeText
 LPXLOPER12 pxFunctionText
@@ -89,15 +91,55 @@ LPXLOPER12 pxArgumentHelp255
 */
 
 const int NumberOfParameters = 11;
-static LPCWSTR rgFuncs[][NumberOfParameters] =
+static LPCWSTR MvcFuncs[][NumberOfParameters] =
 {
-	{ L"ExcelMvcRunCommandAction", L"I", L"ExcelMvcRunCommandAction", L"", L"0", L"ExcelMvc", L"", L"", L"Called by a command", L"", L"" },
-	{ L"ExcelMvcAttach", L"I", L"ExcelMvcAttach", L"", L"2", L"ExcelMvc", L"", L"", L"Attach Excel to ExcelMvc", L"", L"" },
-	{ L"ExcelMvcDetach", L"I", L"ExcelMvcDetach", L"", L"2", L"ExcelMvc", L"", L"", L"Detach Excel from ExcelMvc", L"", L"" },
-	{ L"ExcelMvcShow", L"I", L"ExcelMvcShow", L"", L"2", L"ExcelMvc", L"", L"", L"Shows the ExcelMvc window", L"", L"" },
-	{ L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"2", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" },
-	{ L"ExcelMvcRun", L"I", L"ExcelMvcRun", L"", L"0", L"ExcelMvc", L"", L"", L"Runs the next action in the async queue", L"", L"" }
+	{ L"ExcelMvcRunCommandAction", L"I", L"ExcelMvcRunCommandAction", L"", L"2", L"ExcelMvc", L"", L"", L"Called by a command", L"", L"" },
+	{ L"ExcelMvcRun", L"I", L"ExcelMvcRun", L"", L"2", L"ExcelMvc", L"", L"", L"Runs the next action in the async queue", L"", L"" },
+	{ L"ExcelMvcAttach", L"I", L"ExcelMvcAttach", L"", L"1", L"ExcelMvc", L"", L"", L"Attach Excel to ExcelMvc", L"", L"" },
+	{ L"ExcelMvcDetach", L"I", L"ExcelMvcDetach", L"", L"1", L"ExcelMvc", L"", L"", L"Detach Excel from ExcelMvc", L"", L"" },
+	{ L"ExcelMvcShow", L"I", L"ExcelMvcShow", L"", L"1", L"ExcelMvc", L"", L"", L"Shows the ExcelMvc window", L"", L"" },
+	{ L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"1", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" }
 };
+
+// these will be generated dynamically...
+static LPCWSTR UdfFuncs[][NumberOfParameters] =
+{
+	{ L"ExcelMvcUdf", L"QQQ", L"ExcelMvcAdd2", L"", L"1", L"ExcelMvc", L"", L"", L"Add two numbers", L"", L"" },
+	{ L"ExcelMvcUdf", L"QQQQ", L"ExcelMvcAdd3", L"", L"1", L"ExcelMvc", L"", L"", L"Add three numbers", L"", L"" }
+};
+
+void RegisterFunctions(LPXLOPER12 xdll, LPCWSTR funcs[][NumberOfParameters], int count)
+{
+	for (int idx = 0; idx < count; idx++)
+	{
+		Excel12f
+		(
+			xlfRegister, 0, 12,
+			(LPXLOPER12)xdll,
+			(LPXLOPER12)TempStr12(funcs[idx][0]),
+			(LPXLOPER12)TempStr12(funcs[idx][1]),
+			(LPXLOPER12)TempStr12(funcs[idx][2]),
+			(LPXLOPER12)TempStr12(funcs[idx][3]),
+			(LPXLOPER12)TempInt12(_wtoi(funcs[idx][4])),
+			(LPXLOPER12)TempStr12(funcs[idx][5]),
+			(LPXLOPER12)TempStr12(funcs[idx][6]),
+			(LPXLOPER12)TempStr12(funcs[idx][7]),
+			(LPXLOPER12)TempStr12(funcs[idx][8]),
+			(LPXLOPER12)TempStr12(funcs[idx][9]),
+			(LPXLOPER12)TempStr12(funcs[idx][10])
+		);
+	}
+}
+
+void UnregisterFunctions(LPXLOPER12 xdll, LPCWSTR** funcs, int count)
+{
+	/*
+	for (int idx = 0; idx < count; idx++)
+	{
+		Excel12f(xlfSetName, 0, 2, TempStr12(funcs[idx][2]));
+	}
+	*/
+}
 
 ClrRuntimeHost* pClrHost = nullptr;
 
@@ -133,47 +175,26 @@ void StopAddinClrHost()
 }
 
 static int AutoOpenCount = 0;
-
 BOOL __stdcall xlAutoOpen(void)
 {
 	if (++AutoOpenCount > 1)
-	{
-		//MessageBox(0, L"Test", L"Test", MB_OK);
 		return TRUE;
-	}
 
-	static XLOPER12 xDLL;
-	Excel12f(xlGetName, &xDLL, 0);
+	static XLOPER12 xDll;
+	Excel12f(xlGetName, &xDll, 0);
 
-	int count = sizeof(rgFuncs) / (sizeof(rgFuncs[0][0]) * NumberOfParameters);
-	for (int idx = 0; idx < count; idx++)
-	{
-		int macroType = wcscmp(rgFuncs[idx][4], L"0") == 0 ? 0 : 1;
-		Excel12f
-		(
-			xlfRegister, 0, 12,
-			(LPXLOPER12)&xDLL,
-			(LPXLOPER12)TempStr12(rgFuncs[idx][0]),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][1]),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][2]),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][3]),
-			(LPXLOPER12)TempInt12(macroType),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][5]),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][6]),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][7]),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][8]),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][9]),
-			(LPXLOPER12)TempStr12(rgFuncs[idx][10])
-		);
-	}
+	RegisterFunctions(&xDll, MvcFuncs, sizeof(MvcFuncs) / (sizeof(MvcFuncs[0][0]) * NumberOfParameters));
+	RegisterFunctions(&xDll, UdfFuncs, sizeof(UdfFuncs) / (sizeof(UdfFuncs[0][0]) * NumberOfParameters));
 
-	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDLL);
+	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
 
 	return StartAddinClrHost();
+	//return TRUE;
 }
 
 BOOL __stdcall xlAutoClose(void)
 {
+	//UnregisterFunctions();
 	return TRUE;
 }
 
@@ -211,4 +232,28 @@ BOOL __stdcall ExcelMvcRun(void)
 {
 	pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Run");
 	return pClrHost->TestAndDisplayError();
+}
+
+LPXLOPER12 __stdcall ExcelMvcUdf(
+	LPXLOPER12 arg1, LPXLOPER12 arg2, LPXLOPER12 arg3, LPXLOPER12 arg4, LPXLOPER12 arg5, LPXLOPER12 arg6,
+	LPXLOPER12 arg7, LPXLOPER12 arg8, LPXLOPER12 arg9, LPXLOPER12 arg10, LPXLOPER12 arg11, LPXLOPER12 arg12,
+	LPXLOPER12 arg13, LPXLOPER12 arg14, LPXLOPER12 arg15, LPXLOPER12 arg16, LPXLOPER12 arg17, LPXLOPER12 arg18,
+	LPXLOPER12 arg19, LPXLOPER12 arg20, LPXLOPER12 arg21, LPXLOPER12 arg22, LPXLOPER12 arg23, LPXLOPER12 arg24,
+	LPXLOPER12 arg25, LPXLOPER12 arg26, LPXLOPER12 arg27, LPXLOPER12 arg28, LPXLOPER12 arg29, LPXLOPER12 arg30,
+	LPXLOPER12 arg31, LPXLOPER12 arg32)
+{
+	LPXLOPER12 result = (LPXLOPER12)malloc(sizeof(XLOPER12));
+	result->xltype = xltypeInt | xlbitDLLFree;
+	result->val.w = arg1->val.num + arg2->val.num;
+	if (arg3!= NULL && arg3->xltype == xltypeNum)
+		result->val.w = arg1->val.num + arg2->val.num + arg3->val.num;
+	return result;
+}
+
+void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
+{
+	if ((pxFree->xltype & xlbitDLLFree) != xlbitDLLFree)
+		return;
+	pxFree->xltype = pxFree->xltype & (~xlbitDLLFree);
+	FreeXLOper12T(pxFree);
 }
