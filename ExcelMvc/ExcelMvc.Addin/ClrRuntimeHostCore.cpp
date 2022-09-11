@@ -71,7 +71,8 @@ string_t AssemblyName;
 string_t BasePath;
 
 BOOL
-ClrRuntimeHostCore::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
+ClrRuntimeHostCore::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName,
+	PCWSTR pszClassName, int argc, PCWSTR methods[])
 {
 	ClearError();
 	AssemblyName = pszAssemblyName;
@@ -91,43 +92,28 @@ ClrRuntimeHostCore::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 		return FALSE;
 	}
 
+	for (auto idx = 0; idx < argc; idx++)
+	{
+		const string_t dotnetlib_path = BasePath + +L"\\" + AssemblyName + L".dll";
+		const string_t dotnet_type = string_t(pszClassName) + L"," + AssemblyName;
+		component_entry_point_fn function = nullptr;
+		int rc = load_fptr(
+			dotnetlib_path.c_str(),
+			dotnet_type.c_str(),
+			methods[idx],
+			nullptr /*delegate_type_name*/,
+			nullptr,
+			(void**)&function);
+		Functions[methods[idx]] = function;
+	}
 	return TRUE;
 }
 
 void
-ClrRuntimeHostCore::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName, PCWSTR pArg1, PCWSTR pArg2, PCWSTR pArg3)
+ClrRuntimeHostCore::Call(PCWSTR method, int argc, intptr_t pArgs[])
 {
 	ClearError();
-	const string_t dotnetlib_path = BasePath + +L"\\" + AssemblyName + L".dll";
-	const string_t dotnet_type = string_t(pszClassName) + L"," + AssemblyName;
-	component_entry_point_fn method = nullptr;
-	int rc = load_fptr(
-		dotnetlib_path.c_str(),
-		dotnet_type.c_str(),
-		pszMethodName,
-		nullptr /*delegate_type_name*/,
-		nullptr,
-		(void**)&method);
-	if (method == nullptr)
-	{
-		FormatError(L"%s not found (%s)", pszMethodName, dotnet_type.c_str());
-		return;
-	}
-
-	struct lib_args 
-	{
-		PCWSTR arg1;
-		PCWSTR arg2;
-		PCWSTR arg3;
-	};
-
-	lib_args args
-	{
-		pArg1,
-		pArg2,
-		pArg3,
-	};
-	method(&args, sizeof(args));
+	((component_entry_point_fn)Functions[method])(pArgs, argc);
 }
 
 void

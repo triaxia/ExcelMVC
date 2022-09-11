@@ -35,8 +35,12 @@ static _AppDomainPtr pAppDomain = NULL;
 
 static _AssemblyPtr pAssembly = NULL;
 
+static _TypePtr pClass = NULL;
+
+
 BOOL 
-ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
+ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName,
+	PCWSTR pszClassName, int argc, PCWSTR _[])
 {
 	ClearError();
 
@@ -171,6 +175,16 @@ ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName)
 		goto Cleanup;
 	}
 
+	{
+		bstr_t bstrClassName(pszClassName);
+		hr = pAssembly->GetType_2(bstrClassName, &pClass);
+		if (FAILED(hr))
+		{
+			FormatError(L"Failed to get the type \"%s\" w/hr 0x%08lx\n", pszClassName, hr);
+			goto Cleanup;
+		}
+	}
+
 	return TRUE;
 Cleanup:
 	Stop();
@@ -178,34 +192,23 @@ Cleanup:
 }
 
 void
-ClrRuntimeHostV4::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName
-	, PCWSTR pArg1, PCWSTR pArg2, PCWSTR pArg3)
+ClrRuntimeHostV4::Call(PCWSTR method, int argc, intptr_t pArgs[])
 {
 	ClearError();
 
-	bstr_t bstrClassName(pszClassName);
-	bstr_t bstrMethodName(pszMethodName);
+	bstr_t bstrMethodName(method);
 	SAFEARRAY *psaMethodArgs = NULL;
 	variant_t vtEmpty;
 	variant_t vtReturn;
-	int args;
 
-	_TypePtr spType = NULL;
-	HRESULT hr = pAssembly->GetType_2(bstrClassName, &spType);
-	if (FAILED(hr))
-	{
-        FormatError(L"Failed to get the type \"%s\" w/hr 0x%08lx\n", pszClassName, hr);
-		goto Cleanup;
-	}
-
-    args = (pArg1 == NULL ? 0 : 1) + (pArg2 == NULL ? 0 : 1) + (pArg3 == NULL ? 0 : 1);
-     if (args == 0)
+    if (argc == 0)
     {
         psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, 0);
     }
     else
     {
-        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, args);
+        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, argc);
+		/*
         long idx [] = { 0 };
 		PutElement(psaMethodArgs, idx, pArg1);
         if (args == 2)
@@ -218,9 +221,10 @@ ClrRuntimeHostV4::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName
             idx[0] = 2;
 			PutElement(psaMethodArgs, idx, pArg3);
 		}
+		*/
     }
 
-	hr = spType->InvokeMember_3(
+	HRESULT hr = pClass->InvokeMember_3(
 		bstrMethodName,
 		static_cast<BindingFlags>(BindingFlags_InvokeMethod | BindingFlags_Static | BindingFlags_Public),
 		NULL,
@@ -229,20 +233,15 @@ ClrRuntimeHostV4::CallStaticMethod(PCWSTR pszClassName, PCWSTR pszMethodName
 		&vtReturn);
 	if (FAILED(hr))
 	{
-        FormatError(L"Failed to invoke %s w/hr 0x%08lx\n", pszMethodName, hr);
+        FormatError(L"Failed to invoke %s w/hr 0x%08lx\n", method, hr);
 		goto Cleanup;
 	}
-
 	return;
 
 Cleanup:
 	if (psaMethodArgs)
 	{
 		SafeArrayDestroy(psaMethodArgs);
-	}
-	if (spType)
-	{
-		spType->Release();
 	}
 }
 
@@ -304,6 +303,12 @@ ClrRuntimeHostV4::Stop()
 		pAssembly->Release();
 		pAssembly = NULL;
 	}
+
+	if (pClass)
+	{
+		pClass->Release();
+	}
+
 }
 
 void ClrRuntimeHostV4::PutElement(SAFEARRAY* pa, long idx[], PCWSTR pArg)

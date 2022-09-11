@@ -41,6 +41,7 @@ namespace ExcelMvc.Runtime
     using Diagnostics;
     using Extensions;
     using Views;
+    using Functions;
 
     /// <summary>
     /// Defines interfacing methods for ExcelMvc
@@ -82,7 +83,7 @@ namespace ExcelMvc.Runtime
         /// Fires clicked event for the caller
         /// </summary>
         /// <returns>error string, null if success</returns>
-        public static string FireClicked()
+        public static string Click()
         {
             var status = ActionExtensions.Try(() => App.Instance.FireClicked());
             return TestStauts(status);
@@ -137,13 +138,6 @@ namespace ExcelMvc.Runtime
         }
 
 #if NET5_0_OR_GREATER
-        [StructLayout(LayoutKind.Sequential)]
-        public struct LibArgs
-        {
-            public IntPtr Arg1;
-            public IntPtr Arg2;
-            public IntPtr Arg3;
-        }
 
         public static int Attach(IntPtr arg, int args)
         {
@@ -157,9 +151,9 @@ namespace ExcelMvc.Runtime
             return 1;
         }
 
-        public static int FireClicked(IntPtr arg, int args)
+        public static int Click(IntPtr arg, int args)
         {
-            FireClicked();
+            Click();
             return 1;
         }
 
@@ -178,17 +172,6 @@ namespace ExcelMvc.Runtime
         {
             Run();
             return 1;
-        }
-
-        private static void PrintLibArgs(LibArgs libArgs)
-        {
-            string ToString(IntPtr ptr) =>
-                ptr == IntPtr.Zero ? null :
-                RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Marshal.PtrToStringUni(ptr)
-                : Marshal.PtrToStringUTF8(ptr);
-            Console.WriteLine($"Arg1:{ToString(libArgs.Arg1)}");
-            Console.WriteLine($"Arg2:{ToString(libArgs.Arg2)}");
-            Console.WriteLine($"Arg3:{ToString(libArgs.Arg3)}");
         }
 #endif
     }

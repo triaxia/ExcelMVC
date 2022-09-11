@@ -108,6 +108,16 @@ static LPCWSTR UdfFuncs[][NumberOfParameters] =
 	{ L"ExcelMvcUdf", L"QQQQ", L"ExcelMvcAdd3", L"", L"1", L"ExcelMvc", L"", L"", L"Add three numbers", L"", L"" }
 };
 
+static LPCWSTR MethodNames[] =
+{
+	L"Attach",
+	L"Detach",
+	L"Show",
+	L"Hide",
+	L"Run",
+	L"Click"
+};
+
 void RegisterFunctions(LPXLOPER12 xdll, LPCWSTR funcs[][NumberOfParameters], int count)
 {
 	for (int idx = 0; idx < count; idx++)
@@ -148,8 +158,10 @@ BOOL StartAddinClrHost()
 	static LPCTSTR clrVersion = L"v4.0.30319";
 	delete pClrHost;
 	pClrHost = ClrRuntimeHostFactory::Create();
-	pClrHost->Start(clrVersion, L"ExcelMvc");
+	pClrHost->Start(clrVersion, L"ExcelMvc", L"ExcelMvc.Runtime.Interface"
+		, sizeof(MethodNames)/sizeof(LPCWSTR), MethodNames);
 	BOOL result = pClrHost->TestAndDisplayError();
+	
 	if (result)
 	{
 		// insert a book to get Excel registered with the ROT
@@ -158,7 +170,7 @@ BOOL StartAddinClrHost()
 		Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12)TempInt12(6));
 
 		// attach to ExcelMVC
-		pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Attach");
+		pClrHost->Call(L"Attach", 0, 0);
 		result = pClrHost->TestAndDisplayError();
 
 		// close the book
@@ -167,6 +179,7 @@ BOOL StartAddinClrHost()
 
 	}
 	return result;
+
 }
 
 void StopAddinClrHost()
@@ -189,7 +202,6 @@ BOOL __stdcall xlAutoOpen(void)
 	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
 
 	return StartAddinClrHost();
-	//return TRUE;
 }
 
 BOOL __stdcall xlAutoClose(void)
@@ -200,37 +212,37 @@ BOOL __stdcall xlAutoClose(void)
 
 BOOL __stdcall ExcelMvcRunCommandAction(void)
 {
-	pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"FireClicked");
+	pClrHost->Call(L"FireClicked", 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcAttach(void)
 {
-	pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Attach");
+	pClrHost->Call(L"Attach", 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcDetach(void)
 {
-	pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Detach");
+	pClrHost->Call(L"Detach", 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcShow(void)
 {
-	pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Show");
+	pClrHost->Call(L"Show", 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcHide(void)
 {
-	pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Hide");
+	pClrHost->Call(L"Hide", 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcRun(void)
 {
-	pClrHost->CallStaticMethod(L"ExcelMvc.Runtime.Interface", L"Run");
+	pClrHost->Call(L"Run", 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
