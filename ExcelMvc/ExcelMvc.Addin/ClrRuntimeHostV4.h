@@ -9,7 +9,7 @@ public:
     virtual BOOL Start(PCWSTR pszAssemblyName, PCWSTR pszClassName
         , int argc, PCWSTR methods[]);
     virtual void Stop();
-    virtual void Call(PCWSTR method, int argc, intptr_t pArgs[]);
+    virtual void Call(int idx, int argc, void* args[]);
 private:
     static void PutElement(SAFEARRAY* pa, long idx[], PCWSTR pArg);
 };

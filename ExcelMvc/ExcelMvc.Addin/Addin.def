@@ -7,7 +7,7 @@ EXPORTS
 xlAutoOpen
 xlAutoClose
 xlAutoFree12
-ExcelMvcRunCommandAction
+ExcelMvcClick
 ExcelMvcAttach
 ExcelMvcDetach
 ExcelMvcShow

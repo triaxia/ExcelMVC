@@ -98,14 +98,8 @@ static LPCWSTR MvcFuncs[][NumberOfParameters] =
 	{ L"ExcelMvcAttach", L"I", L"ExcelMvcAttach", L"", L"1", L"ExcelMvc", L"", L"", L"Attach Excel to ExcelMvc", L"", L"" },
 	{ L"ExcelMvcDetach", L"I", L"ExcelMvcDetach", L"", L"1", L"ExcelMvc", L"", L"", L"Detach Excel from ExcelMvc", L"", L"" },
 	{ L"ExcelMvcShow", L"I", L"ExcelMvcShow", L"", L"1", L"ExcelMvc", L"", L"", L"Shows the ExcelMvc window", L"", L"" },
-	{ L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"1", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" }
-};
-
-// these will be generated dynamically...
-static LPCWSTR UdfFuncs[][NumberOfParameters] =
-{
-	{ L"ExcelMvcUdf", L"QQQ", L"ExcelMvcAdd2", L"", L"1", L"ExcelMvc", L"", L"", L"Add two numbers", L"", L"" },
-	{ L"ExcelMvcUdf", L"QQQQ", L"ExcelMvcAdd3", L"", L"1", L"ExcelMvc", L"", L"", L"Add three numbers", L"", L"" }
+	{ L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"1", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" },
+	{ L"ExcelMvcUdf", L"QQQQ", L"ExcelMvcAdd", L"", L"1", L"ExcelMvc", L"", L"", L"Add numbers", L"", L"" }
 };
 
 static LPCWSTR MethodNames[] =
@@ -115,7 +109,8 @@ static LPCWSTR MethodNames[] =
 	L"Show",
 	L"Hide",
 	L"Run",
-	L"Click"
+	L"Click",
+	L"Udf"
 };
 
 void RegisterFunctions(LPXLOPER12 xdll, LPCWSTR funcs[][NumberOfParameters], int count)
@@ -158,9 +153,9 @@ BOOL StartAddinClrHost()
 	delete pClrHost;
 	pClrHost = ClrRuntimeHostFactory::Create();
 	pClrHost->Start(L"ExcelMvc", L"ExcelMvc.Runtime.Interface"
-		, sizeof(MethodNames)/sizeof(LPCWSTR), MethodNames);
+		, sizeof(MethodNames) / sizeof(LPCWSTR), MethodNames);
 	BOOL result = pClrHost->TestAndDisplayError();
-	
+
 	if (result)
 	{
 		// insert a book to get Excel registered with the ROT
@@ -169,7 +164,7 @@ BOOL StartAddinClrHost()
 		Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12)TempInt12(6));
 
 		// attach to ExcelMVC
-		pClrHost->Call(L"Attach", 0, 0);
+		pClrHost->Call(0, 0, 0);
 		result = pClrHost->TestAndDisplayError();
 
 		// close the book
@@ -196,7 +191,6 @@ BOOL __stdcall xlAutoOpen(void)
 	Excel12f(xlGetName, &xDll, 0);
 
 	RegisterFunctions(&xDll, MvcFuncs, sizeof(MvcFuncs) / (sizeof(MvcFuncs[0][0]) * NumberOfParameters));
-	RegisterFunctions(&xDll, UdfFuncs, sizeof(UdfFuncs) / (sizeof(UdfFuncs[0][0]) * NumberOfParameters));
 
 	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
 
@@ -209,39 +203,39 @@ BOOL __stdcall xlAutoClose(void)
 	return TRUE;
 }
 
-BOOL __stdcall ExcelMvcRunCommandAction(void)
-{
-	pClrHost->Call(L"FireClicked", 0, nullptr);
-	return pClrHost->TestAndDisplayError();
-}
-
 BOOL __stdcall ExcelMvcAttach(void)
 {
-	pClrHost->Call(L"Attach", 0, nullptr);
+	pClrHost->Call(0, 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcDetach(void)
 {
-	pClrHost->Call(L"Detach", 0, nullptr);
+	pClrHost->Call(1, 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcShow(void)
 {
-	pClrHost->Call(L"Show", 0, nullptr);
+	pClrHost->Call(2, 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcHide(void)
 {
-	pClrHost->Call(L"Hide", 0, nullptr);
+	pClrHost->Call(3, 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
 BOOL __stdcall ExcelMvcRun(void)
 {
-	pClrHost->Call(L"Run", 0, nullptr);
+	pClrHost->Call(4, 0, nullptr);
+	return pClrHost->TestAndDisplayError();
+}
+
+BOOL __stdcall ExcelMvcClick(void)
+{
+	pClrHost->Call(5, 0, nullptr);
 	return pClrHost->TestAndDisplayError();
 }
 
@@ -255,9 +249,16 @@ LPXLOPER12 __stdcall ExcelMvcUdf(
 {
 	LPXLOPER12 result = (LPXLOPER12)malloc(sizeof(XLOPER12));
 	result->xltype = xltypeInt | xlbitDLLFree;
-	result->val.num = arg1->val.num + arg2->val.num;
-	if (arg3!= NULL && arg3->xltype == xltypeNum)
-		result->val.num = arg1->val.num + arg2->val.num + arg3->val.num;
+	void* args[] =
+	{
+		result,
+		arg1,  arg2,  arg3,  arg4,  arg5,  arg6, arg7,  arg8,  arg9,  arg10,
+		arg11,  arg12, arg13,  arg14,  arg15,  arg16,  arg17,  arg18, arg19,  arg20,
+		arg21,  arg22,  arg23,  arg24,  arg25,  arg26,  arg27,  arg28,  arg29,  arg30,
+		arg31,  arg32
+	};
+
+	pClrHost->Call(6, 33, args);
 	return result;
 }
 

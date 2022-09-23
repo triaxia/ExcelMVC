@@ -192,57 +192,58 @@ Cleanup:
 }
 
 void
-ClrRuntimeHostV4::Call(PCWSTR method, int argc, intptr_t pArgs[])
+ClrRuntimeHostV4::Call(int idx, int argc, void* args[])
 {
-	ClearError();
-
-	bstr_t bstrMethodName(method);
-	SAFEARRAY *psaMethodArgs = NULL;
-	variant_t vtEmpty;
-	variant_t vtReturn;
-
-    if (argc == 0)
-    {
-        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, 0);
-    }
-    else
-    {
-        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, argc);
-		/*
-        long idx [] = { 0 };
-		PutElement(psaMethodArgs, idx, pArg1);
-        if (args == 2)
-        {
-            idx[0] = 1;
-			PutElement(psaMethodArgs, idx, pArg2);
-        }
-        if (args == 3)
-        {
-            idx[0] = 2;
-			PutElement(psaMethodArgs, idx, pArg3);
-		}
-		*/
-    }
-
-	HRESULT hr = pClass->InvokeMember_3(
-		bstrMethodName,
-		static_cast<BindingFlags>(BindingFlags_InvokeMethod | BindingFlags_Static | BindingFlags_Public),
-		NULL,
-		vtEmpty, 
-		psaMethodArgs,
-		&vtReturn);
-	if (FAILED(hr))
-	{
-        FormatError(L"Failed to invoke %s w/hr 0x%08lx\n", method, hr);
-		goto Cleanup;
-	}
-	return;
-
-Cleanup:
-	if (psaMethodArgs)
-	{
-		SafeArrayDestroy(psaMethodArgs);
-	}
+//	/*
+//   ClearError();
+//
+//	bstr_t bstrMethodName(method);
+//	SAFEARRAY *psaMethodArgs = NULL;
+//	variant_t vtEmpty;
+//	variant_t vtReturn;
+//
+//    if (argc == 0)
+//    {
+//        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, 0);
+//    }
+//    else
+//    {
+//        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, argc);
+//		/*
+//        long idx [] = { 0 };
+//		PutElement(psaMethodArgs, idx, pArg1);
+//        if (args == 2)
+//        {
+//            idx[0] = 1;
+//			PutElement(psaMethodArgs, idx, pArg2);
+//        }
+//        if (args == 3)
+//        {
+//            idx[0] = 2;
+//			PutElement(psaMethodArgs, idx, pArg3);
+//		}
+//		*/
+//    }
+//
+//	HRESULT hr = pClass->InvokeMember_3(
+//		bstrMethodName,
+//		static_cast<BindingFlags>(BindingFlags_InvokeMethod | BindingFlags_Static | BindingFlags_Public),
+//		NULL,
+//		vtEmpty, 
+//		psaMethodArgs,
+//		&vtReturn);
+//	if (FAILED(hr))
+//	{
+//        FormatError(L"Failed to invoke %s w/hr 0x%08lx\n", method, hr);
+//		goto Cleanup;
+//	}
+//	return;
+//
+//Cleanup:
+//	if (psaMethodArgs)
+//	{
+//		SafeArrayDestroy(psaMethodArgs);
+//	}
 }
 
 void

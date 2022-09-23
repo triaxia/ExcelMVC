@@ -104,16 +104,16 @@ ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName,
 			nullptr /*delegate_type_name*/,
 			nullptr,
 			(void**)&function);
-		Functions[methods[idx]] = function;
+		Functions[idx] = function;
 	}
 	return TRUE;
 }
 
 void
-ClrRuntimeHostCore::Call(PCWSTR method, int argc, intptr_t pArgs[])
+ClrRuntimeHostCore::Call(int idx, int argc, void* args[])
 {
 	ClearError();
-	(*((component_entry_point_fn)Functions[method]))(pArgs, argc);
+	((component_entry_point_fn)Functions[idx])(args, argc * sizeof(void*));
 }
 
 void

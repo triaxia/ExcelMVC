@@ -2,6 +2,7 @@
 #define _ClrRuntimeHostCore_h
 
 #include "ClrRuntimeHost.h"
+#include <XLCALL.H>
 
 class ClrRuntimeHostCore : public ClrRuntimeHost
 {
@@ -9,10 +10,10 @@ public:
 	virtual BOOL Start(PCWSTR pszAssemblyName, PCWSTR pszClassName
 		, int argc, PCWSTR methods[]);
 	virtual void Stop();
-	virtual void Call(PCWSTR method, int argc, intptr_t pArgs[]);
+	virtual void Call(int idx, int argc, void* args[]);
 
 private:
-	std::map<PCWSTR, void *> Functions;
+	std::map<int, void *> Functions;
 };
 
 #endif

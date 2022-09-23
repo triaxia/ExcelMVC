@@ -10,7 +10,7 @@ public:
     virtual BOOL Start(PCWSTR pszAssemblyName, PCWSTR pszClassName
         , int argc, PCWSTR methods []) = 0;
     virtual void Stop() = 0;
-    virtual void Call(PCWSTR method, int argc, intptr_t pArgs[]) = 0;
+    virtual void Call(int idx, int argc, void *pArgs[]) = 0;
 
     static BOOL TestAndDisplayError();
     static BOOL FindAppConfig(PCWSTR basePath, TCHAR* buffer, DWORD size);
