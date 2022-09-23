@@ -37,10 +37,10 @@ static _AssemblyPtr pAssembly = NULL;
 
 static _TypePtr pClass = NULL;
 
+static LPCTSTR pVersion = L"v4.0.30319";
 
 BOOL 
-ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName,
-	PCWSTR pszClassName, int argc, PCWSTR _[])
+ClrRuntimeHostV4::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName, int argc, PCWSTR _[])
 {
 	ClearError();
 
@@ -58,10 +58,10 @@ ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName,
 
 	// Get the ICLRRuntimeInfo corresponding to a particular CLR version. It 
 	// supersedes CorBindToRuntimeEx with STARTUP_LOADER_SAFEMODE.
-	hr = pMetaHost->GetRuntime(pszVersion, IID_PPV_ARGS(&pRuntimeInfo));
+	hr = pMetaHost->GetRuntime(pVersion, IID_PPV_ARGS(&pRuntimeInfo));
 	if (FAILED(hr))
 	{
-        FormatError(L"ICLRMetaHost::GetRuntime (%s) failed w/hr 0x%08lx\n", pszVersion, hr);
+        FormatError(L"ICLRMetaHost::GetRuntime (%s) failed w/hr 0x%08lx\n", pVersion, hr);
 		goto Cleanup;
 	}
 
@@ -79,7 +79,7 @@ ClrRuntimeHostV4::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName,
 
 	if (!fLoadable)
 	{
-        FormatError(L".NET runtime %s cannot be loaded\n", pszVersion);
+        FormatError(L".NET runtime %s cannot be loaded\n", pVersion);
 		goto Cleanup;
 	}
 

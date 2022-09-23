@@ -7,8 +7,8 @@ using string_t = std::basic_string<wchar_t>;
 class ClrRuntimeHost
 {
 public:
-    virtual BOOL Start(PCWSTR pszVersion, PCWSTR pszAssemblyName
-        , PCWSTR pszClassName, int argc, PCWSTR methods []) = 0;
+    virtual BOOL Start(PCWSTR pszAssemblyName, PCWSTR pszClassName
+        , int argc, PCWSTR methods []) = 0;
     virtual void Stop() = 0;
     virtual void Call(PCWSTR method, int argc, intptr_t pArgs[]) = 0;
 

@@ -71,7 +71,7 @@ string_t AssemblyName;
 string_t BasePath;
 
 BOOL
-ClrRuntimeHostCore::Start(PCWSTR pszVersion, PCWSTR pszAssemblyName,
+ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName,
 	PCWSTR pszClassName, int argc, PCWSTR methods[])
 {
 	ClearError();
@@ -113,7 +113,7 @@ void
 ClrRuntimeHostCore::Call(PCWSTR method, int argc, intptr_t pArgs[])
 {
 	ClearError();
-	((component_entry_point_fn)Functions[method])(pArgs, argc);
+	(*((component_entry_point_fn)Functions[method]))(pArgs, argc);
 }
 
 void

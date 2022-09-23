@@ -155,10 +155,9 @@ ClrRuntimeHost* pClrHost = nullptr;
 
 BOOL StartAddinClrHost()
 {
-	static LPCTSTR clrVersion = L"v4.0.30319";
 	delete pClrHost;
 	pClrHost = ClrRuntimeHostFactory::Create();
-	pClrHost->Start(clrVersion, L"ExcelMvc", L"ExcelMvc.Runtime.Interface"
+	pClrHost->Start(L"ExcelMvc", L"ExcelMvc.Runtime.Interface"
 		, sizeof(MethodNames)/sizeof(LPCWSTR), MethodNames);
 	BOOL result = pClrHost->TestAndDisplayError();
 	
@@ -256,9 +255,9 @@ LPXLOPER12 __stdcall ExcelMvcUdf(
 {
 	LPXLOPER12 result = (LPXLOPER12)malloc(sizeof(XLOPER12));
 	result->xltype = xltypeInt | xlbitDLLFree;
-	result->val.w = arg1->val.num + arg2->val.num;
+	result->val.num = arg1->val.num + arg2->val.num;
 	if (arg3!= NULL && arg3->xltype == xltypeNum)
-		result->val.w = arg1->val.num + arg2->val.num + arg3->val.num;
+		result->val.num = arg1->val.num + arg2->val.num + arg3->val.num;
 	return result;
 }
 

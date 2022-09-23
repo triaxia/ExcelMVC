@@ -6,8 +6,8 @@
 class ClrRuntimeHostCore : public ClrRuntimeHost
 {
 public:
-	virtual BOOL Start(PCWSTR pszVersion, PCWSTR pszAssemblyName,
-		PCWSTR pszClassName, int argc, PCWSTR methods[]);
+	virtual BOOL Start(PCWSTR pszAssemblyName, PCWSTR pszClassName
+		, int argc, PCWSTR methods[]);
 	virtual void Stop();
 	virtual void Call(PCWSTR method, int argc, intptr_t pArgs[]);
 

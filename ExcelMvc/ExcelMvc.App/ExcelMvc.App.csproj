@@ -7,9 +7,7 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.0.1">
-	
-		</PackageReference>
+		<PackageReference Include="ExcelMvc.Net" Version="2.0.1"/>
 	</ItemGroup>
 
 </Project>
