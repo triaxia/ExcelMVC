@@ -4,13 +4,3 @@ LIBRARY
 
 EXPORTS
 ; Explicit exports can go here
-xlAutoOpen
-xlAutoClose
-xlAutoFree12
-ExcelMvcClick
-ExcelMvcAttach
-ExcelMvcDetach
-ExcelMvcShow
-ExcelMvcHide
-ExcelMvcRun
-ExcelMvcUdf

@@ -7,7 +7,7 @@ namespace ExcelMvc.Functions
     /// Decorates arguments of exported functions.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+//	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public class ExcelArgumentAttribute : Attribute
 	{
 		public string Name;

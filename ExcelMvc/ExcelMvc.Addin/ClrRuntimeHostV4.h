@@ -6,10 +6,16 @@
 class ClrRuntimeHostV4 : public ClrRuntimeHost
 {
 public:
-    virtual BOOL Start(PCWSTR pszAssemblyName, PCWSTR pszClassName
-        , int argc, PCWSTR methods[]);
+    virtual void Start(PCWSTR pszAssemblyName, PCWSTR pszClassName);
     virtual void Stop();
-    virtual void Call(int idx, int argc, void* args[]);
+    virtual void Attach();
+    virtual void Detach();
+    virtual void Show();
+    virtual void Hide();
+    virtual void Click();
+    virtual void Run();
+    virtual void Udf(int argc, void* args[]);
+
 private:
     static void PutElement(SAFEARRAY* pa, long idx[], PCWSTR pArg);
 };

@@ -8,7 +8,7 @@ namespace ExcelMvc.Functions
     /// https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+	//[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public class FunctionAttribute : Attribute
 	{
 		/// <summary>

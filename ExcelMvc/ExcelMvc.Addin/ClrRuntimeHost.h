@@ -7,10 +7,15 @@ using string_t = std::basic_string<wchar_t>;
 class ClrRuntimeHost
 {
 public:
-    virtual BOOL Start(PCWSTR pszAssemblyName, PCWSTR pszClassName
-        , int argc, PCWSTR methods []) = 0;
+    virtual void Start(PCWSTR pszAssemblyName, PCWSTR pszClassName) = 0;
     virtual void Stop() = 0;
-    virtual void Call(int idx, int argc, void *pArgs[]) = 0;
+    virtual void Attach() = 0;
+    virtual void Detach() = 0;
+    virtual void Show() = 0;
+    virtual void Hide() = 0;
+    virtual void Click() = 0;
+    virtual void Run() = 0;
+    virtual void Udf(int argc, void* args[]) = 0;
 
     static BOOL TestAndDisplayError();
     static BOOL FindAppConfig(PCWSTR basePath, TCHAR* buffer, DWORD size);

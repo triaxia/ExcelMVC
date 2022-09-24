@@ -260,12 +260,14 @@
     <ClCompile Include="Framewrk.cpp" />
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="MemoryPool.cpp" />
+    <ClCompile Include="MvcFunctions.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UserFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClrRuntimeHost.h" />

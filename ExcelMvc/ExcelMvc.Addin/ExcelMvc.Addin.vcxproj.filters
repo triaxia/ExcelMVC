@@ -33,6 +33,8 @@
     <ClCompile Include="ClrRuntimeHostV4.cpp">
       <Filter>Runtime</Filter>
     </ClCompile>
+    <ClCompile Include="UserFunctions.cpp" />
+    <ClCompile Include="MvcFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClrRuntimeHost.h">

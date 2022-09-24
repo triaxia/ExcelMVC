@@ -70,9 +70,19 @@ load_assembly_and_get_function_pointer_fn get_dotnet_load_assembly(const char_t*
 string_t AssemblyName;
 string_t BasePath;
 
-BOOL
-ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName,
-	PCWSTR pszClassName, int argc, PCWSTR methods[])
+static LPCWSTR MethodNames[] =
+{
+	L"Attach",
+	L"Detach",
+	L"Show",
+	L"Hide",
+	L"Click",
+	L"Run",
+	L"Udf"
+};
+
+void
+ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName)
 {
 	ClearError();
 	AssemblyName = pszAssemblyName;
@@ -81,7 +91,7 @@ ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName,
 	if (!load_hostfxr())
 	{
 		FormatError(L"%s failed", L"load_hostfxr");
-		return FALSE;
+		return;
 	}
 
 	const string_t config_path = ClrRuntimeHost::GetRuntimeConfigFile();
@@ -89,9 +99,10 @@ ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName,
 	if (load_fptr == nullptr)
 	{
 		FormatError(L"%s failed (%s)", L"get_dotnet_load_assembly", config_path.c_str());
-		return FALSE;
+		return;
 	}
 
+	auto argc = sizeof(MethodNames) / sizeof(LPCWSTR);
 	for (auto idx = 0; idx < argc; idx++)
 	{
 		const string_t dotnetlib_path = BasePath + +L"\\" + AssemblyName + L".dll";
@@ -100,23 +111,63 @@ ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName,
 		int rc = load_fptr(
 			dotnetlib_path.c_str(),
 			dotnet_type.c_str(),
-			methods[idx],
+			MethodNames[idx],
 			nullptr /*delegate_type_name*/,
 			nullptr,
 			(void**)&function);
 		Functions[idx] = function;
 	}
-	return TRUE;
-}
-
-void
-ClrRuntimeHostCore::Call(int idx, int argc, void* args[])
-{
-	ClearError();
-	((component_entry_point_fn)Functions[idx])(args, argc * sizeof(void*));
 }
 
 void
 ClrRuntimeHostCore::Stop()
 {
+}
+
+void
+ClrRuntimeHostCore::Attach()
+{
+	ClearError();
+	((component_entry_point_fn)Functions[0])(nullptr, 0);
+}
+
+void
+ClrRuntimeHostCore::Detach()
+{
+	ClearError();
+	((component_entry_point_fn)Functions[1])(nullptr, 0);
+}
+
+void
+ClrRuntimeHostCore::Show()
+{
+	ClearError();
+	((component_entry_point_fn)Functions[2])(nullptr, 0);
+}
+
+void
+ClrRuntimeHostCore::Hide()
+{
+	ClearError();
+	((component_entry_point_fn)Functions[3])(nullptr, 0);
+}
+
+void
+ClrRuntimeHostCore::Click()
+{
+	ClearError();
+	((component_entry_point_fn)Functions[4])(nullptr, 0);
+}
+
+void
+ClrRuntimeHostCore::Run()
+{
+	ClearError();
+	((component_entry_point_fn)Functions[5])(nullptr, 0);
+}
+
+void ClrRuntimeHostCore::Udf(int argc, void* args[])
+{
+	ClearError();
+	((component_entry_point_fn)Functions[6])(args, argc * sizeof(void*));
 }
