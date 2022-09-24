@@ -146,7 +146,7 @@ namespace ExcelMvc.Runtime
             XLOPER12_num r;
             r.xltype = 1;
             r.num = x1.num + x2.num + x3.num;
-            if (index == 2)
+            if (index == 1)
                 r.num = -r.num;
             Marshal.StructureToPtr(r, pargs.Result, true);
             return 1;
