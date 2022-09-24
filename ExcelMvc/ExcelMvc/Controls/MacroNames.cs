@@ -40,7 +40,7 @@ namespace ExcelMvc.Controls
     internal static class MacroNames
     {
 
-        private const string CommandMacroName = "ExcelMvcRunCommandAction";
+        private const string CommandMacroName = "ExcelMvcClick";
 
         /// <summary>
         /// Action name for Commands

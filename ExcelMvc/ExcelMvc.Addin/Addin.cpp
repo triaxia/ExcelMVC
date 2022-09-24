@@ -93,7 +93,7 @@ LPXLOPER12 pxArgumentHelp255
 const int NumberOfParameters = 11;
 static LPCWSTR MvcFuncs[][NumberOfParameters] =
 {
-	{ L"ExcelMvcRunCommandAction", L"I", L"ExcelMvcRunCommandAction", L"", L"2", L"ExcelMvc", L"", L"", L"Called by a command", L"", L"" },
+	{ L"ExcelMvcClick", L"I", L"ExcelMvcClick", L"", L"2", L"ExcelMvc", L"", L"", L"Called by a command", L"", L"" },
 	{ L"ExcelMvcRun", L"I", L"ExcelMvcRun", L"", L"2", L"ExcelMvc", L"", L"", L"Runs the next action in the async queue", L"", L"" },
 	{ L"ExcelMvcAttach", L"I", L"ExcelMvcAttach", L"", L"1", L"ExcelMvc", L"", L"", L"Attach Excel to ExcelMvc", L"", L"" },
 	{ L"ExcelMvcDetach", L"I", L"ExcelMvcDetach", L"", L"1", L"ExcelMvc", L"", L"", L"Detach Excel from ExcelMvc", L"", L"" },
@@ -113,13 +113,23 @@ static LPCWSTR MethodNames[] =
 	L"Udf"
 };
 
+static XLOPER12 RegIds[]
+{
+	XLOPER12(),
+	XLOPER12(),
+	XLOPER12(),
+	XLOPER12(),
+	XLOPER12(),
+	XLOPER12(),
+};
+
 void RegisterFunctions(LPXLOPER12 xdll, LPCWSTR funcs[][NumberOfParameters], int count)
 {
 	for (int idx = 0; idx < count; idx++)
 	{
 		Excel12f
 		(
-			xlfRegister, 0, 12,
+			xlfRegister, &RegIds[idx], 12,
 			(LPXLOPER12)xdll,
 			(LPXLOPER12)TempStr12(funcs[idx][0]),
 			(LPXLOPER12)TempStr12(funcs[idx][1]),
@@ -136,14 +146,12 @@ void RegisterFunctions(LPXLOPER12 xdll, LPCWSTR funcs[][NumberOfParameters], int
 	}
 }
 
-void UnregisterFunctions(LPXLOPER12 xdll, LPCWSTR** funcs, int count)
+void UnregisterFunctions(LPCWSTR funcs[][NumberOfParameters], int count)
 {
-	/*
 	for (int idx = 0; idx < count; idx++)
 	{
-		Excel12f(xlfSetName, 0, 2, TempStr12(funcs[idx][2]));
+		Excel12f(xlfUnregister, 0, 1, &RegIds[idx]);
 	}
-	*/
 }
 
 ClrRuntimeHost* pClrHost = nullptr;
@@ -173,7 +181,6 @@ BOOL StartAddinClrHost()
 
 	}
 	return result;
-
 }
 
 void StopAddinClrHost()
@@ -199,7 +206,7 @@ BOOL __stdcall xlAutoOpen(void)
 
 BOOL __stdcall xlAutoClose(void)
 {
-	//UnregisterFunctions();
+	UnregisterFunctions(MvcFuncs, sizeof(MvcFuncs) / (sizeof(MvcFuncs[0][0]) * NumberOfParameters));
 	return TRUE;
 }
 
