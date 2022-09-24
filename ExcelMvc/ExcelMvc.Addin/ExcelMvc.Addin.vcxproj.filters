@@ -35,6 +35,7 @@
     </ClCompile>
     <ClCompile Include="UserFunctions.cpp" />
     <ClCompile Include="MvcFunctions.cpp" />
+    <ClCompile Include="UserFunctions.Export.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClrRuntimeHost.h">

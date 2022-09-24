@@ -10,6 +10,8 @@ namespace ExcelMvc.Functions
     [StructLayout(LayoutKind.Sequential)]
     public struct Args
     {
+        public int Index;
+
         public IntPtr Result;
 
         public IntPtr Arg01;
