@@ -83,14 +83,14 @@ namespace ExcelMvc.Functions
         public bool IsClusterSafe;
         [MarshalAs(UnmanagedType.U1)]
         public byte ArgumentCount;
-        //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        //public char[] Category;
-        //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        //public char[] Name;
-        //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        //public char[] Description;
-        //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        //public char[] HelpTopic;
+        //[MarshalAs(UnmanagedType.LPWStr)]
+        //public string Category;
+        //[MarshalAs(UnmanagedType.LPWStr)]
+        //public string Name;
+        //[MarshalAs(UnmanagedType.LPWStr)]
+        //public string Description;
+        //[MarshalAs(UnmanagedType.LPWStr)]
+        //public string HelpTopic;
         //[MarshalAs(UnmanagedType.LPArray)]
         //public ExcelArgument[] Arguments;
 
@@ -104,10 +104,10 @@ namespace ExcelMvc.Functions
             IsThreadSafe = rhs.IsThreadSafe;
             IsClusterSafe = rhs.IsClusterSafe;
             ArgumentCount = (byte) (arguments?.Length ?? 0);
-            //Category = rhs.Category?.ToCharArray();
-            //Name = rhs.Name.ToCharArray();
-            //Description = rhs.Description?.ToCharArray();
-            //HelpTopic = rhs.HelpTopic?.ToCharArray();
+            //Category = rhs.Category ?? "";
+            //Name = rhs.Name ?? "";
+            //Description = rhs.Description ?? "";
+            //HelpTopic = rhs.HelpTopic ?? "";
             //Arguments = arguments;
         }
     }
