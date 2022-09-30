@@ -23,7 +23,7 @@ namespace ExcelMvc.Functions
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
                 .Select(x => (function: x.method.GetCustomAttribute<ExcelFunctionAttribute>(), x.method))
-                .Select((x, idx) => (new ExcelFunction(idx, (ExcelFunctionAttribute)x.function, GetArguments(x.method)), x.method));
+                .Select((x, idx) => (new ExcelFunction((uint)idx, (ExcelFunctionAttribute)x.function, GetArguments(x.method)), x.method));
         }
 
         private static IEnumerable<string> GetTypes(Assembly asm)

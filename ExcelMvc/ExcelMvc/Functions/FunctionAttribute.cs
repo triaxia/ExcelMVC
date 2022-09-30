@@ -64,43 +64,39 @@ namespace ExcelMvc.Functions
         public bool IsClusterSafe;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct ExcelFunction
     {
-        [MarshalAs(UnmanagedType.I4)]
-        public int Index;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string Category;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string Name;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string Description;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string HelpTopic;
-        [MarshalAs(UnmanagedType.I1)]
+        [MarshalAs(UnmanagedType.U4)]
+        public uint Index;
+        [MarshalAs(UnmanagedType.U1)]
         public byte FunctionType;
-        [MarshalAs(UnmanagedType.I1)]
+        [MarshalAs(UnmanagedType.U1)]
         public bool IsVolatile;
-        [MarshalAs(UnmanagedType.I1)]
+        [MarshalAs(UnmanagedType.U1)]
         public bool IsMacro;
-        [MarshalAs(UnmanagedType.I1)]
+        [MarshalAs(UnmanagedType.U1)]
         public bool IsAnyc;
-        [MarshalAs(UnmanagedType.I1)]
+        [MarshalAs(UnmanagedType.U1)]
         public bool IsThreadSafe;
-        [MarshalAs(UnmanagedType.I1)]
+        [MarshalAs(UnmanagedType.U1)]
         public bool IsClusterSafe;
-        [MarshalAs(UnmanagedType.I1)]
+        [MarshalAs(UnmanagedType.U1)]
         public byte ArgumentCount;
+        //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        //public char[] Category;
+        //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        //public char[] Name;
+        //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        //public char[] Description;
+        //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        //public char[] HelpTopic;
         //[MarshalAs(UnmanagedType.LPArray)]
         //public ExcelArgument[] Arguments;
 
-        public ExcelFunction(int index, ExcelFunctionAttribute rhs, ExcelArgument[] arguments)
+        public ExcelFunction(uint index, ExcelFunctionAttribute rhs, ExcelArgument[] arguments)
         {
             Index = index;
-            Category = rhs.Category;
-            Name = rhs.Name;
-            Description = rhs.Description;
-            HelpTopic = rhs.HelpTopic;
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
             IsMacro = rhs.IsMacro;
@@ -108,6 +104,10 @@ namespace ExcelMvc.Functions
             IsThreadSafe = rhs.IsThreadSafe;
             IsClusterSafe = rhs.IsClusterSafe;
             ArgumentCount = (byte) (arguments?.Length ?? 0);
+            //Category = rhs.Category?.ToCharArray();
+            //Name = rhs.Name.ToCharArray();
+            //Description = rhs.Description?.ToCharArray();
+            //HelpTopic = rhs.HelpTopic?.ToCharArray();
             //Arguments = arguments;
         }
     }

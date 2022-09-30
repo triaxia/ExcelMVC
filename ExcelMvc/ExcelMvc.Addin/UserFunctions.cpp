@@ -108,10 +108,6 @@ struct ExceArgument
 struct ExcelFunction
 {
 	int Index;
-	LPCWSTR Category;
-	LPCWSTR Name;
-	LPCWSTR Description;
-	LPCWSTR HelpTopic;
 	byte FunctionType;
 	bool IsVolatile;
 	bool IsMacro;
@@ -119,6 +115,10 @@ struct ExcelFunction
 	bool IsThreadSafe;
 	bool IsClusterSafe;
 	byte ArgumentCount;
+	LPCWSTR Category;
+	LPCWSTR Name;
+	LPCWSTR Description;
+	LPCWSTR HelpTopic;
 	ExceArgument **pArgument;
 };
 
