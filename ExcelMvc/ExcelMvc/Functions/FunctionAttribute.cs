@@ -97,4 +97,12 @@ namespace ExcelMvc.Functions
 			ArgumentCount = arguments?.Length ?? 0;
 		}
 	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct ExcelFunctions
+	{
+		public int Count;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2000)]
+		public ExcelFunction[] Functions;
+	}
 }
