@@ -16,7 +16,9 @@ namespace ExcelMvc.Functions
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct ExcelArgument
 	{
+		[MarshalAs(UnmanagedType.LPWStr)]
 		public string Name;
+		[MarshalAs(UnmanagedType.LPWStr)]
 		public string Description;
 
 		public ExcelArgument(ExcelArgumentAttribute rhs)

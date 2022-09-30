@@ -54,6 +54,29 @@ LPXLOPER12 pxArgumentHelp2
 LPXLOPER12 pxArgumentHelp255
 */
 
+struct ExceArgument
+{
+	LPCWSTR Name;
+	LPCWSTR Description;
+};
+
+struct ExcelFunction
+{
+	int Index;
+	byte FunctionType;
+	bool IsVolatile;
+	bool IsMacro;
+	bool IsAnyc;
+	bool IsThreadSafe;
+	bool IsClusterSafe;
+	LPCWSTR Category;
+	LPCWSTR Name;
+	LPCWSTR Description;
+	LPCWSTR HelpTopic;
+	byte ArgumentCount;
+	ExceArgument Arguments[];
+};
+
 const int NumberOfParameters = 11;
 static LPCWSTR UserFunctions[][NumberOfParameters] =
 {
@@ -98,30 +121,6 @@ void UnregisterUserFunctions()
 		Excel12f(xlfUnregister, 0, 1, &RegIds[idx]);
 	}
 }
-
-struct ExceArgument
-{
-	LPCWSTR Category;
-	LPCWSTR Name;
-};
-
-struct ExcelFunction
-{
-	int Index;
-	byte FunctionType;
-	bool IsVolatile;
-	bool IsMacro;
-	bool IsAnyc;
-	bool IsThreadSafe;
-	bool IsClusterSafe;
-	byte ArgumentCount;
-	LPCWSTR Category;
-	LPCWSTR Name;
-	LPCWSTR Description;
-	LPCWSTR HelpTopic;
-	ExceArgument **pArgument;
-};
-
 
 extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr)
 {

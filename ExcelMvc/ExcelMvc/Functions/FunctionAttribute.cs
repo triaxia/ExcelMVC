@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
@@ -67,6 +68,7 @@ namespace ExcelMvc.Functions
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct ExcelFunction
     {
+        public const int MaxArguments = 32;
         [MarshalAs(UnmanagedType.U4)]
         public uint Index;
         [MarshalAs(UnmanagedType.U1)]
@@ -81,18 +83,18 @@ namespace ExcelMvc.Functions
         public bool IsThreadSafe;
         [MarshalAs(UnmanagedType.U1)]
         public bool IsClusterSafe;
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string Category;
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string Name;
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string Description;
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string HelpTopic;
         [MarshalAs(UnmanagedType.U1)]
         public byte ArgumentCount;
-        //[MarshalAs(UnmanagedType.LPWStr)]
-        //public string Category;
-        //[MarshalAs(UnmanagedType.LPWStr)]
-        //public string Name;
-        //[MarshalAs(UnmanagedType.LPWStr)]
-        //public string Description;
-        //[MarshalAs(UnmanagedType.LPWStr)]
-        //public string HelpTopic;
-        //[MarshalAs(UnmanagedType.LPArray)]
-        //public ExcelArgument[] Arguments;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
+        public ExcelArgument[] Arguments;
 
         public ExcelFunction(uint index, ExcelFunctionAttribute rhs, ExcelArgument[] arguments)
         {
@@ -103,12 +105,20 @@ namespace ExcelMvc.Functions
             IsAnyc = rhs.IsAnyc;
             IsThreadSafe = rhs.IsThreadSafe;
             IsClusterSafe = rhs.IsClusterSafe;
-            ArgumentCount = (byte) (arguments?.Length ?? 0);
-            //Category = rhs.Category ?? "";
-            //Name = rhs.Name ?? "";
-            //Description = rhs.Description ?? "";
-            //HelpTopic = rhs.HelpTopic ?? "";
-            //Arguments = arguments;
+            ArgumentCount = (byte)(arguments?.Length ?? 0);
+            Category = rhs.Category ?? "";
+            Name = rhs.Name ?? "";
+            Description = rhs.Description ?? "";
+            HelpTopic = rhs.HelpTopic ?? "";
+            Arguments = Pad(arguments);
+        }
+
+        private static ExcelArgument[] Pad(ExcelArgument[] arguments)
+        {
+            var args = (arguments ?? new ExcelArgument[] { });
+            while (args.Length < MaxArguments)
+                args = args.Concat(new[] { new ExcelArgument() }).ToArray();
+            return args;
         }
     }
 }
