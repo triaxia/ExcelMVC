@@ -138,11 +138,11 @@ namespace ExcelMvc.Runtime
         }
         public static int Udf(IntPtr arg, int args)
         {
-            var pargs = Marshal.PtrToStructure<Args>(arg);
+            var pargs = Marshal.PtrToStructure<FunctionArgs>(arg);
             var index = pargs.Index;
-            var x1 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg01);
-            var x2 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg02);
-            var x3 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg03);
+            var x1 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg00);
+            var x2 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg01);
+            var x3 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg02);
             XLOPER12_num r;
             r.xltype = 1;
             r.num = x1.num + x2.num + x3.num;
