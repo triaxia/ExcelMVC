@@ -45,4 +45,4 @@ obj
 *.vsmdi
 ~$*
 .vs/
-*.VC.db
+Browse.VC.db
