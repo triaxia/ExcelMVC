@@ -54,13 +54,11 @@ LPXLOPER12 pxArgumentHelp2
 LPXLOPER12 pxArgumentHelp255
 */
 
-extern "C" { extern LPCWSTR UdfProcedures[]; }
-
 const int NumberOfParameters = 11;
 static LPCWSTR UserFunctions[][NumberOfParameters] =
 {
-	{ UdfProcedures[0], L"QQQQ", L"ExcelMvcAdd", L"", L"1", L"ExcelMvc", L"", L"", L"Add numbers", L"", L""},
-	{ UdfProcedures[1], L"QQQQ", L"ExcelMvcSub", L"", L"1", L"ExcelMvc", L"", L"", L"Sub numbers", L"", L""}
+	{ L"Udf0000", L"QQQQ", L"ExcelMvcAdd", L"", L"1", L"ExcelMvc", L"", L"", L"Add numbers", L"", L""},
+	{ L"Udf0001", L"QQQQ", L"ExcelMvcSub", L"", L"1", L"ExcelMvc", L"", L"", L"Sub numbers", L"", L""}
 };
 
 static XLOPER12 RegIds[]
@@ -99,4 +97,35 @@ void UnregisterUserFunctions()
 	{
 		Excel12f(xlfUnregister, 0, 1, &RegIds[idx]);
 	}
+}
+
+struct ExceArgument
+{
+	LPCWSTR Category;
+	LPCWSTR Name;
+};
+
+struct ExcelFunction
+{
+	int Index;
+	LPCWSTR Category;
+	LPCWSTR Name;
+	LPCWSTR Description;
+	LPCWSTR HelpTopic;
+	byte FunctionType;
+	bool IsVolatile;
+	bool IsMacro;
+	bool IsAnyc;
+	bool IsThreadSafe;
+	bool IsClusterSafe;
+	byte ArgumentCount;
+	ExceArgument **pArgument;
+};
+
+
+extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr)
+{
+	ExcelFunction* pFunction = (ExcelFunction*)ptr;
+	LPXLOPER12 result = (LPXLOPER12)malloc(sizeof(XLOPER12));
+	return result;
 }

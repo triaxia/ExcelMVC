@@ -57,16 +57,21 @@ namespace ExcelMvc.Runtime
             => StringComparer.InvariantCultureIgnoreCase.Equals(lhs, rhs);
 
         /// <summary>
+        /// The function that selects all assemblies.
+        /// </summary>
+        public static Func<string, bool, bool> SelectAllAssembly = (name, loaded) => true;
+
+        /// <summary>
         /// Create instances of type T in the current AppDomain.
         /// </summary>
-        /// <param name="selectAssembly">A function (assembly name or file name, loaded or npt) that
-        /// returns true or false to indicate if an assembly should be included in the discover process</param>
+        /// <param name="getTypes"></param>
+        /// <param name="selectAssembly">The function that takes arguments (assembly name or file name, loaded or not) 
+        /// and returns true or false to indicate if an assembly should be included in the discover process</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public static void CreateAll(Func<string, bool, bool> selectAssembly = null)
+        public static void CreateAll(Func<Assembly, IEnumerable<string>> getTypes
+            , Func<string, bool, bool> selectAssembly)
         {
-            var types = GetTypes(out var context, selectAssembly);
-            FreeReference(context);
-
+            var types = GetTypes(getTypes, selectAssembly);
             Instances.Clear();
             foreach (var type in types)
             {
@@ -79,48 +84,17 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Discovers 
+        /// Discovers types of type T in the current AppDomain.
         /// </summary>
         /// <param name="selectedAssembly">A function (assembly name or file name, loaded or npt) that
         /// returns true or false to indicate if an assembly should be included in the discover process</param>
         /// <returns></returns>
-        public static List<string> GetTypes(out WeakReference context
-            , Func<string, bool, bool> selectAssembly = null)
+        public static List<string> GetTypes(Func<Assembly, IEnumerable<string>> getTypes,
+            Func<string, bool, bool> selectAssembly)
         {
-            List<string> types = new List<string>();
-            try
-            {
-                LoadContext();
-                var asms = AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(x => !x.IsDynamic);
-                if (selectAssembly != null)
-                    asms = asms.Where(x => selectAssembly(x.GetName().Name, true));
-#if NET6_0_OR_GREATER
-                asms = asms.Where(x => !x.IsCollectible);
-#endif
-                types.AddRange(asms.SelectMany(x => GetTypes(x)));
-                var location = typeof(ObjectFactory<T>).Assembly.Location;
-                if (!string.IsNullOrWhiteSpace(location))
-                {
-                    var path = Path.GetDirectoryName(location);
-                    var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
-                        .Where(x => asms.All(y => !EqualsNoCase(y.Location, x)));
-                    if (selectAssembly != null)
-                        files = files.Where(x => selectAssembly(Path.GetFileNameWithoutExtension(x), true));
-                    var dllTypes = files.SelectMany(x => DiscoverTypes(x));
-                    types.AddRange(dllTypes);
-                }
-            }
-            finally
-            {
-                UnloadContext();
-            }
-#if NET6_0_OR_GREATER
-            context = new WeakReference(AssemblyContext);
-#else
-            context = null;
-#endif
-            return types.Distinct().ToList();
+            var types = GetTypes(out var context, getTypes, selectAssembly);
+            FreeReference(context);
+            return types;
         }
 
         /// <summary>
@@ -151,18 +125,12 @@ namespace ExcelMvc.Runtime
             return idx < 0 ? default : Instances[idx];
         }
 
-        private static IEnumerable<string> DiscoverTypes(string assemblyPath)
-        {
-            var types = Enumerable.Empty<string>();
-            ActionExtensions.Try(() =>
-            {
-                var asm = LoadFrom(assemblyPath);
-                types = types.Concat(GetTypes(asm));
-            }, ex => Messages.Instance.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex)));
-            return types;
-        }
-
-        private static IEnumerable<string> GetTypes(Assembly asm)
+        /// <summary>
+        /// Gets the creatable types with default constructors from the specified assembly. 
+        /// </summary>
+        /// <param name="asm"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> GetCreatableTypes(Assembly asm)
         {
             var itype = typeof(T);
             return asm.GetTypes()
@@ -171,6 +139,56 @@ namespace ExcelMvc.Runtime
                 .Select(x => x.AssemblyQualifiedName);
         }
 
+        private static List<string> GetTypes(out WeakReference context
+            , Func<Assembly, IEnumerable<string>> getTypes, Func<string, bool, bool> selectAssembly)
+        {
+            List<string> types = new List<string>();
+            try
+            {
+                LoadContext();
+                var asms = AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(x => !x.IsDynamic);
+                asms = asms.Where(x => selectAssembly(x.GetName().Name, true));
+#if NET6_0_OR_GREATER
+                asms = asms.Where(x => !x.IsCollectible);
+#endif
+                types.AddRange(asms.SelectMany(x => getTypes(x)));
+                var location = typeof(ObjectFactory<T>).Assembly.Location;
+                if (!string.IsNullOrWhiteSpace(location))
+                {
+                    var path = Path.GetDirectoryName(location);
+                    var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
+                        .Where(x => asms.All(y => !EqualsNoCase(y.Location, x)));
+                    if (selectAssembly != null)
+                        files = files.Where(x => selectAssembly(Path.GetFileNameWithoutExtension(x), true));
+                    var dllTypes = files.SelectMany(x => DiscoverTypes(x, getTypes));
+                    types.AddRange(dllTypes);
+                }
+            }
+            finally
+            {
+                UnloadContext();
+            }
+#if NET6_0_OR_GREATER
+            context = new WeakReference(AssemblyContext);
+#else
+            context = null;
+#endif
+            return types.Distinct().ToList();
+        }
+
+        private static IEnumerable<string> DiscoverTypes(string assemblyPath,
+             Func<Assembly, IEnumerable<string>> getTypes)
+        {
+            var types = Enumerable.Empty<string>();
+            ActionExtensions.Try(() =>
+            {
+                var asm = LoadFrom(assemblyPath);
+                types = types.Concat(getTypes(asm));
+            }, ex => Messages.Instance.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex)));
+            return types;
+        }
+            
         private static bool IsDerivedFrom(Type type, Type baseType)
         {
             bool IsEqual(Type lhs, Type rhs)

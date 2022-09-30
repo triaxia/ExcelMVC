@@ -43,6 +43,7 @@ namespace ExcelMvc.Views
     using System.Windows.Data;
     using Bindings;
     using Controls;
+    using ExcelMvc.Functions;
     using Microsoft.Office.Interop.Excel;
     using Runtime;
 
@@ -177,8 +178,9 @@ namespace ExcelMvc.Views
                         throw new Exception(Resource.ErrorExcelAppFound);
 
                     AsyncActions.Initialise();
-                    ObjectFactory<ISession>.CreateAll();
-                    ObjectFactory<IValueConverter>.CreateAll();
+                    ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
+                    ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
+                    FunctionRegistry.Register();
 
                     Underlying.WorkbookOpen += OpenBook;
                     Underlying.WorkbookBeforeClose += ClosingBook;
