@@ -225,7 +225,7 @@ namespace ExcelMvc.Runtime
                     .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
                     .Select(x => Path.GetDirectoryName(x.Location))
                     .Distinct()
-                    .Select(x => Path.ChangeExtension(Path.Combine(x, args.Name), ".dll"))
+                    .Select(x => Path.ChangeExtension(Path.Combine(x, new AssemblyName(args.Name).Name), ".dll"))
                     .Where(File.Exists)
                     .OrderByDescending(File.GetLastWriteTimeUtc)
                     .FirstOrDefault();

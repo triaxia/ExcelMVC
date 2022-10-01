@@ -15,7 +15,7 @@ public:
     virtual void Hide();
     virtual void Click();
     virtual void Run();
-    virtual void Udf(void* arg, int32_t size);
+    virtual void Udf(void* arg);
 
 private:
 	std::map<int, void *> Functions;

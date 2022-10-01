@@ -136,14 +136,18 @@ namespace ExcelMvc.Runtime
             AsyncActions.Execute(true);
             return null;
         }
+        public static void Udf(ulong value)
+        {
+            FunctionExecution.Execute(new IntPtr((long) value));
+        }
 
-        public static int Udf(IntPtr arg, int args)
+#if NET5_0_OR_GREATER
+
+        public static int Udf(IntPtr arg, int _)
         {
             FunctionExecution.Execute(arg);
             return 1;
         }
-
-#if NET5_0_OR_GREATER
 
         public static int Attach(IntPtr arg, int args)
         {

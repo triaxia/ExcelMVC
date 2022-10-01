@@ -298,47 +298,47 @@ ClrRuntimeHostV4::Stop()
 void
 ClrRuntimeHostV4::Attach()
 {
-	Call(0, 0, NULL);
+	Call(0, NULL);
 }
 
 void
 ClrRuntimeHostV4::Detach()
 {
-	Call(1, 0, NULL);
+	Call(1, NULL);
 }
 
 void
 ClrRuntimeHostV4::Show()
 {
-	Call(2, 0, NULL);
+	Call(2, NULL);
 }
 
 void
 ClrRuntimeHostV4::Hide()
 {
-	Call(3, 0, NULL);
+	Call(3, NULL);
 }
 
 void
 ClrRuntimeHostV4::Click()
 {
-	Call(4, 0, NULL);
+	Call(4, NULL);
 }
 
 void
 ClrRuntimeHostV4::Run()
 {
-	Call(5, 0, NULL);
+	Call(5, NULL);
 }
 
 void
-ClrRuntimeHostV4::Udf(void* arg, int32_t size)
+ClrRuntimeHostV4::Udf(void* arg)
 {
-	//Call(6, argc, args);
+	Call(6, arg);
 }
 
 void
-ClrRuntimeHostV4::Call(int idx, int argc, void* args[])
+ClrRuntimeHostV4::Call(int idx, void* args)
 {
 	ClearError();
 
@@ -347,9 +347,14 @@ ClrRuntimeHostV4::Call(int idx, int argc, void* args[])
 	variant_t vtEmpty;
 	variant_t vtReturn;
 
-	psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, argc);
-	for (long idx = 0; idx < argc; idx++)
-		SafeArrayPutElement(psaMethodArgs, &idx, args[idx]);
+	psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, args == NULL ? 0 : 1);
+	if (args != NULL)
+	{
+		variant_t varg((unsigned long long) args);
+		VARIANT v = varg;
+		long idx = 0;
+		SafeArrayPutElement(psaMethodArgs, &idx, &v);
+	}
 
 	HRESULT hr = pClass->InvokeMember_3(
 		bstrMethodName,
