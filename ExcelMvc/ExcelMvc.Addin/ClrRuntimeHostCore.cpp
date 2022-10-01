@@ -166,8 +166,8 @@ ClrRuntimeHostCore::Run()
 	((component_entry_point_fn)Functions[5])(nullptr, 0);
 }
 
-void ClrRuntimeHostCore::Udf(int argc, void* args[])
+void ClrRuntimeHostCore::Udf(void* arg, int32_t size)
 {
 	ClearError();
-	((component_entry_point_fn)Functions[6])(args, argc * sizeof(void*));
+	((component_entry_point_fn)Functions[6])(arg, size);
 }

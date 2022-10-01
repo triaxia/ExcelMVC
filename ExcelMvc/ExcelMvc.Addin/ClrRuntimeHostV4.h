@@ -14,10 +14,10 @@ public:
     virtual void Hide();
     virtual void Click();
     virtual void Run();
-    virtual void Udf(int argc, void* args[]);
+    virtual void Udf(void* arg, int32_t size);
 
 private:
-    static void PutElement(SAFEARRAY* pa, long idx[], PCWSTR pArg);
+    static void Call(int idx, int argc, void* args[]);
 };
 
 #endif

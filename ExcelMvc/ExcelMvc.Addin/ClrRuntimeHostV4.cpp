@@ -39,6 +39,17 @@ static _TypePtr pClass = NULL;
 
 static LPCTSTR pVersion = L"v4.0.30319";
 
+static LPCWSTR MethodNames[] =
+{
+	L"Attach",
+	L"Detach",
+	L"Show",
+	L"Hide",
+	L"Click",
+	L"Run",
+	L"Udf"
+};
+
 void
 ClrRuntimeHostV4::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName)
 {
@@ -185,6 +196,34 @@ ClrRuntimeHostV4::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName)
 		}
 	}
 
+	/*
+	{
+		auto argc = sizeof(MethodNames) / sizeof(LPCWSTR);
+		for (auto idx = 0; idx < argc; idx++)
+		{
+			bstr_t bstrMethodName(MethodNames[idx]);
+			SAFEARRAY* psaResult = SafeArrayCreateVector(VT_VARIANT, 0, 1);
+			hr = pClass->GetMember(bstrMethodName, MemberTypes_Method, static_cast<BindingFlags>(BindingFlags_Static | BindingFlags_Public), &psaResult);
+			if (FAILED(hr))
+			{
+				FormatError(L"Failed to get the method \"%s\" w/hr 0x%08lx\n", MethodNames[idx], hr);
+				goto Cleanup;
+			}
+			long lowerBound, upperBound;  // get array bounds
+			SafeArrayGetLBound(psaResult, 0, &lowerBound);
+			SafeArrayGetUBound(psaResult, 0, &upperBound);
+
+			SafeArrayGetLBound(psaResult, 1, &lowerBound);
+			SafeArrayGetUBound(psaResult, 1, &upperBound);
+			long dim[] = { 0 };
+			VARIANT v;
+			SafeArrayGetElement(psaResult, dim, &v);
+			//Functions[idx] = function;
+			SafeArrayDestroy(psaResult);
+		};
+	}
+	*/
+
 	return;
 Cleanup:
 	Stop();
@@ -259,102 +298,76 @@ ClrRuntimeHostV4::Stop()
 void
 ClrRuntimeHostV4::Attach()
 {
-	ClearError();
+	Call(0, 0, NULL);
 }
 
 void
 ClrRuntimeHostV4::Detach()
 {
-	ClearError();
+	Call(1, 0, NULL);
 }
 
 void
 ClrRuntimeHostV4::Show()
 {
-	ClearError();
+	Call(2, 0, NULL);
 }
 
 void
 ClrRuntimeHostV4::Hide()
 {
-	ClearError();
+	Call(3, 0, NULL);
 }
 
 void
 ClrRuntimeHostV4::Click()
 {
-	ClearError();
+	Call(4, 0, NULL);
 }
 
 void
 ClrRuntimeHostV4::Run()
 {
-	ClearError();
+	Call(5, 0, NULL);
 }
 
-void 
-ClrRuntimeHostV4::Udf(int argc, void* args[])
+void
+ClrRuntimeHostV4::Udf(void* arg, int32_t size)
+{
+	//Call(6, argc, args);
+}
+
+void
+ClrRuntimeHostV4::Call(int idx, int argc, void* args[])
 {
 	ClearError();
-}
 
-//void
-//ClrRuntimeHostV4::Call(int idx, int argc, void* args[])
-//{
-	//	/*
-	//   ClearError();
-	//
-	//	bstr_t bstrMethodName(method);
-	//	SAFEARRAY *psaMethodArgs = NULL;
-	//	variant_t vtEmpty;
-	//	variant_t vtReturn;
-	//
-	//    if (argc == 0)
-	//    {
-	//        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, 0);
-	//    }
-	//    else
-	//    {
-	//        psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, argc);
-	//		/*
-	//        long idx [] = { 0 };
-	//		PutElement(psaMethodArgs, idx, pArg1);
-	//        if (args == 2)
-	//        {
-	//            idx[0] = 1;
-	//			PutElement(psaMethodArgs, idx, pArg2);
-	//        }
-	//        if (args == 3)
-	//        {
-	//            idx[0] = 2;
-	//			PutElement(psaMethodArgs, idx, pArg3);
-	//		}
-	//		*/
-	//    }
-	//
-	//	HRESULT hr = pClass->InvokeMember_3(
-	//		bstrMethodName,
-	//		static_cast<BindingFlags>(BindingFlags_InvokeMethod | BindingFlags_Static | BindingFlags_Public),
-	//		NULL,
-	//		vtEmpty, 
-	//		psaMethodArgs,
-	//		&vtReturn);
-	//	if (FAILED(hr))
-	//	{
-	//        FormatError(L"Failed to invoke %s w/hr 0x%08lx\n", method, hr);
-	//		goto Cleanup;
-	//	}
-	//	return;
-	//
-	//Cleanup:
-	//	if (psaMethodArgs)
-	//	{
-	//		SafeArrayDestroy(psaMethodArgs);
-	//	}
-	// }
-	void ClrRuntimeHostV4::PutElement(SAFEARRAY* pa, long idx[], PCWSTR pArg)
+	bstr_t bstrMethodName(MethodNames[idx]);
+	SAFEARRAY* psaMethodArgs = NULL;
+	variant_t vtEmpty;
+	variant_t vtReturn;
+
+	psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, argc);
+	for (long idx = 0; idx < argc; idx++)
+		SafeArrayPutElement(psaMethodArgs, &idx, args[idx]);
+
+	HRESULT hr = pClass->InvokeMember_3(
+		bstrMethodName,
+		static_cast<BindingFlags>(BindingFlags_InvokeMethod | BindingFlags_Static | BindingFlags_Public),
+		NULL,
+		vtEmpty,
+		psaMethodArgs,
+		&vtReturn);
+	if (FAILED(hr))
 	{
-		variant_t varg(pArg);
-		VARIANT v = varg;
-		SafeArrayPutElement(pa, idx, &v);
+		FormatError(L"Failed to invoke %s w/hr 0x%08lx\n", MethodNames[idx], hr);
+		goto Cleanup;
 	}
+	return;
+
+Cleanup:
+	if (psaMethodArgs)
+	{
+		SafeArrayDestroy(psaMethodArgs);
+	}
+}

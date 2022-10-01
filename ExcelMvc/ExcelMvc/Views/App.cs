@@ -180,7 +180,7 @@ namespace ExcelMvc.Views
                     AsyncActions.Initialise();
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
                     ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
-                    FunctionExecution.RegisterFunctions();
+                    Try(() => FunctionExecution.RegisterFunctions());
 
                     Underlying.WorkbookOpen += OpenBook;
                     Underlying.WorkbookBeforeClose += ClosingBook;
@@ -224,7 +224,7 @@ namespace ExcelMvc.Views
                     Underlying.WorkbookBeforeClose -= ClosingBook;
                     Underlying.WorkbookActivate -= Activate;
                     Underlying.WorkbookDeactivate -= Deactivate;
-                    
+
                     // Underlying is needed when Attach is invoked from the surface of the sheet
                     // Underlying = null;
                 }

@@ -35,7 +35,8 @@ namespace ExcelMvc.Functions
         private static bool HasCustomAttribute<T>(this MethodInfo method) where T : Attribute
         {
             var name = typeof(T).AssemblyQualifiedName;
-            return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
+            return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
+            //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
     }
 }
