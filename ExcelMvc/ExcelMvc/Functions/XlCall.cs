@@ -23,7 +23,11 @@ namespace ExcelMvc.Functions
             }
             finally
             {
-                if (ptr != IntPtr.Zero) Marshal.FreeHGlobal(ptr);
+                if (ptr != IntPtr.Zero)
+                {
+                    Marshal.DestroyStructure<ExcelFunction>(ptr);
+                    Marshal.FreeHGlobal(ptr);
+                }
             }
         }
     }
