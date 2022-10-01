@@ -36,24 +36,6 @@ Boston, MA 02110-1301 USA.
 #include "framewrk.h"
 #include "ClrRuntimeHost.h"
 
-/*
-
-https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
-LPXLOPER12 pxProcedure
-LPXLOPER12 pxTypeText
-LPXLOPER12 pxFunctionText
-LPXLOPER12 pxArgumentText
-LPXLOPER12 pxMacroType,
-LPXLOPER12 pxCategory
-LPXLOPER12 pxShortcutText
-LPXLOPER12 pxHelpTopic
-LPXLOPER12 pxFunctionHelp
-LPXLOPER12 pxArgumentHelp1
-LPXLOPER12 pxArgumentHelp2
-.
-LPXLOPER12 pxArgumentHelp255
-*/
-
 struct ExceArgument
 {
 	LPCWSTR Name;
@@ -63,7 +45,7 @@ struct ExceArgument
 struct ExcelFunction
 {
 	int Index;
-	byte FunctionType;
+	byte MacroType;
 	bool IsVolatile;
 	bool IsMacro;
 	bool IsAnyc;
@@ -77,54 +59,111 @@ struct ExcelFunction
 	ExceArgument Arguments[];
 };
 
-const int NumberOfParameters = 11;
-static LPCWSTR UserFunctions[][NumberOfParameters] =
-{
-	{ L"Udf0000", L"QQQQ", L"ExcelMvcAdd", L"", L"1", L"ExcelMvc", L"", L"", L"Add numbers", L"", L""},
-	{ L"Udf0001", L"QQQQ", L"ExcelMvcSub", L"", L"1", L"ExcelMvc", L"", L"", L"Sub numbers", L"", L""}
-};
+static std::map<int, LPXLOPER12> RegIds;
+static XLOPER12 xDll;
 
-static XLOPER12 RegIds[]
+void RegisterUserFunctions()
 {
-	XLOPER12(),
-};
-
-void RegisterUserFunctions(LPXLOPER12 xdll)
-{
-	auto count = sizeof(UserFunctions) / (sizeof(UserFunctions[0][0]) * NumberOfParameters);
-	for (int idx = 0; idx < count; idx++)
-	{
-		Excel12f
-		(
-			xlfRegister, &RegIds[idx], NumberOfParameters + 1,
-			(LPXLOPER12)xdll,
-			(LPXLOPER12)TempStr12(UserFunctions[idx][0]),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][1]),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][2]),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][3]),
-			(LPXLOPER12)TempInt12(_wtoi(UserFunctions[idx][4])),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][5]),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][6]),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][7]),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][8]),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][9]),
-			(LPXLOPER12)TempStr12(UserFunctions[idx][10])
-		);
-	}
+	Excel12f(xlGetName, &xDll, 0);
 }
 
 void UnregisterUserFunctions()
 {
-	auto count = sizeof(RegIds) / sizeof(XLOPER12);
-	for (int idx = 0; idx < count; idx++)
+	for (auto it = RegIds.begin(); it != RegIds.end(); it++)
 	{
-		Excel12f(xlfUnregister, 0, 1, &RegIds[idx]);
+		Excel12f(xlfUnregister, 0, 1, it->second);
+		FreeXLOper12T(it->second);
 	}
+	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
+}
+
+void UnregisterUserFunction(int index)
+{
+	auto it = RegIds.find(index);
+	if (it != RegIds.end())
+	{
+		Excel12f(xlfUnregister, 0, 1, it->second);
+		FreeXLOper12T(it->second);
+		RegIds.erase(index);
+	}
+}
+
+LPCWSTR NullCoalesce(LPCWSTR value)
+{
+	return value == NULL ? L"" : value;
+}
+
+void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstring& types)
+{
+	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
+	{
+		if (idx > 0) names += L",";
+		names += NullCoalesce(pFunction->Arguments[idx].Name);
+		types += L"Q";
+	}
+	types += L"Q";
 }
 
 extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr)
 {
+	/*
+	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
+	LPXLOPER12 pxModuleText
+	LPXLOPER12 pxProcedure
+	LPXLOPER12 pxTypeText
+	LPXLOPER12 pxFunctionText
+	LPXLOPER12 pxArgumentText
+	LPXLOPER12 pxMacroType,
+	LPXLOPER12 pxCategory
+	LPXLOPER12 pxShortcutText
+	LPXLOPER12 pxHelpTopic
+	LPXLOPER12 pxFunctionHelp
+	LPXLOPER12 pxArgumentHelp1
+	LPXLOPER12 pxArgumentHelp2
+	.
+	LPXLOPER12 pxArgumentHelp245
+	*/
+
 	ExcelFunction* pFunction = (ExcelFunction*)ptr;
-	LPXLOPER12 result = (LPXLOPER12)malloc(sizeof(XLOPER12));
-	return result;
+	UnregisterUserFunction(pFunction->Index);
+	auto regId = (LPXLOPER12)malloc(sizeof(XLOPER12));
+	RegIds[pFunction->Index] = regId;
+
+	std::wstring names;	std::wstring types;
+	MakeArgumentList(pFunction, names, types);
+
+	TCHAR procedure[10];
+	wsprintf(procedure, L"Udf%04d", pFunction->Index);
+
+	auto count = 10 + pFunction->ArgumentCount;
+	LPXLOPER12* pParams = new LPXLOPER12[count];
+
+	pParams[0] = &xDll;
+	pParams[1] = TempStr12(procedure);
+	pParams[2] = TempStr12(types.c_str());
+	pParams[3] = TempStr12(pFunction->Name);
+	pParams[4] = TempStr12(names.c_str());
+	pParams[5] = TempInt12(pFunction->MacroType);
+	pParams[6] = TempStr12(NullCoalesce(pFunction->Category));
+	pParams[7] = TempStr12(L"");
+	pParams[8] = TempStr12(NullCoalesce(pFunction->HelpTopic));
+	pParams[9] = TempStr12(NullCoalesce(pFunction->Description));
+	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
+		pParams[10 + idx] = (LPXLOPER12)TempStr12(NullCoalesce(pFunction->Description));
+
+	Excel12v(xlfRegister, regId, count, pParams);
+	FreeAllTempMemory();
+
+	delete[] pParams;
+	
+	/*
+	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
+	{
+		delete[] pFunction->Arguments[idx].Name;
+		delete[] pFunction->Arguments[idx].Description;
+		pFunction->Arguments[idx].Name = NULL;
+		pFunction->Arguments[idx].Description = NULL;
+	}*/
+
+	return regId;
 }

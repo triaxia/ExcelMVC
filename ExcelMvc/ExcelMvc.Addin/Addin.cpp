@@ -39,9 +39,9 @@ Boston, MA 02110-1301 USA.
 extern "C" const GUID __declspec(selectany) DIID__Workbook =
 { 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
 
-extern void RegisterMvcFunctions(LPXLOPER12 xdll);
+extern void RegisterMvcFunctions();
 extern void UnregisterMvcFunctions();
-extern void RegisterUserFunctions(LPXLOPER12 xdll);
+extern void RegisterUserFunctions();
 extern void UnregisterUserFunctions();
 
 BOOL IsExcelThere()
@@ -114,16 +114,9 @@ void StopAddinClrHost()
 extern "C" __declspec(dllexport)
 BOOL __stdcall xlAutoOpen(void)
 {
-	static XLOPER12 xDll;
-	Excel12f(xlGetName, &xDll, 0);
-
-	RegisterMvcFunctions(&xDll);
-	RegisterUserFunctions(&xDll);
-
-	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
-
+	RegisterMvcFunctions();
+	RegisterUserFunctions();
 	StartAddinClrHost();
-
 	return TRUE;
 }
 

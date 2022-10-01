@@ -80,15 +80,18 @@ static XLOPER12 RegIds[]
 	XLOPER12()
 };
 
-void RegisterMvcFunctions(LPXLOPER12 xdll)
+void RegisterMvcFunctions()
 {
+	static XLOPER12 xDll;
+	Excel12f(xlGetName, &xDll, 0);
+
 	auto count = sizeof(MvcFunctions) / (sizeof(MvcFunctions[0][0]) * NumberOfParameters);
 	for (int idx = 0; idx < count; idx++)
 	{
 		Excel12f
 		(
 			xlfRegister, &RegIds[idx], NumberOfParameters + 1,
-			(LPXLOPER12)xdll,
+			(LPXLOPER12)&xDll,
 			(LPXLOPER12)TempStr12(MvcFunctions[idx][0]),
 			(LPXLOPER12)TempStr12(MvcFunctions[idx][1]),
 			(LPXLOPER12)TempStr12(MvcFunctions[idx][2]),
@@ -102,6 +105,7 @@ void RegisterMvcFunctions(LPXLOPER12 xdll)
 			(LPXLOPER12)TempStr12(MvcFunctions[idx][10])
 		);
 	}
+	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
 }
 
 void UnregisterMvcFunctions()
@@ -112,7 +116,6 @@ void UnregisterMvcFunctions()
 		Excel12f(xlfUnregister, 0, 1, &RegIds[idx]);
 	}
 }
-
 
 extern "C" __declspec(dllexport)
 BOOL __stdcall ExcelMvcAttach(void)

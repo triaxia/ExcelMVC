@@ -1,5 +1,6 @@
 using ExcelMvc.Functions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace ExcelMvc.Tests
 {
@@ -15,7 +16,9 @@ namespace ExcelMvc.Tests
         [TestMethod]
         public void TestMethod1()
         {
-            FunctionRegistry.Register();
+            var x = FunctionRegistry.Discover().First();
+            for (int idx = 0; idx < 1000000; idx++)
+                XlCall.Register(x.function);
         }
     }
 }

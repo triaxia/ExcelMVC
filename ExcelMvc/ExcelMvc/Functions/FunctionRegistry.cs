@@ -14,7 +14,6 @@ namespace ExcelMvc.Functions
             Functions = Discover().ToList();
             foreach (var (function, _) in Functions)
                 XlCall.Register(function);
-
         }
 
         public static IEnumerable<(ExcelFunction function, MethodInfo method)> Discover()
