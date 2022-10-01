@@ -104,6 +104,21 @@ void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstrin
 	types += L"Q";
 }
 
+void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
+{
+	topic = NullCoalesce(pFunction->HelpTopic);
+	if (topic.find(L"!") != std::wstring::npos)
+		return;
+
+	auto lower = topic;
+	for (auto idx = 0; idx < lower.size(); idx++)
+		lower[idx] = std::tolower(lower[idx]);
+	if (lower.find(L"http://") != std::wstring::npos
+		|| lower.find(L"https://") != std::wstring::npos)
+		topic += L"!0";
+}
+
+
 extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr)
 {
 	/*
@@ -135,6 +150,9 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	TCHAR procedure[10];
 	wsprintf(procedure, L"Udf%04d", pFunction->Index);
 
+	std::wstring helpTopic;
+	NormaliseHelpTopic(pFunction, helpTopic);
+
 	auto count = 10 + pFunction->ArgumentCount;
 	LPXLOPER12* pParams = new LPXLOPER12[count];
 
@@ -146,7 +164,7 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	pParams[5] = TempInt12(pFunction->MacroType);
 	pParams[6] = TempStr12(NullCoalesce(pFunction->Category));
 	pParams[7] = TempStr12(L"");
-	pParams[8] = TempStr12(NullCoalesce(pFunction->HelpTopic));
+	pParams[8] = TempStr12(helpTopic.c_str());
 	pParams[9] = TempStr12(NullCoalesce(pFunction->Description));
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 		pParams[10 + idx] = (LPXLOPER12)TempStr12(NullCoalesce(pFunction->Description));
