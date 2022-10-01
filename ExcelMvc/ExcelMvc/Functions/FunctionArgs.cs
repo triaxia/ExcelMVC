@@ -7,7 +7,7 @@ namespace ExcelMvc.Functions
     [StructLayout(LayoutKind.Sequential)]
     public struct FunctionArgs
     {
-        public int Index;
+        public uint Index;
         public IntPtr Result;
         public IntPtr Arg00;
         public IntPtr Arg01;
@@ -42,7 +42,7 @@ namespace ExcelMvc.Functions
         public IntPtr Arg30;
         public IntPtr Arg31;
 
-        public IntPtr[] GetArgs(int size) => new IntPtr[]
+        public IntPtr[] GetArgs(int size = 32) => new IntPtr[]
         {
             Arg00, Arg01, Arg02, Arg03, Arg04, Arg05, Arg06, Arg07, Arg08, Arg09,
             Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16, Arg17, Arg18, Arg19,

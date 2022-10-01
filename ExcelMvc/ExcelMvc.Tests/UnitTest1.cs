@@ -16,7 +16,7 @@ namespace ExcelMvc.Tests
         [TestMethod]
         public void TestMethod1()
         {
-            var x = FunctionRegistry.Discover().First();
+            var x = FunctionDiscovery.Discover().First();
             for (int idx = 0; idx < 1000000; idx++)
                 XlCall.Register(x.function);
         }

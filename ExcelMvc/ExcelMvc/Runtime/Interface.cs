@@ -136,19 +136,10 @@ namespace ExcelMvc.Runtime
             AsyncActions.Execute(true);
             return null;
         }
+
         public static int Udf(IntPtr arg, int args)
         {
-            var pargs = Marshal.PtrToStructure<FunctionArgs>(arg);
-            var index = pargs.Index;
-            var x1 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg00);
-            var x2 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg01);
-            var x3 = Marshal.PtrToStructure<XLOPER12_num>(pargs.Arg02);
-            XLOPER12_num r;
-            r.xltype = 1;
-            r.num = x1.num + x2.num + x3.num;
-            if (index == 1)
-                r.num = -r.num;
-            Marshal.StructureToPtr(r, pargs.Result, true);
+            FunctionExecution.Execute(arg);
             return 1;
         }
 
