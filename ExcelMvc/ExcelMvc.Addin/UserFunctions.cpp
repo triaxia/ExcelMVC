@@ -121,6 +121,11 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 
 extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr)
 {
+	ExcelFunction* pFunction = (ExcelFunction*)ptr;
+	UnregisterUserFunction(pFunction->Index);
+	auto regId = (LPXLOPER12)malloc(sizeof(XLOPER12));
+	RegIds[pFunction->Index] = regId;
+
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText
@@ -138,50 +143,62 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	.
 	LPXLOPER12 pxArgumentHelp245
 	*/
+	TCHAR pxProcedure[10];
+	wsprintf(pxProcedure, L"Udf%04d", pFunction->Index);
 
-	ExcelFunction* pFunction = (ExcelFunction*)ptr;
-	UnregisterUserFunction(pFunction->Index);
-	auto regId = (LPXLOPER12)malloc(sizeof(XLOPER12));
-	RegIds[pFunction->Index] = regId;
+	std::wstring pxArgumentText; std::wstring pxTypeText;
+	MakeArgumentList(pFunction, pxArgumentText, pxTypeText);
 
-	std::wstring names;	std::wstring types;
-	MakeArgumentList(pFunction, names, types);
+	if (pFunction->IsVolatile) pxTypeText += L"!";
+	if (pFunction->IsThreadSafe) pxTypeText += L"$";
+	if (pFunction->IsClusterSafe) pxTypeText += L"&";
+	if (pFunction->IsMacro) pxTypeText += L"#";
+	if (pFunction->IsAnyc) pxTypeText = std::wstring(L">") + pxTypeText + L"X";
 
-	TCHAR procedure[10];
-	wsprintf(procedure, L"Udf%04d", pFunction->Index);
 
-	std::wstring helpTopic;
-	NormaliseHelpTopic(pFunction, helpTopic);
+	auto pxFunctionText = pFunction->Name;
+
+	auto pxMacroType = pFunction->MacroType;
+
+	auto pxCategory = NullCoalesce(pFunction->Category);
+	auto pxShortcutText = L"";
+
+	std::wstring pxHelpTopic;
+	NormaliseHelpTopic(pFunction, pxHelpTopic);
+
+	auto pxFunctionHelp = NullCoalesce(pFunction->Description);
 
 	auto count = 10 + pFunction->ArgumentCount;
-	LPXLOPER12* pParams = new LPXLOPER12[count];
+	auto pParams = new LPXLOPER12[count];
 
 	pParams[0] = &xDll;
-	pParams[1] = TempStr12(procedure);
-	pParams[2] = TempStr12(types.c_str());
-	pParams[3] = TempStr12(pFunction->Name);
-	pParams[4] = TempStr12(names.c_str());
-	pParams[5] = TempInt12(pFunction->MacroType);
-	pParams[6] = TempStr12(NullCoalesce(pFunction->Category));
-	pParams[7] = TempStr12(L"");
-	pParams[8] = TempStr12(helpTopic.c_str());
-	pParams[9] = TempStr12(NullCoalesce(pFunction->Description));
+	pParams[1] = TempStr12(pxProcedure);
+	pParams[2] = TempStr12(pxTypeText.c_str());
+	pParams[3] = TempStr12(pxFunctionText);
+	pParams[4] = TempStr12(pxArgumentText.c_str());
+	pParams[5] = TempInt12(pxMacroType);
+	pParams[6] = TempStr12(pxCategory);
+	pParams[7] = TempStr12(pxShortcutText);
+	pParams[8] = TempStr12(pxHelpTopic.c_str());
+	pParams[9] = TempStr12(pxFunctionHelp);
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
-		pParams[10 + idx] = (LPXLOPER12)TempStr12(NullCoalesce(pFunction->Description));
+		pParams[10 + idx] = (LPXLOPER12)TempStr12(NullCoalesce(pFunction->Arguments[idx].Description));
 
 	Excel12v(xlfRegister, regId, count, pParams);
 	FreeAllTempMemory();
 
 	delete[] pParams;
 	
-	/*
+	/* C# Marshal.DestroyStructure<ExcelFunction> does not delete nested Argument texts, so
+	*  delete them here...
+	*/
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		delete[] pFunction->Arguments[idx].Name;
 		delete[] pFunction->Arguments[idx].Description;
 		pFunction->Arguments[idx].Name = NULL;
 		pFunction->Arguments[idx].Description = NULL;
-	}*/
+	}
 
 	return regId;
 }
