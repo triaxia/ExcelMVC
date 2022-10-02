@@ -135,4 +135,5 @@ void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
 		return;
 	pxFree->xltype = pxFree->xltype & (~xlbitDLLFree);
 	FreeXLOper12T(pxFree);
+	free(pxFree);
 }
