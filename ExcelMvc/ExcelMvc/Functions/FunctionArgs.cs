@@ -52,11 +52,17 @@ namespace ExcelMvc.Functions
 
         public string Print(int size)
         {
-            var dd = Marshal.SizeOf(typeof(XLOPER12));
             string ToString(IntPtr ptr) => ptr == IntPtr.Zero
                 ? null : Marshal.PtrToStructure<XLOPER12>(ptr).xltype.ToString();
             return string.Join(System.Environment.NewLine,
                  GetArgs(size).Select(x => $"{ToString(x)}"));
         }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct FunctionResult
+    {
+        public uint Index;
+        public IntPtr Value;
     }
 }

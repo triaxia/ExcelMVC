@@ -59,7 +59,16 @@ struct ExcelFunction
 	ExceArgument Arguments[];
 };
 
-static std::map<int, LPXLOPER12> RegIds;
+struct FunctionResult
+{
+	int Index;
+	LPXLOPER12 Value;
+};
+
+static std::map<int, LPXLOPER12> FunctionRegIds;
+static std::map<int, LPXLOPER12> FunctionAsyncHandles;
+static std::map<int, int> FunctionArgCount;
+
 static XLOPER12 xDll;
 
 void RegisterUserFunctions()
@@ -69,7 +78,7 @@ void RegisterUserFunctions()
 
 void UnregisterUserFunctions()
 {
-	for (auto it = RegIds.begin(); it != RegIds.end(); it++)
+	for (auto it = FunctionRegIds.begin(); it != FunctionRegIds.end(); it++)
 	{
 		Excel12f(xlfUnregister, 0, 1, it->second);
 		FreeXLOper12T(it->second);
@@ -79,12 +88,12 @@ void UnregisterUserFunctions()
 
 void UnregisterUserFunction(int index)
 {
-	auto it = RegIds.find(index);
-	if (it != RegIds.end())
+	auto it = FunctionRegIds.find(index);
+	if (it != FunctionRegIds.end())
 	{
 		Excel12f(xlfUnregister, 0, 1, it->second);
 		FreeXLOper12T(it->second);
-		RegIds.erase(index);
+		FunctionRegIds.erase(index);
 	}
 }
 
@@ -95,13 +104,19 @@ LPCWSTR NullCoalesce(LPCWSTR value)
 
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstring& types)
 {
+	types = pFunction->IsAnyc ? L">" : L"Q";
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		if (idx > 0) names += L",";
 		names += NullCoalesce(pFunction->Arguments[idx].Name);
 		types += L"Q";
 	}
-	types += L"Q";
+	if (pFunction->IsAnyc) types += L"X";
+	if (pFunction->IsVolatile) types += L"!";
+	if (pFunction->IsThreadSafe) types += L"$";
+	if (pFunction->IsClusterSafe) types += L"&";
+	if (pFunction->IsMacro) types += L"#";
+
 }
 
 void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
@@ -118,14 +133,26 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 		topic += L"!0";
 }
 
+bool CanRegisterAsyncHandle(int index)
+{
+	auto it = FunctionAsyncHandles.find(index);
+	return it != FunctionAsyncHandles.end() && it->second == NULL;
+}
+
+void RegisterAsyncHandle(int index, LPXLOPER12 args[])
+{
+	if (CanRegisterAsyncHandle(index))
+		FunctionAsyncHandles[index] = args[FunctionArgCount[index]];
+}
 
 extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr)
 {
 	ExcelFunction* pFunction = (ExcelFunction*)ptr;
 	UnregisterUserFunction(pFunction->Index);
 	auto regId = (LPXLOPER12)malloc(sizeof(XLOPER12));
-	RegIds[pFunction->Index] = regId;
-
+	FunctionRegIds[pFunction->Index] = regId;
+	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
+	if (pFunction->IsAnyc) FunctionAsyncHandles[pFunction->Index] = NULL;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText
@@ -148,13 +175,6 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 
 	std::wstring pxArgumentText; std::wstring pxTypeText;
 	MakeArgumentList(pFunction, pxArgumentText, pxTypeText);
-
-	if (pFunction->IsVolatile) pxTypeText += L"!";
-	if (pFunction->IsThreadSafe) pxTypeText += L"$";
-	if (pFunction->IsClusterSafe) pxTypeText += L"&";
-	if (pFunction->IsMacro) pxTypeText += L"#";
-	if (pFunction->IsAnyc) pxTypeText = std::wstring(L">") + pxTypeText + L"X";
-
 
 	auto pxFunctionText = pFunction->Name;
 
@@ -201,4 +221,14 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	}
 
 	return regId;
+}
+
+extern "C" __declspec(dllexport) LPXLOPER12 __stdcall AsyncReturn(void* ptr)
+{
+	FunctionResult* pResult = (FunctionResult*)ptr;
+	auto it = FunctionAsyncHandles[pResult->Index];
+	auto value = pResult->Value;
+	XLOPER12 status;
+	Excel12(xlAsyncReturn, &status, 2, it, value);
+	return it;
 }
