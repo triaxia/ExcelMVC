@@ -10,9 +10,9 @@ namespace ExcelMvc.Functions
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RegisterFunction")]
         public static extern IntPtr RegisterFunction32(IntPtr function);
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "AsyncReturn")]
-        public static extern IntPtr AsyncReturn64(uint index, IntPtr function);
+        public static extern IntPtr AsyncReturn64(IntPtr handle, IntPtr result);
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "AsyncReturn")]
-        public static extern IntPtr AsyncReturn32(uint index, IntPtr function);
+        public static extern IntPtr AsyncReturn32(IntPtr handle, IntPtr result);
 
         public static void RegisterFunction(ExcelFunction function)
         {
@@ -24,12 +24,12 @@ namespace ExcelMvc.Functions
                     RegisterFunction32(ptr);
             }
         }
-        public static void AsyncReturn(uint index, IntPtr result)
+        public static void AsyncReturn(IntPtr handle, IntPtr result)
         {
             if (Environment.Is64BitProcess)
-                AsyncReturn64(index, result);
+                AsyncReturn64(handle, result);
             else
-                AsyncReturn32(index, result);
+                AsyncReturn32(handle, result);
         }
     }
 }

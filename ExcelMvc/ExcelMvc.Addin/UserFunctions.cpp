@@ -61,7 +61,7 @@ struct ExcelFunction
 };
 
 static std::map<int, LPXLOPER12> FunctionRegIds;
-static std::map<int, LPXLOPER12> FunctionAsyncHandles;
+static std::map<int, bool> FunctionAsync;
 static std::map<int, int> FunctionArgCount;
 static std::map<int, void*> FunctionCallback;
 
@@ -96,9 +96,9 @@ void UnregisterUserFunction(int index)
 	}
 
 	{
-		auto it = FunctionAsyncHandles.find(index);
-		if (it != FunctionAsyncHandles.end())
-			FunctionAsyncHandles.erase(index);
+		auto it = FunctionAsync.find(index);
+		if (it != FunctionAsync.end())
+			FunctionAsync.erase(index);
 	}
 
 	{
@@ -150,17 +150,11 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 		topic += L"!0";
 }
 
-void GetFunctionCallback(int index, void **pCallback, bool* aync, int *argc)
+void GetFunctionInfo(int index, void **pCallback, bool* async, int *argc)
 {
-	auto it = FunctionAsyncHandles.find(index);
-	*aync = it != FunctionAsyncHandles.end() && it->second == NULL;
+	*async = FunctionAsync[index];
 	*pCallback = FunctionCallback[index];
 	*argc = FunctionArgCount[index];
-}
-
-void RegisterAsyncHandle(int index, void* args[])
-{
-	FunctionAsyncHandles[index] = (LPXLOPER12) args[2 + FunctionArgCount[index]];
 }
 
 extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr)
@@ -171,8 +165,7 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	FunctionRegIds[pFunction->Index] = regId;
 	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
 	FunctionCallback[pFunction->Index] = pFunction->Callback;
-	if (pFunction->IsAnyc)
-		FunctionAsyncHandles[pFunction->Index] = NULL;
+	FunctionAsync[pFunction->Index] = pFunction->IsAnyc;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText
@@ -243,9 +236,8 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	return regId;
 }
 
-extern "C" __declspec(dllexport) void __stdcall AsyncReturn(unsigned int index, void* result)
+extern "C" __declspec(dllexport) void __stdcall AsyncReturn(void* handle, void* result)
 {
-	auto it = FunctionAsyncHandles[index];
 	XLOPER12 status;
-	Excel12(xlAsyncReturn, &status, 2, it, (LPXLOPER12)result);
+	Excel12(xlAsyncReturn, &status, 2, handle, result);
 }

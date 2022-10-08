@@ -25,12 +25,14 @@ namespace ExcelMvc.Functions
             var fargs = Marshal.PtrToStructure<FunctionArgs>(args);
             var (function, method) = Functions[fargs.Index];
             var arguments = fargs.GetArgs();
-            var values = method.GetParameters()
+
+            var argc = method.GetParameters().Length;
+            var values = method.GetParameters().Take(argc)
                 .Select((p, idx) => Converter.ConvertIncoming(arguments[idx], p))
                 .ToArray();
 
             if (function.IsAnyc)
-                ExecuteAsync(function, method, values, ref fargs.Result);
+                ExecuteAsync(function, method, values, fargs.GetArgs()[argc]);
             else
                 ExecuteSync(function, method, values, ref fargs.Result);
         }
@@ -42,20 +44,19 @@ namespace ExcelMvc.Functions
             Converter.ConvertOutging(value, ref result);
         }
 
-        public static void ExecuteAsync(ExcelFunction function, MethodInfo method, object[] args,
-            ref IntPtr result)
+        public static void ExecuteAsync(ExcelFunction function, MethodInfo method, object[] args, IntPtr handle)
         {
             Task.Run(() =>
             {
                 XLOPER12_num x;
                 x.xltype = 1;
                 x.num = 0;
-                using (var ptr = new StructIntPtr<XLOPER12_num>(ref x))
+                using (var result = new StructIntPtr<XLOPER12_num>(ref x))
                 {
-                    var value = ptr.Ptr;
+                    var value = result.Ptr;
                     ExecuteSync(function, method, args, ref value);
-                    value = ptr.Detach(); // result owned by Excel
-                    XlCall.AsyncReturn(function.Index, value);
+                    // result will be owned and freed by Excel, so detach it.
+                    XlCall.AsyncReturn(handle, result.Detach());
                 }
             });
         }
