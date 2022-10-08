@@ -70,14 +70,19 @@ namespace ExcelMvc.Functions
         public bool IsClusterSafe;
     }
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FunctionCallback(IntPtr args);
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct ExcelFunction
     {
         public const int MaxArguments = 32;
         [MarshalAs(UnmanagedType.U4)]
         public uint Index;
-        [MarshalAs(UnmanagedType.U8)]
-        public ulong Callback;
+        // ulong works too
+        //[MarshalAs(UnmanagedType.U8)]
+        //public ulong Callback;
+        public IntPtr Callback;
         [MarshalAs(UnmanagedType.U1)]
         public byte FunctionType;
         [MarshalAs(UnmanagedType.U1)]
@@ -103,10 +108,11 @@ namespace ExcelMvc.Functions
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public ExcelArgument[] Arguments;
 
-        public ExcelFunction(uint index, IntPtr callback, ExcelFunctionAttribute rhs, ExcelArgument[] arguments)
+        public ExcelFunction(uint index, ExcelFunctionAttribute rhs, ExcelArgument[] arguments,
+            FunctionCallback callback)
         {
             Index = index;
-            Callback = (ulong) callback;
+            Callback = Marshal.GetFunctionPointerForDelegate(callback);
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
             IsMacro = rhs.IsMacro;

@@ -9,14 +9,13 @@ namespace ExcelMvc.Functions
 {
     public static class FunctionDiscovery
     {
-        public static IEnumerable<(ExcelFunction function, MethodInfo method)> Discover()
+        public static IEnumerable<(MethodInfo method, ExcelFunctionAttribute function, ExcelArgument[] args)> Discover()
         {
             return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
                 .Select(x => (function: x.method.GetCustomAttribute<ExcelFunctionAttribute>(), x.method))
-                .Select((x, idx) => (new ExcelFunction((uint)idx, FunctionExecution.MakeCallback(x.method),
-                    (ExcelFunctionAttribute)x.function, GetArguments(x.method)), x.method));
+                .Select(x => (x.method, (ExcelFunctionAttribute)x.function, GetArguments(x.method)));
         }
 
         private static IEnumerable<string> GetTypes(Assembly asm)
@@ -40,7 +39,5 @@ namespace ExcelMvc.Functions
             return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
             //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
-
-
     }
 }

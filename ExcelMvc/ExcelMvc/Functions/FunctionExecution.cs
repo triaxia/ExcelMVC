@@ -9,27 +9,14 @@ namespace ExcelMvc.Functions
 {
     public static class FunctionExecution
     {
-        public static Dictionary<uint, (ExcelFunction function, MethodInfo method)> Functions { get; private set; }
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void ExecuteCallback(IntPtr args);
-
-        // keep it alive!
-        private static readonly ExecuteCallback Instance = new ExecuteCallback(FunctionExecution.Execute);
-
-        public static IntPtr MakeCallback(MethodInfo method)
-        {
-            // perhaps one day one callback per method
-            // return Marshal.GetFunctionPointerForDelegate(Instance);
-            return Marshal.GetFunctionPointerForDelegate(Instance);
-        }
+        public static Dictionary<uint, (MethodInfo method, ExcelFunction function, FunctionCallback callback)> Functions
+        { get; private set; }
 
         public static void RegisterFunctions()
         {
-            Functions = FunctionDiscovery
-                .Discover()
-                .ToDictionary(x => x.function.Index, x => (x.function, x.method));
-
+            Functions = FunctionDiscovery.Discover()
+                .Select((x, idx) => (index: (uint)idx, x.method, x.function, x.args, callback: MakeCallback(x.method, x.function)))
+                .ToDictionary(x => x.index, x => (x.method, new ExcelFunction(x.index, x.function, x.args, x.callback), x.callback));
             foreach (var pair in Functions)
                 XlCall.RegisterFunction(pair.Value.function);
         }
@@ -37,7 +24,7 @@ namespace ExcelMvc.Functions
         public static void Execute(IntPtr args)
         {
             var fargs = Marshal.PtrToStructure<FunctionArgs>(args);
-            var (function, method) = Functions[fargs.Index];
+            var (method, function, callback) = Functions[fargs.Index];
             var arguments = fargs.GetArgs();
 
             var argc = method.GetParameters().Length;
@@ -74,7 +61,11 @@ namespace ExcelMvc.Functions
                     XlCall.AsyncReturn((IntPtr)largs[3], result.Detach());
                 }
             }, new object[] { function, method, args, handle });
+        }
 
+        public static FunctionCallback MakeCallback(MethodInfo method, ExcelFunctionAttribute function)
+        {
+            return new FunctionCallback(FunctionExecution.Execute);
         }
     }
 }

@@ -45,7 +45,9 @@ struct ExceArgument
 struct ExcelFunction
 {
 	int Index;
-	unsigned long long Callback;
+	// "unsigned long long" works too.
+	//unsigned long long Callback; 
+	void* Callback;
 	byte MacroType;
 	bool IsVolatile;
 	bool IsMacro;
