@@ -15,7 +15,7 @@ namespace ExcelMvc.Functions
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
                 .Select(x => (function: x.method.GetCustomAttribute<ExcelFunctionAttribute>(), x.method))
-                .Select((x, idx) => (new ExcelFunction((uint)idx, MakeCallback(x.method),
+                .Select((x, idx) => (new ExcelFunction((uint)idx, FunctionExecution.MakeCallback(x.method),
                     (ExcelFunctionAttribute)x.function, GetArguments(x.method)), x.method));
         }
 
@@ -32,14 +32,6 @@ namespace ExcelMvc.Functions
                 .Select(x => (argument: x.GetCustomAttribute<ExcelArgumentAttribute>(), parameter: x))
                 .Select(x => x.argument == null ? new ExcelArgument { Name = x.parameter.Name, Description = "" } : new ExcelArgument(x.argument))
                 .ToArray();
-        }
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate void Callback(IntPtr args);
-
-        private static IntPtr MakeCallback(MethodInfo method)
-        {
-            return Marshal.GetFunctionPointerForDelegate(new Callback(FunctionExecution.Execute));
         }
 
         private static bool HasCustomAttribute<T>(this MethodInfo method) where T : Attribute

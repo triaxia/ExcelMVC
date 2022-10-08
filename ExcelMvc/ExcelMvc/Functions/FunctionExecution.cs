@@ -10,6 +10,21 @@ namespace ExcelMvc.Functions
     public static class FunctionExecution
     {
         public static Dictionary<uint, (ExcelFunction function, MethodInfo method)> Functions { get; private set; }
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        delegate void ExecuteCallback(IntPtr args);
+
+        // keep it alive!
+        private static readonly IntPtr Instance
+            = Marshal.GetFunctionPointerForDelegate(new ExecuteCallback(FunctionExecution.Execute));
+
+        public static IntPtr MakeCallback(MethodInfo method)
+        {
+            // perhaps one day one callback per method
+            // return Marshal.GetFunctionPointerForDelegate(Instance);
+            return Instance;
+        }
+
         public static void RegisterFunctions()
         {
             Functions = FunctionDiscovery
@@ -46,19 +61,21 @@ namespace ExcelMvc.Functions
 
         public static void ExecuteAsync(ExcelFunction function, MethodInfo method, object[] args, IntPtr handle)
         {
-            Task.Run(() =>
+            Task.Factory.StartNew(state =>
             {
+                var largs = (object[])state;
                 XLOPER12_num x;
                 x.xltype = 1;
                 x.num = 0;
                 using (var result = new StructIntPtr<XLOPER12_num>(ref x))
                 {
                     var value = result.Ptr;
-                    ExecuteSync(function, method, args, ref value);
+                    ExecuteSync((ExcelFunction)largs[0], (MethodInfo)largs[1], (object[])largs[2], ref value);
                     // result will be owned and freed by Excel, so detach it.
-                    XlCall.AsyncReturn(handle, result.Detach());
+                    XlCall.AsyncReturn((IntPtr)largs[3], result.Detach());
                 }
-            });
+            }, new object[] { function, method, args, handle });
+
         }
     }
 }

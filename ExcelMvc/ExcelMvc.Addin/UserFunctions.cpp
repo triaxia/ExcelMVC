@@ -143,7 +143,7 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 		return;
 
 	auto lower = topic;
-	for (auto idx = 0; idx < lower.size(); idx++)
+	for (unsigned int idx = 0; idx < lower.size(); idx++)
 		lower[idx] = std::tolower(lower[idx]);
 	if (lower.find(L"http://") != std::wstring::npos
 		|| lower.find(L"https://") != std::wstring::npos)

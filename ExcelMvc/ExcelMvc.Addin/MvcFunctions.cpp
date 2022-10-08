@@ -86,7 +86,7 @@ void RegisterMvcFunctions()
 	Excel12f(xlGetName, &xDll, 0);
 
 	auto count = sizeof(MvcFunctions) / (sizeof(MvcFunctions[0][0]) * NumberOfParameters);
-	for (int idx = 0; idx < count; idx++)
+	for (unsigned int idx = 0; idx < count; idx++)
 	{
 		Excel12f
 		(
@@ -111,7 +111,7 @@ void RegisterMvcFunctions()
 void UnregisterMvcFunctions()
 {
 	auto count = sizeof(RegIds) / sizeof(XLOPER12);
-	for (int idx = 0; idx < count; idx++)
+	for (unsigned int idx = 0; idx < count; idx++)
 	{
 		Excel12f(xlfUnregister, 0, 1, &RegIds[idx]);
 	}

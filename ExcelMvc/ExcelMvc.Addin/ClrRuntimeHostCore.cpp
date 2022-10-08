@@ -103,7 +103,7 @@ ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName)
 	}
 
 	auto argc = sizeof(MethodNames) / sizeof(LPCWSTR);
-	for (auto idx = 0; idx < argc; idx++)
+	for (unsigned int idx = 0; idx < argc; idx++)
 	{
 		const string_t dotnetlib_path = BasePath + +L"\\" + AssemblyName + L".dll";
 		const string_t dotnet_type = string_t(pszClassName) + L"," + AssemblyName;
