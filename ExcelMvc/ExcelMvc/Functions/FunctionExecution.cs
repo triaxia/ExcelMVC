@@ -28,7 +28,8 @@ namespace ExcelMvc.Functions
             var arguments = fargs.GetArgs();
 
             var argc = method.GetParameters().Length;
-            var values = method.GetParameters().Take(argc)
+            var values = method.GetParameters()
+                .Take(argc)
                 .Select((p, idx) => Converter.ConvertIncoming(arguments[idx], p))
                 .ToArray();
 
@@ -42,7 +43,7 @@ namespace ExcelMvc.Functions
             ref IntPtr result)
         {
             var value = method.Invoke(null, args);
-            Converter.ConvertOutging(value, ref result);
+            Converter.ConvertOutging(value, method, ref result);
         }
 
         public static void ExecuteAsync(ExcelFunction function, MethodInfo method, object[] args, IntPtr handle)

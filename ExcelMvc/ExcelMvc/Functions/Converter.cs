@@ -13,14 +13,13 @@ namespace ExcelMvc.Functions
             return result;
         }
 
-        public static void ConvertOutging(object outgoing, ref IntPtr result)
+        public static void ConvertOutging(object outgoing, MethodInfo method, ref IntPtr result)
         {
             XLOPER12_num r;
             r.xltype = 1;
             r.num = (double)outgoing;
             Marshal.StructureToPtr(r, result, false);
         }
-
 
         private static object GetDefaultValue(ParameterInfo info)
         {
