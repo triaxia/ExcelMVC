@@ -51,10 +51,8 @@ namespace ExcelMvc.Functions
             Task.Factory.StartNew(state =>
             {
                 var largs = (object[])state;
-                XLOPER12_num x;
-                x.xltype = 1;
-                x.num = 0;
-                using (var result = new StructIntPtr<XLOPER12_num>(ref x))
+                XLOPER12.Make((double)0, out var r);
+                using (var result = new StructIntPtr<XLOPER12>(ref r))
                 {
                     var value = result.Ptr;
                     ExecuteSync((ExcelFunction)largs[0], (MethodInfo)largs[1], (object[])largs[2], ref value);

@@ -33,5 +33,11 @@ namespace Samples
         {
             return v1 + v2;
         }
+
+        [ExcelFunction(Name = "uAdd", IsAnyc = false, IsThreadSafe = false, Description = "nothing", HelpTopic = "https://www.microsoft.com")]
+        public static double Add()
+        {
+            return 32424;
+        }
     }
 }

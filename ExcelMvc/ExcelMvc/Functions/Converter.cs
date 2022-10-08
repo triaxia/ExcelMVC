@@ -9,15 +9,13 @@ namespace ExcelMvc.Functions
         public static object ConvertIncoming(IntPtr incoming, ParameterInfo info)
         {
             var result = incoming == IntPtr.Zero ?
-                GetDefaultValue(info) : Marshal.PtrToStructure<XLOPER12_num>(incoming).num;
+                GetDefaultValue(info) : Marshal.PtrToStructure<XLOPER12>(incoming).num;
             return result;
         }
 
         public static void ConvertOutging(object outgoing, MethodInfo method, ref IntPtr result)
         {
-            XLOPER12_num r;
-            r.xltype = 1;
-            r.num = (double)outgoing;
+            XLOPER12.Make((double)outgoing, out var r);
             Marshal.StructureToPtr(r, result, false);
         }
 
