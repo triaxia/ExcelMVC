@@ -15,14 +15,13 @@ namespace ExcelMvc.Functions
         delegate void ExecuteCallback(IntPtr args);
 
         // keep it alive!
-        private static readonly IntPtr Instance
-            = Marshal.GetFunctionPointerForDelegate(new ExecuteCallback(FunctionExecution.Execute));
+        private static readonly ExecuteCallback Instance = new ExecuteCallback(FunctionExecution.Execute);
 
         public static IntPtr MakeCallback(MethodInfo method)
         {
             // perhaps one day one callback per method
             // return Marshal.GetFunctionPointerForDelegate(Instance);
-            return Instance;
+            return Marshal.GetFunctionPointerForDelegate(Instance);
         }
 
         public static void RegisterFunctions()

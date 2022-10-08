@@ -76,7 +76,8 @@ namespace ExcelMvc.Functions
         public const int MaxArguments = 32;
         [MarshalAs(UnmanagedType.U4)]
         public uint Index;
-        public IntPtr Callback;
+        [MarshalAs(UnmanagedType.U8)]
+        public ulong Callback;
         [MarshalAs(UnmanagedType.U1)]
         public byte FunctionType;
         [MarshalAs(UnmanagedType.U1)]
@@ -105,7 +106,7 @@ namespace ExcelMvc.Functions
         public ExcelFunction(uint index, IntPtr callback, ExcelFunctionAttribute rhs, ExcelArgument[] arguments)
         {
             Index = index;
-            Callback = callback;
+            Callback = (ulong) callback;
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
             IsMacro = rhs.IsMacro;

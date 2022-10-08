@@ -45,7 +45,7 @@ struct ExceArgument
 struct ExcelFunction
 {
 	int Index;
-	void* Callback;
+	unsigned long long Callback;
 	byte MacroType;
 	bool IsVolatile;
 	bool IsMacro;
@@ -164,7 +164,7 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	auto regId = (LPXLOPER12)malloc(sizeof(XLOPER12));
 	FunctionRegIds[pFunction->Index] = regId;
 	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
-	FunctionCallback[pFunction->Index] = pFunction->Callback;
+	FunctionCallback[pFunction->Index] = (void *) pFunction->Callback;
 	FunctionAsync[pFunction->Index] = pFunction->IsAnyc;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1

@@ -4,6 +4,19 @@ namespace Samples
 {
     public static class Math
     {
+        /*
+            Public Sub test()
+                Dim start As Date
+                start = Now()
+                For i = 0 To 1000000
+                    Application.Run "uAdd2", 1, 3
+                Next i
+    
+                Dim diff As Double
+                diff = (Now - start) * 24 * 60 * 60
+                Debug.Print diff
+            End Sub
+        */
         //[ExcelFunction(Name = "uAdd3", IsThreadSafe = true, Description = "Add 3 numbers", HelpTopic = "https://www.microsoft.com")]
         //public static double Add3(
         //    [ExcelArgument(Name = "v1", Description = "argument 1")] double v1,
