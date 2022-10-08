@@ -6,19 +6,19 @@ using System.Runtime.InteropServices;
 namespace ExcelMvc.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class FunctionDiscoveryTests
     {
         [ExcelFunction(Name = "uAdd")]
-        public static double Add(double v1, double v2, double v3)
+        public static double uAdd(double v1, double v2, double v3)
         {
             return v1 + v2 + v3;
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void Discover()
         {
-            FunctionExecution.RegisterFunctions();
-            Assert.AreEqual(1, FunctionExecution.Functions.Count());
+            var functions = FunctionDiscovery.Discover().Where(x => x.function.Name == "uAdd");
+            Assert.AreEqual(1, functions.Count());
         }
     }
 }

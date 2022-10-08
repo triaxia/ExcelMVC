@@ -51,7 +51,7 @@ namespace ExcelMvc.Functions
             Task.Factory.StartNew(state =>
             {
                 var largs = (object[])state;
-                XLOPER12.Make((double)0, out var r);
+                var r = new XLOPER12((double)0);
                 using (var result = new StructIntPtr<XLOPER12>(ref r))
                 {
                     var value = result.Ptr;

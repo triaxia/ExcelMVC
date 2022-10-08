@@ -15,7 +15,7 @@ namespace ExcelMvc.Functions
 
         public static void ConvertOutging(object outgoing, MethodInfo method, ref IntPtr result)
         {
-            XLOPER12.Make((double)outgoing, out var r);
+            var r = new XLOPER12((double)outgoing);
             Marshal.StructureToPtr(r, result, false);
         }
 

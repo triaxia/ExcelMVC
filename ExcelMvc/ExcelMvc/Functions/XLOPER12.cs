@@ -4,49 +4,57 @@ using System.Runtime.InteropServices;
 namespace ExcelMvc.Functions
 {
     [StructLayout(LayoutKind.Explicit)]
-    public struct XlString
-    {
-        [FieldOffset(0)]
-        public ushort Length;
-        [FieldOffset(2)]
-        public IntPtr Data;
-    }
-   
-    [StructLayout(LayoutKind.Explicit)]
-    public struct XLOPER12
+    unsafe public struct XLOPER12
     {
         [FieldOffset(0)] public double num;
         [FieldOffset(0)] public int w;
         [FieldOffset(0)] public int xbool;
-        //[FieldOffset(0)] public XlString str;
+        [FieldOffset(0)] private void *str;
         [FieldOffset(24)] public uint xltype;
 
-        public static void Make(double v, out XLOPER12 op)
+        public XLOPER12(double v)
         {
-            //op.str.Length = 0;
-            //op.str.Data = IntPtr.Zero;
-            op.w = 0;
-            op.xbool = 0;
-            op.num = v;
-            op.xltype = (uint)XlTypes.xltypeNum;
+            str = null;
+            w = 0;
+            xbool = 0;
+            num = v;
+            xltype = (uint)XlTypes.xltypeNum;
         }
 
-        //public static void Make(int v, out XLOPER12 op)
-        //{
-        //    op.str = null;
-        //    op.num = 0;
-        //    op.xbool = 0;
-        //    op.xltype = (uint)XlTypes.xltypeInt;
-        //    op.w = v;
-        //}
+        public XLOPER12(int v)
+        {
+            str = null;
+            num = 0;
+            xbool = 0;
+            xltype = (uint)XlTypes.xltypeInt;
+            w = v;
+        }
 
-        //public static void Make(bool v, out XLOPER12 op)
-        //{
-        //    op.str = null;
-        //    op.num = 0;
-        //    op.w = 0;
-        //    op.xltype = (uint)XlTypes.xltypeBool;
-        //    op.xbool = v ? -1 : 0;
-        //}
+        public XLOPER12(bool v)
+        {
+            str = null;
+            num = 0;
+            w = 0;
+            xltype = (uint)XlTypes.xltypeBool;
+            xbool = v ? -1 : 0;
+        }
+
+        public XLOPER12(string v)
+        {
+            num = 0;
+            w = 0;
+            xbool =0;
+            xltype = (uint)XlTypes.xltypeStr;
+            str = null; //TODO
+        }
+
+        public string Str()
+        {
+            if (xltype != (uint)XlTypes.xltypeStr)
+                return null;
+
+            var value = Marshal.PtrToStringUni(new IntPtr(str));
+            return value.Substring(1, value[0]);
+        }
     }
 }
