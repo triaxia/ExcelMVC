@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
 {
@@ -14,7 +15,8 @@ namespace ExcelMvc.Functions
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
                 .Select(x => (function: x.method.GetCustomAttribute<ExcelFunctionAttribute>(), x.method))
-                .Select((x, idx) => (new ExcelFunction((uint)idx, (ExcelFunctionAttribute)x.function, GetArguments(x.method)), x.method));
+                .Select((x, idx) => (new ExcelFunction((uint)idx, MakeCallback(x.method),
+                    (ExcelFunctionAttribute)x.function, GetArguments(x.method)), x.method));
         }
 
         private static IEnumerable<string> GetTypes(Assembly asm)
@@ -32,11 +34,21 @@ namespace ExcelMvc.Functions
                 .ToArray();
         }
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        delegate void Callback(IntPtr args);
+
+        private static IntPtr MakeCallback(MethodInfo method)
+        {
+            return Marshal.GetFunctionPointerForDelegate(new Callback(FunctionExecution.Execute));
+        }
+
         private static bool HasCustomAttribute<T>(this MethodInfo method) where T : Attribute
         {
             var name = typeof(T).AssemblyQualifiedName;
             return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
             //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
+
+
     }
 }

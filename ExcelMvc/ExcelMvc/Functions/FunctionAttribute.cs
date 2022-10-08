@@ -47,6 +47,11 @@ namespace ExcelMvc.Functions
         public bool IsMacro;
 
         /// <summary>
+        /// Indicates if the function is listed in the Function Wizard.
+        /// </summary>
+        public bool IsHidden = false;
+
+        /// <summary>
         /// Registers the function as an asynchronous function.
         /// (pxTypeText=>(pxArgsTypeText)X)
         /// </summary>
@@ -71,6 +76,7 @@ namespace ExcelMvc.Functions
         public const int MaxArguments = 32;
         [MarshalAs(UnmanagedType.U4)]
         public uint Index;
+        public IntPtr Callback;
         [MarshalAs(UnmanagedType.U1)]
         public byte FunctionType;
         [MarshalAs(UnmanagedType.U1)]
@@ -96,9 +102,10 @@ namespace ExcelMvc.Functions
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public ExcelArgument[] Arguments;
 
-        public ExcelFunction(uint index, ExcelFunctionAttribute rhs, ExcelArgument[] arguments)
+        public ExcelFunction(uint index, IntPtr callback, ExcelFunctionAttribute rhs, ExcelArgument[] arguments)
         {
             Index = index;
+            Callback = callback;
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
             IsMacro = rhs.IsMacro;
@@ -111,6 +118,7 @@ namespace ExcelMvc.Functions
             Description = rhs.Description ?? "";
             HelpTopic = rhs.HelpTopic ?? "";
             Arguments = Pad(arguments);
+            if (rhs.IsHidden) FunctionType = 0;
         }
 
         private static ExcelArgument[] Pad(ExcelArgument[] arguments)

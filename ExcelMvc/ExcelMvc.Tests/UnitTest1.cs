@@ -18,7 +18,8 @@ namespace ExcelMvc.Tests
         {
             var x = FunctionDiscovery.Discover().First();
             for (int idx = 0; idx < 1000000; idx++)
-                XlCall.Register(x.function);
+                XlCall.RegisterFunction(x.function);
+            Assert.IsTrue(true);
         }
     }
 }

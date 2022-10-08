@@ -17,7 +17,7 @@ namespace ExcelMvc.Functions
                 .ToDictionary(x => x.function.Index, x => (x.function, x.method));
 
             foreach (var pair in Functions)
-                XlCall.Register(pair.Value.function);
+                XlCall.RegisterFunction(pair.Value.function);
         }
 
         public static void Execute(IntPtr args)
@@ -34,6 +34,7 @@ namespace ExcelMvc.Functions
             else
                 ExecuteSync(function, method, values, ref fargs.Result);
         }
+
         public static void ExecuteSync(ExcelFunction function, MethodInfo method, object[] args,
             ref IntPtr result)
         {
@@ -53,8 +54,8 @@ namespace ExcelMvc.Functions
                 {
                     var value = ptr.Ptr;
                     ExecuteSync(function, method, args, ref value);
-                    value = ptr.Detach(); //TODO
-                    XlCall.AsyncReturn(new FunctionResult { Index = function.Index, Value = value });
+                    value = ptr.Detach(); // result owned by Excel
+                    XlCall.AsyncReturn(function.Index, value);
                 }
             });
         }

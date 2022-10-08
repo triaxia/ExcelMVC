@@ -58,11 +58,4 @@ namespace ExcelMvc.Functions
                  GetArgs(size).Select(x => $"{ToString(x)}"));
         }
     }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct FunctionResult
-    {
-        public uint Index;
-        public IntPtr Value;
-    }
 }
