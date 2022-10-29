@@ -1,4 +1,5 @@
 using ExcelMvc.Functions;
+using Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,7 +9,7 @@ namespace ExcelMvc.Tests
     [TestClass]
     public class FunctionDiscoveryTests
     {
-        [ExcelFunction(Name = "uAdd")]
+        [Function(Name = "uAdd")]
         public static double uAdd(double v1, double v2, double v3)
         {
             return v1 + v2 + v3;

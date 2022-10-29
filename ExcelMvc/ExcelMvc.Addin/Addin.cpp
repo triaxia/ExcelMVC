@@ -111,7 +111,6 @@ void StopAddinClrHost()
 	if (pClrHost != nullptr) pClrHost->Stop();
 }
 
-extern "C" __declspec(dllexport)
 BOOL __stdcall xlAutoOpen(void)
 {
 	RegisterMvcFunctions();
@@ -120,7 +119,6 @@ BOOL __stdcall xlAutoOpen(void)
 	return TRUE;
 }
 
-extern "C" __declspec(dllexport)
 BOOL __stdcall xlAutoClose(void)
 {
 	UnregisterMvcFunctions();
@@ -128,7 +126,6 @@ BOOL __stdcall xlAutoClose(void)
 	return TRUE;
 }
 
-extern "C" __declspec(dllexport)
 void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
 {
 	if ((pxFree->xltype & xlbitDLLFree) != xlbitDLLFree)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -34,7 +35,7 @@ namespace ExcelMvc.Functions
             if (Ptr == IntPtr.Zero)
                 return;
 
-            Marshal.DestroyStructure<ExcelFunction>(Ptr);
+            Marshal.DestroyStructure<Function>(Ptr);
             Marshal.FreeHGlobal(Ptr);
         }
     }

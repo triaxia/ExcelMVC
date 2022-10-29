@@ -26,7 +26,7 @@ namespace Samples
         //    return v1 + v2 + v3;
         //}
 
-        [ExcelFunction(Name = "uAdd2", IsAnyc = false, IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
+        [ExcelFunction(Name = "uAdd2", IsAnyc = true, IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
         public static double Add2(
             [ExcelArgument(Name = "v1", Description = "argument 1")] double v1,
             [ExcelArgument(Name = "v2", Description = "argument 2")] double v2)

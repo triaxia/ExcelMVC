@@ -66,7 +66,6 @@ static std::map<int, LPXLOPER12> FunctionRegIds;
 static std::map<int, bool> FunctionAsync;
 static std::map<int, int> FunctionArgCount;
 static std::map<int, void*> FunctionCallback;
-
 static XLOPER12 xDll;
 
 void RegisterUserFunctions()
@@ -159,7 +158,58 @@ void GetFunctionInfo(int index, void **pCallback, bool* async, int *argc)
 	*argc = FunctionArgCount[index];
 }
 
-extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr)
+extern "C" extern ClrRuntimeHost * pClrHost;
+extern void GetFunctionInfo(int index, void** pCallback, bool* aync, int* argc);
+typedef void (*pFNCallback)(void*);
+
+LPXLOPER12 
+Udf32(unsigned int index,
+	LPXLOPER12 arg01, LPXLOPER12 arg02, LPXLOPER12 arg03, LPXLOPER12 arg04, LPXLOPER12 arg05, LPXLOPER12 arg06, LPXLOPER12 arg07, LPXLOPER12 arg08, LPXLOPER12 arg09, LPXLOPER12 arg10,
+	LPXLOPER12 arg11, LPXLOPER12 arg12, LPXLOPER12 arg13, LPXLOPER12 arg14, LPXLOPER12 arg15, LPXLOPER12 arg16, LPXLOPER12 arg17, LPXLOPER12 arg18, LPXLOPER12 arg19, LPXLOPER12 arg20,
+	LPXLOPER12 arg21, LPXLOPER12 arg22, LPXLOPER12 arg23, LPXLOPER12 arg24, LPXLOPER12 arg25, LPXLOPER12 arg26, LPXLOPER12 arg27, LPXLOPER12 arg28, LPXLOPER12 arg29, LPXLOPER12 arg30,
+	LPXLOPER12 arg31, LPXLOPER12 arg32)
+{
+	bool async = false;
+	void* pCallback = NULL;
+	int argc;
+
+	GetFunctionInfo(index, &pCallback, &async, &argc);
+	LPXLOPER12 result = NULL;
+
+	if (async)
+	{
+		argc++;
+	}
+	else
+	{
+		result = new XLOPER12();
+		memset(result, 0, sizeof(XLOPER12));
+	}
+
+	void* args[] =
+	{
+		(void*)index, result,
+		arg01,  arg02,  arg03,  arg04,  arg05,  arg06, arg07,  arg08,  arg09,  arg10,
+		arg11,  arg12, arg13,  arg14,  arg15,  arg16,  arg17,  arg18, arg19,  arg20,
+		arg21,  arg22,  arg23,  arg24,  arg25,  arg26,  arg27,  arg28,  arg29,  arg30,
+		arg31,  arg32
+	};
+
+	// wiped out unwanted args
+	for (auto idx = argc + 2; idx < 34; idx++)
+		args[idx] = NULL;
+
+	// callback is 14% faster than COM interop for 471. there is no difference for net6.0 as it is already
+	// using callback.
+	//pClrHost->Udf(args);
+	((pFNCallback)pCallback)(args);
+	if (result != NULL)
+		result->xltype = result->xltype | xlbitDLLFree;
+	return result;
+}
+
+
+ LPXLOPER12 __stdcall RegisterFunction(void* ptr)
 {
 	ExcelFunction* pFunction = (ExcelFunction*)ptr;
 	UnregisterUserFunction(pFunction->Index);
@@ -186,7 +236,7 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	LPXLOPER12 pxArgumentHelp245
 	*/
 	TCHAR pxProcedure[10];
-	wsprintf(pxProcedure, L"Udf%04d", pFunction->Index);
+	wsprintf(pxProcedure, L"f%d", pFunction->Index);
 
 	std::wstring pxArgumentText; std::wstring pxTypeText;
 	MakeArgumentList(pFunction, pxArgumentText, pxTypeText);
@@ -238,7 +288,7 @@ extern "C" __declspec(dllexport) LPXLOPER12 __stdcall RegisterFunction(void* ptr
 	return regId;
 }
 
-extern "C" __declspec(dllexport) void __stdcall AsyncReturn(void* handle, void* result)
+void __stdcall AsyncReturn(void* handle, void* result)
 {
 	XLOPER12 status;
 	Excel12(xlAsyncReturn, &status, 2, handle, result);

@@ -106,4 +106,8 @@
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Mvc\Mvc.csproj" PrivateAssets="All"/>
+	</ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mvc;
+using System;
 using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
@@ -14,9 +15,9 @@ namespace ExcelMvc.Functions
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "AsyncReturn")]
         public static extern IntPtr AsyncReturn32(IntPtr handle, IntPtr result);
 
-        public static void RegisterFunction(ExcelFunction function)
+        public static void RegisterFunction(Function function)
         {
-            using (var ptr = new StructIntPtr<ExcelFunction>(ref function))
+            using (var ptr = new StructIntPtr<Function>(ref function))
             {
                 if (Environment.Is64BitProcess)
                     RegisterFunction64(ptr);
