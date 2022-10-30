@@ -110,4 +110,17 @@
 		<ProjectReference Include="..\Mvc\Mvc.csproj" PrivateAssets="All"/>
 	</ItemGroup>
 
+	<PropertyGroup>
+		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyReferencedProjectAssetsToPackage</TargetsForTfmSpecificBuildOutput>
+	</PropertyGroup>
+
+	<Target Name="CopyReferencedProjectAssetsToPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">
+		<ItemGroup>
+			<ProjectCopyLocalPaths Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')-&gt;WithMetadataValue('PrivateAssets', 'All'))" />
+		</ItemGroup>
+		<ItemGroup>
+			<BuildOutputInPackage Include="@(ProjectCopyLocalPaths)" TargetPath="%(ProjectCopyLocalPaths.DestinationSubDirectory)" />
+		</ItemGroup>
+	</Target>
+
 </Project>

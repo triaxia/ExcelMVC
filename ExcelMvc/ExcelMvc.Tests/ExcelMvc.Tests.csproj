@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\ExcelMvc\ExcelMvc.csproj" />
+	  <ProjectReference Include="..\Mvc\Mvc.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

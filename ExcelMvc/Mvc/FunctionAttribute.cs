@@ -55,7 +55,7 @@ namespace Mvc
         /// Registers the function as an asynchronous function.
         /// (pxTypeText=>(pxArgsTypeText)X)
         /// </summary>
-        public bool IsAnyc;
+        public bool IsAsync;
 
         /// <summary>
         /// Indiates the function is thread-safe.
@@ -116,7 +116,7 @@ namespace Mvc
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
             IsMacro = rhs.IsMacro;
-            IsAsync = rhs.IsAnyc;
+            IsAsync = rhs.IsAsync;
             IsThreadSafe = rhs.IsThreadSafe;
             IsClusterSafe = rhs.IsClusterSafe;
             ArgumentCount = (byte)(arguments?.Length ?? 0);

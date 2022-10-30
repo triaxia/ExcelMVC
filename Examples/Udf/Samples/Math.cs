@@ -1,4 +1,5 @@
 ﻿using ExcelMvc.Functions;
+using Mvc;
 
 namespace Samples
 {
@@ -26,15 +27,15 @@ namespace Samples
         //    return v1 + v2 + v3;
         //}
 
-        [ExcelFunction(Name = "uAdd2", IsAnyc = true, IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
+        [Function(Name = "uAdd2", IsAsync = false, IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
         public static double Add2(
-            [ExcelArgument(Name = "v1", Description = "argument 1")] double v1,
-            [ExcelArgument(Name = "v2", Description = "argument 2")] double v2)
+            [Argument(Name = "v1", Description = "argument 1")] double v1,
+            [Argument(Name = "v2", Description = "argument 2")] double v2)
         {
             return v1 + v2;
         }
 
-        [ExcelFunction(Name = "uAdd", IsAnyc = false, IsThreadSafe = false, Description = "nothing", HelpTopic = "https://www.microsoft.com")]
+        [Function(Name = "uAdd", IsAsync = false, IsThreadSafe = false, Description = "nothing", HelpTopic = "https://www.microsoft.com")]
         public static double Add()
         {
             return 32424;
