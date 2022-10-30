@@ -66,5 +66,30 @@ namespace ExcelMvc.Functions
         {
             return new FunctionCallback(FunctionExecution.Execute);
         }
+
+        /* 9 ms version 300 ms for 1million calls
+         static void Main(string[] args)
+        {
+            var ps = new int[] { 1, 2 }.Select((idx, x) => Expression.Parameter(typeof(int), $"a{idx}")).ToArray();
+            var m = typeof(Program).GetMethod("X")!;
+            var d = Expression.Call(typeof(Program).GetMethod("X")!, ps);
+            var f = ((Func<int, int, int>)(Expression.Lambda(d, ps).Compile()));
+            //var f = Expression.Lambda(d, ps).Compile();
+
+            var start = System.Diagnostics.Stopwatch.StartNew();
+            for (var idx = 0; idx < 1000000; idx++)
+            {
+                var v = f(3, 4);
+            }
+            Console.WriteLine(start.Elapsed.ToString());
+
+            start = System.Diagnostics.Stopwatch.StartNew();
+            for (var idx = 0; idx < 1000000; idx++)
+            {
+                var v = m.Invoke(null, new object[] { 1, 3 });
+            }
+            Console.WriteLine(start.Elapsed.ToString());
+        }
+        */
     }
 }
