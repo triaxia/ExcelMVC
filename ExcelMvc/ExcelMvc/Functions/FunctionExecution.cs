@@ -90,6 +90,36 @@ namespace ExcelMvc.Functions
             }
             Console.WriteLine(start.Elapsed.ToString());
         }
+
+     static void Main(string[] args)
+        {
+            var p1 = new int[] { 1, 2 }.Select((idx, x) => Expression.Parameter(typeof(int), $"a{idx}")).ToArray();
+            var m1 = typeof(Program).GetMethod("X")!;
+            var c1 = Expression.Call(m1, p1);
+            var f1 = ((Func<int, int, int>)(Expression.Lambda(c1, p1).Compile()));
+
+            var p2 = new[] { Expression.Parameter(typeof(object), "c"), Expression.Parameter(typeof(Type), "p") };
+            var m2 = typeof(Program).GetMethod("C")!;
+            var c2 = Expression.Call(m2, p2);
+            var f2 = ((Func<object, Type, int>)(Expression.Lambda(c2, p2).Compile()));
+
+        var start = System.Diagnostics.Stopwatch.StartNew();
+            for (var idx = 0; idx< 1000000; idx++)
+            {
+                //var v = f1(f2(3, typeof(int)), f2(4, typeof(int)));
+                var v = f1(3, 4);
+    }
+    Console.WriteLine(start.Elapsed.ToString());
+
+            start = System.Diagnostics.Stopwatch.StartNew();
+            for (var idx = 0; idx< 1000000; idx++)
+            {
+                //var v = m1.Invoke(null, new object[] { (1, typeof(int)), C(3, typeof(int))});
+                var v = m1.Invoke(null, new object[] { 1, 3 });
+}
+Console.WriteLine(start.Elapsed.ToString());
+        }
+
         */
     }
 }
