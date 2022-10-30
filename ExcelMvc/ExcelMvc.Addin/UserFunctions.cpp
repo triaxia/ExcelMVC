@@ -236,7 +236,7 @@ Udf32(unsigned int index,
 	LPXLOPER12 pxArgumentHelp245
 	*/
 	TCHAR pxProcedure[10];
-	wsprintf(pxProcedure, L"f%d", pFunction->Index + 1);
+	wsprintf(pxProcedure, L"f%d", pFunction->Index);
 
 	std::wstring pxArgumentText; std::wstring pxTypeText;
 	MakeArgumentList(pFunction, pxArgumentText, pxTypeText);
