@@ -120,6 +120,21 @@ LPCWSTR NullCoalesce(LPCWSTR value)
 	return value == NULL ? L"" : value;
 }
 
+LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
+{
+	value = NullCoalesce(value);
+	auto len = lstrlenW(value);
+	auto dest = new WCHAR[len + spaces + 1];
+	wmemcpy_s(dest, len, value, len);
+	for (auto idx = 0; idx < spaces; idx++)
+		dest[len + idx] = ' ';
+	dest[len + spaces] = '\0';
+	auto result = TempStr12(dest);
+	delete[] dest;
+	return result;
+}
+
+
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstring& types)
 {
 	types = pFunction->IsAnyc ? L">" : L"Q";
@@ -134,7 +149,6 @@ void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstrin
 	if (pFunction->IsThreadSafe) types += L"$";
 	if (pFunction->IsClusterSafe) types += L"&";
 	if (pFunction->IsMacro) types += L"#";
-
 }
 
 void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
@@ -251,8 +265,6 @@ Udf32(unsigned int index,
 	std::wstring pxHelpTopic;
 	NormaliseHelpTopic(pFunction, pxHelpTopic);
 
-	auto pxFunctionHelp = NullCoalesce(pFunction->Description);
-
 	auto count = 10 + pFunction->ArgumentCount;
 	auto pParams = new LPXLOPER12[count];
 
@@ -265,9 +277,17 @@ Udf32(unsigned int index,
 	pParams[6] = TempStr12(pxCategory);
 	pParams[7] = TempStr12(pxShortcutText);
 	pParams[8] = TempStr12(pxHelpTopic.c_str());
-	pParams[9] = TempStr12(pxFunctionHelp);
+	pParams[9] = pFunction->ArgumentCount == 0 ?
+		TempStr12SpacesPadded(pFunction->Description, 2)
+		: TempStr12(NullCoalesce(pFunction->Description));
+
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
-		pParams[10 + idx] = (LPXLOPER12)TempStr12(NullCoalesce(pFunction->Arguments[idx].Description));
+	{
+		pParams[10 + idx] = idx == pFunction->ArgumentCount - 1 ?
+			TempStr12SpacesPadded(pFunction->Arguments[idx].Description, 2)
+			:TempStr12(NullCoalesce(pFunction->Arguments[idx].Description));
+	}
+
 
 	Excel12v(xlfRegister, regId, count, pParams);
 	FreeAllTempMemory();

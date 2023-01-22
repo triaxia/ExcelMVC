@@ -9,6 +9,12 @@ xlAutoClose
 xlAutoFree12
 RegisterFunction
 AsyncReturn
+ExcelMvcAttach
+ExcelMvcDetach
+ExcelMvcShow
+ExcelMvcHide
+ExcelMvcClick
+ExcelMvcRun
 f0
 f1
 f2
