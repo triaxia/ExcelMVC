@@ -277,6 +277,9 @@ Udf32(unsigned int index,
 	pParams[6] = TempStr12(pxCategory);
 	pParams[7] = TempStr12(pxShortcutText);
 	pParams[8] = TempStr12(pxHelpTopic.c_str());
+
+	// Excel function Wizard truncates total function help text by up to two characters...
+	// So we fool it by adding two spaces.
 	pParams[9] = pFunction->ArgumentCount == 0 ?
 		TempStr12SpacesPadded(pFunction->Description, 2)
 		: TempStr12(NullCoalesce(pFunction->Description));
