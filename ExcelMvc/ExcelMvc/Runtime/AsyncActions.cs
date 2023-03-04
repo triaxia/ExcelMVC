@@ -78,7 +78,6 @@ namespace ExcelMvc.Runtime
         /// Gets the number of outstanding actions
         /// </summary>
         /// <returns>Number of items</returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public static int GetActionDepth()
         {
             return Actions.Count;
@@ -88,10 +87,9 @@ namespace ExcelMvc.Runtime
         /// Gets the number of outstanding macros
         /// </summary>
         /// <returns>Number of items</returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public static int GetMacroDepth()
         {
-            return Actions.Count;
+            return Macros.Count;
         }
 
         /// <summary>
@@ -109,7 +107,6 @@ namespace ExcelMvc.Runtime
         /// <param name="state">State object</param>
         /// <param name="asMacro">Execute as a macro</param>
         /// <param name="pumpMilliseconds">Pumping message</param>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public static void Post(Action<object> action, object state
             , bool asMacro, int pumpMilliseconds = 0)
         {
@@ -130,7 +127,6 @@ namespace ExcelMvc.Runtime
         /// Executes the next action in the queue
         /// </summary>
         /// <param name="exectueMacro">Execute the next macro</param>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public static void Execute(bool exectueMacro)
         {
             void Do(ConcurrentQueue<Item> queue)
