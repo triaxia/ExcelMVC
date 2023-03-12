@@ -107,7 +107,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Mvc\Mvc.csproj" PrivateAssets="All"/>
+		<ProjectReference Include="..\Mvc\Mvc.csproj" PrivateAssets="All" />
 	</ItemGroup>
 
 	<PropertyGroup>
