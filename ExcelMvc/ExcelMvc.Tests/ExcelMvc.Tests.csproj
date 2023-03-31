@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
 		<!--<ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>-->
+		<Nullable>enable</Nullable>-->
 		<IsPackable>false</IsPackable>
+	    <EnableComHosting>true</EnableComHosting> 
 	</PropertyGroup>
 
 	<ItemGroup>

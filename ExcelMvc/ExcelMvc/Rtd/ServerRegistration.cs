@@ -22,8 +22,8 @@ namespace ExcelMvc.Rtd
     /// }
     /// 
     /// Registry:
-    ///  
-    ///   Windows Registry Editor Version 5.00
+    ///   .NET Framework
+    ///   Windows Registry Editor Version 5.00 
     /// 
     ///   [HKEY_CLASSES_ROOT\CLSID\{3346EEFA-D567-447A-92A9-B941D1BAB751}]
     ///   @="MyServer.MyObject"
@@ -48,6 +48,24 @@ namespace ExcelMvc.Rtd
     /// 
     ///   [HKEY_CLASSES_ROOT\CLSID\{3346EEFA-D567-447A-92A9-B941D1BAB751}\ProgId]
     ///   @="MyServer.MyObject"
+    ///   
+    ///   .NET Core
+    ///   Windows Registry Editor Version 5.00
+    ///   [HKEY_CLASSES_ROOT\CLSID\{9F35B6F5-2C05-4E7F-93AA-EE087F6E7AB6}]
+    ///    @= "CoreCLR COMHost Server"
+    ///
+    ///   [HKEY_CLASSES_ROOT\CLSID\{9F35B6F5-2C05-4E7F-93AA-EE087F6E7AB6}\InProcServer32]
+    ///   @= "D:\\Temp\\classlib\\classlib\\bin\\Debug\\net6.0\\classlib.comhost.dll"
+    ///   "ThreadingModel" = "Both"
+    ///   [HKEY_CLASSES_ROOT\CLSID\{ 9F35B6F5 - 2C05 - 4E7F - 93AA - EE087F6E7AB6}\ProgID]
+    ///   @= "classlib.server"
+    ///   
+    /// 
+    ///   [HKEY_CLASSES_ROOT\classlib.server]
+    ///   @="classlib.Server"
+    ///   [HKEY_CLASSES_ROOT\classlib.server\CLSID]
+    ///   @="{9F35B6F5-2C05-4E7F-93AA-EE087F6E7AB6}"
+    ///
     ///
     /// Replace HKEY_CLASSES_ROOT with HKEY_CURRENT_USER\Software\Classes.
     /// 
@@ -56,30 +74,10 @@ namespace ExcelMvc.Rtd
     public static class ServerRegistration
     {
         private const string ClassesPath = @"Software\Classes\";
-        private const string ExcelMvcPath = @"Software\ExcelMvc\";
 
-        /// <summary>
-        /// (Assembly.CodeBase, (com-guid, com-progid))
-        /// </summary>
-        private static readonly ConcurrentDictionary<string, (string guid, string progId)> Guids 
-            = new ConcurrentDictionary<string, (string guid, string progId)>();
-
-        public static string Register(Type type)
+        public static string RegisterType(Type type)
         {
-            return Guids.GetOrAdd(type.Assembly.CodeBase, c =>
-            {
-                //var guid = $"{Guid.NewGuid()}";
-                //var progId = $"{type.FullName}.{guid.Replace("-", "")}";
-                //var progId = $"ExcelMvc.{guid.Replace("-", "")}";
-                var guid = $"{type.GUID}";
-                var progId = type.FullName;
-                RegisterType(type, guid, progId);
-                return (guid, progId);
-            }).progId;
-        }
 
-        private static void RegisterType(Type type, string guid, string progId)
-        {
             var x86 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
             var x64 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
 
@@ -89,6 +87,8 @@ namespace ExcelMvc.Rtd
                 x64.OpenSubKey(ClassesPath, RegistryKeyPermissionCheck.ReadWriteSubTree, System.Security.AccessControl.RegistryRights.FullControl)
             };
 
+            var progId = GetProgId(type);
+            var guid = $"{{{GetGuid(type)}}}";
 
             foreach (var key in keys)
             {
@@ -101,7 +101,7 @@ namespace ExcelMvc.Rtd
 
 
                 ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}]
-                var keyCLSID = key.OpenSubKey(@"CLSID", RegistryKeyPermissionCheck.ReadWriteSubTree, 
+                var keyCLSID = key.OpenSubKey(@"CLSID", RegistryKeyPermissionCheck.ReadWriteSubTree,
                     System.Security.AccessControl.RegistryRights.FullControl).CreateSubKey(guid);
                 keyCLSID.SetValue(null, progId);
 
@@ -121,6 +121,8 @@ namespace ExcelMvc.Rtd
 
                 keyCLSID.Close();
             }
+
+            return progId;
         }
 
         private static void SetKeyValues(RegistryKey key, Type type, bool versionNode)
@@ -136,5 +138,10 @@ namespace ExcelMvc.Rtd
             key.SetValue("RuntimeVersion", type.Assembly.ImageRuntimeVersion);
             key.SetValue("CodeBase", type.Assembly.CodeBase);
         }
+
+        private static string GetProgId(Type type) => type.GetCustomAttributes(typeof(ProgIdAttribute), false)
+            .Cast<ProgIdAttribute>().Single().Value;
+        private static string GetGuid(Type type) => type.GetCustomAttributes(typeof(GuidAttribute), false)
+            .Cast<GuidAttribute>().Single().Value;
     }
 }
