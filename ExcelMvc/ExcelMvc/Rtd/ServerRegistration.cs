@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ExcelMvc.Rtd
 {
-    /// <summary>
+    /*
     /// COM class:
     /// 
     /// namespace MyServer
@@ -69,15 +69,13 @@ namespace ExcelMvc.Rtd
     ///
     /// Replace HKEY_CLASSES_ROOT with HKEY_CURRENT_USER\Software\Classes.
     /// 
-    /// </summary>
-
+    */
     public static class ServerRegistration
     {
         private const string ClassesPath = @"Software\Classes\";
 
         public static string RegisterType(Type type)
         {
-
             var x86 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
             var x64 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
 
@@ -89,6 +87,7 @@ namespace ExcelMvc.Rtd
 
             var progId = GetProgId(type);
             var guid = $"{{{GetGuid(type)}}}";
+
 
             foreach (var key in keys)
             {
@@ -108,17 +107,22 @@ namespace ExcelMvc.Rtd
                 ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\ProgId]
                 keyCLSID.CreateSubKey("ProgId").SetValue(null, progId);
 
-
+#if NET5_0_OR_GREATER
                 ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
-                var InprocServer32 = keyCLSID.CreateSubKey("InprocServer32");
-                SetKeyValues(InprocServer32, type, false);
+                var inprocServer32 = keyCLSID.CreateSubKey("InProcServer32");
+                inprocServer32.SetValue(null, type.Assembly.Location.ToLower().Replace(".dll", ".comhost.dll"));
+                inprocServer32.SetValue("ThreadingModel", "Both");
 
+#else
+                ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
+                var inprocServer32 = keyCLSID.CreateSubKey("InprocServer32");
+
+                SetKeyValues(inprocServer32, type, false);
                 ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32\1.0.0.0]
-                SetKeyValues(InprocServer32.CreateSubKey("Version"), type, true);
-
+                SetKeyValues(inprocServer32.CreateSubKey("Version"), type, true);
                 ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
                 keyCLSID.CreateSubKey(@"Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}");
-
+#endif
                 keyCLSID.Close();
             }
 
@@ -132,7 +136,6 @@ namespace ExcelMvc.Rtd
                 key.SetValue(null, "mscoree.dll");
                 key.SetValue("ThreadingModel", "Both");
             }
-
             key.SetValue("Class", type.FullName);
             key.SetValue("Assembly", type.Assembly.FullName);
             key.SetValue("RuntimeVersion", type.Assembly.ImageRuntimeVersion);

@@ -2,6 +2,8 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
+		<!--Referenced below-->
+		<NetCoreFramework>net6.0-windows</NetCoreFramework>
 		<!--<Nullable>enable</Nullable>-->
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -26,6 +28,7 @@
 		<ContinuousIntegrationBuild Condition=" '$(Configuration)' == 'Release' ">true</ContinuousIntegrationBuild>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<EnableComHosting>true</EnableComHosting>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -87,6 +90,9 @@
 			<PackagePath>Build</PackagePath>
 		</Content>
 		<Content Include="ExcelMvc.Net.targets">
+			<PackagePath>Build</PackagePath>
+		</Content>
+		<Content Include="bin\$(Configuration)\$(NetCoreFramework)\ExcelMvc.comhost.dll">
 			<PackagePath>Build</PackagePath>
 		</Content>
 	</ItemGroup>
