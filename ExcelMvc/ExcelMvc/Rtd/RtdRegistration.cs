@@ -125,6 +125,11 @@ namespace ExcelMvc.Rtd
             return progId;
         }
 
+        public static void UnregisterType(Type type)
+        {
+
+        }
+
         private static void SetKeyValues(RegistryKey key, Type type, bool versionNode)
         {
             if (!versionNode)

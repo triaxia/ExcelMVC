@@ -12,13 +12,21 @@ namespace ExcelMvc.Rtd
         public IRtdServerImpl Impl { get; }
 
         private static IRtdServerImpl Incoming;
-        public static void XlRtd(IRtdServerImpl impl)
+        public static object RtdCall(IRtdServerImpl impl, string[] args)
         {
-            Incoming = impl;
             // system lock
-            // register
-            // create
-            // deregister
+            try
+            {
+                // only if not running
+                RtdRegistration.RegisterType(typeof(RtdServer));
+                RtdServer.Incoming = impl;
+            }
+            finally
+            {
+
+                RtdRegistration.UnregisterType(typeof(RtdServer));
+            }
+            return null;
         }
 
         public RtdServer()
