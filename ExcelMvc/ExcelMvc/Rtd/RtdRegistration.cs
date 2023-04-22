@@ -1,11 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace ExcelMvc.Rtd
@@ -70,7 +66,7 @@ namespace ExcelMvc.Rtd
     /// Replace HKEY_CLASSES_ROOT with HKEY_CURRENT_USER\Software\Classes.
     /// 
     */
-    public static class ServerRegistration
+    public static class RtdRegistration
     {
         private const string ClassesPath = @"Software\Classes\";
 

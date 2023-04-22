@@ -36,7 +36,6 @@ namespace ExcelMvc.Runtime
 {
     using System;
     using System.Windows;
-    using System.Runtime.InteropServices;
 
     using Diagnostics;
     using Extensions;

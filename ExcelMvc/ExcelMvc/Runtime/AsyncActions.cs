@@ -36,7 +36,6 @@ namespace ExcelMvc.Runtime
 {
     using System;
     using System.Collections.Concurrent;
-    using System.Runtime.CompilerServices;
     using ExcelMvc.Diagnostics;
     using Extensions;
     using Views;

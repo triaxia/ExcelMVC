@@ -2,7 +2,6 @@ using ExcelMvc.Functions;
 using Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Tests
 {
