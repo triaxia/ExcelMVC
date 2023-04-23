@@ -10,37 +10,28 @@ namespace ExcelMvc.Rtd
     public class RtdServer : Microsoft.Office.Interop.Excel.IRtdServer
     {
         public IRtdServerImpl Impl { get; }
-
-        private static IRtdServerImpl Incoming;
-        public static object RtdCall(IRtdServerImpl impl, string[] args)
-        {
-            // system lock
-            try
-            {
-                // only if not running
-                RtdRegistration.RegisterType(typeof(RtdServer));
-                RtdServer.Incoming = impl;
-            }
-            finally
-            {
-
-                RtdRegistration.UnregisterType(typeof(RtdServer));
-            }
-            return null;
-        }
+        private IRTDUpdateEvent CallbackObject { get; set; }
 
         public RtdServer()
         {
-            Impl = Incoming;
+            Impl = new RtdServerImplTest();
         }
 
-        public int ServerStart(IRTDUpdateEvent CallbackObject)
+        public int ServerStart(IRTDUpdateEvent callbackObject)
         {
-            return Impl.Start(() => CallbackObject.UpdateNotify());
+            CallbackObject = callbackObject;
+            void OnUpdated(object sender, EventArgs args)
+            {
+                CallbackObject.UpdateNotify();
+            }
+            Impl.Updated -= OnUpdated;
+            Impl.Updated += OnUpdated;
+            return Impl.Start();
         }
 
         public object ConnectData(int TopicID, ref Array Strings, ref bool GetNewValues)
         {
+            GetNewValues = true;
             var args = Strings.Cast<object>().Select(x => $"{x}").ToArray();
             return Impl.Connect(TopicID, args);
         }

@@ -1,19 +1,23 @@
-﻿namespace ExcelMvc.Rtd
-{
-    public delegate void UpdateNotify();
+﻿using System;
 
+namespace ExcelMvc.Rtd
+{
     /// <summary>
     /// Defines the implementation interface of a real-time data (RTD) server.
     /// </summary>
     public interface IRtdServerImpl
     {
         /// <summary>
+        /// Occurs whenever topic values have been updated.
+        /// </summary>
+        event EventHandler<EventArgs> Updated;
+
+        /// <summary>
         /// Called immediately after a RTD server is instantiated. 
         /// </summary>
-        /// <param name="updateNotify">The method to be called whenever topic values are updated.</param>
         /// <returns>A negative value or zero indicates failure to start the server, a positive value
         /// indicates success.</returns>
-        int Start(UpdateNotify updateNotify);
+        int Start();
 
         /// <summary>
         /// Adds a new topic to the RTD server.
