@@ -5,12 +5,14 @@ using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Rtd
 {
-    [Guid("F80F202A-B862-4D50-AA51-F0481781CB4F")]
-    [ComVisible(true)][ProgId("ExcelMvc.Rtd")]
     public class RtdServer : Microsoft.Office.Interop.Excel.IRtdServer
     {
-        public IRtdServerImpl Impl { get; }
         private IRTDUpdateEvent CallbackObject { get; set; }
+
+        public IRtdServerImpl Impl { get; }
+        public const string ProgIdPattern = "ExcelMvc.Rtd[0-9]*";
+        public string GetProgId() => this.GetType().GetCustomAttributes(typeof(ProgIdAttribute), true)
+            .Cast<ProgIdAttribute>().Single().Value;
 
         public RtdServer()
         {
@@ -57,8 +59,7 @@ namespace ExcelMvc.Rtd
         {
             Impl.Terminate();
         }
-
-        private string GetProgId(Type type) => type.GetCustomAttributes(typeof(ProgIdAttribute), true)
-            .Cast<ProgIdAttribute>().Single().Value;
     }
+
+    [Guid("F80F202A-B862-4D50-AA51-F0481781CB4F")][ComVisible(true)][ProgId("ExcelMvc.Rtd00")]public class RtdServer00 : RtdServer { };
 }

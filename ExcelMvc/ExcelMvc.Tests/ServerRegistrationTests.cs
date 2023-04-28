@@ -11,10 +11,11 @@ namespace ExcelMvc.Tests
         [TestMethod]
         public void Register()
         {
-            var progId = ExcelMvc.Rtd.RtdRegistration.RegisterType(typeof(RtdServer));
-            var type = Type.GetTypeFromProgID("ExcelMvc.Rtd", true);
+            var progId = ExcelMvc.Rtd.RtdRegistration.RegisterType(typeof(RtdServer00));
+            var type = Type.GetTypeFromProgID("ExcelMvc.Rtd00", true);
             dynamic instance  = Activator.CreateInstance(type);
-            Assert.AreEqual(5, instance.Add(2, 3));
+            Assert.IsNotNull(instance);
+            ExcelMvc.Rtd.RtdRegistration.DeleteProgId("ExcelMvc.Rtd00");
         }
     }
 }

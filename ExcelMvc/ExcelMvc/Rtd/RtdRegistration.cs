@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-
+using System.Text.RegularExpressions;
 
 namespace ExcelMvc.Rtd
 {
@@ -68,58 +68,55 @@ namespace ExcelMvc.Rtd
     */
     public static class RtdRegistration
     {
-        private const string ClassesPath = @"Software\Classes\";
-
         public static string RegisterType(Type type)
         {
-            var x86 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
-            var x64 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
-
-            var keys = new[]
-            {
-                x86.OpenSubKey(ClassesPath, RegistryKeyPermissionCheck.ReadWriteSubTree, System.Security.AccessControl.RegistryRights.FullControl),
-                x64.OpenSubKey(ClassesPath, RegistryKeyPermissionCheck.ReadWriteSubTree, System.Security.AccessControl.RegistryRights.FullControl)
-            };
-
             var progId = GetProgId(type);
             var guid = $"{{{GetGuid(type)}}}";
 
-
-            foreach (var key in keys)
+            foreach (var key in OpenClassesKeys())
             {
-                ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID]
-                var keyProgID = key.CreateSubKey(progId);
-                keyProgID.SetValue(null, progId);
+                using (key)
+                {
+                    ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID]
+                    using (var keyProgID = key.CreateSubKey(progId))
+                    {
+                        keyProgID.SetValue(null, progId);
+                        ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID\CLSID]
+                        using (var x = keyProgID.CreateSubKey("CLSID")) x.SetValue(null, guid);
+                        using (var x = keyProgID.CreateSubKey("Time")) x.SetValue(null, $"{DateTime.Now:O}");
+                        keyProgID.Close();
+                    }
 
-                ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID\CLSID]
-                keyProgID.CreateSubKey(@"CLSID").SetValue(null, guid);
-
-
-                ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}]
-                var keyCLSID = key.OpenSubKey(@"CLSID", RegistryKeyPermissionCheck.ReadWriteSubTree,
-                    System.Security.AccessControl.RegistryRights.FullControl).CreateSubKey(guid);
-                keyCLSID.SetValue(null, progId);
-
-                ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\ProgId]
-                keyCLSID.CreateSubKey("ProgId").SetValue(null, progId);
+                    ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}]
+                    using (var keyCLSID = key.OpenSubKey("CLSID", RegistryKeyPermissionCheck.ReadWriteSubTree,
+                        System.Security.AccessControl.RegistryRights.FullControl).CreateSubKey(guid))
+                    {
+                        keyCLSID.SetValue(null, progId);
+                        ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\ProgId]
+                        using (var x = keyCLSID.CreateSubKey("ProgId")) x.SetValue(null, progId);
 
 #if NET5_0_OR_GREATER
-                ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
-                var inprocServer32 = keyCLSID.CreateSubKey("InProcServer32");
-                inprocServer32.SetValue(null, type.Assembly.Location.ToLower().Replace(".dll", ".comhost.dll"));
-                inprocServer32.SetValue("ThreadingModel", "Both");
+                    ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
+                    using (var inprocServer32 = keyCLSID.CreateSubKey("InProcServer32"))
+                    {
+                        inprocServer32.SetValue(null, type.Assembly.Location.ToLower().Replace(".dll", ".comhost.dll"));
+                        inprocServer32.SetValue("ThreadingModel", "Both");
+                    }
 
 #else
-                ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
-                var inprocServer32 = keyCLSID.CreateSubKey("InprocServer32");
-
-                SetKeyValues(inprocServer32, type, false);
-                ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32\1.0.0.0]
-                SetKeyValues(inprocServer32.CreateSubKey("Version"), type, true);
-                ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
-                keyCLSID.CreateSubKey(@"Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}");
+                        ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
+                        using (var inprocServer32 = keyCLSID.CreateSubKey("InprocServer32"))
+                        {
+                            SetKeyValues(inprocServer32, type, false);
+                            ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32\1.0.0.0]
+                            SetKeyValues(inprocServer32.CreateSubKey("Version"), type, true);
+                        }
+                        ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+                        using (var x = keyCLSID.CreateSubKey(@"Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}")) ;
 #endif
-                keyCLSID.Close();
+                        keyCLSID.Close();
+                    }
+                }
             }
 
             return progId;
@@ -128,6 +125,45 @@ namespace ExcelMvc.Rtd
         public static void UnregisterType(Type type)
         {
 
+        }
+
+        public static void PurgeProgIds()
+        {
+            var pattern = new Regex(RtdServer.ProgIdPattern);
+            foreach (var key in OpenClassesKeys())
+            {
+                using (key)
+                {
+                    foreach (var progId in key.GetSubKeyNames().Where(x => pattern.IsMatch(x)))
+                    {
+                        using (var progKey = key.OpenSubKey(progId))
+                        using (var timeKey = progKey.OpenSubKey("Time"))
+                        {
+                            var time = $"{timeKey.GetValue(null)}";
+                            if (string.IsNullOrWhiteSpace(time) || !DateTime.TryParse(time, out var x) ||
+                                (DateTime.Now - x).TotalSeconds > 60)
+                                DeleteProgId(progId);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void DeleteProgId(string progId)
+        {
+            foreach (var key in OpenClassesKeys())
+            {
+                using (key)
+                {
+                    using (var progKey = key.OpenSubKey(progId))
+                    {
+                        if (progKey == null) continue;
+                        using (var clsKey = progKey.OpenSubKey("CLSID"))
+                            key.DeleteSubKeyTree($"CLSID\\{clsKey.GetValue(null)}", true);
+                        key.DeleteSubKeyTree(progId);
+                    }
+                }
+            }
         }
 
         private static void SetKeyValues(RegistryKey key, Type type, bool versionNode)
@@ -143,8 +179,20 @@ namespace ExcelMvc.Rtd
             key.SetValue("CodeBase", type.Assembly.CodeBase);
         }
 
+        private const string ClassesPath = @"Software\Classes\";
+        public static RegistryKey[] OpenClassesKeys()
+        {
+            var x86 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
+            var x64 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
+            return new[]
+            {
+                x86.OpenSubKey(ClassesPath, RegistryKeyPermissionCheck.ReadWriteSubTree, System.Security.AccessControl.RegistryRights.FullControl),
+                x64.OpenSubKey(ClassesPath, RegistryKeyPermissionCheck.ReadWriteSubTree, System.Security.AccessControl.RegistryRights.FullControl)
+            };
+        }
+
         private static string GetProgId(Type type) => type.GetCustomAttributes(typeof(ProgIdAttribute), false)
-            .Cast<ProgIdAttribute>().Single().Value;
+        .Cast<ProgIdAttribute>().Single().Value;
         private static string GetGuid(Type type) => type.GetCustomAttributes(typeof(GuidAttribute), false)
             .Cast<GuidAttribute>().Single().Value;
     }

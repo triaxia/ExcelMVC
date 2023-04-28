@@ -7,6 +7,9 @@
 		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
 			  DestinationFolder="$(TargetDir)"></Copy>
+		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
+			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.comhost.dll"
+			  DestinationFolder="$(TargetDir)"></Copy>
 		<Message Importance="high"
 				 Text="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll copied"/>
 		<Message Importance="high"
