@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -87,9 +88,8 @@ namespace ExcelMvc.Rtd
                     }
 
                     ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}]
-                    using (var clsKey = OpenSubKey(key, "CLSID"))
+                    using (var clsKey = OpenSubKey(key, "CLSID") ?? CreateSubKey(key, "CLSID"))
                     {
-                        if (clsKey == null) continue;
                         using (var keyGuid = CreateSubKey(clsKey, guid))
                         {
                             keyGuid.SetValue(null, progId);
@@ -156,6 +156,7 @@ namespace ExcelMvc.Rtd
 
         public static void DeleteProgId(string progId)
         {
+            var guids = new List<string>();
             foreach (var key in OpenClassesKeys())
             {
                 using (key)
@@ -165,11 +166,22 @@ namespace ExcelMvc.Rtd
                         if (progKey == null) continue;
                         using (var guidKey = progKey.OpenSubKey("CLSID"))
                         {
-                            using (var clsKey = OpenSubKey(key, "CLSID"))
-                                if (clsKey != null)
-                                    clsKey.DeleteSubKeyTree($"{guidKey.GetValue(null)}");
+                            guids.Add($"{guidKey.GetValue(null)}");
                         }
                         key.DeleteSubKeyTree(progId);
+                    }
+                }
+            }
+
+            foreach (var key in OpenClassesKeys())
+            {
+                using (key)
+                {
+                    using (var clsKey = OpenSubKey(key, "CLSID"))
+                    {
+                        if (clsKey == null) continue;
+                        foreach (var guid in guids)
+                            clsKey.DeleteSubKeyTree(guid);
                     }
                 }
             }
