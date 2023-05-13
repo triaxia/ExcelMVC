@@ -134,7 +134,7 @@ namespace ExcelMvc.Rtd
 
         public static void PurgeProgIds()
         {
-            var pattern = new Regex(RtdServer.ProgIdPattern);
+            var pattern = new Regex(RtdServerFactory.ProgIdPattern);
             foreach (var key in OpenClassesKeys())
             {
                 using (key)
