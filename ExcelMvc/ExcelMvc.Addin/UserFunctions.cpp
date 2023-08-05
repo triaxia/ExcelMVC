@@ -62,6 +62,13 @@ struct ExcelFunction
 	ExceArgument Arguments[];
 };
 
+struct FunctionArgs
+{
+	LPXLOPER12 Result;
+	LPXLOPER12 Args[32];
+	int Index;
+};
+
 static std::map<int, LPXLOPER12> FunctionRegIds;
 static std::map<int, bool> FunctionAsync;
 static std::map<int, int> FunctionArgCount;
@@ -200,17 +207,20 @@ Udf32(unsigned int index,
 		memset(result, 0, sizeof(XLOPER12));
 	}
 
+	FunctionArgs args;
+	args.Result = result;
+
 	void* args[] =
 	{
-		(void*)index, result,
+		result,
 		arg01,  arg02,  arg03,  arg04,  arg05,  arg06, arg07,  arg08,  arg09,  arg10,
 		arg11,  arg12, arg13,  arg14,  arg15,  arg16,  arg17,  arg18, arg19,  arg20,
 		arg21,  arg22,  arg23,  arg24,  arg25,  arg26,  arg27,  arg28,  arg29,  arg30,
-		arg31,  arg32
+		arg31,  arg32, (void*)index
 	};
 
 	// wiped out unwanted args
-	for (auto idx = argc + 2; idx < 34; idx++)
+	for (auto idx = argc + 1; idx < 33; idx++)
 		args[idx] = NULL;
 
 	// callback is 14% faster than COM interop for 471. there is no difference for net6.0 as it is already
@@ -218,14 +228,13 @@ Udf32(unsigned int index,
 	//pClrHost->Udf(args);
 	((pFNCallback)pCallback)(args);
 	if (result != NULL)
-		result->xltype = result->xltype | xlbitDLLFree;
+		result->xltype = result->xltype | xlbitXLFree;
 	return result;
 }
 
 
- LPXLOPER12 __stdcall RegisterFunction(void* ptr)
+ LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 {
-	ExcelFunction* pFunction = (ExcelFunction*)ptr;
 	UnregisterUserFunction(pFunction->Index);
 	auto regId = (LPXLOPER12)malloc(sizeof(XLOPER12));
 	FunctionRegIds[pFunction->Index] = regId;
@@ -308,11 +317,18 @@ Udf32(unsigned int index,
 		pFunction->Arguments[idx].Description = NULL;
 	}
 
+	if (regId != NULL)
+		regId->xltype = regId->xltype | xlbitDLLFree;
 	return regId;
-}
+ }
 
-void __stdcall AsyncReturn(void* handle, void* result)
-{
-	XLOPER12 status;
-	Excel12(xlAsyncReturn, &status, 2, handle, result);
-}
+ LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
+ {
+	 auto status = new XLOPER12();
+	 if (result != NULL)
+		 result->xltype = result->xltype | xlbitXLFree;
+
+	 Excel12(xlAsyncReturn, status, 2, handle, result);
+	 status->xltype = status->xltype | xlbitDLLFree;
+	 return status;
+ }

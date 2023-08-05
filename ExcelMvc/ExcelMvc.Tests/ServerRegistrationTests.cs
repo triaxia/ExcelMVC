@@ -1,7 +1,5 @@
 ﻿using ExcelMvc.Rtd;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
 
 namespace ExcelMvc.Tests
 {

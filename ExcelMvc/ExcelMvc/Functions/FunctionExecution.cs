@@ -10,13 +10,13 @@ namespace ExcelMvc.Functions
 {
     public static class FunctionExecution
     {
-        public static Dictionary<uint, (MethodInfo method, Function function, FunctionCallback callback)> Functions
+        public static Dictionary<int, (MethodInfo method, Function function, FunctionCallback callback)> Functions
         { get; private set; }
 
         public static void RegisterFunctions()
         {
             Functions = FunctionDiscovery.Discover()
-                .Select((x, idx) => (index: (uint)idx, x.method, x.function, x.args, callback: MakeCallback(x.method, x.function)))
+                .Select((x, idx) => (index: idx, x.method, x.function, x.args, callback: MakeCallback(x.method, x.function)))
                 .ToDictionary(x => x.index, x => (x.method, new Function(x.index, x.function, x.args, x.callback), x.callback));
             foreach (var pair in Functions)
                 XlCall.RegisterFunction(pair.Value.function);

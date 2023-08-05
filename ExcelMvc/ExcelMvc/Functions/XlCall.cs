@@ -14,23 +14,40 @@ namespace ExcelMvc.Functions
         public static extern IntPtr AsyncReturn64(IntPtr handle, IntPtr result);
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "AsyncReturn")]
         public static extern IntPtr AsyncReturn32(IntPtr handle, IntPtr result);
+        [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "xlAutoFree12")]
+        public static extern IntPtr xlAutoFree64(IntPtr handle);
+        [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "xlAutoFree12")]
+        public static extern IntPtr xlAutoFree32(IntPtr handle);
+        [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RtdCall")]
+        public static extern IntPtr RtdCall64(IntPtr args, IntPtr result);
+        [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RtdCall")]
+        public static extern IntPtr RtdCall32(IntPtr args, IntPtr result);
 
         public static void RegisterFunction(Function function)
         {
             using (var ptr = new StructIntPtr<Function>(ref function))
             {
                 if (Environment.Is64BitProcess)
-                    RegisterFunction64(ptr);
+                    xlAutoFree64(RegisterFunction64(ptr));
                 else
-                    RegisterFunction32(ptr);
+                    xlAutoFree32(RegisterFunction32(ptr));
             }
         }
+
         public static void AsyncReturn(IntPtr handle, IntPtr result)
         {
             if (Environment.Is64BitProcess)
-                AsyncReturn64(handle, result);
+                xlAutoFree64(AsyncReturn64(handle, result));
             else
-                AsyncReturn32(handle, result);
+                xlAutoFree32(AsyncReturn32(handle, result));
+        }
+
+        public static void RtdCall(IntPtr args, IntPtr result)
+        {
+            if (Environment.Is64BitProcess)
+                RtdCall64(args, result);
+            else
+                RtdCall32(args, result);
         }
     }
 }

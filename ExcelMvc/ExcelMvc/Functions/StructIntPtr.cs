@@ -31,7 +31,7 @@ namespace ExcelMvc.Functions
             if (Ptr == IntPtr.Zero)
                 return;
 
-            Marshal.DestroyStructure<Function>(Ptr);
+            Marshal.DestroyStructure<T>(Ptr);
             Marshal.FreeHGlobal(Ptr);
         }
     }

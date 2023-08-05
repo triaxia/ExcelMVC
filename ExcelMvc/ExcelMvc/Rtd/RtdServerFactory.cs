@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mvc;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -77,7 +78,6 @@ namespace ExcelMvc.Rtd
             var builder = new CustomAttributeBuilder(ci, args.Select(x => x.value).ToArray());
             typeBuilder.SetCustomAttribute(builder);
         }
-
-        [Guid("F80F202A-B862-4D50-AA51-F0481781CB4F")][ComVisible(true)][ProgId("ExcelMvc.Rtd001")] public class Rtd001 : RtdServer { };
     }
+    [Guid("F80F202A-B862-4D50-AA51-F0481781CB4F")][ComVisible(true)][ProgId("ExcelMvc.Rtd001")] public class Rtd001 : RtdServer { };
 }

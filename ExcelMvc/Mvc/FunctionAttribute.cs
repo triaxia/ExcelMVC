@@ -76,9 +76,9 @@ namespace Mvc
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct Function
     {
-        public const int MaxArguments = 32;
+        public const ushort MaxArguments = 32;
         [MarshalAs(UnmanagedType.U4)]
-        public uint Index;
+        public int Index;
         // ulong works too
         //[MarshalAs(UnmanagedType.U8)]
         //public ulong Callback;
@@ -108,7 +108,7 @@ namespace Mvc
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public Argument[] Arguments;
 
-        public Function(uint index, FunctionAttribute rhs, Argument[] arguments,
+        public Function(int index, FunctionAttribute rhs, Argument[] arguments,
             FunctionCallback callback)
         {
             Index = index;

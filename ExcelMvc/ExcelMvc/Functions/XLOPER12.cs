@@ -4,6 +4,15 @@ using System.Runtime.InteropServices;
 namespace ExcelMvc.Functions
 {
     [StructLayout(LayoutKind.Explicit)]
+    unsafe struct XlString12
+    {
+        [FieldOffset(0)]
+        public ushort Length;
+        [FieldOffset(2)]
+        public char *Data;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
     unsafe public struct XLOPER12
     {
         [FieldOffset(0)] public double num;
@@ -45,7 +54,18 @@ namespace ExcelMvc.Functions
             w = 0;
             xbool =0;
             xltype = (uint)XlTypes.xltypeStr;
-            str = null; //TODO
+
+            var x = new XlString12
+            {
+                Length = (ushort)v.Length,
+                Data = (char*)Marshal.AllocCoTaskMem(v.Length)
+            };
+
+            var idx = 0;
+            foreach (char c in v) x.Data[idx++] = c;
+
+            using (var result = new StructIntPtr<XlString12>(ref x))
+                str = (void*) result.Detach();
         }
 
         public string Str()
