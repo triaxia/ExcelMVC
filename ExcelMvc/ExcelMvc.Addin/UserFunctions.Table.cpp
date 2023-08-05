@@ -34,9 +34,9 @@ Boston, MA 02110-1301 USA.
 #include "pch.h"
 #include <XLCALL.H>
 
-extern LPXLOPER12 Udf32(int index, LPXLOPER12 arg0,...);
+extern LPXLOPER12 Udf32(int index, va_list ls, LPXLOPER12 arg0);
 
-#define expudf(i) extern "C" __declspec(dllexport) void f##i(LPXLOPER12 arg0,...) { var  Udf32(##i, arg0,...); }
+#define expudf(i) extern "C" __declspec(dllexport) void f##i(LPXLOPER12 arg0,...) { va_list vl; va_start(vl, arg0); Udf32(##i, vl, arg0);  }
 
 expudf(0)
 expudf(1)

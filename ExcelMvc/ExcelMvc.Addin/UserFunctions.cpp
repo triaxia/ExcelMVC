@@ -75,16 +75,6 @@ static std::map<int, int> FunctionArgCount;
 static std::map<int, void*> FunctionCallback;
 static XLOPER12 xDll;
 
-void FillArgs(va_list vl, LPXLOPER12 arg, FunctionArgs args)
-{
-	auto idx = 0;
-	while (arg != NULL)
-	{
-		args.Args[idx] = arg;
-		arg = va_arg(vl, LPXLOPER12);
-	}
-}
-
 
 void RegisterUserFunctions()
 {
@@ -195,14 +185,23 @@ extern void GetFunctionInfo(int index, void** pCallback, bool* aync, int* argc);
 typedef void (*pFNCallback)(void*);
 
 LPXLOPER12 
-Udf32(FunctionArgs args)
+Udf32(int index, va_list vl, LPXLOPER12 arg0)
 {
 	bool async = false;
 	void* pCallback = NULL;
 	int argc;
 
+	FunctionArgs args;
+	args.Index = index;
+	auto idx = 0;
+	while (arg0 != NULL)
+	{
+		args.Args[idx++] = arg0;
+		arg0 = va_arg(vl, LPXLOPER12);
+	}
+
 	GetFunctionInfo(args.Index, &pCallback, &async, &argc);
-	LPXLOPER12 result = NULL;
+	args.Result = NULL;
 
 	if (async)
 	{
@@ -210,10 +209,9 @@ Udf32(FunctionArgs args)
 	}
 	else
 	{
-		result = new XLOPER12();
-		memset(result, 0, sizeof(XLOPER12));
+		args.Result = new XLOPER12();
+		memset(args.Result, 0, sizeof(XLOPER12));
 	}
-	args.Result = result;
 
 	// wiped out unwanted args
 	for (auto idx = argc; idx < 32; idx++)
@@ -223,8 +221,9 @@ Udf32(FunctionArgs args)
 	// using callback.
 	//pClrHost->Udf(args);
 	((pFNCallback)pCallback)(&args);
-	if (result != NULL) result->xltype = result->xltype | xlbitXLFree;
-	return result;
+	if (args.Result != NULL)
+		args.Result->xltype = args.Result->xltype | xlbitXLFree;
+	return args.Result;
 }
 
 
