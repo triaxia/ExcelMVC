@@ -185,7 +185,7 @@ extern void GetFunctionInfo(int index, void** pCallback, bool* aync, int* argc);
 typedef void (*pFNCallback)(void*);
 
 LPXLOPER12 
-Udf32(int index, va_list vl, LPXLOPER12 arg0)
+Udf(int index, va_list vl, LPXLOPER12 arg0)
 {
 	bool async = false;
 	void* pCallback = NULL;
@@ -253,7 +253,7 @@ Udf32(int index, va_list vl, LPXLOPER12 arg0)
 	LPXLOPER12 pxArgumentHelp245
 	*/
 	TCHAR pxProcedure[10];
-	wsprintf(pxProcedure, L"f%d", pFunction->Index);
+	wsprintf(pxProcedure, L"udf%d", pFunction->Index);
 
 	std::wstring pxArgumentText; std::wstring pxTypeText;
 	MakeArgumentList(pFunction, pxArgumentText, pxTypeText);
