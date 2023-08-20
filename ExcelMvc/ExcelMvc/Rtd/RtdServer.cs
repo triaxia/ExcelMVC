@@ -16,6 +16,7 @@ namespace ExcelMvc.Rtd
 
         public RtdServer()
         {
+            Impl = new RtdServerImplTest();
         }
 
         public int ServerStart(IRTDUpdateEvent callbackObject)

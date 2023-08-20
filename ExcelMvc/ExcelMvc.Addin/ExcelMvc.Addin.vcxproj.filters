@@ -64,5 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Addin.def" />
+    <None Include="..\excelmvc\resource.designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\excelmvc\resource.resx" />
   </ItemGroup>
 </Project>

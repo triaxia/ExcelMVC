@@ -62,10 +62,11 @@ struct ExcelFunction
 	ExceArgument Arguments[];
 };
 
+const int MAX_ARG_COUNT = 32;
 struct FunctionArgs
 {
 	LPXLOPER12 Result;
-	LPXLOPER12 Args[32];
+	LPXLOPER12 Args[MAX_ARG_COUNT];
 	int Index;
 };
 
@@ -74,7 +75,6 @@ static std::map<int, bool> FunctionAsync;
 static std::map<int, int> FunctionArgCount;
 static std::map<int, void*> FunctionCallback;
 static XLOPER12 xDll;
-
 
 void RegisterUserFunctions()
 {
@@ -214,7 +214,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	}
 
 	// wiped out unwanted args
-	for (auto idx = argc; idx < 32; idx++)
+	for (auto idx = argc; idx < MAX_ARG_COUNT; idx++)
 		args.Args[idx] = NULL;
 
 	// callback is 14% faster than COM interop for 471. there is no difference for net6.0 as it is already
@@ -230,7 +230,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
  LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 {
 	UnregisterUserFunction(pFunction->Index);
-	auto regId = (LPXLOPER12)malloc(sizeof(XLOPER12));
+	auto regId = new XLOPER12();
 	FunctionRegIds[pFunction->Index] = regId;
 	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
 	FunctionCallback[pFunction->Index] = (void *) pFunction->Callback;
@@ -295,9 +295,6 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	}
 
 	Excel12v(xlfRegister, regId, count, pParams);
-
-	for (auto idx = 0; idx < count; idx++)
-		FreeXLOper12T(pParams[idx]);
 	delete[] pParams;
 	
 	/* C# Marshal.DestroyStructure<ExcelFunction> does not delete nested Argument texts, so
@@ -325,15 +322,18 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 
  void __stdcall RtdCall(FunctionArgs* args)
  {
-	 auto pParams = new LPXLOPER12[32];
+	 auto pParams = new LPXLOPER12[MAX_ARG_COUNT];
 	 auto count = 0;
 	 auto jdx = 0;
-	 for (auto idx = 0; idx < 32; idx++)
+	 for (auto idx = 0; idx < MAX_ARG_COUNT; idx++)
 	 {
 		 if (args->Args[idx] == NULL) continue;
 		pParams[jdx++] = args->Args[idx];
 		count++;
 	 }
-     Excel12v(xlfRtd, args->Result, count, pParams);
+
+	 auto result = new XLOPER12();
+	 auto t = TempStr12(L"ExcelMvc.Rtd001");
+     Excel12(xlfRtd, result, 3, TempStr12(L"ExcelMvc.Rtd001"), TempStr12(L""), TempStr12(L""));
 	 delete[] pParams;
  }

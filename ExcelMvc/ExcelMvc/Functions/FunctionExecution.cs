@@ -1,4 +1,5 @@
-﻿using Mvc;
+﻿using ExcelMvc.Rtd;
+using Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +60,22 @@ namespace ExcelMvc.Functions
                     XlCall.AsyncReturn((IntPtr)largs[3], result.Detach());
                 }
             }, new object[] { function, method, args, handle });
+        }
+
+        public static void Test()
+        {
+            RtdRegistration.RegisterType(typeof(Rtd001));
+            FunctionArgs args = new FunctionArgs();
+            var x = new XLOPER12("ExcelMvc.Rtd001");
+            args.Arg00 = new StructIntPtr<XLOPER12>(ref x).Ptr;
+            var y = new XLOPER12("");
+            args.Arg01 = new StructIntPtr<XLOPER12>(ref y).Ptr;
+            var z = new XLOPER12("");
+            args.Arg02 = new StructIntPtr<XLOPER12>(ref z).Ptr;
+
+            var r = new XLOPER12("");
+            args.Result = new StructIntPtr<XLOPER12>(ref r).Ptr;
+            XlCall.RtdCall(new StructIntPtr<FunctionArgs>(ref args).Ptr);
         }
 
         public static FunctionCallback MakeCallback(MethodInfo method, FunctionAttribute function)

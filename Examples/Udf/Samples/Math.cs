@@ -49,5 +49,12 @@ namespace Samples
         {
             return 32424;
         }
+
+        [Function(Name = "uTest", IsAsync = false, IsThreadSafe = false, Description = "nothing", HelpTopic = "https://www.microsoft.com")]
+        public static double uTest()
+        {
+            FunctionExecution.Test();
+            return 32424;
+        }
     }
 }

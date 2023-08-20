@@ -282,7 +282,11 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\excelmvc\resource.designer.cs" />
     <None Include="Addin.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\excelmvc\resource.resx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
