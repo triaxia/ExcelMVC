@@ -14,6 +14,11 @@ namespace ExcelMvc.Functions
             Marshal.StructureToPtr(structure, Ptr, false);
         }
 
+        public static T PtrToStruct(IntPtr ptr)
+        {
+           return Marshal.PtrToStructure<T>(ptr);
+        }
+
         public static implicit operator IntPtr(StructIntPtr<T> me)
         {
             return me.Ptr;

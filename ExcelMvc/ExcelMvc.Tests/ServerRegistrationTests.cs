@@ -14,7 +14,7 @@ namespace ExcelMvc.Tests
             //dynamic instance  = Activator.CreateInstance(type);
             //Assert.IsNotNull(instance);
             //ExcelMvc.Rtd.RtdRegistration.DeleteProgId("ExcelMvc.Rtd00");
-            var dd = RtdServerFactory.Create(new RtdServerImplTest());
+            //var dd = RtdServers.DynamicCreate(new RtdServerImplTest());
         }
     }
 }

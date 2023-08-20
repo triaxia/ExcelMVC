@@ -294,10 +294,10 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 			:TempStr12(NullCoalesce(pFunction->Arguments[idx].Description));
 	}
 
-
 	Excel12v(xlfRegister, regId, count, pParams);
-	FreeAllTempMemory();
 
+	for (auto idx = 0; idx < count; idx++)
+		FreeXLOper12T(pParams[idx]);
 	delete[] pParams;
 	
 	/* C# Marshal.DestroyStructure<ExcelFunction> does not delete nested Argument texts, so
@@ -318,9 +318,22 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
  LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
  {
 	 auto status = new XLOPER12();
-	 if (result != NULL) result->xltype = result->xltype | xlbitXLFree;
-
 	 Excel12(xlAsyncReturn, status, 2, handle, result);
 	 status->xltype = status->xltype | xlbitDLLFree;
 	 return status;
+ }
+
+ void __stdcall RtdCall(FunctionArgs* args)
+ {
+	 auto pParams = new LPXLOPER12[32];
+	 auto count = 0;
+	 auto jdx = 0;
+	 for (auto idx = 0; idx < 32; idx++)
+	 {
+		 if (args->Args[idx] == NULL) continue;
+		pParams[jdx++] = args->Args[idx];
+		count++;
+	 }
+     Excel12v(xlfRtd, args->Result, count, pParams);
+	 delete[] pParams;
  }

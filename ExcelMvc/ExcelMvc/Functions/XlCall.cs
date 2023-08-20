@@ -19,9 +19,9 @@ namespace ExcelMvc.Functions
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "xlAutoFree12")]
         public static extern IntPtr xlAutoFree32(IntPtr handle);
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RtdCall")]
-        public static extern IntPtr RtdCall64(IntPtr args, IntPtr result);
+        public static extern IntPtr RtdCall64(IntPtr args);
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RtdCall")]
-        public static extern IntPtr RtdCall32(IntPtr args, IntPtr result);
+        public static extern IntPtr RtdCall32(IntPtr args);
 
         public static void RegisterFunction(Function function)
         {
@@ -42,12 +42,14 @@ namespace ExcelMvc.Functions
                 xlAutoFree32(AsyncReturn32(handle, result));
         }
 
-        public static void RtdCall(IntPtr args, IntPtr result)
+        public static void RtdCall(IntPtr args)
         {
+            IntPtr result = IntPtr.Zero;
             if (Environment.Is64BitProcess)
-                RtdCall64(args, result);
+                result = RtdCall64(args);
             else
-                RtdCall32(args, result);
+                result = RtdCall32(args);
+            //return Converter.ConvertOutgoing(result);
         }
     }
 }

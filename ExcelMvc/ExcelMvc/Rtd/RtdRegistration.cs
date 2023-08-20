@@ -129,12 +129,12 @@ namespace ExcelMvc.Rtd
 
         public static void UnregisterType(Type type)
         {
-
         }
 
+        public const string ProgIdPattern = "ExcelMvc.Rtd[0-9]*";
         public static void PurgeProgIds()
         {
-            var pattern = new Regex(RtdServerFactory.ProgIdPattern);
+            var pattern = new Regex(ProgIdPattern);
             foreach (var key in OpenClassesKeys())
             {
                 using (key)

@@ -13,6 +13,11 @@ namespace ExcelMvc.Functions
             return result;
         }
 
+        public static object ConvertOutgoing(IntPtr outgoing)
+        {
+            return Marshal.PtrToStructure<XLOPER12>(outgoing).num;
+        }
+
         public static void ConvertOutging(object outgoing, MethodInfo method, ref IntPtr result)
         {
             var r = new XLOPER12((double)outgoing);

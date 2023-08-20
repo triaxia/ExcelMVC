@@ -8,45 +8,45 @@ using System.Threading;
 
 namespace ExcelMvc.Rtd
 {
-    public static class RtdServerFactory
+    public static class RtdServers
     {
-        public const string ProgIdPattern = "ExcelMvc.Rtd[0-9]*";
-
         private static int nextId = 0;
-        public static RtdServer Create(IRtdServerImpl impl)
+        private static RtdServer StaticCreate(IRtdServerImpl impl)
         {
             var id = Interlocked.Increment(ref nextId);
             var name = $"ExcelMvc.Rtd.Rtd{id:000}";
-            var x = Type.GetType(name);
-            var progId = ExcelMvc.Rtd.RtdRegistration.RegisterType(x);
-            var type = Type.GetTypeFromProgID(progId, true);
+            var type = Type.GetType(name);
+            var progId = ExcelMvc.Rtd.RtdRegistration.RegisterType(type);
+            type = Type.GetTypeFromProgID(progId, true);
             var instance = (RtdServer) Activator.CreateInstance(type);
             instance.Impl = impl;
             ExcelMvc.Rtd.RtdRegistration.DeleteProgId(progId);
             return instance;
         }
 
-
         /// <summary>
         /// Dynamically generated assembly cannot be registered...
         /// </summary>
         /// <param name="impl"></param>
         /// <returns></returns>
-        public static RtdServer DynamicCreate(IRtdServerImpl impl)
+        private static RtdServer DynamicCreate(IRtdServerImpl impl)
         {
             var id = Interlocked.Increment(ref nextId);
             var name = $"Rtd{id:000}";
             var cls = CreateClass(name, $"ExcelMvc.{name}");
             CreateConstructor(cls);
             Type type = cls.CreateType();
-            var instance = (RtdServer) Activator.CreateInstance(type);
+            var progId = ExcelMvc.Rtd.RtdRegistration.RegisterType(type);
+            type = Type.GetTypeFromProgID(progId, true);
+            var instance = (RtdServer)Activator.CreateInstance(type);
             instance.Impl = impl;
+            ExcelMvc.Rtd.RtdRegistration.DeleteProgId(progId);
             return instance;
         }
 
         private static TypeBuilder CreateClass(string className, string progid)
         {
-            var asmName = $"{nameof(RtdServerFactory)}.{className}";
+            var asmName = $"{nameof(RtdServers)}.{className}";
             var asmBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(asmName), AssemblyBuilderAccess.Run);
             var moduleBuilder = asmBuilder.DefineDynamicModule("MainModule");
             var typeBuilder = moduleBuilder.DefineType(className,

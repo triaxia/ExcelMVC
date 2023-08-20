@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace ExcelMvc.Functions
@@ -24,7 +23,7 @@ namespace ExcelMvc.Functions
 
         public static void Execute(IntPtr args)
         {
-            var fargs = Marshal.PtrToStructure<FunctionArgs>(args);
+            var fargs = StructIntPtr<FunctionArgs>.PtrToStruct(args);
             var (method, function, callback) = Functions[fargs.Index];
             var argc = method.GetParameters().Length;
             var arguments = fargs.GetArgs(argc);
@@ -66,60 +65,5 @@ namespace ExcelMvc.Functions
         {
             return new FunctionCallback(FunctionExecution.Execute);
         }
-
-        /* 9 ms version 300 ms for 1million calls
-         static void Main(string[] args)
-        {
-            var ps = new int[] { 1, 2 }.Select((idx, x) => Expression.Parameter(typeof(int), $"a{idx}")).ToArray();
-            var m = typeof(Program).GetMethod("X")!;
-            var d = Expression.Call(typeof(Program).GetMethod("X")!, ps);
-            var f = ((Func<int, int, int>)(Expression.Lambda(d, ps).Compile()));
-            //var f = Expression.Lambda(d, ps).Compile();
-
-            var start = System.Diagnostics.Stopwatch.StartNew();
-            for (var idx = 0; idx < 1000000; idx++)
-            {
-                var v = f(3, 4);
-            }
-            Console.WriteLine(start.Elapsed.ToString());
-
-            start = System.Diagnostics.Stopwatch.StartNew();
-            for (var idx = 0; idx < 1000000; idx++)
-            {
-                var v = m.Invoke(null, new object[] { 1, 3 });
-            }
-            Console.WriteLine(start.Elapsed.ToString());
-        }
-
-     static void Main(string[] args)
-        {
-            var p1 = new int[] { 1, 2 }.Select((idx, x) => Expression.Parameter(typeof(int), $"a{idx}")).ToArray();
-            var m1 = typeof(Program).GetMethod("X")!;
-            var c1 = Expression.Call(m1, p1);
-            var f1 = ((Func<int, int, int>)(Expression.Lambda(c1, p1).Compile()));
-
-            var p2 = new[] { Expression.Parameter(typeof(object), "c"), Expression.Parameter(typeof(Type), "p") };
-            var m2 = typeof(Program).GetMethod("C")!;
-            var c2 = Expression.Call(m2, p2);
-            var f2 = ((Func<object, Type, int>)(Expression.Lambda(c2, p2).Compile()));
-
-        var start = System.Diagnostics.Stopwatch.StartNew();
-            for (var idx = 0; idx< 1000000; idx++)
-            {
-                //var v = f1(f2(3, typeof(int)), f2(4, typeof(int)));
-                var v = f1(3, 4);
-    }
-    Console.WriteLine(start.Elapsed.ToString());
-
-            start = System.Diagnostics.Stopwatch.StartNew();
-            for (var idx = 0; idx< 1000000; idx++)
-            {
-                //var v = m1.Invoke(null, new object[] { (1, typeof(int)), C(3, typeof(int))});
-                var v = m1.Invoke(null, new object[] { 1, 3 });
-}
-Console.WriteLine(start.Elapsed.ToString());
-        }
-
-        */
     }
 }

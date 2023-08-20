@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace Mvc
 {
@@ -11,20 +10,5 @@ namespace Mvc
 	{
 		public string Name;
 		public string Description;
-	}
-
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-	public struct Argument
-	{
-		[MarshalAs(UnmanagedType.LPWStr)]
-		public string Name;
-		[MarshalAs(UnmanagedType.LPWStr)]
-		public string Description;
-
-		public Argument(ArgumentAttribute rhs)
-        {
-			Name = rhs.Name;
-			Description = rhs.Description;
-		}
 	}
 }
