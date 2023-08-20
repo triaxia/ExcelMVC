@@ -331,9 +331,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 		pParams[jdx++] = args->Args[idx];
 		count++;
 	 }
-
-	 auto result = new XLOPER12();
-	 auto t = TempStr12(L"ExcelMvc.Rtd001");
-     Excel12(xlfRtd, result, 3, TempStr12(L"ExcelMvc.Rtd001"), TempStr12(L""), TempStr12(L""));
+	 
+	 Excel12v(xlfRtd, args->Result, count, pParams);
 	 delete[] pParams;
  }

@@ -1,5 +1,6 @@
 ﻿using ExcelMvc.Rtd;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace ExcelMvc.Tests
 {
@@ -9,12 +10,8 @@ namespace ExcelMvc.Tests
         [TestMethod]
         public void Register()
         {
-            //var progId = ExcelMvc.Rtd.RtdRegistration.RegisterType(typeof(RtdServerFactory.RtdServer001));
-            //var type = Type.GetTypeFromProgID("ExcelMvc.Rtd00", true);
-            //dynamic instance  = Activator.CreateInstance(type);
-            //Assert.IsNotNull(instance);
-            //ExcelMvc.Rtd.RtdRegistration.DeleteProgId("ExcelMvc.Rtd00");
-            //var dd = RtdServers.DynamicCreate(new RtdServerImplTest());
+            var type = Type.GetTypeFromProgID("ExcelMvc.Rtd001");
+            Activator.CreateInstance(type);
         }
     }
 }
