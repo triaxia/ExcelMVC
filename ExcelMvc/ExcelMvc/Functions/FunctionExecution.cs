@@ -63,7 +63,7 @@ namespace ExcelMvc.Functions
             }, new object[] { function, method, args, handle });
         }
 
-        public static object Test()
+        public static object ExecuteRtd()
         {
             RtdRegistration.RegisterType(typeof(Rtd002));
             FunctionArgs args = new FunctionArgs();
@@ -77,8 +77,11 @@ namespace ExcelMvc.Functions
                 args.Arg00 = xx.Ptr;
                 args.Arg01 = yy.Ptr;
                 args.Arg02 = zz.Ptr;
-                XlCall.RtdCall(new StructIntPtr<FunctionArgs>(ref args).Ptr);
-                return Marshal.PtrToStructure<XLOPER12>(args.Result).num;
+                using (var p = new StructIntPtr<FunctionArgs>(ref args))
+                {
+                    var result = XlCall.RtdCall(p.Ptr);
+                    return Marshal.PtrToStructure<XLOPER12>(result).num;
+                }
             }
         }
 

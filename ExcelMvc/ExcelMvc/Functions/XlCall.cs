@@ -42,14 +42,12 @@ namespace ExcelMvc.Functions
                 xlAutoFree32(AsyncReturn32(handle, result));
         }
 
-        public static void RtdCall(IntPtr args)
+        public static IntPtr RtdCall(IntPtr args)
         {
-            IntPtr result = IntPtr.Zero;
             if (Environment.Is64BitProcess)
-                result = RtdCall64(args);
+                return RtdCall64(args);
             else
-                result = RtdCall32(args);
-            //return Converter.ConvertOutgoing(result);
+                return RtdCall32(args);
         }
     }
 }

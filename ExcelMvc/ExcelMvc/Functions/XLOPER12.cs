@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace ExcelMvc.Functions
 {
     [StructLayout(LayoutKind.Explicit)]
-    unsafe public struct XLOPER12 :  IDisposable
+    unsafe public struct XLOPER12 : IDisposable
     {
         [FieldOffset(0)] public double num;
         [FieldOffset(0)] public int w;
@@ -39,25 +39,35 @@ namespace ExcelMvc.Functions
             xbool = v ? -1 : 0;
         }
 
-        unsafe public XLOPER12(string v)
+        public XLOPER12(string v)
         {
             num = 0;
             w = 0;
             xbool = 0;
             xltype = (uint)XlTypes.xltypeStr;
-            char x = (char) v.Length;
-            str = (void*)Marshal.StringToBSTR(v.Insert(0, new string(new[] {x})));
+            str = (void*)Marshal.AllocCoTaskMem((v.Length + 1) * sizeof(char));
+            char* p = (char*)str;
+            p[0] =(char) v.Length;
+            for (var idx = 1; idx <= v.Length; idx++)
+                p[idx] = v[idx - 1];
         }
 
         public string xx()
         {
-            return Marshal.PtrToStringBSTR((IntPtr)str);
+            char* p =(char *) str;
+            var length = p[0];
+            if (length == 0)
+                return String.Empty;
+            var d = new char[length];
+            for (var idx = 1; idx <= length; idx++)
+                d[idx - 1] = p[idx];
+            return new string(d);
         }
 
         public void Dispose()
         {
             if (str != null)
-                Marshal.FreeBSTR((IntPtr)str);
+                Marshal.FreeCoTaskMem((IntPtr)str);
         }
     }
 }

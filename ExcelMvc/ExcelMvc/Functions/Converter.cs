@@ -10,17 +10,13 @@ namespace ExcelMvc.Functions
         {
             if (incoming == IntPtr.Zero) return GetDefaultValue(info);
             var x = Marshal.PtrToStructure<XLOPER12>(incoming);
-            return x.num;
-        }
-
-        public static object ConvertOutgoing(IntPtr outgoing)
-        {
-            return Marshal.PtrToStructure<XLOPER12>(outgoing).num;
+            return x.xx();
+            //return x.num;
         }
 
         public static void ConvertOutging(object outgoing, MethodInfo method, ref IntPtr result)
         {
-            var r = new XLOPER12((double)outgoing);
+            var r = new XLOPER12(outgoing.ToString());
             Marshal.StructureToPtr(r, result, false);
         }
 
@@ -31,4 +27,3 @@ namespace ExcelMvc.Functions
         }
     }
 }
-;

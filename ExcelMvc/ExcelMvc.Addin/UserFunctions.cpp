@@ -222,7 +222,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	//pClrHost->Udf(args);
 	((pFNCallback)pCallback)(&args);
 	if (args.Result != NULL)
-		args.Result->xltype = args.Result->xltype | xlbitXLFree;
+		args.Result->xltype = args.Result->xltype | xlbitDLLFree;
 	return args.Result;
 }
 
@@ -320,7 +320,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	 return status;
  }
 
- void __stdcall RtdCall(FunctionArgs* args)
+ LPXLOPER12 __stdcall RtdCall(FunctionArgs* args)
  {
 	 auto pParams = new LPXLOPER12[MAX_ARG_COUNT];
 	 auto count = 0;
@@ -331,7 +331,9 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 		pParams[jdx++] = args->Args[idx];
 		count++;
 	 }
-	 args->Result = new XLOPER12();
-	 Excel12v(xlfRtd, args->Result, count, pParams);
+	 auto result = new XLOPER12();
+	 Excel12v(xlfRtd, result, count, pParams);
+	 result->xltype = result->xltype | xlbitDLLFree;
 	 delete[] pParams;
+	 return result;
  }

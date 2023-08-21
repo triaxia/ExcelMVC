@@ -50,11 +50,16 @@ namespace Samples
             return 32424;
         }
 
-        [Function(Name = "uTest", IsAsync = false, IsThreadSafe = false, Description = "nothing", HelpTopic = "https://www.microsoft.com")]
-        public static double uTest()
+        [Function(Name = "uFeed", IsAsync = false, IsThreadSafe = false, Description = "nothing", HelpTopic = "https://www.microsoft.com")]
+        public static object uFeed(object value)
         {
-            FunctionExecution.Test();
-            return 32424;
+            return value;
+        }
+
+        [Function(Name = "uTest", IsAsync = false, IsThreadSafe = false, Description = "nothing", HelpTopic = "https://www.microsoft.com")]
+        public static object uTest()
+        {
+            return FunctionExecution.ExecuteRtd();
         }
     }
 }
