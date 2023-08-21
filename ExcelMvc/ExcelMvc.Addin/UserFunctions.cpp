@@ -315,6 +315,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
  LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
  {
 	 auto status = new XLOPER12();
+	 result->xltype = result->xltype | xlbitDLLFree;
 	 Excel12(xlAsyncReturn, status, 2, handle, result);
 	 status->xltype = status->xltype | xlbitDLLFree;
 	 return status;
@@ -332,6 +333,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 		count++;
 	 }
 	 auto result = new XLOPER12();
+	 memset(result, 0, sizeof(XLOPER12));
 	 Excel12v(xlfRtd, result, count, pParams);
 	 result->xltype = result->xltype | xlbitDLLFree;
 	 delete[] pParams;
