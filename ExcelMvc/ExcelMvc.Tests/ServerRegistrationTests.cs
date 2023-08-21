@@ -10,8 +10,8 @@ namespace ExcelMvc.Tests
         [TestMethod]
         public void Register()
         {
-            var type = Type.GetTypeFromProgID("ExcelMvc.Rtd001");
-            Activator.CreateInstance(type);
+            RtdRegistration.RegisterType(typeof(Rtd002));
+            //Activator.CreateInstance(type);
         }
     }
 }

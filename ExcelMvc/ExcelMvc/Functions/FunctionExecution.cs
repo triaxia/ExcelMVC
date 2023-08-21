@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace ExcelMvc.Functions
@@ -62,20 +63,23 @@ namespace ExcelMvc.Functions
             }, new object[] { function, method, args, handle });
         }
 
-        public static void Test()
+        public static object Test()
         {
-            RtdRegistration.RegisterType(typeof(Rtd001));
+            RtdRegistration.RegisterType(typeof(Rtd002));
             FunctionArgs args = new FunctionArgs();
-            var x = new XLOPER12("ExcelMvc.Rtd001");
-            args.Arg00 = new StructIntPtr<XLOPER12>(ref x).Ptr;
+            var x = new XLOPER12("ExcelMvc.Rtd002");
             var y = new XLOPER12("");
-            args.Arg01 = new StructIntPtr<XLOPER12>(ref y).Ptr;
             var z = new XLOPER12("");
-            args.Arg02 = new StructIntPtr<XLOPER12>(ref z).Ptr;
-
-            var r = new XLOPER12("");
-            args.Result = new StructIntPtr<XLOPER12>(ref r).Ptr;
-            XlCall.RtdCall(new StructIntPtr<FunctionArgs>(ref args).Ptr);
+            using (var xx = new StructIntPtr<XLOPER12>(ref x))
+            using (var yy = new StructIntPtr<XLOPER12>(ref y))
+            using (var zz = new StructIntPtr<XLOPER12>(ref z))
+            {
+                args.Arg00 = xx.Ptr;
+                args.Arg01 = yy.Ptr;
+                args.Arg02 = zz.Ptr;
+                XlCall.RtdCall(new StructIntPtr<FunctionArgs>(ref args).Ptr);
+                return Marshal.PtrToStructure<XLOPER12>(args.Result).num;
+            }
         }
 
         public static FunctionCallback MakeCallback(MethodInfo method, FunctionAttribute function)

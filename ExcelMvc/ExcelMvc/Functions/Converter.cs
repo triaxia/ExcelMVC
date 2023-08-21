@@ -8,9 +8,9 @@ namespace ExcelMvc.Functions
     {
         public static object ConvertIncoming(IntPtr incoming, ParameterInfo info)
         {
-            var result = incoming == IntPtr.Zero ?
-                GetDefaultValue(info) : Marshal.PtrToStructure<XLOPER12>(incoming).num;
-            return result;
+            if (incoming == IntPtr.Zero) return GetDefaultValue(info);
+            var x = Marshal.PtrToStructure<XLOPER12>(incoming);
+            return x.num;
         }
 
         public static object ConvertOutgoing(IntPtr outgoing)
