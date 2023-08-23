@@ -49,12 +49,19 @@ namespace ExcelMvc.Functions
 
         public static void ExecuteAsync(Function function, MethodInfo method, object[] args, IntPtr handle)
         {
+            /* XlCall.AsyncReturn cannot be called more then once!?
+            var result = XLOPER12.FromObject($"executing {function.Name}...");
+            using (var presult = new StructIntPtr<XLOPER12>(ref result))
+                XlCall.AsyncReturn(handle, presult.Detach());
+            */
+
             Task.Factory.StartNew(state =>
             {
                 var largs = (object[])state;
-                var value = IntPtr.Zero;
-                ExecuteSync((Function)largs[0], (MethodInfo)largs[1], (object[])largs[2], ref value);
-                XlCall.AsyncReturn((IntPtr)largs[3], value);
+                var result = XLOPER12.FromObject(method.Invoke(null, (object[])largs[2]));
+                using (var presult = new StructIntPtr<XLOPER12>(ref result))
+                    XlCall.AsyncReturn((IntPtr)largs[3], presult.Detach());
+
             }, new object[] { function, method, args, handle });
         }
 

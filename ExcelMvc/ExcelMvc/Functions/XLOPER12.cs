@@ -138,7 +138,7 @@ namespace ExcelMvc.Functions
                 if (sa.Length == 0) return;
                 array.rows = sa.Length;
                 array.columns = 1;
-                array.lparray = (XLOPER12*)Marshal.AllocHGlobal(sa.Length * sizeof(XLOPER12*));
+                array.lparray = (XLOPER12*)Marshal.AllocHGlobal(sa.Length * sizeof(XLOPER12));
                 var row0 = sa.GetLowerBound(0);
                 for (var row = row0; row <= sa.GetUpperBound(0); row++)
                 {

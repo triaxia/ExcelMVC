@@ -7,14 +7,19 @@ namespace ExcelMvc.Functions
     {
         public static object FromIncoming(XLOPER12? value, ParameterInfo info)
         {
-            if (value == null) return GetDefaultValue(info);
+            if (value == null)
+                return GetDefaultValue(info);
             var result = XLOPER12.ToObject(value.Value);
-            return info.ParameterType == typeof(object) ? result : Convert.ChangeType(result, info.ParameterType);
+            if (result == null)
+                return GetDefaultValue(info);
+            if (info.ParameterType == typeof(object) || info.ParameterType == result.GetType())
+                return result;
+            return Convert.ChangeType(result, info.ParameterType);
         }
 
         public static void ToOutgoing(object outgoing, ref IntPtr result, MethodInfo method)
         {
-            XLOPER12.ToIntPtr(XLOPER12.FromObject(outgoing),ref result);
+            XLOPER12.ToIntPtr(XLOPER12.FromObject(outgoing), ref result);
         }
 
         private static object GetDefaultValue(ParameterInfo info)

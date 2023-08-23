@@ -32,6 +32,7 @@ namespace Samples
             [Argument(Name = "v1", Description = "argument 1")] double v1,
             [Argument(Name = "v2", Description = "argument 2")] double v2)
         {
+            System.Threading.Thread.Sleep(10000);
             return v1 + v2;
         }
 

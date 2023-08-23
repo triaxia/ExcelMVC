@@ -1438,7 +1438,8 @@ void FreeXLOper12T(LPXLOPER12 pxloper12)
 	int cxloper12;
 	LPXLOPER12 pxloper12Free;
 
-	xltype = pxloper12->xltype;
+	// must take off xlbitDLLFree! PJG
+	xltype = pxloper12->xltype & (~xlbitDLLFree);
 
 	switch (xltype)
 	{
