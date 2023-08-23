@@ -138,7 +138,7 @@ namespace ExcelMvc.Functions
                 if (sa.Length == 0) return;
                 array.rows = sa.Length;
                 array.columns = 1;
-                array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(sa.Length * sizeof(XLOPER12*));
+                array.lparray = (XLOPER12*)Marshal.AllocHGlobal(sa.Length * sizeof(XLOPER12*));
                 var row0 = sa.GetLowerBound(0);
                 for (var row = row0; row <= sa.GetUpperBound(0); row++)
                 {
@@ -153,7 +153,7 @@ namespace ExcelMvc.Functions
                 array.rows = da.GetLength(0);
                 array.columns = da.GetLength(1);
                 var xxx = Marshal.SizeOf(typeof(XLOPER12));
-                array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(array.rows * array.columns * sizeof(XLOPER12));
+                array.lparray = (XLOPER12*)Marshal.AllocHGlobal(array.rows * array.columns * sizeof(XLOPER12));
                 var row0 = da.GetLowerBound(0);
                 var col0 = da.GetLowerBound(1);
                 for (var row = row0; row <= da.GetUpperBound(0); row++)
