@@ -8,7 +8,7 @@
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Version>2.0.2-alpha</Version>
-		<Description>Writing Excel applications in .NET using MVC/MVVM pattern. This package supercedes ExcelMvc.</Description>
+		<Description>Writing Excel applications in .NET using Function.Definitions/MVVM pattern. This package supercedes ExcelMvc.</Description>
 		<Copyright>Copyright © 2013 Peter Gu (Creator) &amp; Wolfgang Stamm (Contributor)</Copyright>
 		<RepositoryUrl>https://github.com/triaxia/ExcelMVC</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -113,7 +113,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Mvc\Mvc.csproj" PrivateAssets="All" />
+		<ProjectReference Include="..\Mvc\Function.Definitions.csproj" PrivateAssets="All" />
 	</ItemGroup>
 
 	<PropertyGroup>

@@ -1,5 +1,4 @@
-﻿using ExcelMvc.Rtd;
-using Mvc;
+﻿using Function.Definitions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +34,7 @@ namespace ExcelMvc.Functions
                 .ToArray();
 
             if (function.IsAsync)
-                ExecuteAsync(function, method, values, fargs.GetArgs()[argc]);
+                ExecuteAsync(function, method, values, fargs.GetArgs()[argc], ref fargs.Result);
             else
                 ExecuteSync(function, method, values, ref fargs.Result);
         }
@@ -47,19 +46,15 @@ namespace ExcelMvc.Functions
             Converter.ToOutgoing(value, ref result, method);
         }
 
-        public static void ExecuteAsync(Function function, MethodInfo method, object[] args, IntPtr handle)
+        public static void ExecuteAsync(Function function, MethodInfo method, object[] args
+            , IntPtr handle, ref IntPtr result)
         {
-            /* XlCall.AsyncReturn cannot be called more then once!?
-            var result = XLOPER12.FromObject($"executing {function.Name}...");
-            using (var presult = new StructIntPtr<XLOPER12>(ref result))
-                XlCall.AsyncReturn(handle, presult.Detach());
-            */
-
+            Converter.ToOutgoing("...", ref result, method);
             Task.Factory.StartNew(state =>
             {
                 var largs = (object[])state;
-                var result = XLOPER12.FromObject(method.Invoke(null, (object[])largs[2]));
-                using (var presult = new StructIntPtr<XLOPER12>(ref result))
+                var outcome = XLOPER12.FromObject(method.Invoke(null, (object[])largs[2]));
+                using (var presult = new StructIntPtr<XLOPER12>(ref outcome))
                     XlCall.AsyncReturn((IntPtr)largs[3], presult.Detach());
 
             }, new object[] { function, method, args, handle });

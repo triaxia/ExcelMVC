@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mvc
+namespace Function.Definitions
 {
     /// <summary>
     /// Decorates functions that are to be exported as User Defined Functions.

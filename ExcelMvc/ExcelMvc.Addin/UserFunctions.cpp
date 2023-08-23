@@ -201,17 +201,10 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	}
 
 	GetFunctionInfo(args.Index, &pCallback, &async, &argc);
-	args.Result = NULL;
+	args.Result = new XLOPER12();
+	memset(args.Result, 0, sizeof(XLOPER12));
 
-	if (async)
-	{
-		argc++;
-	}
-	else
-	{
-		args.Result = new XLOPER12();
-		memset(args.Result, 0, sizeof(XLOPER12));
-	}
+	if (async) argc++;
 
 	// wiped out unwanted args
 	for (auto idx = argc; idx < MAX_ARG_COUNT; idx++)

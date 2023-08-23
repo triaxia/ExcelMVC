@@ -9,7 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelMvc.Addin", "ExcelMvc.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelMvc.Tests", "ExcelMvc.Tests\ExcelMvc.Tests.csproj", "{FFC44D99-19D7-4A81-80A1-B894C1FFAB0D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mvc", "Mvc\Mvc.csproj", "{9F414984-1169-4F17-AECA-8B1429579731}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Function.Definitions", "Mvc\Function.Definitions.csproj", "{9F414984-1169-4F17-AECA-8B1429579731}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{039BB7A4-19C3-42AC-B4DE-7B928FD5DD0E}"
 EndProject

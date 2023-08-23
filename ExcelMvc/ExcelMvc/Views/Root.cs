@@ -70,12 +70,19 @@ namespace ExcelMvc.Views
         /// <param name="m">Message instance</param>
         protected override void WndProc(ref Message m)
         {
-            const int wmDestroy = 0x0002;
-            if (m.Msg == wmDestroy)
+            try
             {
-                Destroyed(this, EventArgs.Empty);
+                const int wmDestroy = 0x0002;
+                if (m.Msg == wmDestroy)
+                {
+                    Destroyed(this, EventArgs.Empty);
+                }
+                base.WndProc(ref m);
             }
-            base.WndProc(ref m);
+            catch
+            {
+                // sometimes crash in debugger...
+            }
         }
     }
 }

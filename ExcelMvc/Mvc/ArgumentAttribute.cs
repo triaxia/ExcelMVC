@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mvc
+namespace Function.Definitions
 {
 	/// <summary>
 	/// Decorates arguments of exported functions.

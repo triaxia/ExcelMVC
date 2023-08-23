@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mvc
+namespace Function.Definitions
 {
     /// <summary>
     /// Defines the implementation interface of a real-time data (RTD) server.

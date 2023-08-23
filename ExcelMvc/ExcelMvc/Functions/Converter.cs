@@ -12,8 +12,11 @@ namespace ExcelMvc.Functions
             var result = XLOPER12.ToObject(value.Value);
             if (result == null)
                 return GetDefaultValue(info);
-            if (info.ParameterType == typeof(object) || info.ParameterType == result.GetType())
+            if (info.ParameterType == typeof(object))
                 return result;
+            if (info.ParameterType == result.GetType())
+                return result;
+            // TODO
             return Convert.ChangeType(result, info.ParameterType);
         }
 

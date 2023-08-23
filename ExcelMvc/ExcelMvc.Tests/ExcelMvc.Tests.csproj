@@ -16,7 +16,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\ExcelMvc\ExcelMvc.csproj" />
-	  <ProjectReference Include="..\Mvc\Mvc.csproj" />
+	  <ProjectReference Include="..\Mvc\Function.Definitions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
