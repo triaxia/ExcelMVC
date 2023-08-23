@@ -17,5 +17,8 @@
 		<Message Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
 			     Importance="high"
 				 Text="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json copied"/>
+		<Message Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
+			     Importance="high"
+				 Text="$(MSBuildThisFileDirectory)ExcelMvc.comhost.dll copied"/>
 	</Target>
 </Project>

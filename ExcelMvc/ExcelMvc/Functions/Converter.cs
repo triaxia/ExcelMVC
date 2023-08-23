@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
 {
     public static class Converter
     {
-        public static object ConvertIncoming(IntPtr incoming, ParameterInfo info)
+        public static object FromIncoming(XLOPER12? value, ParameterInfo info)
         {
-            if (incoming == IntPtr.Zero) return GetDefaultValue(info);
-            var x = Marshal.PtrToStructure<XLOPER12>(incoming);
-            return x.xx();
-            //return x.num;
+            if (value == null) return GetDefaultValue(info);
+            var result = XLOPER12.ToObject(value.Value);
+            return info.ParameterType == typeof(object) ? result : Convert.ChangeType(result, info.ParameterType);
         }
 
-        public static void ConvertOutging(object outgoing, MethodInfo method, ref IntPtr result)
+        public static void ToOutgoing(object outgoing, ref IntPtr result, MethodInfo method)
         {
-            var r = new XLOPER12(outgoing.ToString());
-            Marshal.StructureToPtr(r, result, false);
+            XLOPER12.ToIntPtr(XLOPER12.FromObject(outgoing),ref result);
         }
 
         private static object GetDefaultValue(ParameterInfo info)

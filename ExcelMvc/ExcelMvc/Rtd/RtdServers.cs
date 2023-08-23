@@ -79,5 +79,5 @@ namespace ExcelMvc.Rtd
             typeBuilder.SetCustomAttribute(builder);
         }
     }
-    [Guid("904CC167-E783-4254-A378-C1528A2DEE6F")][ComVisible(true)][ProgId("ExcelMvc.RtdServer001")] public class RtdServer001 : RtdServer { };
+    [Guid("904CC167-E783-4254-A378-C1528A2DEE6F")][ComVisible(true)][ProgId("ExcelMvc.Rtd001")] public class Rtd001 : RtdServer { };
 }

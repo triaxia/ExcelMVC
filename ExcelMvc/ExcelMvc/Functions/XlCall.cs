@@ -25,12 +25,12 @@ namespace ExcelMvc.Functions
 
         public static void RegisterFunction(Function function)
         {
-            using (var ptr = new StructIntPtr<Function>(ref function))
+            using (var func = new StructIntPtr<Function>(ref function))
             {
                 if (Environment.Is64BitProcess)
-                    xlAutoFree64(RegisterFunction64(ptr));
+                    xlAutoFree64(RegisterFunction64(func.Ptr));
                 else
-                    xlAutoFree32(RegisterFunction32(ptr));
+                    xlAutoFree32(RegisterFunction32(func.Ptr));
             }
         }
 

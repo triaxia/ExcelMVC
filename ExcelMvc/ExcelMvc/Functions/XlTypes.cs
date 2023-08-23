@@ -1,5 +1,8 @@
-﻿namespace ExcelMvc.Functions
+﻿using System;
+
+namespace ExcelMvc.Functions
 {
+    [Flags]
     public enum XlTypes
     {
         xltypeNum = 0x0001,
@@ -13,6 +16,8 @@
         xltypeNil = 0x0100,
         xltypeSRef = 0x0400,
         xltypeInt = 0x0800,
+        xlbitXLFree = 0x1000,
+        xlbitDLLFree = 0x4000,
         xltypeBigData = xltypeStr | xltypeInt
     }
 }

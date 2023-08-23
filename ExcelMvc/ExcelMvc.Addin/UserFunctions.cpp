@@ -221,8 +221,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	// using callback.
 	//pClrHost->Udf(args);
 	((pFNCallback)pCallback)(&args);
-	if (args.Result != NULL)
-		args.Result->xltype = args.Result->xltype | xlbitDLLFree;
+
 	return args.Result;
 }
 

@@ -19,11 +19,6 @@ namespace ExcelMvc.Functions
            return Marshal.PtrToStructure<T>(ptr);
         }
 
-        public static implicit operator IntPtr(StructIntPtr<T> me)
-        {
-            return me.Ptr;
-        }
-
         public IntPtr Detach()
         {
             var me = Ptr;

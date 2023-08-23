@@ -36,8 +36,8 @@ namespace Mvc
         /// <summary>
         /// Gets the updated topic values in the RTD server
         /// </summary>
-        /// <returns>A two dimentional array with the first demension being the topic ids and 
-        /// the second demension being the corresponding topic values.</returns>
+        /// <returns>A array of two rows, with the first row being the topic ids and 
+        /// the second being the corresponding topic values.</returns>
         object[,] GetTopicValues();
 
         /// <summary>

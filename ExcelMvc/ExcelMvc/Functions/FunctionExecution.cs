@@ -25,13 +25,13 @@ namespace ExcelMvc.Functions
 
         public static void Execute(IntPtr args)
         {
-            var fargs = StructIntPtr<FunctionArgs>.PtrToStruct(args);
+            var fargs = Marshal.PtrToStructure<FunctionArgs>(args);
             var (method, function, callback) = Functions[fargs.Index];
             var argc = method.GetParameters().Length;
             var arguments = fargs.GetArgs(argc);
 
             var values = method.GetParameters()
-                .Select((p, idx) => Converter.ConvertIncoming(arguments[idx], p))
+                .Select((p, idx) => Converter.FromIncoming(XLOPER12.FromIntPtr(arguments[idx]), p))
                 .ToArray();
 
             if (function.IsAsync)
@@ -44,7 +44,7 @@ namespace ExcelMvc.Functions
             ref IntPtr result)
         {
             var value = method.Invoke(null, args);
-            Converter.ConvertOutging(value, method, ref result);
+            Converter.ToOutgoing(value, ref result, method);
         }
 
         public static void ExecuteAsync(Function function, MethodInfo method, object[] args, IntPtr handle)
@@ -52,22 +52,18 @@ namespace ExcelMvc.Functions
             Task.Factory.StartNew(state =>
             {
                 var largs = (object[])state;
-                var r = new XLOPER12((double)0);
-                using (var result = new StructIntPtr<XLOPER12>(ref r))
-                {
-                    var value = result.Ptr;
-                    ExecuteSync((Function)largs[0], (MethodInfo)largs[1], (object[])largs[2], ref value);
-                    // result will be owned and freed by Excel, so detach it.
-                    XlCall.AsyncReturn((IntPtr)largs[3], result.Detach());
-                }
+                var value = IntPtr.Zero;
+                ExecuteSync((Function)largs[0], (MethodInfo)largs[1], (object[])largs[2], ref value);
+                XlCall.AsyncReturn((IntPtr)largs[3], value);
             }, new object[] { function, method, args, handle });
         }
 
         public static object ExecuteRtd()
         {
-            RtdRegistration.RegisterType(typeof(RtdServer001));
+            /*
+            RtdRegistration.RegisterType(typeof(Rtd001));
             FunctionArgs args = new FunctionArgs();
-            var x = new XLOPER12("ExcelMvc.RtdServer001");
+            var x = new XLOPER12("ExcelMvc.Rtd001");
             var y = new XLOPER12("");
             var z = new XLOPER12("");
             using (var xx = new StructIntPtr<XLOPER12>(ref x))
@@ -82,7 +78,8 @@ namespace ExcelMvc.Functions
                     var result = XlCall.RtdCall(p.Ptr);
                     return Marshal.PtrToStructure<XLOPER12>(result).num;
                 }
-            }
+            }*/
+            return null;
         }
 
         public static FunctionCallback MakeCallback(MethodInfo method, FunctionAttribute function)
