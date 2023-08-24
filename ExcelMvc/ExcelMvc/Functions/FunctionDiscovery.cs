@@ -11,8 +11,9 @@ namespace ExcelMvc.Functions
     {
         public static IEnumerable<(MethodInfo method, FunctionAttribute function, Argument[] args)> Discover()
         {
-            return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
-                .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
+            var types = ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly);
+
+            return types.Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
                 .Select(x => (function: x.method.GetCustomAttribute<FunctionAttribute>(), x.method))
                 .Select(x => (x.method, (FunctionAttribute)x.function, GetArguments(x.method)));

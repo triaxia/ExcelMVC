@@ -46,8 +46,7 @@ static LPCWSTR MethodNames[] =
 	L"Show",
 	L"Hide",
 	L"Click",
-	L"Run",
-	L"Udf"
+	L"Run"
 };
 
 void
@@ -329,12 +328,6 @@ void
 ClrRuntimeHostV4::Run()
 {
 	Call(5, NULL);
-}
-
-void
-ClrRuntimeHostV4::Udf(void* arg)
-{
-	Call(6, arg);
 }
 
 void

@@ -14,7 +14,6 @@ public:
     virtual void Hide();
     virtual void Click();
     virtual void Run();
-    virtual void Udf(void* arg);
 
 private:
     static void Call(int idx, void *arg);

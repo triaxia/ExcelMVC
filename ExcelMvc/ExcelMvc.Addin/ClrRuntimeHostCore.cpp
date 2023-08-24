@@ -77,8 +77,7 @@ static LPCWSTR MethodNames[] =
 	L"Show",
 	L"Hide",
 	L"Click",
-	L"Run",
-	L"Udf"
+	L"Run"
 };
 
 void
@@ -164,10 +163,4 @@ ClrRuntimeHostCore::Run()
 {
 	ClearError();
 	((component_entry_point_fn)Functions[5])(nullptr, 0);
-}
-
-void ClrRuntimeHostCore::Udf(void* arg)
-{
-	ClearError();
-	((component_entry_point_fn)Functions[6])(arg, 0);
 }

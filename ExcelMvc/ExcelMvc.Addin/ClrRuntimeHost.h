@@ -15,7 +15,6 @@ public:
     virtual void Hide() = 0;
     virtual void Click() = 0;
     virtual void Run() = 0;
-    virtual void Udf(void* arg) = 0;
 
     static BOOL TestAndDisplayError();
     static BOOL FindAppConfig(PCWSTR basePath, TCHAR* buffer, DWORD size);

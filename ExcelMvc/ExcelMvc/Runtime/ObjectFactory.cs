@@ -140,7 +140,8 @@ namespace ExcelMvc.Runtime
         }
 
         private static List<string> GetTypes(out WeakReference context
-            , Func<Assembly, IEnumerable<string>> getTypes, Func<string, bool, bool> selectAssembly)
+            , Func<Assembly, IEnumerable<string>> getTypes
+            , Func<string, bool, bool> selectAssembly)
         {
             List<string> types = new List<string>();
             try
@@ -184,7 +185,8 @@ namespace ExcelMvc.Runtime
             ActionExtensions.Try(() =>
             {
                 var asm = LoadFrom(assemblyPath);
-                types = types.Concat(getTypes(asm));
+                if (asm != null)
+                    types = types.Concat(getTypes(asm));
             }, ex => Messages.Instance.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex)));
             return types;
         }
@@ -208,11 +210,14 @@ namespace ExcelMvc.Runtime
             AssemblyContext = new AssemblyLoadContext($"ObjectFactory<{typeof(T)}>", true);
             AssemblyContext.Resolving +=(sender, args) =>
             {
-                var file = sender.Assemblies
+                var basePath = Path.GetDirectoryName(typeof(ObjectFactory<object>).Assembly.Location);
+                var folders = sender.Assemblies
                     .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
                     .Select(x => Path.GetDirectoryName(x.Location))
-                    .Distinct()
-                    .Select(x => Path.ChangeExtension(Path.Combine(x!, args.Name!), ".dll"))
+                    .Concat(new [] {basePath})
+                    .Distinct();
+
+                var file = folders.Select(x => Path.Combine(x!, $"{args.Name}.dll"))
                     .Where(File.Exists)
                     .OrderByDescending(File.GetLastWriteTimeUtc)
                     .FirstOrDefault();
@@ -242,13 +247,20 @@ namespace ExcelMvc.Runtime
         }
         private static Assembly LoadFrom(string assemblyPath)
         {
+            try
+            {
 #if NET6_0_OR_GREATER
             var loaded = AssemblyContext.Assemblies
                 .SingleOrDefault(a => !a.IsDynamic && EqualsNoCase(a.Location, assemblyPath));
             return loaded ?? AssemblyContext.LoadFromAssemblyPath(assemblyPath);
 #else
-            return Assembly.ReflectionOnlyLoadFrom(assemblyPath);
+                return Assembly.ReflectionOnlyLoadFrom(assemblyPath);
 #endif
+            }catch (BadImageFormatException)
+            {
+                // ignore 
+                return null;
+            }
         }
 
         private static void FreeReference(WeakReference reference)
