@@ -43,8 +43,10 @@ namespace ExcelMvc.Functions
 
         public void Dispose()
         {
-            if (any != null)
+            if (xltype == (uint)XlTypes.xltypeStr && any != null)
                 Marshal.FreeHGlobal((IntPtr)any);
+            if (xltype == (uint)XlTypes.xltypeMulti && array.lparray != null)
+                Marshal.FreeHGlobal((IntPtr)array.lparray);
         }
 
         private XLOPER12(object value)
@@ -121,7 +123,7 @@ namespace ExcelMvc.Functions
             }
             else if (value is string sr)
             {
-                any = (char*)Marshal.AllocCoTaskMem((sr.Length + 1) * sizeof(char));
+                any = (char*)Marshal.AllocHGlobal((sr.Length + 1) * sizeof(char));
                 char* p = (char*)any;
                 p[0] = (char)sr.Length;
                 for (var idx = 1; idx <= sr.Length; idx++)
@@ -169,7 +171,7 @@ namespace ExcelMvc.Functions
 
         private object ToObject()
         {
-            var type = (XlTypes)xltype;
+            var type = (XlTypes)xltype & ~XlTypes.xlbitDLLFree;
             switch (type)
             {
                 case XlTypes.xltypeInt: return w;

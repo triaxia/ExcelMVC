@@ -168,7 +168,7 @@ namespace ExcelMvc.Rtd
                         {
                             guids.Add($"{guidKey.GetValue(null)}");
                         }
-                        key.DeleteSubKeyTree(progId);
+                        key.DeleteSubKeyTree(progId, false);
                     }
                 }
             }
@@ -181,7 +181,7 @@ namespace ExcelMvc.Rtd
                     {
                         if (clsKey == null) continue;
                         foreach (var guid in guids)
-                            clsKey.DeleteSubKeyTree(guid);
+                            clsKey.DeleteSubKeyTree(guid, false);
                     }
                 }
             }

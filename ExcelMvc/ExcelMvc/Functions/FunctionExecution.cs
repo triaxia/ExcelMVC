@@ -1,4 +1,5 @@
-﻿using Function.Definitions;
+﻿using ExcelMvc.Rtd;
+using Function.Definitions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,12 +63,11 @@ namespace ExcelMvc.Functions
 
         public static object ExecuteRtd()
         {
-            /*
-            RtdRegistration.RegisterType(typeof(Rtd001));
+            RtdRegistration.RegisterType(typeof(Rtd101));
             FunctionArgs args = new FunctionArgs();
-            var x = new XLOPER12("ExcelMvc.Rtd001");
-            var y = new XLOPER12("");
-            var z = new XLOPER12("");
+            var x = XLOPER12.FromObject("ExcelMvc.Rtd101");
+            var y = XLOPER12.FromObject("");
+            var z = XLOPER12.FromObject("");
             using (var xx = new StructIntPtr<XLOPER12>(ref x))
             using (var yy = new StructIntPtr<XLOPER12>(ref y))
             using (var zz = new StructIntPtr<XLOPER12>(ref z))
@@ -77,11 +77,10 @@ namespace ExcelMvc.Functions
                 args.Arg02 = zz.Ptr;
                 using (var p = new StructIntPtr<FunctionArgs>(ref args))
                 {
-                    var result = XlCall.RtdCall(p.Ptr);
-                    return Marshal.PtrToStructure<XLOPER12>(result).num;
+                    var result = XLOPER12.FromIntPtr(XlCall.RtdCall(p.Ptr));
+                    return result == null ? null : XLOPER12.ToObject(result.Value);
                 }
-            }*/
-            return null;
+            }
         }
 
         public static FunctionCallback MakeCallback(MethodInfo method, FunctionAttribute function)
