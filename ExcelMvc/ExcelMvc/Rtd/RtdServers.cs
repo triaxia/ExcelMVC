@@ -10,7 +10,7 @@ namespace ExcelMvc.Rtd
     /// <summary>
     /// A naive way of creating RTD servers... until I can do COM server factory...
     /// </summary>
-    public static partial class RtdServers
+    public static class RtdServers
     {
         private static readonly string MutexName = $"Global\\{nameof(RtdServers)}";
         private static Mutex SystemMutex;
@@ -72,8 +72,8 @@ namespace ExcelMvc.Rtd
         private static readonly Dictionary<Type, IRtdServerImpl> Impls
             = new Dictionary<Type, IRtdServerImpl>()
             {
-                //{typeof(Rtd101), null},
-                //{typeof(Rtd102), null},
+                {typeof(Rtd101), null},
+                {typeof(Rtd102), null},
                 {typeof(Rtd103), null},
                 {typeof(Rtd104), null},
                 {typeof(Rtd105), null},

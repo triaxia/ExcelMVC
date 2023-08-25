@@ -9,9 +9,8 @@ using System.Threading;
 
 namespace ExcelMvc.Rtd
 {
-    public static partial class RtdServers
+    internal static class RtdServers__
     {
-
         private static int nextId = 0;
         private static RtdServer StaticCreate(IRtdServerImpl impl)
         {
