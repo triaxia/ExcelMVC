@@ -21,7 +21,7 @@ namespace ExcelMvc.Rtd
             var progId = ExcelMvc.Rtd.RtdRegistration.RegisterType(type);
             type = Type.GetTypeFromProgID(progId, true);
             var instance = (RtdServer)Activator.CreateInstance(type);
-            instance.Impl = impl;
+            //instance.Impl = impl;
             ExcelMvc.Rtd.RtdRegistration.DeleteProgId(progId);
             return instance;
         }
@@ -41,7 +41,7 @@ namespace ExcelMvc.Rtd
             var progId = ExcelMvc.Rtd.RtdRegistration.RegisterType(type);
             type = Type.GetTypeFromProgID(progId, true);
             var instance = (RtdServer)Activator.CreateInstance(type);
-            instance.Impl = impl;
+            //instance.Impl = impl;
             ExcelMvc.Rtd.RtdRegistration.DeleteProgId(progId);
             return instance;
         }

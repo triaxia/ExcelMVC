@@ -1,8 +1,180 @@
-﻿using System;
+﻿using Function.Definitions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace ExcelMvc.Rtd
 {
+    /// <summary>
+    /// A naive way of creating RTD servers... until I can do COM server factory...
+    /// </summary>
+    public static partial class RtdServers
+    {
+        private static readonly string MutexName = $"Global\\{nameof(RtdServers)}";
+        private static Mutex SystemMutex;
+        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
+        public static (Type type, string progId) Acquire(IRtdServerImpl impl)
+        {
+            lock (MutexName)
+            {
+                var pair = Impls.FirstOrDefault(x => x.Value == impl);
+                if (pair.Key != null)
+                    return (pair.Key, RtdRegistration.GetProgId(pair.Key));
+
+                try
+                {
+                    SystemMutex = new Mutex(false, MutexName);
+                    if (!SystemMutex.WaitOne(Timeout))
+                        throw new TimeoutException($"Wait on {MutexName} timed out ({Timeout})");
+                }
+                catch (AbandonedMutexException)
+                {
+                    // the owning process abandoned, e.g. terminated with ReleaseMutex
+                }
+                catch
+                {
+                    SystemMutex?.Dispose();
+                    throw;
+                }
+                var type = Impls.FirstOrDefault(x => x.Value == null).Key;
+                if (type == null)
+                    // not really going to occur...
+                    throw new ArgumentOutOfRangeException($"Rtd server limit {Impls.Count} exceeded ");
+
+                Impls[type] = impl;
+                RtdRegistration.RegisterType(type);
+                return (type, RtdRegistration.GetProgId(type));
+            }
+        }
+
+        public static IRtdServerImpl GetImpl(Type rtdType)
+        {
+            lock (MutexName)
+            {
+                var impl = Impls[rtdType];
+                RtdRegistration.DeleteProgId(RtdRegistration.GetProgId(rtdType));
+                SystemMutex?.ReleaseMutex();
+                SystemMutex?.Dispose();
+                return impl;
+            };
+        }
+
+        public static void Release(Type rtdType)
+        {
+            lock (MutexName)
+            {
+                Impls[rtdType] = null;
+            }
+        }
+
+        private static readonly Dictionary<Type, IRtdServerImpl> Impls
+            = new Dictionary<Type, IRtdServerImpl>()
+            {
+                //{typeof(Rtd101), null},
+                //{typeof(Rtd102), null},
+                {typeof(Rtd103), null},
+                {typeof(Rtd104), null},
+                {typeof(Rtd105), null},
+                {typeof(Rtd106), null},
+                {typeof(Rtd107), null},
+                {typeof(Rtd108), null},
+                {typeof(Rtd109), null},
+                {typeof(Rtd110), null},
+                {typeof(Rtd111), null},
+                {typeof(Rtd112), null},
+                {typeof(Rtd113), null},
+                {typeof(Rtd114), null},
+                {typeof(Rtd115), null},
+                {typeof(Rtd116), null},
+                {typeof(Rtd117), null},
+                {typeof(Rtd118), null},
+                {typeof(Rtd119), null},
+                {typeof(Rtd120), null},
+                {typeof(Rtd121), null},
+                {typeof(Rtd122), null},
+                {typeof(Rtd123), null},
+                {typeof(Rtd124), null},
+                {typeof(Rtd125), null},
+                {typeof(Rtd126), null},
+                {typeof(Rtd127), null},
+                {typeof(Rtd128), null},
+                {typeof(Rtd129), null},
+                {typeof(Rtd130), null},
+                {typeof(Rtd131), null},
+                {typeof(Rtd132), null},
+                {typeof(Rtd133), null},
+                {typeof(Rtd134), null},
+                {typeof(Rtd135), null},
+                {typeof(Rtd136), null},
+                {typeof(Rtd137), null},
+                {typeof(Rtd138), null},
+                {typeof(Rtd139), null},
+                {typeof(Rtd140), null},
+                {typeof(Rtd141), null},
+                {typeof(Rtd142), null},
+                {typeof(Rtd143), null},
+                {typeof(Rtd144), null},
+                {typeof(Rtd145), null},
+                {typeof(Rtd146), null},
+                {typeof(Rtd147), null},
+                {typeof(Rtd148), null},
+                {typeof(Rtd149), null},
+                {typeof(Rtd150), null},
+                {typeof(Rtd151), null},
+                {typeof(Rtd152), null},
+                {typeof(Rtd153), null},
+                {typeof(Rtd154), null},
+                {typeof(Rtd155), null},
+                {typeof(Rtd156), null},
+                {typeof(Rtd157), null},
+                {typeof(Rtd158), null},
+                {typeof(Rtd159), null},
+                {typeof(Rtd160), null},
+                {typeof(Rtd161), null},
+                {typeof(Rtd162), null},
+                {typeof(Rtd163), null},
+                {typeof(Rtd164), null},
+                {typeof(Rtd165), null},
+                {typeof(Rtd166), null},
+                {typeof(Rtd167), null},
+                {typeof(Rtd168), null},
+                {typeof(Rtd169), null},
+                {typeof(Rtd170), null},
+                {typeof(Rtd171), null},
+                {typeof(Rtd172), null},
+                {typeof(Rtd173), null},
+                {typeof(Rtd174), null},
+                {typeof(Rtd175), null},
+                {typeof(Rtd176), null},
+                {typeof(Rtd177), null},
+                {typeof(Rtd178), null},
+                {typeof(Rtd179), null},
+                {typeof(Rtd180), null},
+                {typeof(Rtd181), null},
+                {typeof(Rtd182), null},
+                {typeof(Rtd183), null},
+                {typeof(Rtd184), null},
+                {typeof(Rtd185), null},
+                {typeof(Rtd186), null},
+                {typeof(Rtd187), null},
+                {typeof(Rtd188), null},
+                {typeof(Rtd189), null},
+                {typeof(Rtd190), null},
+                {typeof(Rtd191), null},
+                {typeof(Rtd192), null},
+                {typeof(Rtd193), null},
+                {typeof(Rtd194), null},
+                {typeof(Rtd195), null},
+                {typeof(Rtd196), null},
+                {typeof(Rtd197), null},
+                {typeof(Rtd198), null},
+                {typeof(Rtd199), null},
+                {typeof(Rtd200), null}
+            };
+    }
+
     [Guid("b92c4d6a-0586-435c-a6a6-053bbd1ae1b7")][ComVisible(true)][ProgId("ExcelMvc.Rtd101")] public class Rtd101 : RtdServer { };
     [Guid("d473afa0-94b1-44a0-9915-ea31618ed346")][ComVisible(true)][ProgId("ExcelMvc.Rtd102")] public class Rtd102 : RtdServer { };
     [Guid("1b01b885-fd41-4d4a-8858-6097c6312961")][ComVisible(true)][ProgId("ExcelMvc.Rtd103")] public class Rtd103 : RtdServer { };
@@ -103,8 +275,4 @@ namespace ExcelMvc.Rtd
     [Guid("65684c2a-98dc-4b19-bb02-26254d067586")][ComVisible(true)][ProgId("ExcelMvc.Rtd198")] public class Rtd198 : RtdServer { };
     [Guid("d439a944-8ade-4af7-bb36-7158aa18762f")][ComVisible(true)][ProgId("ExcelMvc.Rtd199")] public class Rtd199 : RtdServer { };
     [Guid("89b8ef4f-b57a-43e2-9212-bfe1f6f33db1")][ComVisible(true)][ProgId("ExcelMvc.Rtd200")] public class Rtd200 : RtdServer { };
-
-    public static partial class RtdServers
-    {
-    }
 }

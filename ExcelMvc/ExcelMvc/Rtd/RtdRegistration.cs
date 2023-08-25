@@ -208,15 +208,15 @@ namespace ExcelMvc.Rtd
             return new[] { OpenSubKey(x86, ClassesPath), OpenSubKey(x64, ClassesPath) };
         }
 
+        public static string GetProgId(Type type) => type.GetCustomAttributes(typeof(ProgIdAttribute), false)
+        .Cast<ProgIdAttribute>().Single().Value;
+        public static string GetGuid(Type type) => type.GetCustomAttributes(typeof(GuidAttribute), false)
+            .Cast<GuidAttribute>().Single().Value;
+
         private static RegistryKey OpenSubKey(RegistryKey key, string path)
             => key.OpenSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree);
 
         private static RegistryKey CreateSubKey(RegistryKey key, string path)
             => key.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree);
-
-        private static string GetProgId(Type type) => type.GetCustomAttributes(typeof(ProgIdAttribute), false)
-        .Cast<ProgIdAttribute>().Single().Value;
-        private static string GetGuid(Type type) => type.GetCustomAttributes(typeof(GuidAttribute), false)
-            .Cast<GuidAttribute>().Single().Value;
     }
 }

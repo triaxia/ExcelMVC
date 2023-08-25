@@ -63,9 +63,9 @@ namespace ExcelMvc.Functions
 
         public static object ExecuteRtd()
         {
-            RtdRegistration.RegisterType(typeof(Rtd101));
+            var (type, progId) = RtdServers.Acquire(new RtdServerImplTest());
             FunctionArgs args = new FunctionArgs();
-            var x = XLOPER12.FromObject("ExcelMvc.Rtd101");
+            var x = XLOPER12.FromObject(progId);
             var y = XLOPER12.FromObject("");
             var z = XLOPER12.FromObject("");
             using (var xx = new StructIntPtr<XLOPER12>(ref x))

@@ -2,7 +2,6 @@
 using Function.Definitions;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Rtd
 {
@@ -10,13 +9,10 @@ namespace ExcelMvc.Rtd
     {
         private IRTDUpdateEvent CallbackObject { get; set; }
 
-        public IRtdServerImpl Impl { get; set; }
-        public string GetProgId() => this.GetType().GetCustomAttributes(typeof(ProgIdAttribute), true)
-            .Cast<ProgIdAttribute>().Single().Value;
-
+        public IRtdServerImpl Impl { get; }
         public RtdServer()
         {
-            Impl = new RtdServerImplTest();
+            Impl = RtdServers.GetImpl(GetType());
         }
 
         public int ServerStart(IRTDUpdateEvent callbackObject)
@@ -57,6 +53,7 @@ namespace ExcelMvc.Rtd
 
         public void ServerTerminate()
         {
+            RtdServers.Release(GetType());
             Impl.Terminate();
         }
     }
