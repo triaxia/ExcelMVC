@@ -22,7 +22,7 @@ namespace Function.Definitions
         /// </summary>
         public string Description;
         /// <summary>
-        /// The help infomation displayed when the Help button is clicked.
+        /// The help information displayed when the Help button is clicked.
         /// It can be in either "chm-file!HelpContextID" or "https://address/path_to_file_in_site!0". 
         /// </summary>
         public string HelpTopic;

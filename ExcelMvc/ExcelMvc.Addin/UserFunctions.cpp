@@ -51,7 +51,7 @@ struct ExcelFunction
 	byte MacroType;
 	bool IsVolatile;
 	bool IsMacro;
-	bool IsAnyc;
+	bool IsAsync;
 	bool IsThreadSafe;
 	bool IsClusterSafe;
 	LPCWSTR Category;
@@ -145,14 +145,14 @@ LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
 
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstring& types)
 {
-	types = pFunction->IsAnyc ? L">" : L"Q";
+	types = pFunction->IsAsync ? L">" : L"Q";
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		if (idx > 0) names += L",";
 		names += NullCoalesce(pFunction->Arguments[idx].Name);
 		types += L"Q";
 	}
-	if (pFunction->IsAnyc) types += L"X";
+	if (pFunction->IsAsync) types += L"X";
 	if (pFunction->IsVolatile) types += L"!";
 	if (pFunction->IsThreadSafe) types += L"$";
 	if (pFunction->IsClusterSafe) types += L"&";
@@ -226,7 +226,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	FunctionRegIds[pFunction->Index] = regId;
 	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
 	FunctionCallback[pFunction->Index] = (void *) pFunction->Callback;
-	FunctionAsync[pFunction->Index] = pFunction->IsAnyc;
+	FunctionAsync[pFunction->Index] = pFunction->IsAsync;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText

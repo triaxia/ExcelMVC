@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
+		<TargetFrameworks>net471;net8.0-windows</TargetFrameworks>
 		<!--Referenced below-->
 		<NetCoreFramework>net6.0-windows</NetCoreFramework>
 		<!--<Nullable>enable</Nullable>-->
@@ -29,7 +29,13 @@
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<EnableComHosting>true</EnableComHosting>
+		<EnableRegFreeCom>true</EnableRegFreeCom>
 	</PropertyGroup>
+
+	<!--this supposed to work for .NET 8 and from VS 1.7.8, but not, perhaps wait until the office release?!-->
+	<ItemGroup>
+		<RuntimeHostConfigurationOption Include="System.Runtime.InteropServices.COM.LoadComponentInDefaultContext" Value="true" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="Microsoft.Office.Interop.Excel">
