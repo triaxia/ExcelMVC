@@ -1,6 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
+// https://github.com/dotnet/runtime/blob/main/src/native/corehost/hostfxr.h
 #ifndef __HOSTFXR_H__
 #define __HOSTFXR_H__
 
@@ -28,6 +28,8 @@ enum hostfxr_delegate_type
     hdt_com_unregister,
     hdt_load_assembly_and_get_function_pointer,
     hdt_get_function_pointer,
+    hdt_load_assembly,
+    hdt_load_assembly_bytes,
 };
 
 typedef int32_t(HOSTFXR_CALLTYPE *hostfxr_main_fn)(const int argc, const char_t **argv);
@@ -64,7 +66,7 @@ typedef void(HOSTFXR_CALLTYPE *hostfxr_error_writer_fn)(const char_t *message);
 // By default no callback is registered in which case the errors are written to stderr.
 //
 // Each call to the error writer is sort of like writing a single line (the EOL character is omitted).
-// Multiple calls to the error writer may occure for one failure.
+// Multiple calls to the error writer may occur for one failure.
 //
 // If the hostfxr invokes functions in hostpolicy as part of its operation, the error writer
 // will be propagated to hostpolicy for the duration of the call. This means that errors from
@@ -88,6 +90,8 @@ struct hostfxr_initialize_parameters
 //      Number of argv arguments
 //    argv
 //      Command-line arguments for running an application (as if through the dotnet executable).
+//      Only command-line arguments which are accepted by runtime installation are supported, SDK/CLI commands are not supported.
+//      For example 'app.dll app_argument_1 app_argument_2`.
 //    parameters
 //      Optional. Additional parameters for initialization
 //    host_context_handle
@@ -284,5 +288,79 @@ typedef int32_t(HOSTFXR_CALLTYPE *hostfxr_get_runtime_delegate_fn)(
 //     The error code result.
 //
 typedef int32_t(HOSTFXR_CALLTYPE *hostfxr_close_fn)(const hostfxr_handle host_context_handle);
+
+struct hostfxr_dotnet_environment_sdk_info
+{
+    size_t size;
+    const char_t* version;
+    const char_t* path;
+};
+
+typedef void(HOSTFXR_CALLTYPE* hostfxr_get_dotnet_environment_info_result_fn)(
+    const struct hostfxr_dotnet_environment_info* info,
+    void* result_context);
+
+struct hostfxr_dotnet_environment_framework_info
+{
+    size_t size;
+    const char_t* name;
+    const char_t* version;
+    const char_t* path;
+};
+
+struct hostfxr_dotnet_environment_info
+{
+    size_t size;
+
+    const char_t* hostfxr_version;
+    const char_t* hostfxr_commit_hash;
+
+    size_t sdk_count;
+    const struct hostfxr_dotnet_environment_sdk_info* sdks;
+
+    size_t framework_count;
+    const struct hostfxr_dotnet_environment_framework_info* frameworks;
+};
+
+//
+// Returns available SDKs and frameworks.
+//
+// Resolves the existing SDKs and frameworks from a dotnet root directory (if
+// any), or the global default location. If multi-level lookup is enabled and
+// the dotnet root location is different than the global location, the SDKs and
+// frameworks will be enumerated from both locations.
+//
+// The SDKs are sorted in ascending order by version, multi-level lookup
+// locations are put before private ones.
+//
+// The frameworks are sorted in ascending order by name followed by version,
+// multi-level lookup locations are put before private ones.
+//
+// Parameters:
+//    dotnet_root
+//      The path to a directory containing a dotnet executable.
+//
+//    reserved
+//      Reserved for future parameters.
+//
+//    result
+//      Callback invoke to return the list of SDKs and frameworks.
+//      Structs and their elements are valid for the duration of the call.
+//
+//    result_context
+//      Additional context passed to the result callback.
+//
+// Return value:
+//   0 on success, otherwise failure.
+//
+// String encoding:
+//   Windows     - UTF-16 (pal::char_t is 2 byte wchar_t)
+//   Unix        - UTF-8  (pal::char_t is 1 byte char)
+//
+typedef int32_t(HOSTFXR_CALLTYPE* hostfxr_get_dotnet_environment_info_fn)(
+    const char_t* dotnet_root,
+    void* reserved,
+    hostfxr_get_dotnet_environment_info_result_fn result,
+    void* result_context);
 
 #endif //__HOSTFXR_H__

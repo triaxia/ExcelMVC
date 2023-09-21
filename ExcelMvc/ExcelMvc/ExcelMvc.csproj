@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net471;net8.0-windows</TargetFrameworks>
 		<!--Referenced below-->
-		<NetCoreFramework>net6.0-windows</NetCoreFramework>
+		<NetCoreFramework>net8.0-windows</NetCoreFramework>
 		<!--<Nullable>enable</Nullable>-->
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
