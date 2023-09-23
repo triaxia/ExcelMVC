@@ -137,4 +137,8 @@
 		</ItemGroup>
 	</Target>
 
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="powershell -Execution Unrestricted -File &quot;$(ProjectDir)PostBuild.ps1&quot;" />
+	</Target>
+
 </Project>

@@ -103,7 +103,6 @@ namespace ExcelMvc.Rtd
                             inprocServer32.SetValue(null, type.Assembly.Location.ToLower().Replace(".dll", ".comhost.dll"));
                             inprocServer32.SetValue("ThreadingModel", "Both");
                         }
-
 #else
                             ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
                             using (var inprocServer32 = CreateSubKey(keyGuid, "InprocServer32"))
@@ -129,6 +128,8 @@ namespace ExcelMvc.Rtd
 
         public static void UnregisterType(Type type)
         {
+            var progId = GetProgId(type);
+            DeleteProgId(progId);
         }
 
         public const string ProgIdPattern = "ExcelMvc.Rtd[0-9]*";

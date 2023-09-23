@@ -29,9 +29,12 @@ namespace Samples
         }
 
         [Function(Name = "uRtd", IsAsync = false, IsThreadSafe = false, Description = "Timer Rtd", HelpTopic = "https://www.microsoft.com")]
-        public static object uRtd()
+        public static object uRtd(
+            [Argument(Name = "v1", Description = "argument 1")] string v1,
+            [Argument(Name = "v2", Description = "argument 2")] string v2
+)
         {
-            return FunctionExecution.ExecuteRtd();
+            return FunctionExecution.ExecuteRtd(new RtdTimer(), v1, v2);
         }
     }
 }

@@ -61,22 +61,16 @@ namespace ExcelMvc.Functions
             }, new object[] { function, method, args, handle });
         }
 
-        public static object ExecuteRtd()
+        public static object ExecuteRtd(IRtdServerImpl impl, params string[] args)
         {
-            var (type, progId) = RtdServers.Acquire(new RtdServerImplTest());
-            FunctionArgs args = new FunctionArgs();
-            var x = XLOPER12.FromObject(progId);
-            var y = XLOPER12.FromObject("");
-            var z = XLOPER12.FromObject("");
-            using (var xx = new StructIntPtr<XLOPER12>(ref x))
-            using (var yy = new StructIntPtr<XLOPER12>(ref y))
-            using (var zz = new StructIntPtr<XLOPER12>(ref z))
+            var (type, progId) = RtdServers.Acquire(impl);
+            args = new string[] { progId, "" }.Concat(args).ToArray();
+            using (var x = new FunctionArgsBag(args))
             {
-                args.Arg00 = xx.Ptr;
-                args.Arg01 = yy.Ptr;
-                args.Arg02 = zz.Ptr;
-                using (var p = new StructIntPtr<FunctionArgs>(ref args))
+                var fargs = x.ToArgs();
+                using (var p = new StructIntPtr<FunctionArgs>(ref fargs))
                 {
+
                     var result = XLOPER12.FromIntPtr(XlCall.RtdCall(p.Ptr));
                     return result == null ? null : XLOPER12.ToObject(result.Value);
                 }

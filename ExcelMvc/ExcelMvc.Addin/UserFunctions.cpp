@@ -320,7 +320,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	 auto jdx = 0;
 	 for (auto idx = 0; idx < MAX_ARG_COUNT; idx++)
 	 {
-		 if (args->Args[idx] == NULL) continue;
+		 if (args->Args[idx] == NULL || args->Args[idx]->xltype == xltypeNil) continue;
 		pParams[jdx++] = args->Args[idx];
 		count++;
 	 }

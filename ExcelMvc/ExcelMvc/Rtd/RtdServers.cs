@@ -12,13 +12,14 @@ namespace ExcelMvc.Rtd
     /// </summary>
     public static class RtdServers
     {
-        private static readonly string MutexName = $"Global\\{nameof(RtdServers)}";
+        private static readonly string MutexName = $"Global\\{nameof(RtdServers)}{Environment.UserName}";
         private static Mutex SystemMutex;
         private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
         public static (Type type, string progId) Acquire(IRtdServerImpl impl)
         {
             lock (MutexName)
             {
+                RtdRegistration.PurgeProgIds();
                 var pair = Impls.FirstOrDefault(x => x.Value == impl);
                 if (pair.Key != null)
                     return (pair.Key, RtdRegistration.GetProgId(pair.Key));
