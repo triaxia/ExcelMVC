@@ -5,26 +5,26 @@ using System.Threading;
 
 namespace Samples
 {
-    public class Topic
+    public class RandomTimer : IRtdServerImpl
     {
-        public string[] args;
-        public DateTime value;
-    }
-    public class RtdTimer : IRtdServerImpl
-    {
+        public class Topic
+        {
+            public string[] args;
+            public double value;
+        }
         public event EventHandler<EventArgs> Updated;
         public readonly ConcurrentDictionary<int, Topic> Topics
             = new ConcurrentDictionary<int, Topic>();
-            
+
         private Timer Timer { get; }
-        public RtdTimer()
+        public RandomTimer()
         {
             Timer = new Timer(OnTimer, null, 5000, 5000);
         }
 
         public object Connect(int topicId, string[] args)
         {
-            return Topics[topicId] = new Topic { args = args, value = DateTime.Now };
+            return Topics[topicId] = new Topic { args = args, value = new Random().NextDouble() };
         }
 
         public void Disconnect(int topicId)
@@ -39,7 +39,7 @@ namespace Samples
             for (int i = 0; i < snapshot.Length; i++)
             {
                 values[0, i] = snapshot[i].Key;
-                values[1, i] = $"{snapshot[i].Value.value:O}{string.Join(",", snapshot[i].Value.args)}";
+                values[1, i] = $"{snapshot[i].Value.value}{string.Join(",", snapshot[i].Value.args)}";
             }
             return values;
         }
@@ -54,7 +54,7 @@ namespace Samples
             return 1;
         }
 
-        public void Terminate()
+        public void Stop()
         {
             Timer.Change(0, Timeout.Infinite);
             Topics.Clear();
@@ -64,7 +64,7 @@ namespace Samples
         {
             var now = DateTime.Now;
             foreach (var pair in Topics)
-                pair.Value.value = DateTime.Now;
+                pair.Value.value = new Random().NextDouble();
             Updated?.Invoke(this, EventArgs.Empty);
         }
     }

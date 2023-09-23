@@ -15,15 +15,14 @@ namespace ExcelMvc.Rtd
         private static readonly string MutexName = $"Global\\{nameof(RtdServers)}{Environment.UserName}";
         private static Mutex SystemMutex;
         private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
-        public static (Type type, string progId) Acquire(IRtdServerImpl impl)
+        public static (Type type, string progId) Acquire(Type implType)
         {
             lock (MutexName)
             {
                 RtdRegistration.PurgeProgIds();
-                var pair = Impls.FirstOrDefault(x => x.Value == impl);
+                var pair = Impls.FirstOrDefault(x => x.Value == implType);
                 if (pair.Key != null)
                     return (pair.Key, RtdRegistration.GetProgId(pair.Key));
-
                 try
                 {
                     SystemMutex = new Mutex(false, MutexName);
@@ -44,13 +43,13 @@ namespace ExcelMvc.Rtd
                     // not really going to occur...
                     throw new ArgumentOutOfRangeException($"Rtd server limit {Impls.Count} exceeded ");
 
-                Impls[type] = impl;
+                Impls[type] = implType;
                 RtdRegistration.RegisterType(type);
                 return (type, RtdRegistration.GetProgId(type));
             }
         }
 
-        public static IRtdServerImpl GetImpl(Type rtdType)
+        public static Type GetImpl(Type rtdType)
         {
             lock (MutexName)
             {
@@ -70,8 +69,8 @@ namespace ExcelMvc.Rtd
             }
         }
 
-        private static readonly Dictionary<Type, IRtdServerImpl> Impls
-            = new Dictionary<Type, IRtdServerImpl>()
+        private static readonly Dictionary<Type, Type> Impls
+            = new Dictionary<Type, Type>()
             {
                 {typeof(Rtd101), null},
                 {typeof(Rtd102), null},

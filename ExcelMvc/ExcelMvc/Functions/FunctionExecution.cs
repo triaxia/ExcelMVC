@@ -61,11 +61,11 @@ namespace ExcelMvc.Functions
             }, new object[] { function, method, args, handle });
         }
 
-        public static object ExecuteRtd(IRtdServerImpl impl, params string[] args)
+        public static object ExecuteRtd(Type impl, params string[] args)
         {
             var (type, progId) = RtdServers.Acquire(impl);
             args = new string[] { progId, "" }.Concat(args).ToArray();
-            using (var x = new FunctionArgsBag(args))
+            var x = new FunctionArgsBag(args);
             {
                 var fargs = x.ToArgs();
                 using (var p = new StructIntPtr<FunctionArgs>(ref fargs))

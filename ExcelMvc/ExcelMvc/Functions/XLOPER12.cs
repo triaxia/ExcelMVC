@@ -123,11 +123,12 @@ namespace ExcelMvc.Functions
             }
             else if (value is string sr)
             {
-                any = (char*)Marshal.AllocHGlobal((sr.Length + 1) * sizeof(char));
+                any = (char*)Marshal.AllocHGlobal((sr.Length + 2) * sizeof(char));
                 char* p = (char*)any;
                 p[0] = (char)sr.Length;
                 for (var idx = 1; idx <= sr.Length; idx++)
                     p[idx] = sr[idx - 1];
+                p[sr.Length + 1] =(char) 0;
                 xltype = (uint)XlTypes.xltypeStr;
             }
             else if (value is DateTime dt)

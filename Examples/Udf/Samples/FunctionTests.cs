@@ -28,13 +28,21 @@ namespace Samples
             return value;
         }
 
-        [Function(Name = "uRtd", IsAsync = false, IsThreadSafe = false, Description = "Timer Rtd", HelpTopic = "https://www.microsoft.com")]
-        public static object uRtd(
+        [Function(Name = "uRtdTime", IsAsync = false, IsThreadSafe = false, Description = "Timer Rtd", HelpTopic = "https://www.microsoft.com")]
+        public static object uRtdTime(
             [Argument(Name = "v1", Description = "argument 1")] string v1,
             [Argument(Name = "v2", Description = "argument 2")] string v2
 )
         {
-            return FunctionExecution.ExecuteRtd(new RtdTimer(), v1, v2);
+            return FunctionExecution.ExecuteRtd(typeof(TimerServer), v1, v2);
+        }
+        [Function(Name = "uRtdRandom", IsAsync = false, IsThreadSafe = false, Description = "Ramdon Rtd", HelpTopic = "https://www.microsoft.com")]
+        public static object uRtdRandom(
+            [Argument(Name = "v1", Description = "argument 1")] string v1,
+            [Argument(Name = "v2", Description = "argument 2")] string v2
+)
+        {
+            return FunctionExecution.ExecuteRtd(typeof(RandomTimer), v1, v2);
         }
     }
 }

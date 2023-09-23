@@ -49,6 +49,6 @@ namespace Addin.Interfaces
         /// <summary>
         /// Terminates the real-time data (RTD) server.
         /// </summary>
-        void Terminate();
+        void Stop();
     }
 }
