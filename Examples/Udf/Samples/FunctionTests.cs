@@ -1,5 +1,5 @@
 ﻿using ExcelMvc.Functions;
-using Function.Definitions;
+using Addin.Interfaces;
 
 namespace Samples
 {

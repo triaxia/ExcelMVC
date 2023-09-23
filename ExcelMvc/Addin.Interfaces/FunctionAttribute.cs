@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Function.Definitions
+namespace Addin.Interfaces
 {
     /// <summary>
     /// Decorates functions that are to be exported as User Defined Functions.

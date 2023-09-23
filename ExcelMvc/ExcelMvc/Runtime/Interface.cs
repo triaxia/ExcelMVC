@@ -1,3 +1,9 @@
+using System;
+using System.Windows;
+
+using ExcelMvc.Diagnostics;
+using ExcelMvc.Extensions;
+using ExcelMvc.Views;
 
 /*
 Copyright (C) 2013 =>
@@ -34,18 +40,10 @@ Boston, MA 02110-1301 USA.
 */
 namespace ExcelMvc.Runtime
 {
-    using System;
-    using System.Windows;
-
-    using Diagnostics;
-    using Extensions;
-    using Views;
-    using Functions;
-
     /// <summary>
     /// Defines interfacing methods for ExcelMvc
     /// </summary>
-    public static class Interface
+    public static partial class Interface
     {
         /// <summary>
         /// Attaches the current Excel session to ExcelMvc
@@ -135,43 +133,5 @@ namespace ExcelMvc.Runtime
             AsyncActions.Execute(true);
             return null;
         }
-
-#if NET5_0_OR_GREATER
-
-        public static int Attach(IntPtr arg, int args)
-        {
-            Attach();
-            return 1;
-        }
-
-        public static int Detach(IntPtr arg, int args)
-        {
-            Detach();
-            return 1;
-        }
-
-        public static int Click(IntPtr arg, int args)
-        {
-            Click();
-            return 1;
-        }
-
-        public static int Show(IntPtr arg, int args)
-        {
-            Show();
-            return 1;
-        }
-
-        public static int Hide(IntPtr arg, int args)
-        {
-            Hide();
-            return 1;
-        }
-        public static int Run(IntPtr arg, int args)
-        {
-            Run();
-            return 1;
-        }
-#endif
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Function.Definitions
+namespace Addin.Interfaces
 {
     /// <summary>
     /// Defines the implementation interface of a real-time data (RTD) server.

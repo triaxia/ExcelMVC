@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Function.Definitions
+namespace Addin.Interfaces
 {
 	/// <summary>
 	/// Decorates arguments of exported functions.
