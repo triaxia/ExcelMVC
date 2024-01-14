@@ -134,3 +134,26 @@ void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
 	FreeXLOper12T(pxFree);
 	free(pxFree);
 }
+
+HRESULT __stdcall DllRegisterServer()
+{
+	HRESULT result = S_OK;
+	return result;
+}
+
+HRESULT __stdcall DllUnregisterServer()
+{
+	HRESULT result = S_OK;
+	return result;
+}
+
+HRESULT __stdcall DllGetClassObject(REFCLSID clsid, REFIID iid, void** ppv)
+{
+	HRESULT result = S_OK;
+	return result;
+}
+
+HRESULT __stdcall DllCanUnloadNow()
+{
+	return S_FALSE;
+}
