@@ -4,12 +4,14 @@
 #include <string>
 using string_t = std::basic_string<wchar_t>;
 
+extern struct AddInInfo;
+
 class ClrRuntimeHost
 {
 public:
     virtual void Start(PCWSTR pszAssemblyName, PCWSTR pszClassName) = 0;
     virtual void Stop() = 0;
-    virtual void Attach() = 0;
+    virtual void Attach(AddInInfo *pInfo) = 0;
     virtual void Detach() = 0;
     virtual void Show() = 0;
     virtual void Hide() = 0;

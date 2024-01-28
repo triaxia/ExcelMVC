@@ -63,8 +63,8 @@ namespace ExcelMvc.Functions
 
         public static object ExecuteRtd(Type impl, params string[] args)
         {
-            var (type, progId) = RtdServers.Acquire(impl);
-            args = new string[] { progId, "" }.Concat(args).ToArray();
+            var progID = RtdRegistration.RegisterTypeTest();
+            args = new string[] { progID, "" }.Concat(args).ToArray();
             var x = new FunctionArgsBag(args);
             {
                 var fargs = x.ToArgs();

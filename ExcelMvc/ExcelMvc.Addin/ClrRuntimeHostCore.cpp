@@ -124,10 +124,11 @@ ClrRuntimeHostCore::Stop()
 }
 
 void
-ClrRuntimeHostCore::Attach()
+ClrRuntimeHostCore::Attach(AddInInfo* pInfo)
 {
 	ClearError();
-	((component_entry_point_fn)Functions[0])(nullptr, 0);
+	auto x = sizeof(AddInInfo*);
+	((component_entry_point_fn)Functions[0])(pInfo, x);
 }
 
 void

@@ -295,9 +295,9 @@ ClrRuntimeHostV4::Stop()
 }
 
 void
-ClrRuntimeHostV4::Attach()
+ClrRuntimeHostV4::Attach(AddInInfo* pInfo)
 {
-	Call(0, NULL);
+	Call(0, pInfo);
 }
 
 void

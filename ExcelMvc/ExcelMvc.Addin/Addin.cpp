@@ -39,6 +39,31 @@ Boston, MA 02110-1301 USA.
 extern "C" const GUID __declspec(selectany) DIID__Workbook =
 { 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
 
+typedef HRESULT(__stdcall* PFN_DLLGETCLASSOBJECT)(CLSID clsid, IID iid, LPVOID* ppv);
+struct AddInInfo
+{
+	WCHAR ModuleFileName[MAX_PATH];
+	PFN_DLLGETCLASSOBJECT pDllGetClassObject;
+};
+
+AddInInfo* pAddInInfo = NULL;
+
+void DeleteAddInInfo()
+{
+	if (pAddInInfo == NULL) return;
+	delete[] pAddInInfo->ModuleFileName;
+	delete pAddInInfo;
+}
+
+AddInInfo * CreateAddInInfo()
+{
+	DeleteAddInInfo();
+	pAddInInfo = new AddInInfo();
+	pAddInInfo->pDllGetClassObject = NULL;
+	::GetModuleFileName(Constants::Dll, pAddInInfo->ModuleFileName, sizeof(pAddInInfo->ModuleFileName) / sizeof(WCHAR));
+	return pAddInInfo;
+}
+
 extern void RegisterMvcFunctions();
 extern void UnregisterMvcFunctions();
 extern void RegisterUserFunctions();
@@ -82,7 +107,7 @@ extern "C"
 	ClrRuntimeHost* pClrHost = nullptr;
 }
 
-BOOL StartAddinClrHost()
+BOOL StartAddInClrHost()
 {
 	delete pClrHost;
 	pClrHost = ClrRuntimeHostFactory::Create();
@@ -96,7 +121,7 @@ BOOL StartAddinClrHost()
 		Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12)TempInt12(6));
 
 		// attach to ExcelMVC
-		pClrHost->Attach();
+		pClrHost->Attach(CreateAddInInfo());
 		result = pClrHost->TestAndDisplayError();
 
 		// close the book
@@ -106,7 +131,7 @@ BOOL StartAddinClrHost()
 	return result;
 }
 
-void StopAddinClrHost()
+void StopAddInClrHost()
 {
 	if (pClrHost != nullptr) pClrHost->Stop();
 }
@@ -115,7 +140,7 @@ BOOL __stdcall xlAutoOpen(void)
 {
 	RegisterMvcFunctions();
 	RegisterUserFunctions();
-	StartAddinClrHost();
+	StartAddInClrHost();
 	return TRUE;
 }
 

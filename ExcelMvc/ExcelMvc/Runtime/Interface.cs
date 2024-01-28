@@ -53,7 +53,7 @@ namespace ExcelMvc.Runtime
         public static string Attach(object app)
         {
             var status = ActionExtensions.Try(() => App.Instance.Attach(app));
-            return TestStauts(status);
+            return TestStatus(status);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace ExcelMvc.Runtime
         public static string Attach()
         {
             var status = ActionExtensions.Try(() => App.Instance.Attach(null));
-            return TestStauts(status);
+            return TestStatus(status);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace ExcelMvc.Runtime
         public static string Detach()
         {
             var status = ActionExtensions.Try(() => App.Instance.Detach());
-            return TestStauts(status);
+            return TestStatus(status);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace ExcelMvc.Runtime
         public static string Click()
         {
             var status = ActionExtensions.Try(() => App.Instance.FireClicked());
-            return TestStauts(status);
+            return TestStatus(status);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace ExcelMvc.Runtime
         /// </summary>
         /// <param name="status">Exception object</param>
         /// <returns>error string, null if success</returns>
-        public static string TestStauts(Exception status)
+        public static string TestStatus(Exception status)
         {
             string result = null;
             if (status != null)

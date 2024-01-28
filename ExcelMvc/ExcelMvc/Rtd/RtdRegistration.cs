@@ -69,6 +69,51 @@ namespace ExcelMvc.Rtd
     */
     public static class RtdRegistration
     {
+
+        public static string RegisterTypeTest()
+        {
+            var progId = "ExcelMvc.Test";
+            var guid =Guid.NewGuid().ToString("B").ToUpperInvariant();
+
+            foreach (var key in OpenClassesKeys())
+            {
+                using (key)
+                {
+                    ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID]
+                    using (var keyProgID = CreateSubKey(key, progId))
+                    {
+                        keyProgID.SetValue(null, progId);
+                        ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID\CLSID]
+                        using (var x = CreateSubKey(keyProgID, "CLSID")) x.SetValue(null, guid);
+                        using (var x = CreateSubKey(keyProgID, "Time")) x.SetValue(null, $"{DateTime.Now:O}");
+                    }
+
+                    ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}]
+                    using (var clsKey = OpenSubKey(key, "CLSID") ?? CreateSubKey(key, "CLSID"))
+                    {
+                        using (var keyGuid = CreateSubKey(clsKey, guid))
+                        {
+                            keyGuid.SetValue(null, progId);
+                            ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\ProgId]
+                            using (var x = CreateSubKey(keyGuid, "ProgId")) x.SetValue(null, progId);
+
+                            ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
+                            using (var inprocServer32 = keyGuid.CreateSubKey("InProcServer32"))
+                            {
+                                var path = System.IO.Path.GetDirectoryName(typeof(RtdRegistration).Assembly.Location);
+                                path = System.IO.Path.Combine(path, "ExcelMvc.Addin.x64.xll");
+                                inprocServer32.SetValue(null, path);
+                                inprocServer32.SetValue("ThreadingModel", "Both");
+                            }
+                        }
+                    }
+                }
+            }
+
+            return progId;
+        }
+
+
         public static string RegisterType(Type type)
         {
             var progId = GetProgId(type);

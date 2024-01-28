@@ -8,7 +8,7 @@ class ClrRuntimeHostV4 : public ClrRuntimeHost
 public:
     virtual void Start(PCWSTR pszAssemblyName, PCWSTR pszClassName);
     virtual void Stop();
-    virtual void Attach();
+    virtual void Attach(AddInInfo* pInfo);
     virtual void Detach();
     virtual void Show();
     virtual void Hide();
