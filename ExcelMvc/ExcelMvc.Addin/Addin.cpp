@@ -40,28 +40,29 @@ extern "C" const GUID __declspec(selectany) DIID__Workbook =
 { 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
 
 typedef HRESULT(__stdcall* PFN_DLLGETCLASSOBJECT)(CLSID clsid, IID iid, LPVOID* ppv);
-struct AddInInfo
+struct AddInHead
 {
-	WCHAR ModuleFileName[MAX_PATH];
+	LPWSTR ModuleFileName;
 	PFN_DLLGETCLASSOBJECT pDllGetClassObject;
 };
 
-AddInInfo* pAddInInfo = NULL;
+AddInHead* pAddInHead = NULL;
 
-void DeleteAddInInfo()
+void DeleteAddInHead()
 {
-	if (pAddInInfo == NULL) return;
-	delete[] pAddInInfo->ModuleFileName;
-	delete pAddInInfo;
+	if (pAddInHead == NULL) return;
+	delete pAddInHead->ModuleFileName;
+	delete pAddInHead;
 }
 
-AddInInfo * CreateAddInInfo()
+AddInHead* CreateAddInHead()
 {
-	DeleteAddInInfo();
-	pAddInInfo = new AddInInfo();
-	pAddInInfo->pDllGetClassObject = NULL;
-	::GetModuleFileName(Constants::Dll, pAddInInfo->ModuleFileName, sizeof(pAddInInfo->ModuleFileName) / sizeof(WCHAR));
-	return pAddInInfo;
+	DeleteAddInHead();
+	pAddInHead = new AddInHead();
+	pAddInHead->pDllGetClassObject = NULL;
+	pAddInHead->ModuleFileName = new WCHAR[MAX_PATH];
+	::GetModuleFileName(Constants::Dll, pAddInHead->ModuleFileName, MAX_PATH);
+	return pAddInHead;
 }
 
 extern void RegisterMvcFunctions();
@@ -121,7 +122,7 @@ BOOL StartAddInClrHost()
 		Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12)TempInt12(6));
 
 		// attach to ExcelMVC
-		pClrHost->Attach(CreateAddInInfo());
+		pClrHost->Attach(CreateAddInHead());
 		result = pClrHost->TestAndDisplayError();
 
 		// close the book

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 using ExcelMvc.Diagnostics;
@@ -48,20 +49,12 @@ namespace ExcelMvc.Runtime
         /// <summary>
         /// Attaches the current Excel session to ExcelMvc
         /// </summary>
-        /// <param name="app">Excel Application object</param>
         /// <returns>error string, null if success</returns>
-        public static string Attach(object app)
+        public static string Attach(object [] args)
         {
-            var status = ActionExtensions.Try(() => App.Instance.Attach(app));
-            return TestStatus(status);
-        }
-
-        /// <summary>
-        /// Attaches the current Excel session to ExcelMvc
-        /// </summary>
-        /// <returns>error string, null if success</returns>
-        public static string Attach()
-        {
+            var v = Marshal.PtrToStructure<AddInHead>((IntPtr)args[0]);
+            var X = Marshal.PtrToStringAuto(v.ModuleFileName);
+            // arg maybe IntPtr to AddInHead or an Excel object
             var status = ActionExtensions.Try(() => App.Instance.Attach(null));
             return TestStatus(status);
         }

@@ -117,12 +117,10 @@ void UnregisterMvcFunctions()
 	}
 }
 
-extern AddInInfo* CreateAddInInfo();
-
 extern "C" __declspec(dllexport)
 BOOL __stdcall ExcelMvcAttach(void)
 {
-	pClrHost->Attach(CreateAddInInfo());
+	pClrHost->Attach(NULL);
 	return pClrHost->TestAndDisplayError();
 }
 

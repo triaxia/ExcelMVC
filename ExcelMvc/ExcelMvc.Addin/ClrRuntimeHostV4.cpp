@@ -295,9 +295,9 @@ ClrRuntimeHostV4::Stop()
 }
 
 void
-ClrRuntimeHostV4::Attach(AddInInfo* pInfo)
+ClrRuntimeHostV4::Attach(AddInHead* pHead)
 {
-	Call(0, pInfo);
+	Call(0, pHead);
 }
 
 void
@@ -339,14 +339,15 @@ ClrRuntimeHostV4::Call(int idx, void* args)
 	SAFEARRAY* psaMethodArgs = NULL;
 	variant_t vtEmpty;
 	variant_t vtReturn;
-
+	
 	psaMethodArgs = SafeArrayCreateVector(VT_VARIANT, 0, args == NULL ? 0 : 1);
 	if (args != NULL)
 	{
-		variant_t varg((unsigned long long) args);
+		variant_t varg((unsigned long) args);
 		VARIANT v = varg;
-		long idx = 0;
-		SafeArrayPutElement(psaMethodArgs, &idx, &v);
+		long indices[1];
+		indices[0] = 0;
+		SafeArrayPutElement(psaMethodArgs, indices, &v);
 	}
 
 	HRESULT hr = pClass->InvokeMember_3(
