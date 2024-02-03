@@ -9,9 +9,9 @@ namespace ExcelMvc.Runtime
 {
     public static partial class Interface
     {
-        public static int Attach2(IntPtr arg, int args)
+        public static int Attach(IntPtr arg, int args)
         {
-            Attach(new object [] {arg});
+            Attach(arg);
             return 1;
         }
 

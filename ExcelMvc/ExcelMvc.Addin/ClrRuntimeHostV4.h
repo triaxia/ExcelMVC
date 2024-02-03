@@ -16,7 +16,7 @@ public:
     virtual void Run();
 
 private:
-    static void Call(int idx, void *arg);
+    static void Call(int idx, void *arg, bool setArg = false);
 };
 
 #endif
