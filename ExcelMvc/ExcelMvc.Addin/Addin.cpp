@@ -175,8 +175,7 @@ HRESULT __stdcall DllUnregisterServer()
 
 HRESULT __stdcall DllGetClassObject(REFCLSID clsid, REFIID iid, void** ppv)
 {
-	HRESULT result = S_OK;
-	return result;
+	return pAddInHead->pDllGetClassObject(clsid, iid, ppv);
 }
 
 HRESULT __stdcall DllCanUnloadNow()

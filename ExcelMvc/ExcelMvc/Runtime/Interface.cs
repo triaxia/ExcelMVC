@@ -1,9 +1,9 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Windows;
 
 using ExcelMvc.Diagnostics;
 using ExcelMvc.Extensions;
+using ExcelMvc.Rtd;
 using ExcelMvc.Views;
 
 /*
@@ -61,12 +61,7 @@ namespace ExcelMvc.Runtime
         /// <returns>error string, null if success</returns>
         public static string Attach(IntPtr head)
         {
-            if (head != IntPtr.Zero)
-            {
-                var v = Marshal.PtrToStructure<AddInHead>(head);
-                var X = Marshal.PtrToStringAuto(v.ModuleFileName);
-            }
-            // arg maybe IntPtr to AddInHead or an Excel object
+            if (head != IntPtr.Zero) ComServer.OnAttach(head);
             var status = ActionExtensions.Try(() => App.Instance.Attach(null));
             return TestStatus(status);
         }
