@@ -84,28 +84,17 @@ namespace ExcelMvc.Rtd
                 return E_INVALIDARG;
             }
 
-            //ComAPI.IClassFactory factory;
-            //if (registeredClassFactories.TryGetValue(clsid, out factory) ||
-            //    TryGetComClassType(clsid, out factory))
+            var factory = RtdRegistry.FindFactory(clsid);
+            if (factory == null)
             {
-                var factory = new ComObjectFactory(null);
-
-                IntPtr punkFactory = Marshal.GetIUnknownForObject(factory);
-                HRESULT hrQI = Marshal.QueryInterface(punkFactory, ref iid, out ppunk);
-                Marshal.Release(punkFactory);
-                if (hrQI == S_OK)
-                {
-                    return S_OK;
-                }
-                else
-                {
-                    return E_UNEXPECTED;
-                }
+                ppunk = IntPtr.Zero;
+                return CLASS_E_CLASSNOTAVAILABLE;
             }
 
-            // Otherwise it was not found
-            ppunk = IntPtr.Zero;
-            return CLASS_E_CLASSNOTAVAILABLE;
+            IntPtr punkFactory = Marshal.GetIUnknownForObject(factory);
+            var hrQI = Marshal.QueryInterface(punkFactory, ref iid, out ppunk);
+            Marshal.Release(punkFactory);
+            return hrQI == S_OK ? S_OK : E_UNEXPECTED;
         }
     }
 }

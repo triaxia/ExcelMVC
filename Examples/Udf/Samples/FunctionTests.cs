@@ -34,7 +34,7 @@ namespace Samples
             [Argument(Name = "v2", Description = "argument 2")] string v2
 )
         {
-            return FunctionExecution.ExecuteRtd(typeof(TimerServer), v1, v2);
+            return FunctionExecution.ExecuteRtd(typeof(TimerServer), () => new TimerServer(), v1, v2);
         }
         [Function(Name = "uRtdRandom", IsAsync = false, IsThreadSafe = false, Description = "Ramdon Rtd", HelpTopic = "https://www.microsoft.com")]
         public static object uRtdRandom(
@@ -42,7 +42,7 @@ namespace Samples
             [Argument(Name = "v2", Description = "argument 2")] string v2
 )
         {
-            return FunctionExecution.ExecuteRtd(typeof(RandomTimer), v1, v2);
+            return FunctionExecution.ExecuteRtd(typeof(RandomTimer), () => new RandomTimer(), v1, v2);
         }
     }
 }

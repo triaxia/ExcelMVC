@@ -10,11 +10,7 @@ namespace ExcelMvc.Rtd
         private IRTDUpdateEvent CallbackObject { get; set; }
 
         public IRtdServerImpl Impl { get; }
-        public RtdServer()
-        {
-            //var type = RtdServers.GetImpl(GetType());
-            //Impl =(IRtdServerImpl) Activator.CreateInstance(type);
-        }
+        public RtdServer(IRtdServerImpl impl) =>Impl = impl;
 
         public int ServerStart(IRTDUpdateEvent callbackObject)
         {
@@ -54,7 +50,6 @@ namespace ExcelMvc.Rtd
 
         public void ServerTerminate()
         {
-            //RtdServers.Release(GetType());
             Impl.Stop();
         }
     }

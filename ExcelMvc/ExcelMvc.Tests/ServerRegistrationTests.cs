@@ -9,7 +9,7 @@ namespace ExcelMvc.Tests
         [TestMethod]
         public void Register()
         {
-            RtdRegistration.PurgeProgIds();
+            RegistryFunctions.PurgeProgIds();
             //RtdRegistration.RegisterType(typeof(Rtd101));
             //Activator.CreateInstance(type);
         }

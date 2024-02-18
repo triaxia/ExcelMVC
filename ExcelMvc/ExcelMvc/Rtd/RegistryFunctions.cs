@@ -69,9 +69,9 @@ namespace ExcelMvc.Rtd
     /// Replace HKEY_CLASSES_ROOT with HKEY_CURRENT_USER\Software\Classes.
     /// 
     */
-    public static class RtdRegistration
+    public static class RegistryFunctions
     {
-        public static (string progId, string guid) RegisterType()
+        public static (string progId, Guid clsId) Register()
         {
             var clsId = Guid.NewGuid();
             var guid = clsId.ToString("B").ToUpperInvariant();
@@ -110,10 +110,10 @@ namespace ExcelMvc.Rtd
                 }
             }
 
-            return (progId, guid);
+            return (progId, clsId);
         }
 
-        public static void UnregisterType(string progId)
+        public static void Unregister(string progId)
         {
             DeleteProgId(progId);
         }

@@ -61,18 +61,20 @@ namespace ExcelMvc.Functions
             }, new object[] { function, method, args, handle });
         }
 
-        public static object ExecuteRtd(Type impl, params string[] args)
+        public static object ExecuteRtd(Type implType, Func<IRtdServerImpl> implFactory, params string[] args)
         {
-            var reg = RtdRegistration.RegisterType();
-            args = new string[] { reg.progId, "" }.Concat(args).ToArray();
-            var x = new FunctionArgsBag(args);
+            using (var reg = new RtdRegistry(implType, implFactory))
             {
-                var fargs = x.ToArgs();
-                using (var p = new StructIntPtr<FunctionArgs>(ref fargs))
+                args = new string[] { reg.ProgId, "" }.Concat(args).ToArray();
+                var x = new FunctionArgsBag(args);
                 {
+                    var fargs = x.ToArgs();
+                    using (var p = new StructIntPtr<FunctionArgs>(ref fargs))
+                    {
 
-                    var result = XLOPER12.FromIntPtr(XlCall.RtdCall(p.Ptr));
-                    return result == null ? null : XLOPER12.ToObject(result.Value);
+                        var result = XLOPER12.FromIntPtr(XlCall.RtdCall(p.Ptr));
+                        return result == null ? null : XLOPER12.ToObject(result.Value);
+                    }
                 }
             }
         }
