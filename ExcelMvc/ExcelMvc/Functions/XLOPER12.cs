@@ -28,7 +28,7 @@ namespace ExcelMvc.Functions
 
         public static XLOPER12? FromIntPtr(IntPtr value)
         {
-            return value ==IntPtr.Zero ? null : (XLOPER12 ?) Marshal.PtrToStructure<XLOPER12>(value);
+            return value == IntPtr.Zero ? null : (XLOPER12?)Marshal.PtrToStructure<XLOPER12>(value);
         }
 
         public static object ToObject(XLOPER12 value)
@@ -128,7 +128,7 @@ namespace ExcelMvc.Functions
                 p[0] = (char)sr.Length;
                 for (var idx = 1; idx <= sr.Length; idx++)
                     p[idx] = sr[idx - 1];
-                p[sr.Length + 1] =(char) 0;
+                p[sr.Length + 1] = (char)0;
                 xltype = (uint)XlTypes.xltypeStr;
             }
             else if (value is DateTime dt)
@@ -188,14 +188,14 @@ namespace ExcelMvc.Functions
                         d[idx - 1] = p[idx];
                     return new string(d);
                 case XlTypes.xltypeMulti:
-                   var result = new object[array.rows, array.columns];
+                    var result = new object[array.rows, array.columns];
                     for (var row = 0; row < array.rows; row++)
                         for (var col = 0; col < array.columns; col++)
                         {
                             var ele = array.lparray + row * array.columns + col;
-                            result[row, col] =ele->ToObject();
+                            result[row, col] = ele->ToObject();
                         }
-                   return result;
+                    return result;
                 case XlTypes.xltypeMissing:
                     return null;
             }
