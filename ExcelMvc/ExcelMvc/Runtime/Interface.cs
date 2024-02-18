@@ -61,7 +61,7 @@ namespace ExcelMvc.Runtime
         /// <returns>error string, null if success</returns>
         public static string Attach(IntPtr head)
         {
-            if (head != IntPtr.Zero) ComServer.OnAttach(head);
+            if (head != IntPtr.Zero) ComServerFactory.OnAttach(head);
             var status = ActionExtensions.Try(() => App.Instance.Attach(null));
             return TestStatus(status);
         }

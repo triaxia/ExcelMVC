@@ -243,7 +243,7 @@ namespace ExcelMvc.Rtd
             key.SetValue("Class", type.FullName);
             key.SetValue("Assembly", type.Assembly.FullName);
             key.SetValue("RuntimeVersion", type.Assembly.ImageRuntimeVersion);
-            key.SetValue("CodeBase", type.Assembly.CodeBase);
+            key.SetValue("CodeBase", type.Assembly.Location);
         }
 
         private const string ClassesPath = @"Software\Classes\";

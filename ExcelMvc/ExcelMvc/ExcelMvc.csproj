@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net471;net8.0-windows</TargetFrameworks>
-		<!--Referenced below-->
-		<NetCoreFramework>net8.0-windows</NetCoreFramework>
+		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
 		<!--<Nullable>enable</Nullable>-->
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -96,9 +94,6 @@
 			<PackagePath>Build</PackagePath>
 		</Content>
 		<Content Include="ExcelMvc.Net.targets">
-			<PackagePath>Build</PackagePath>
-		</Content>
-		<Content Include="bin\$(Configuration)\$(NetCoreFramework)\ExcelMvc.comhost.dll">
 			<PackagePath>Build</PackagePath>
 		</Content>
 	</ItemGroup>
