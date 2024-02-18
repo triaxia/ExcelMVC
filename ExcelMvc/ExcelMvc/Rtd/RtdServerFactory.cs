@@ -8,14 +8,7 @@ namespace ExcelMvc.Rtd
     using IID = Guid;
     using CLSID = Guid;
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct AddInHead
-    {
-        public IntPtr ModuleFileName;
-        public IntPtr pDllGetClassObject;
-    }
-
-    public static unsafe class ComServerFactory
+    public static class RtdServerFactory
     {
         public const HRESULT S_OK = 0;
         public const HRESULT S_FALSE = 1;
@@ -32,8 +25,6 @@ namespace ExcelMvc.Rtd
         public static readonly Guid GuidIUnknown = new Guid(GuidStringIUnknown);
         public static readonly Guid GuidClassFactory = new Guid(GuidStringClassFactory);
         public static readonly Guid GuidIRtdServer = new Guid(GuidStringIRtdServer);
-
-        public static string ModuleFileName { get; private set; }
 
         [ComImport]
         [Guid(GuidStringClassFactory)]
@@ -115,16 +106,6 @@ namespace ExcelMvc.Rtd
             // Otherwise it was not found
             ppunk = IntPtr.Zero;
             return CLASS_E_CLASSNOTAVAILABLE;
-        }
-
-        internal delegate HRESULT fn_dll_get_class_object(CLSID rclsid, IID riid, out IntPtr ppunk);
-        public static void OnAttach(IntPtr head)
-        {
-            AddInHead* pAddInHead = (AddInHead*)head;
-            ModuleFileName = Marshal.PtrToStringAuto(pAddInHead->ModuleFileName);
-            fn_dll_get_class_object fnDllGetClassObject = (fn_dll_get_class_object)DllGetClassObject;
-            GCHandle.Alloc(fnDllGetClassObject);
-            pAddInHead->pDllGetClassObject = Marshal.GetFunctionPointerForDelegate(fnDllGetClassObject);
         }
     }
 }
