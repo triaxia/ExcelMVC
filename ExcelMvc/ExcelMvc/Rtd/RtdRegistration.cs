@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
+using System.Windows.Markup;
 
 namespace ExcelMvc.Rtd
 {
@@ -69,11 +71,11 @@ namespace ExcelMvc.Rtd
     */
     public static class RtdRegistration
     {
-
-        public static string RegisterTypeTest()
+        public static (string progId, string guid) RegisterType()
         {
-            var progId = "ExcelMvc.Test";
-            var guid =Guid.NewGuid().ToString("B").ToUpperInvariant();
+            var clsId = Guid.NewGuid();
+            var guid = clsId.ToString("B").ToUpperInvariant();
+            var progId = $"ExcelMvc.{clsId.ToString("N")}";
 
             foreach (var key in OpenClassesKeys())
             {
@@ -100,9 +102,7 @@ namespace ExcelMvc.Rtd
                             ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
                             using (var inprocServer32 = keyGuid.CreateSubKey("InProcServer32"))
                             {
-                                var path = System.IO.Path.GetDirectoryName(typeof(RtdRegistration).Assembly.Location);
-                                path = System.IO.Path.Combine(path, "ExcelMvc.Addin.x64.xll");
-                                inprocServer32.SetValue(null, path);
+                                inprocServer32.SetValue(null, AddIn.ModuleFileName);
                                 inprocServer32.SetValue("ThreadingModel", "Both");
                             }
                         }
@@ -110,74 +110,15 @@ namespace ExcelMvc.Rtd
                 }
             }
 
-            return progId;
+            return (progId, guid);
         }
 
-
-        public static string RegisterType(Type type)
+        public static void UnregisterType(string progId)
         {
-            var progId = GetProgId(type);
-            var guid = $"{{{GetGuid(type)}}}";
-
-            foreach (var key in OpenClassesKeys())
-            {
-                using (key)
-                {
-                    ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID]
-                    using (var keyProgID = CreateSubKey(key, progId))
-                    {
-                        keyProgID.SetValue(null, progId);
-                        ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID\CLSID]
-                        using (var x = CreateSubKey(keyProgID, "CLSID")) x.SetValue(null, guid);
-                        using (var x = CreateSubKey(keyProgID, "Time")) x.SetValue(null, $"{DateTime.Now:O}");
-                    }
-
-                    ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}]
-                    using (var clsKey = OpenSubKey(key, "CLSID") ?? CreateSubKey(key, "CLSID"))
-                    {
-                        using (var keyGuid = CreateSubKey(clsKey, guid))
-                        {
-                            keyGuid.SetValue(null, progId);
-                            ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\ProgId]
-                            using (var x = CreateSubKey(keyGuid, "ProgId")) x.SetValue(null, progId);
-
-#if NET5_0_OR_GREATER
-                        ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
-                        using (var inprocServer32 = keyGuid.CreateSubKey("InProcServer32"))
-                        {
-                            inprocServer32.SetValue(null, type.Assembly.Location.ToLower().Replace(".dll", ".comhost.dll"));
-                            inprocServer32.SetValue("ThreadingModel", "Both");
-                        }
-#else
-                            ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
-                            using (var inprocServer32 = CreateSubKey(keyGuid, "InprocServer32"))
-                            {
-                                SetKeyValues(inprocServer32, type, false);
-                                ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32\1.0.0.0]
-                                using (var versionKey = CreateSubKey(inprocServer32, "Version"))
-                                    SetKeyValues(versionKey, type, true);
-                            }
-                            ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
-                            using (var _ = CreateSubKey(keyGuid, @"Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}"))
-                            {
-                                // nothing to do
-                            }
-#endif
-                        }
-                    }
-                }
-            }
-
-            return progId;
-        }
-
-        public static void UnregisterType(Type type)
-        {
-            var progId = GetProgId(type);
             DeleteProgId(progId);
         }
 
-        public const string ProgIdPattern = "ExcelMvc.Rtd[0-9]*";
+        public const string ProgIdPattern = "ExcelMvc.(.)+";
         public static void PurgeProgIds()
         {
             var pattern = new Regex(ProgIdPattern);
@@ -253,11 +194,6 @@ namespace ExcelMvc.Rtd
             var x64 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
             return new[] { OpenSubKey(x86, ClassesPath), OpenSubKey(x64, ClassesPath) };
         }
-
-        public static string GetProgId(Type type) => type.GetCustomAttributes(typeof(ProgIdAttribute), false)
-        .Cast<ProgIdAttribute>().Single().Value;
-        public static string GetGuid(Type type) => type.GetCustomAttributes(typeof(GuidAttribute), false)
-            .Cast<GuidAttribute>().Single().Value;
 
         private static RegistryKey OpenSubKey(RegistryKey key, string path)
             => key.OpenSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree);
