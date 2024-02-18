@@ -40,12 +40,12 @@ namespace ExcelMvc.Rtd
 
         [ComVisible(true)]
         [ClassInterface(ClassInterfaceType.None)]
-        public class ComObjectFactory : IComClassFactory
+        public class RtdComClassFactory : IComClassFactory
         {
-            private object _instance ;
-            public ComObjectFactory(object instance)
+            public RtdServer RtdServer;
+            public RtdComClassFactory(RtdServer instance)
             {
-                _instance = instance;
+                RtdServer = instance;
             }
 
             public int CreateInstance([In] IntPtr pUnkOuter, [In] ref CLSID riid, [Out] out IntPtr ppvObject)
@@ -57,11 +57,11 @@ namespace ExcelMvc.Rtd
                 }
                 if (riid == GuidIUnknown)
                 {
-                    ppvObject = Marshal.GetIUnknownForObject(_instance);
+                    ppvObject = Marshal.GetIUnknownForObject(RtdServer);
                 }
                 else if (riid == GuidIRtdServer)
                 {
-                    ppvObject = Marshal.GetComInterfaceForObject(_instance, typeof(IRtdServer));
+                    ppvObject = Marshal.GetComInterfaceForObject(RtdServer, typeof(IRtdServer));
                 }
                 else
                 {

@@ -174,6 +174,7 @@ namespace ExcelMvc.Rtd
             }
         }
 
+        /*
         private static void SetKeyValues(RegistryKey key, Type type, bool versionNode)
         {
             if (!versionNode)
@@ -185,7 +186,7 @@ namespace ExcelMvc.Rtd
             key.SetValue("Assembly", type.Assembly.FullName);
             key.SetValue("RuntimeVersion", type.Assembly.ImageRuntimeVersion);
             key.SetValue("CodeBase", type.Assembly.Location);
-        }
+        }*/
 
         private const string ClassesPath = @"Software\Classes\";
         public static RegistryKey[] OpenClassesKeys()

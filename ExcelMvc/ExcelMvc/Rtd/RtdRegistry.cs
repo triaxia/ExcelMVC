@@ -12,8 +12,8 @@ namespace ExcelMvc.Rtd
 
         private static readonly ConcurrentDictionary<string, (RtdServer server, string progId)> Servers
             = new ConcurrentDictionary<string, (RtdServer server, string progId)>();
-        private static readonly ConcurrentDictionary<Guid, ComObjectFactory> Factories
-            = new ConcurrentDictionary<Guid, ComObjectFactory>();
+        private static readonly ConcurrentDictionary<Guid, RtdComClassFactory> Factories
+            = new ConcurrentDictionary<Guid, RtdComClassFactory>();
 
         private bool Registered { get; set; }
 
@@ -26,7 +26,7 @@ namespace ExcelMvc.Rtd
                 var (progId, guid) = RegistryFunctions.Register();
                 var impl = implFactory?.Invoke() ?? (IRtdServerImpl)Activator.CreateInstance(implType);
                 var server = new RtdServer(impl);
-                Factories[guid] = new ComObjectFactory(server);
+                Factories[guid] = new RtdComClassFactory(server);
                 return (new RtdServer(impl), progId);
             });
             ProgId = pair.progId;
@@ -39,9 +39,17 @@ namespace ExcelMvc.Rtd
             GC.SuppressFinalize(this);
         }
 
-        public static ComObjectFactory FindFactory(Guid guid)
+        public static RtdComClassFactory FindFactory(Guid guid)
         {
             return Factories.ToArray().SingleOrDefault(x => x.Key == guid).Value;
+        }
+
+        public static void OnTerminated(RtdServer server)
+        {
+            var key = Servers.ToArray().SingleOrDefault(x => x.Value.server == server).Key;
+            Servers.TryRemove(key, out var _);
+            var guid = Factories.ToArray().SingleOrDefault(x => x.Value.RtdServer == server).Key;
+            Factories.TryRemove(guid, out var _);
         }
     }
 }
