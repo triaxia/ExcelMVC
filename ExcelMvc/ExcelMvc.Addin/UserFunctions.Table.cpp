@@ -34,6 +34,7 @@ Boston, MA 02110-1301 USA.
 #include "pch.h"
 #include <XLCALL.H>
 
+/*
 extern LPXLOPER12 Udf(int index, va_list ls, LPXLOPER12 arg0);
 
 #define expudf(i) extern "C" __declspec(dllexport) LPXLOPER12 udf##i(LPXLOPER12 arg0,...) { va_list vl; va_start(vl, arg0); auto x = Udf(##i, vl, arg0); va_end(vl); return x; }
@@ -5038,4 +5039,4 @@ expudf(4996)
 expudf(4997)
 expudf(4998)
 expudf(4999)
-
+*/

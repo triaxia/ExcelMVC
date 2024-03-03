@@ -27,7 +27,7 @@
     <ClCompile Include="MemoryPool.cpp">
       <Filter>XlCall</Filter>
     </ClCompile>
-    <ClCompile Include="Addin.cpp" />
+    <ClCompile Include="AddIn.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="ClrRuntimeHostV4.cpp">
@@ -35,7 +35,8 @@
     </ClCompile>
     <ClCompile Include="UserFunctions.cpp" />
     <ClCompile Include="MvcFunctions.cpp" />
-    <ClCompile Include="UserFunctions.Table.cpp" />
+    <ClCompile Include="Export.cpp" />
+    <ClCompile Include="Export32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClrRuntimeHost.h">
@@ -61,10 +62,12 @@
     <ClInclude Include="ClrRuntimeHostV4.h">
       <Filter>Runtime</Filter>
     </ClInclude>
+    <ClInclude Include="Export.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Addin.def" />
+    <None Include="AddIn.def" />
     <None Include="..\excelmvc\resource.designer.cs" />
+    <None Include="Export64.asm" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\excelmvc\resource.resx" />

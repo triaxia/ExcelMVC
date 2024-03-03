@@ -8,16 +8,11 @@
 #define PCH_H
 
 #include "targetver.h"
-
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <oaidl.h>
 #include <map>
-
-class Constants
-{
-public:
-	static HMODULE Dll;
-};
+#include "Export.h"
 
 #endif //PCH_H

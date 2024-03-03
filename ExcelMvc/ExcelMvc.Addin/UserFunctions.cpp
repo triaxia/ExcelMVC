@@ -36,15 +36,19 @@ Boston, MA 02110-1301 USA.
 #include "framewrk.h"
 #include "ClrRuntimeHost.h"
 
+extern "C" { extern PFN ExportTable[]; }
+
 struct ExceArgument
 {
 	LPCWSTR Name;
 	LPCWSTR Description;
+	byte Type;
 };
 
 struct ExcelFunction
 {
 	int Index;
+	byte ReturnType;
 	// "unsigned long long" works too.
 	//unsigned long long Callback; 
 	void* Callback;
@@ -142,7 +146,6 @@ LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
 	return result;
 }
 
-
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstring& types)
 {
 	types = pFunction->IsAsync ? L">" : L"Q";
@@ -184,6 +187,7 @@ extern "C" extern ClrRuntimeHost * pClrHost;
 extern void GetFunctionInfo(int index, void** pCallback, bool* aync, int* argc);
 typedef void (*pFNCallback)(void*);
 
+/*
 LPXLOPER12 
 Udf(int index, va_list vl, LPXLOPER12 arg0)
 {
@@ -217,7 +221,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 
 	return args.Result;
 }
-
+*/
 
  LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 {
@@ -227,6 +231,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
 	FunctionCallback[pFunction->Index] = (void *) pFunction->Callback;
 	FunctionAsync[pFunction->Index] = pFunction->IsAsync;
+	ExportTable[pFunction->Index] = (PFN)pFunction->Callback;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText

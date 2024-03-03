@@ -2,6 +2,8 @@
 #include "ClrRuntimeHost.h"
 #include <cwchar>
 
+extern "C" { extern HMODULE hDll; }
+
 WCHAR ClrRuntimeHost::ErrorBuffer[1024] = {};
 
 void
@@ -67,7 +69,7 @@ BOOL ClrRuntimeHost::FindAppConfig(PCWSTR basePath, TCHAR *buffer, DWORD size)
 string_t ClrRuntimeHost::GetBasePath()
 {
     WCHAR buffer[MAX_PATH];
-    ::GetModuleFileName(Constants::Dll, buffer, sizeof(buffer) / sizeof(WCHAR));
+    ::GetModuleFileName(hDll, buffer, sizeof(buffer) / sizeof(WCHAR));
     string_t path = buffer;
     auto pos = path.find_last_of(L"\\");
     return path.substr(0, pos);

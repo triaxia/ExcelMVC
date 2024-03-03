@@ -12,11 +12,14 @@ namespace ExcelMvc.Functions
         public string Name;
         [MarshalAs(UnmanagedType.LPWStr)]
         public string Description;
+        [MarshalAs(UnmanagedType.U1)]
+        public byte Type;
 
         public Argument(ArgumentAttribute rhs)
         {
             Name = rhs.Name;
             Description = rhs.Description;
+            Type = 1; //TODO
         }
     }
 
@@ -29,6 +32,8 @@ namespace ExcelMvc.Functions
         public const ushort MaxArguments = 32;
         [MarshalAs(UnmanagedType.U4)]
         public int Index;
+        [MarshalAs(UnmanagedType.U1)]
+        public byte ReturnType;
         // ulong works too
         //[MarshalAs(UnmanagedType.U8)]
         //public ulong Callback;
@@ -76,6 +81,7 @@ namespace ExcelMvc.Functions
             HelpTopic = rhs.HelpTopic ?? "";
             Arguments = Pad(arguments);
             if (rhs.IsHidden) FunctionType = 0;
+            ReturnType = 1; // TODO
         }
 
         private static Argument[] Pad(Argument[] arguments)
