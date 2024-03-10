@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
-using System.Windows.Navigation;
 
 namespace ExcelMvc.Functions
 {
@@ -85,8 +84,7 @@ namespace ExcelMvc.Functions
         {
             return x + y;
         }
-
-        public delegate double XlAct2(double p1, double p2);
+        public delegate double xxx(double x, double y);
 
         public static IntPtr MakeCallback(MethodInfo method, FunctionAttribute function)
         {
@@ -94,8 +92,32 @@ namespace ExcelMvc.Functions
             var p2 = Expression.Parameter(typeof(double), "b");
             var m = typeof(FunctionExecution).GetMethod("Add");
             var p3 = Expression.Call(m, new[] { p1, p2 } );
-            var e = Expression.Lambda(typeof(XlAct2), p3, p1, p2 ).Compile();
+            var t = typeof(xxx);// CreateDelegate(method).GetType();
+            var e = Expression.Lambda(t, p3, p1, p2 ).Compile();
             return Marshal.GetFunctionPointerForDelegate(e);
+        }
+
+        public static Delegate CreateDelegate(MethodInfo methodInfo, object target = null)
+        {
+            Func<Type[], Type> getType;
+
+            var types = methodInfo.GetParameters().Select(p => p.ParameterType);
+            if (methodInfo.ReturnType.Equals((typeof(void))))
+            {
+                getType = Expression.GetActionType;
+            }
+            else
+            {
+                getType = Expression.GetFuncType;
+                types = types.Concat(new[] { methodInfo.ReturnType });
+            }
+
+            if (methodInfo.IsStatic)
+            {
+                return Delegate.CreateDelegate(getType(types.ToArray()), methodInfo);
+            }
+
+            return Delegate.CreateDelegate(getType(types.ToArray()), target, methodInfo.Name);
         }
     }
 }
