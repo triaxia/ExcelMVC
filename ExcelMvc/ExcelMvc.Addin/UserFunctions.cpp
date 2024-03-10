@@ -77,7 +77,6 @@ struct FunctionArgs
 static std::map<int, LPXLOPER12> FunctionRegIds;
 static std::map<int, bool> FunctionAsync;
 static std::map<int, int> FunctionArgCount;
-static std::map<int, void*> FunctionCallback;
 static XLOPER12 xDll;
 
 void RegisterUserFunctions()
@@ -118,12 +117,6 @@ void UnregisterUserFunction(int index)
 		auto it = FunctionArgCount.find(index);
 		if (it != FunctionArgCount.end())
 			FunctionArgCount.erase(index);
-	}
-
-	{
-		auto it = FunctionCallback.find(index);
-		if (it != FunctionCallback.end())
-			FunctionCallback.erase(index);
 	}
 }
 
@@ -176,16 +169,7 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 		topic += L"!0";
 }
 
-void GetFunctionInfo(int index, void **pCallback, bool* async, int *argc)
-{
-	*async = FunctionAsync[index];
-	*pCallback = FunctionCallback[index];
-	*argc = FunctionArgCount[index];
-}
-
 extern "C" extern ClrRuntimeHost * pClrHost;
-extern void GetFunctionInfo(int index, void** pCallback, bool* aync, int* argc);
-typedef void (*pFNCallback)(void*);
 
 /*
 LPXLOPER12 
@@ -229,9 +213,8 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	auto regId = new XLOPER12();
 	FunctionRegIds[pFunction->Index] = regId;
 	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
-	FunctionCallback[pFunction->Index] = (void *) pFunction->Callback;
 	FunctionAsync[pFunction->Index] = pFunction->IsAsync;
-	ExportTable[pFunction->Index] = (PFN)(pFunction->Callback);
+	ExportTable[pFunction->Index] = (PFN) pFunction->Callback;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText

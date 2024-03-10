@@ -63,8 +63,7 @@ namespace ExcelMvc.Functions
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public Argument[] Arguments;
 
-        public Function(int index, FunctionAttribute rhs, Argument[] arguments,
-            IntPtr callback)
+        public Function(int index, FunctionAttribute rhs, Argument[] arguments, IntPtr callback)
         {
             Index = index;
             Callback = callback; // Marshal.GetFunctionPointerForDelegate(callback);

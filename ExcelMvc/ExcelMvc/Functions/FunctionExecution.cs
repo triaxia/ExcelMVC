@@ -91,9 +91,7 @@ namespace ExcelMvc.Functions
             var e = Expression.Lambda(p3, p1, p2 ).Compile();
             */
             F f = (F)Add;
-            GCHandle.Alloc(f);
             return Marshal.GetFunctionPointerForDelegate(f);
         }
-
     }
 }
