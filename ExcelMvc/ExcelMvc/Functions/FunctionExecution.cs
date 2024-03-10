@@ -97,27 +97,23 @@ namespace ExcelMvc.Functions
             return Marshal.GetFunctionPointerForDelegate(e);
         }
 
-        public static Delegate CreateDelegate(MethodInfo methodInfo, object target = null)
+        public static Delegate CreateDelegate(MethodInfo method, object target = null)
         {
             Func<Type[], Type> getType;
 
-            var types = methodInfo.GetParameters().Select(p => p.ParameterType);
-            if (methodInfo.ReturnType.Equals((typeof(void))))
+            var types = method.GetParameters().Select(p => p.ParameterType);
+            if (method.ReturnType.Equals((typeof(void))))
             {
                 getType = Expression.GetActionType;
             }
             else
             {
                 getType = Expression.GetFuncType;
-                types = types.Concat(new[] { methodInfo.ReturnType });
+                types = types.Concat(new[] { method.ReturnType });
             }
 
-            if (methodInfo.IsStatic)
-            {
-                return Delegate.CreateDelegate(getType(types.ToArray()), methodInfo);
-            }
-
-            return Delegate.CreateDelegate(getType(types.ToArray()), target, methodInfo.Name);
+            return method.IsStatic ? Delegate.CreateDelegate(getType(types.ToArray()), method)
+                : Delegate.CreateDelegate(getType(types.ToArray()), target, method.Name);
         }
     }
 }
