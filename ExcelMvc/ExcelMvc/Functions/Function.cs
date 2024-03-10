@@ -64,10 +64,10 @@ namespace ExcelMvc.Functions
         public Argument[] Arguments;
 
         public Function(int index, FunctionAttribute rhs, Argument[] arguments,
-            FunctionCallback callback)
+            IntPtr callback)
         {
             Index = index;
-            Callback = Marshal.GetFunctionPointerForDelegate(callback);
+            Callback = callback; // Marshal.GetFunctionPointerForDelegate(callback);
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
             IsMacro = rhs.IsMacro;

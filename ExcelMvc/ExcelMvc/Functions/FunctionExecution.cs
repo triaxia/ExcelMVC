@@ -11,7 +11,7 @@ namespace ExcelMvc.Functions
 {
     public static class FunctionExecution
     {
-        public static Dictionary<int, (MethodInfo method, Function function, FunctionCallback callback)> Functions
+        public static Dictionary<int, (MethodInfo method, Function function, IntPtr callback)> Functions
         { get; private set; }
 
         public static void RegisterFunctions()
@@ -79,9 +79,21 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public static FunctionCallback MakeCallback(MethodInfo method, FunctionAttribute function)
+        public delegate double F(double a, double b);
+        public static double Add(double a, double b) { return a + b; }
+
+        public static IntPtr MakeCallback(MethodInfo method, FunctionAttribute function)
         {
-            return new FunctionCallback(FunctionExecution.Execute);
+            /*
+            var p1 = Expression.Parameter(typeof(double), "a");
+            var p2 = Expression.Parameter(typeof(double), "b");
+            var p3 = Expression.Call(null, typeof(FunctionExecution).GetMethod("Add"), p1, p2 );
+            var e = Expression.Lambda(p3, p1, p2 ).Compile();
+            */
+            F f = (F)Add;
+            GCHandle.Alloc(f);
+            return Marshal.GetFunctionPointerForDelegate(f);
         }
+
     }
 }

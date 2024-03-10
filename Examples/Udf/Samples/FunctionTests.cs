@@ -13,6 +13,7 @@ namespace Samples
             return v1 + v2;
         }
 
+        /*
         [Function(Name = "uAdd3", IsAsync = false, IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
         public static double Add3(
             [Argument(Name = "v1", Description = "argument 1")] double v1,
@@ -44,5 +45,6 @@ namespace Samples
         {
             return FunctionExecution.ExecuteRtd(typeof(RandomTimer), () => new RandomTimer(), v1, v2);
         }
+        */
     }
 }

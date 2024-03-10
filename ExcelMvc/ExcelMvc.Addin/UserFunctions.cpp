@@ -148,12 +148,12 @@ LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
 
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstring& types)
 {
-	types = pFunction->IsAsync ? L">" : L"Q";
+	types = pFunction->IsAsync ? L">" : L"B";
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		if (idx > 0) names += L",";
 		names += NullCoalesce(pFunction->Arguments[idx].Name);
-		types += L"Q";
+		types += L"B";
 	}
 	if (pFunction->IsAsync) types += L"X";
 	if (pFunction->IsVolatile) types += L"!";
@@ -231,7 +231,7 @@ Udf(int index, va_list vl, LPXLOPER12 arg0)
 	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
 	FunctionCallback[pFunction->Index] = (void *) pFunction->Callback;
 	FunctionAsync[pFunction->Index] = pFunction->IsAsync;
-	ExportTable[pFunction->Index] = (PFN)pFunction->Callback;
+	ExportTable[pFunction->Index] = (PFN)(pFunction->Callback);
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText
