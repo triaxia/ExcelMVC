@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System.Windows.Navigation;
 
 namespace ExcelMvc.Functions
 {
@@ -79,19 +81,21 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public delegate double F(double a, double b);
-        public static double Add(double a, double b) { return a + b; }
+        public static double Add(double x, double y)
+        {
+            return x + y;
+        }
+
+        public delegate double XlAct2(double p1, double p2);
 
         public static IntPtr MakeCallback(MethodInfo method, FunctionAttribute function)
         {
-            /*
             var p1 = Expression.Parameter(typeof(double), "a");
             var p2 = Expression.Parameter(typeof(double), "b");
-            var p3 = Expression.Call(null, typeof(FunctionExecution).GetMethod("Add"), p1, p2 );
-            var e = Expression.Lambda(p3, p1, p2 ).Compile();
-            */
-            F f = (F)Add;
-            return Marshal.GetFunctionPointerForDelegate(f);
+            var m = typeof(FunctionExecution).GetMethod("Add");
+            var p3 = Expression.Call(m, new[] { p1, p2 } );
+            var e = Expression.Lambda(typeof(XlAct2), p3, p1, p2 ).Compile();
+            return Marshal.GetFunctionPointerForDelegate(e);
         }
     }
 }
