@@ -80,40 +80,10 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public static double Add(double x, double y)
-        {
-            return x + y;
-        }
-        public delegate double xxx(double x, double y);
-
         public static IntPtr MakeCallback(MethodInfo method, FunctionAttribute function)
         {
-            var p1 = Expression.Parameter(typeof(double), "a");
-            var p2 = Expression.Parameter(typeof(double), "b");
-            var m = typeof(FunctionExecution).GetMethod("Add");
-            var p3 = Expression.Call(m, new[] { p1, p2 } );
-            var t = typeof(xxx);// CreateDelegate(method).GetType();
-            var e = Expression.Lambda(t, p3, p1, p2 ).Compile();
+            var e = XlDelegateFactory.MakeOuterDelegate(method, function);    
             return Marshal.GetFunctionPointerForDelegate(e);
-        }
-
-        public static Delegate CreateDelegate(MethodInfo method, object target = null)
-        {
-            Func<Type[], Type> getType;
-
-            var types = method.GetParameters().Select(p => p.ParameterType);
-            if (method.ReturnType.Equals((typeof(void))))
-            {
-                getType = Expression.GetActionType;
-            }
-            else
-            {
-                getType = Expression.GetFuncType;
-                types = types.Concat(new[] { method.ReturnType });
-            }
-
-            return method.IsStatic ? Delegate.CreateDelegate(getType(types.ToArray()), method)
-                : Delegate.CreateDelegate(getType(types.ToArray()), target, method.Name);
         }
     }
 }
