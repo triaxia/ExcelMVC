@@ -8,7 +8,7 @@ namespace ExcelMvc.Functions
 {
     public static class XlDelegateFactory
     {
-        public static Delegate GetOuterDelegate(MethodInfo method, FunctionAttribute function)
+        public static Delegate MakeOuterDelegate(MethodInfo method, FunctionAttribute function)
         {
             var inner = new DelegateInvoke(() => MakeInnerDelegate(method, function));
             var count = method.GetParameters().Length;  

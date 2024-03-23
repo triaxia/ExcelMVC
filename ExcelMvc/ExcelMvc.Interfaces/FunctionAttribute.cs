@@ -56,13 +56,13 @@ namespace ExcelMvc.Interfaces
         public bool IsAsync;
 
         /// <summary>
-        /// Indiates the function is thread-safe.
+        /// Indicates the function is thread-safe.
         /// (pxTypeTex +='$')
         /// </summary>
         public bool IsThreadSafe;
 
         /// <summary>
-        /// Indiates the function is cluster-safe.
+        /// Indicates the function is cluster-safe.
         /// (pxTypeText += '&')
         /// </summary>
         public bool IsClusterSafe;
