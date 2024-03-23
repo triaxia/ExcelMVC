@@ -25,6 +25,11 @@ namespace ExcelMvc.Functions
             XLOPER12.ToIntPtr(XLOPER12.FromObject(outgoing), ref result);
         }
 
+        public static double IntPtr2Double(IntPtr value) 
+        {
+            return *(double*)value.ToPointer();
+        }
+
         private static object GetDefaultValue(ParameterInfo info)
         {
             var type = info.ParameterType;

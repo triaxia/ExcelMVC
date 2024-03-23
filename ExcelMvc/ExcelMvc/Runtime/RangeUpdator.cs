@@ -62,9 +62,9 @@ namespace ExcelMvc.Runtime
             get { return LazyInstance.Value; }
         }
 
-        internal static string NameOfAsynUpdateThread
+        internal static string NameOfAsyncUpdateThread
         {
-            get { return "ExcelMvcAsynUpdateThread"; }
+            get { return "ExcelMvcAsyncUpdateThread"; }
         }
 
         public void Update(Range range, int rowOffset, int rows, int columnOffset, int columns, object value)
@@ -146,7 +146,7 @@ namespace ExcelMvc.Runtime
         private static bool IsAsyncUpdateThread()
         {
             var threadName = Thread.CurrentThread.Name;
-            return !string.IsNullOrWhiteSpace(threadName) && threadName.EqualNoCase(NameOfAsynUpdateThread);
+            return !string.IsNullOrWhiteSpace(threadName) && threadName.EqualNoCase(NameOfAsyncUpdateThread);
         }
 
         private static int RowOffsetFromRowId(Range start, int count, string rowId)
