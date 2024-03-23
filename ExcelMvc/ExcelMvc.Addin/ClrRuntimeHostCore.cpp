@@ -128,7 +128,7 @@ ClrRuntimeHostCore::Attach(AddInHead* pHead)
 {
 	ClearError();
 	auto x = sizeof(AddInHead*);
-	((component_entry_point_fn)Functions[0])(pHead, x);
+	((component_entry_point_fn)Functions[0])(pHead, (int32_t) x);
 }
 
 void

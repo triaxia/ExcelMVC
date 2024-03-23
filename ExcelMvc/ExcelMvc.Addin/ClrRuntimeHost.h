@@ -4,7 +4,7 @@
 #include <string>
 using string_t = std::basic_string<wchar_t>;
 
-extern struct AddInHead;
+struct AddInHead;
 
 class ClrRuntimeHost
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Addin.Interfaces
+namespace ExcelMvc.Interfaces
 {
     /// <summary>
     /// Decorates functions that are to be exported as User Defined Functions.

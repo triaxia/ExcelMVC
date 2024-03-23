@@ -1,5 +1,5 @@
 ﻿using ExcelMvc.Rtd;
-using Addin.Interfaces;
+using ExcelMvc.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

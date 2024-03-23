@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ExcelMvc.Functions
 {
-    public static class Converter
+    public unsafe static class Converter
     {
         public static object FromIncoming(XLOPER12? value, ParameterInfo info)
         {

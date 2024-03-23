@@ -114,7 +114,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Addin.Interfaces\Addin.Interfaces.csproj" PrivateAssets="All" />
+	  <ProjectReference Include="..\ExcelMvc.Interfaces\ExcelMvc.Interfaces.csproj" />
 	</ItemGroup>
 
 	<PropertyGroup>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Addin.Interfaces
+namespace ExcelMvc.Interfaces
 {
 	/// <summary>
 	/// Decorates arguments of exported functions.

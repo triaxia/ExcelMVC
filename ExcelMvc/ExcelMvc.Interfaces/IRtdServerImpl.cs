@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Addin.Interfaces
+namespace ExcelMvc.Interfaces
 {
     /// <summary>
     /// Defines the implementation interface of a real-time data (RTD) server.

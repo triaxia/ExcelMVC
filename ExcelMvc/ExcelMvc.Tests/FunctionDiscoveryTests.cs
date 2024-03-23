@@ -1,5 +1,5 @@
 using ExcelMvc.Functions;
-using Addin.Interfaces;
+using ExcelMvc.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
