@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Linq.Expressions;
 
 namespace ExcelMvc.Functions
 {
@@ -82,7 +81,7 @@ namespace ExcelMvc.Functions
 
         public static IntPtr MakeCallback(MethodInfo method, FunctionAttribute function)
         {
-            var e = XlDelegateFactory.MakeOuterDelegate(method, function);    
+            var e = DelegateFactory.MakeOuterDelegate(method, function);    
             return Marshal.GetFunctionPointerForDelegate(e);
         }
     }
