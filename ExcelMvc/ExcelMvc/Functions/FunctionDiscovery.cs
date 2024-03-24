@@ -4,11 +4,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
 {
     public static class FunctionDiscovery
     {
+        public static void RegisterFunctions()
+        {
+            var functions = FunctionDiscovery.Discover()
+                .Select((x, idx) => (index: idx, x.method, x.function, x.args, callback: MakeCallback(x.method)))
+                .ToDictionary(x => x.index, x => (x.method, function: new Function(x.index, x.function, x.args, x.callback), x.callback));
+            foreach (var pair in functions)
+                XlCall.RegisterFunction(pair.Value.function);
+        }
+
         public static IEnumerable<(MethodInfo method, FunctionAttribute function, Argument[] args)> Discover()
         {
             return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
@@ -38,6 +48,12 @@ namespace ExcelMvc.Functions
             var name = typeof(T).AssemblyQualifiedName;
             return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
             //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
+        }
+
+        public static IntPtr MakeCallback(MethodInfo method)
+        {
+            var e = DelegateFactory.MakeOuterDelegate(method);
+            return Marshal.GetFunctionPointerForDelegate(e);
         }
     }
 }

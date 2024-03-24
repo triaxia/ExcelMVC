@@ -8,9 +8,9 @@ namespace ExcelMvc.Functions
 {
     public static class DelegateFactory
     {
-        public static Delegate MakeOuterDelegate(MethodInfo method, FunctionAttribute function)
+        public static Delegate MakeOuterDelegate(MethodInfo method)
         {
-            var instance = new LazyDelegate(() => MakeInnerDelegate(method, function));
+            var instance = new LazyDelegate(() => MakeInnerDelegate(method));
             var count = method.GetParameters().Length;
             if (method.ReturnType.Equals(typeof(void)))
             {
@@ -24,7 +24,7 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public static Delegate MakeInnerDelegate(MethodInfo method, FunctionAttribute function)
+        public static Delegate MakeInnerDelegate(MethodInfo method)
         {
             var expressions = method.GetParameters()
                 .Select(x => (x.ParameterType, expression: Expression.Parameter(typeof(IntPtr), x.Name)));

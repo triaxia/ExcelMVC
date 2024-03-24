@@ -180,7 +180,7 @@ namespace ExcelMvc.Views
                     AsyncActions.Initialise();
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
                     ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
-                    Try(() => FunctionExecution.RegisterFunctions());
+                    Try(() => FunctionDiscovery.RegisterFunctions());
 
                     Underlying.WorkbookOpen += OpenBook;
                     Underlying.WorkbookBeforeClose += ClosingBook;

@@ -2,6 +2,9 @@
 using ExcelMvc.Interfaces;
 using System;
 using System.Linq;
+using ExcelMvc.Functions;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace ExcelMvc.Rtd
 {
@@ -52,6 +55,31 @@ namespace ExcelMvc.Rtd
         {
             Impl.Stop();
             RtdRegistry.OnTerminated(this);
+        }
+
+        public static object ExecuteRtd(Type implType, Func<IRtdServerImpl> implFactory, params string[] args)
+        {
+            using (var reg = new RtdRegistry(implType, implFactory))
+            {
+                args = new string[] { reg.ProgId, "" }.Concat(args).ToArray();
+                var x = new FunctionArgsBag(args);
+                {
+                    var fargs = x.ToArgs();
+                    using (var p = new StructIntPtr<FunctionArgs>(ref fargs))
+                    {
+
+                        var result = XLOPER12.FromIntPtr(XlCall.RtdCall(p.Ptr));
+                        return result == null ? null : XLOPER12.ToObject(result.Value);
+                    }
+                }
+            }
+        }
+
+        public static void SetAsyncResult(IntPtr handle, object result)
+        {
+            var outcome = XLOPER12.FromObject(result);
+            using (var ptr = new StructIntPtr<XLOPER12>(ref outcome))
+                XlCall.AsyncReturn(handle, ptr.Detach());
         }
     }
 }
