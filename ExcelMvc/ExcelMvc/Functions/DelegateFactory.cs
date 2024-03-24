@@ -10,39 +10,56 @@ namespace ExcelMvc.Functions
     {
         public static Delegate MakeOuterDelegate(MethodInfo method, FunctionAttribute function)
         {
-            var instance = new DelegateInvoke(() => MakeInnerDelegate(method, function));
+            var instance = new LazyDelegate(() => MakeInnerDelegate(method, function));
             var count = method.GetParameters().Length;
             if (method.ReturnType.Equals(typeof(void)))
             {
                 return Delegate.CreateDelegate(ActionDelegate.Actions[count],
-                    instance, typeof(DelegateInvoke).GetMethod($"Action{count}"));
+                    instance, LazyDelegate.GetActionMethod(count));
             }
             else
             {
                 return Delegate.CreateDelegate(FunctionDelegate.Functions[count],
-                    instance, typeof(DelegateInvoke).GetMethod($"Function{count}"));
+                    instance, LazyDelegate.GetFunctionMethod(count));
             }
         }
 
         public static Delegate MakeInnerDelegate(MethodInfo method, FunctionAttribute function)
         {
-            var convert = typeof(Converter).GetMethod("IntPtr2Double");
-
-            var expressions = method.GetParameters().Select(x => (x.ParameterType, expression: Expression.Parameter(typeof(IntPtr), x.Name)));
+            var expressions = method.GetParameters()
+                .Select(x => (x.ParameterType, expression: Expression.Parameter(typeof(IntPtr), x.Name)));
             
-            var outerParameters = expressions.Select(x => x.expression);
-            var innerParameters = expressions.Select(x => Expression.Call(XlMarshalContext.IntPtr2ParameterMethod(x.ParameterType), x.expression));
+            var outerParameters = expressions.Select(x => x.expression)
+                .ToArray();
+            var innerParameters = expressions.Select(x => Expression.Call(XlMarshalContext.IntPtr2Parameter(x.ParameterType), x.expression))
+                .ToArray();
+            var innerCall = Expression.Call(method, innerParameters);
 
-            /*
-            // a lot to do here...
-            var count = method.GetParameters().Length;
-            var type = method.ReturnType.Equals(typeof(void)) ?
-                ActionDelegate.Actions[count] : FunctionDelegate.Functions[count];
-            */
+            var ex = Expression.Variable(typeof(Exception), "ex");
+            var exHandler = Expression.Call(XlMarshalException.HandlerMethod, ex);
 
-            //assign, catch ...
-            //var e = Expression.Lambda(type, p3, p1, p2).Compile();
-            return null;
+            if (method.ReturnType == typeof(void))
+            {
+                var catcher = Expression.Block(exHandler, Expression.Empty()); // TODO
+                var body = Expression.TryCatch(innerCall, Expression.Catch(ex, catcher));
+                var delegateType = ActionDelegate.Actions[outerParameters.Length];
+                return Expression.Lambda(delegateType, body, method.Name, outerParameters).Compile();
+            }
+            else
+            {
+                var context = Expression.Variable(typeof(XlMarshalContext), "context");
+                var value = Expression.Call(typeof(XlMarshalContext), nameof(XlMarshalContext.GetThreadInstance), null);
+                innerCall = Expression.Call(context, XlMarshalContext.Result2IntPtr(method.ReturnType), innerCall);
+                var catcher = Expression.Block(exHandler, Expression.Constant(IntPtr.Zero)); // TODO
+
+                var delegateType = FunctionDelegate.Functions[outerParameters.Length];
+                var body = Expression.Block(
+                    typeof(IntPtr),
+                    new ParameterExpression[] { context },
+                    Expression.Assign(context, value),
+                    Expression.TryCatch(innerCall, Expression.Catch(ex, catcher)));
+                return Expression.Lambda(delegateType, body, method.Name, outerParameters).Compile();
+            }
         }
     }
 }

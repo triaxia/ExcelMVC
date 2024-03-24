@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using static ExcelMvc.Functions.ActionDelegate;
 using static ExcelMvc.Functions.FunctionDelegate;
@@ -163,15 +164,17 @@ namespace ExcelMvc.Functions
         };
     }
 
-    public class DelegateInvoke
+    public class LazyDelegate
     {
         private readonly Lazy<Delegate> _delegate;
 
-        public DelegateInvoke(Func<Delegate> make)
+        public LazyDelegate(Func<Delegate> make)
         {
             _delegate = new Lazy<Delegate>(make, LazyThreadSafetyMode.PublicationOnly);
         }
 
+        public static MethodInfo GetActionMethod(int parameterCount)
+            => typeof(LazyDelegate).GetMethod($"Action{parameterCount}", BindingFlags.Public | BindingFlags.Instance);
         public void Action0() => ((Action0)_delegate.Value)();
         public void Action1(IntPtr p1) => ((Action1)_delegate.Value)(p1);
         public void Action2(IntPtr p1, IntPtr p2) => ((Action2)_delegate.Value)(p1, p2);
@@ -237,6 +240,8 @@ namespace ExcelMvc.Functions
         public void Action62(IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7, IntPtr p8, IntPtr p9, IntPtr p10, IntPtr p11, IntPtr p12, IntPtr p13, IntPtr p14, IntPtr p15, IntPtr p16, IntPtr p17, IntPtr p18, IntPtr p19, IntPtr p20, IntPtr p21, IntPtr p22, IntPtr p23, IntPtr p24, IntPtr p25, IntPtr p26, IntPtr p27, IntPtr p28, IntPtr p29, IntPtr p30, IntPtr p31, IntPtr p32, IntPtr p33, IntPtr p34, IntPtr p35, IntPtr p36, IntPtr p37, IntPtr p38, IntPtr p39, IntPtr p40, IntPtr p41, IntPtr p42, IntPtr p43, IntPtr p44, IntPtr p45, IntPtr p46, IntPtr p47, IntPtr p48, IntPtr p49, IntPtr p50, IntPtr p51, IntPtr p52, IntPtr p53, IntPtr p54, IntPtr p55, IntPtr p56, IntPtr p57, IntPtr p58, IntPtr p59, IntPtr p60, IntPtr p61, IntPtr p62) => ((Action62)_delegate.Value)(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39, p40, p41, p42, p43, p44, p45, p46, p47, p48, p49, p50, p51, p52, p53, p54, p55, p56, p57, p58, p59, p60, p61, p62);
         public void Action63(IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7, IntPtr p8, IntPtr p9, IntPtr p10, IntPtr p11, IntPtr p12, IntPtr p13, IntPtr p14, IntPtr p15, IntPtr p16, IntPtr p17, IntPtr p18, IntPtr p19, IntPtr p20, IntPtr p21, IntPtr p22, IntPtr p23, IntPtr p24, IntPtr p25, IntPtr p26, IntPtr p27, IntPtr p28, IntPtr p29, IntPtr p30, IntPtr p31, IntPtr p32, IntPtr p33, IntPtr p34, IntPtr p35, IntPtr p36, IntPtr p37, IntPtr p38, IntPtr p39, IntPtr p40, IntPtr p41, IntPtr p42, IntPtr p43, IntPtr p44, IntPtr p45, IntPtr p46, IntPtr p47, IntPtr p48, IntPtr p49, IntPtr p50, IntPtr p51, IntPtr p52, IntPtr p53, IntPtr p54, IntPtr p55, IntPtr p56, IntPtr p57, IntPtr p58, IntPtr p59, IntPtr p60, IntPtr p61, IntPtr p62, IntPtr p63) => ((Action63)_delegate.Value)(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39, p40, p41, p42, p43, p44, p45, p46, p47, p48, p49, p50, p51, p52, p53, p54, p55, p56, p57, p58, p59, p60, p61, p62, p63);
 
+        public static MethodInfo GetFunctionMethod(int parameterCount)
+            => typeof(LazyDelegate).GetMethod($"Function{parameterCount}", BindingFlags.Public | BindingFlags.Instance);
         public IntPtr Function0() => ((Function0)_delegate.Value)();
         public IntPtr Function1(IntPtr p1) => ((Function1)_delegate.Value)(p1);
         public IntPtr Function2(IntPtr p1, IntPtr p2) => ((Function2)_delegate.Value)(p1, p2);

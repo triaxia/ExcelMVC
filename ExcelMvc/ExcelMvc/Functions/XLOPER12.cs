@@ -21,6 +21,8 @@ namespace ExcelMvc.Functions
         [FieldOffset(0)] XLArray array;
         [FieldOffset(24)] public uint xltype;
 
+        public const int MaxStringLength = 32767;
+
         public static XLOPER12 FromObject(object value)
         {
             return new XLOPER12(value);
