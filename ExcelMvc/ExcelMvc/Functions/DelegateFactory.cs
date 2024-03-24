@@ -50,14 +50,16 @@ namespace ExcelMvc.Functions
                 var context = Expression.Variable(typeof(XlMarshalContext), "context");
                 var value = Expression.Call(typeof(XlMarshalContext), nameof(XlMarshalContext.GetThreadInstance), null);
                 innerCall = Expression.Call(context, XlMarshalContext.Result2IntPtr(method.ReturnType), innerCall);
-                var catcher = Expression.Block(exHandler, Expression.Constant(IntPtr.Zero)); // TODO
 
-                var delegateType = FunctionDelegate.Functions[outerParameters.Length];
+                var catcher = Expression.Call(context, XlMarshalContext.Result2IntPtr(typeof(object)), exHandler);
+
                 var body = Expression.Block(
                     typeof(IntPtr),
                     new ParameterExpression[] { context },
                     Expression.Assign(context, value),
                     Expression.TryCatch(innerCall, Expression.Catch(ex, catcher)));
+
+                var delegateType = FunctionDelegate.Functions[outerParameters.Length];
                 return Expression.Lambda(delegateType, body, method.Name, outerParameters).Compile();
             }
         }
