@@ -1,5 +1,4 @@
-﻿using ExcelMvc.Interfaces;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -26,13 +25,25 @@ namespace ExcelMvc.Functions
 
         public static Delegate MakeInnerDelegate(MethodInfo method)
         {
+            // option 1, works!
+            var parameters = method.GetParameters();
+            var outerParameters = parameters.Select(p => Expression.Parameter(typeof(IntPtr), p.Name)).ToArray();
+            var innerParameters = new Expression[outerParameters.Length];
+            for (var index = 0; index < parameters.Length; index++)
+            {
+                var type = parameters[index].ParameterType;
+                innerParameters[index] = Expression.Call(XlMarshalContext.IncomingConverter(type), outerParameters[index]);
+            }
+
+            /* option 2, does not work, lambda.Compile() throws an error, cannot work out why!
             var expressions = method.GetParameters()
                 .Select(x => (x.ParameterType, expression: Expression.Parameter(typeof(IntPtr), x.Name)));
-            
             var outerParameters = expressions.Select(x => x.expression)
                 .ToArray();
             var innerParameters = expressions.Select(x => Expression.Call(XlMarshalContext.IntPtr2Parameter(x.ParameterType), x.expression))
                 .ToArray();
+            */
+
             var innerCall = Expression.Call(method, innerParameters);
 
             var ex = Expression.Variable(typeof(Exception), "ex");
@@ -49,9 +60,9 @@ namespace ExcelMvc.Functions
             {
                 var context = Expression.Variable(typeof(XlMarshalContext), "context");
                 var value = Expression.Call(typeof(XlMarshalContext), nameof(XlMarshalContext.GetThreadInstance), null);
-                innerCall = Expression.Call(context, XlMarshalContext.Result2IntPtr(method.ReturnType), innerCall);
+                innerCall = Expression.Call(context, XlMarshalContext.OutgoingConverter(method.ReturnType), innerCall);
 
-                var catcher = Expression.Call(context, XlMarshalContext.Result2IntPtr(typeof(object)), exHandler);
+                var catcher = Expression.Call(context, XlMarshalContext.OutgoingConverter(typeof(object)), exHandler);
 
                 var body = Expression.Block(
                     typeof(IntPtr),

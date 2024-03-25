@@ -1,13 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExcelMvc.Functions
 {
     public unsafe partial class XlMarshalContext
     {
-        public static IntPtr IntPtr2IntPtr(IntPtr value) => value;
-        public static double IntPtr2Double(IntPtr value) => *(double*)value.ToPointer();
-        public static string IntPtr2String(IntPtr value)
+        public static IntPtr IntPtrToIntPtr(IntPtr value) => value;
+        public static double IntPtrToDouble(IntPtr value) => *(double*)value.ToPointer();
+        public static DateTime IntPtrToDateTime(IntPtr value) => DateTime.FromOADate(*(double*)value.ToPointer());
+        public static float IntPtrToFloat (IntPtr value) => *(float*)value.ToPointer();
+        public static decimal IntPtrToDecimal(IntPtr value) => *(decimal*)value.ToPointer();
+        public static long IntPtrToLong(IntPtr value) => *(long*)value.ToPointer();
+        public static ulong IntPtrToULong(IntPtr value) => *(ulong*)value.ToPointer();
+        public static int IntPtrToInt(IntPtr value) => *(int*)value.ToPointer();
+        public static uint IntPtrToUInt(IntPtr value) => *(uint*)value.ToPointer();
+        public static short IntPtrToShort(IntPtr value) => *(short*)value.ToPointer();
+        public static ushort IntPtrToUShort(IntPtr value) => *(ushort*)value.ToPointer();
+        public static byte IntPtrToByte(IntPtr value) => *(byte*)value.ToPointer();
+        public static string IntPtrToString(IntPtr value)
         {
             if (value == IntPtr.Zero) return null;
 
@@ -15,16 +26,30 @@ namespace ExcelMvc.Functions
             var len = (short)p[0];
             return len == 0 ? string.Empty : new string(p, 1, len);
         }
-
-        public static MethodInfo IntPtr2Parameter(Type parameter)
+        public static object IntPtrToObject(IntPtr value)
         {
-            var flags = BindingFlags.Static | BindingFlags.Public;
-            if (typeof(double) == parameter)
-                return typeof(XlMarshalContext).GetMethod(nameof(IntPtr2Double), flags);
-            if (typeof(string) == parameter)
-                return typeof(XlMarshalContext).GetMethod(nameof(IntPtr2String), flags);
-
-            return typeof(XlMarshalContext).GetMethod(nameof(IntPtr2IntPtr), flags);
+            return null;
         }
+
+        private static readonly Dictionary<Type, MethodInfo> IncomingConverters
+            = new Dictionary<Type, MethodInfo>()
+            {
+                { typeof(double), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDouble)) },
+                { typeof(DateTime), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTime)) },
+                { typeof(decimal), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDecimal)) },
+                { typeof(float), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToFloat)) },
+                { typeof(long), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToLong)) },
+                { typeof(ulong), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToULong)) },
+                { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToInt)) },
+                { typeof(uint), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToUInt)) },
+                { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToShort)) },
+                { typeof(ushort), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToUShort)) },
+                { typeof(byte), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToByte)) },
+                { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToString)) },
+                { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObject)) },
+            };
+
+        public static MethodInfo IncomingConverter(Type result) =>
+            IncomingConverters.TryGetValue(result, out var value) ? value : IncomingConverters[(typeof(object))];
     }
 }

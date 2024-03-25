@@ -3,8 +3,6 @@ using ExcelMvc.Interfaces;
 using System;
 using System.Linq;
 using ExcelMvc.Functions;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace ExcelMvc.Rtd
 {
