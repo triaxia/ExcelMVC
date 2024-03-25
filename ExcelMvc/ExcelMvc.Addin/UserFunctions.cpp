@@ -141,12 +141,12 @@ LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
 
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstring& types)
 {
-	types = pFunction->IsAsync ? L">" : L"B";
+	types = pFunction->IsAsync ? L">" : L"E";
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		if (idx > 0) names += L",";
 		names += NullCoalesce(pFunction->Arguments[idx].Name);
-		types += L"B";
+		types += L"E";
 	}
 	if (pFunction->IsAsync) types += L"X";
 	if (pFunction->IsVolatile) types += L"!";

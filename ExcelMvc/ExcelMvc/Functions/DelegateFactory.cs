@@ -60,7 +60,8 @@ namespace ExcelMvc.Functions
                     Expression.TryCatch(innerCall, Expression.Catch(ex, catcher)));
 
                 var delegateType = FunctionDelegate.Functions[outerParameters.Length];
-                return Expression.Lambda(delegateType, body, method.Name, outerParameters).Compile();
+                var lambda = Expression.Lambda(delegateType, body, method.Name, outerParameters);
+                return lambda.Compile();
             }
         }
     }
