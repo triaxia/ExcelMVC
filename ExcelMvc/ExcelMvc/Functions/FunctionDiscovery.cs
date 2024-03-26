@@ -30,7 +30,7 @@ namespace ExcelMvc.Functions
 
         private static IEnumerable<string> GetTypes(Assembly asm)
         {
-            return asm.GetTypes().Select(t => (type: t, methods: t.GetMethods(BindingFlags.Public | BindingFlags.Static)
+            return asm.GetExportedTypes().Select(t => (type: t, methods: t.GetMethods(BindingFlags.Public | BindingFlags.Static)
                 .Where(m => m.HasCustomAttribute<FunctionAttribute>())))
                 .SelectMany(t => t.methods.Select(m => $"{t.type.AssemblyQualifiedName}|{m.Name}"));
         }

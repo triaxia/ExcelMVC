@@ -133,7 +133,7 @@ namespace ExcelMvc.Runtime
         public static IEnumerable<string> GetCreatableTypes(Assembly asm)
         {
             var itype = typeof(T);
-            return asm.GetTypes()
+            return asm.GetExportedTypes()
                 .Where(x => !x.IsGenericType && !x.IsInterface && !x.IsAbstract && IsDerivedFrom(x, itype))
                 .Where(x => x.GetConstructor(Type.EmptyTypes) != null)
                 .Select(x => x.AssemblyQualifiedName);
