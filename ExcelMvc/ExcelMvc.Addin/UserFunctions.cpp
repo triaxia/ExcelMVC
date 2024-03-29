@@ -171,42 +171,6 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 
 extern "C" extern ClrRuntimeHost * pClrHost;
 
-/*
-LPXLOPER12 
-Udf(int index, va_list vl, LPXLOPER12 arg0)
-{
-	bool async = false;
-	void* pCallback = NULL;
-	int argc;
-
-	FunctionArgs args;
-	args.Index = index;
-	auto idx = 0;
-	while (arg0 != NULL)
-	{
-		args.Args[idx++] = arg0;
-		arg0 = va_arg(vl, LPXLOPER12);
-	}
-
-	GetFunctionInfo(args.Index, &pCallback, &async, &argc);
-	args.Result = new XLOPER12();
-	memset(args.Result, 0, sizeof(XLOPER12));
-
-	if (async) argc++;
-
-	// wiped out unwanted args
-	for (auto idx = argc; idx < MAX_ARG_COUNT; idx++)
-		args.Args[idx] = NULL;
-
-	// callback is 14% faster than COM interop for 471. there is no difference for net6.0 as it is already
-	// using callback.
-	//pClrHost->Udf(args);
-	((pFNCallback)pCallback)(&args);
-
-	return args.Result;
-}
-*/
-
  LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 {
 	UnregisterUserFunction(pFunction->Index);
