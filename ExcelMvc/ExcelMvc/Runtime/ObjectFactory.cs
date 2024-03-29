@@ -226,11 +226,12 @@ namespace ExcelMvc.Runtime
 #else
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += (_, args) =>
             {
+                var name = $"{new AssemblyName(args.Name).Name}.dll";
                 var file = AppDomain.CurrentDomain.GetAssemblies()
                     .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
                     .Select(x => Path.GetDirectoryName(x.Location))
                     .Distinct()
-                    .Select(x => Path.ChangeExtension(Path.Combine(x, new AssemblyName(args.Name).Name), ".dll"))
+                    .Select(x => Path.Combine(x, name))
                     .Where(File.Exists)
                     .OrderByDescending(File.GetLastWriteTimeUtc)
                     .FirstOrDefault();
