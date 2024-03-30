@@ -48,5 +48,12 @@ namespace ExcelMvc.Functions
             else
                 return RtdCall32(args);
         }
+
+        public static void SetAsyncResult(IntPtr handle, object result)
+        {
+            var outcome = XLOPER12.FromObject(result);
+            using (var ptr = new StructIntPtr<XLOPER12>(ref outcome))
+                AsyncReturn(handle, ptr.Detach());
+        }
     }
 }

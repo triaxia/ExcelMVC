@@ -13,9 +13,9 @@ namespace ExcelMvc.Functions
         {
             var functions = FunctionDiscovery.Discover()
                 .Select((x, idx) => (index: idx, x.method, x.function, x.args, callback: MakeCallback(x.method)))
-                .ToDictionary(x => x.index, x => (x.method, function: new Function(x.index, x.function, x.args, x.callback), x.callback));
+                .ToDictionary(x => x.index, x => new Function(x.index, x.function, x.args, x.callback, x.method.ReturnType));
             foreach (var pair in functions)
-                XlCall.RegisterFunction(pair.Value.function);
+                XlCall.RegisterFunction(pair.Value);
         }
 
         public static IEnumerable<(MethodInfo method, ExcelFunctionAttribute function, Argument[] args)> Discover()
@@ -38,7 +38,7 @@ namespace ExcelMvc.Functions
         {
             return method.GetParameters()
                 .Select(x => (argument: x.GetCustomAttribute<ExcelArgumentAttribute>(), parameter: x))
-                .Select(x => x.argument == null ? new Argument { Name = x.parameter.Name, Description = "" } : new Argument(x.argument))
+                .Select(x => new Argument(x.parameter, x.argument))
                 .ToArray();
         }
 

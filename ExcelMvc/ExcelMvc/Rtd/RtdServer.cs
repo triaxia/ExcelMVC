@@ -54,7 +54,7 @@ namespace ExcelMvc.Rtd
             RtdRegistry.OnTerminated(this);
         }
 
-        public static object ExecuteRtd(Type implType, Func<IRtdServerImpl> implFactory, params string[] args)
+        public static object Execute(Type implType, Func<IRtdServerImpl> implFactory, params string[] args)
         {
             using (var reg = new RtdRegistry(implType, implFactory))
             {
@@ -70,13 +70,6 @@ namespace ExcelMvc.Rtd
                     }
                 }
             }
-        }
-
-        public static void SetAsyncResult(IntPtr handle, object result)
-        {
-            var outcome = XLOPER12.FromObject(result);
-            using (var ptr = new StructIntPtr<XLOPER12>(ref outcome))
-                XlCall.AsyncReturn(handle, ptr.Detach());
         }
     }
 }

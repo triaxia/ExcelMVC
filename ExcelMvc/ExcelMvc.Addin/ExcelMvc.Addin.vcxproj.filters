@@ -66,10 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AddIn.def" />
-    <None Include="..\excelmvc\resource.designer.cs" />
-    <None Include="Export64.asm" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\excelmvc\resource.resx" />
+    <MASM Include="Export64.asm" />
   </ItemGroup>
 </Project>

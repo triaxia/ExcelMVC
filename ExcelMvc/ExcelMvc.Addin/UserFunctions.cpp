@@ -42,13 +42,13 @@ struct ExceArgument
 {
 	LPCWSTR Name;
 	LPCWSTR Description;
-	byte Type;
+	LPCWSTR Type;
 };
 
 struct ExcelFunction
 {
 	int Index;
-	byte ReturnType;
+	LPCWSTR ReturnType;
 	// "unsigned long long" works too.
 	//unsigned long long Callback; 
 	void* Callback;
@@ -91,7 +91,6 @@ void UnregisterUserFunctions()
 	}
 	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
 }
-
 
 void UnregisterUserFunction(int index)
 {

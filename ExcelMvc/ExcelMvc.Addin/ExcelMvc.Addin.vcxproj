@@ -285,14 +285,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\excelmvc\resource.designer.cs" />
     <None Include="AddIn.def" />
   </ItemGroup>
   <ItemGroup Condition="'$(Platform)'=='x64'">
     <MASM Include="Export64.asm" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\excelmvc\resource.resx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

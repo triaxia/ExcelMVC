@@ -40,7 +40,7 @@ namespace ExcelMvc.Functions
                 .Select(x => (x.ParameterType, expression: Expression.Parameter(typeof(IntPtr), x.Name)));
             var outerParameters = expressions.Select(x => x.expression)
                 .ToArray();
-            var innerParameters = expressions.Select(x => Expression.Call(XlMarshalContext.IntPtr2Parameter(x.ParameterType), x.expression))
+            var innerParameters = expressions.Select(x => Expression.Call(XlMarshalContext.IncomingConverter(x.ParameterType), x.expression))
                 .ToArray();
             */
 

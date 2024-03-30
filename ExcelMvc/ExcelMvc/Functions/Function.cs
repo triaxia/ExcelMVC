@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
@@ -11,14 +12,22 @@ namespace ExcelMvc.Functions
         public string Name;
         [MarshalAs(UnmanagedType.LPWStr)]
         public string Description;
-        [MarshalAs(UnmanagedType.U1)]
-        public byte Type;
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string Type;
 
-        public Argument(ExcelArgumentAttribute rhs)
+        public Argument(ParameterInfo parameter, ExcelArgumentAttribute argument)
         {
-            Name = rhs.Name;
-            Description = rhs.Description;
-            Type = 1; //TODO
+            if (argument == null)
+            {
+                Name = parameter.Name;
+                Description = "";
+            }
+            else
+            {
+                Name = argument.Name;
+                Description = argument.Description;
+            }
+            Type = parameter.ParameterType.FullName;
         }
     }
 
@@ -31,8 +40,8 @@ namespace ExcelMvc.Functions
         public const ushort MaxArguments = 32;
         [MarshalAs(UnmanagedType.U4)]
         public int Index;
-        [MarshalAs(UnmanagedType.U1)]
-        public byte ReturnType;
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string ReturnType;
         // ulong works too
         //[MarshalAs(UnmanagedType.U8)]
         //public ulong Callback;
@@ -62,10 +71,11 @@ namespace ExcelMvc.Functions
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public Argument[] Arguments;
 
-        public Function(int index, ExcelFunctionAttribute rhs, Argument[] arguments, IntPtr callback)
+        public Function(int index, ExcelFunctionAttribute rhs, Argument[] arguments
+            , IntPtr callback, Type returnType)
         {
             Index = index;
-            Callback = callback; // Marshal.GetFunctionPointerForDelegate(callback);
+            Callback = callback; 
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
             IsMacro = rhs.IsMacro;
@@ -79,7 +89,7 @@ namespace ExcelMvc.Functions
             HelpTopic = rhs.HelpTopic ?? "";
             Arguments = Pad(arguments);
             if (rhs.IsHidden) FunctionType = 0;
-            ReturnType = 1; // TODO
+            ReturnType = returnType.FullName;
         }
 
         private static Argument[] Pad(Argument[] arguments)
