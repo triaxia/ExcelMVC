@@ -1,14 +1,13 @@
 ﻿using ExcelMvc.Functions;
-using ExcelMvc.Interfaces;
 
 namespace Samples
 {
     public static class FunctionTests
     {
-        [Function(Name = "uAdd2", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
+        [ExcelFunction(Name = "uAdd2", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
         public static double uAdd2(
-            [Argument(Name = "v1", Description = "argument 1")] double v1,
-            [Argument(Name = "v2", Description = "argument 2")] double v2)
+            [ExcelArgument(Name = "v1", Description = "argument 1")] double v1,
+            [ExcelArgument(Name = "v2", Description = "argument 2")] double v2)
         {
             return v1 + v2;
         }

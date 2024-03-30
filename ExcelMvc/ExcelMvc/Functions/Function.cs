@@ -1,5 +1,4 @@
-﻿using ExcelMvc.Interfaces;
-using System;
+﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -15,7 +14,7 @@ namespace ExcelMvc.Functions
         [MarshalAs(UnmanagedType.U1)]
         public byte Type;
 
-        public Argument(ArgumentAttribute rhs)
+        public Argument(ExcelArgumentAttribute rhs)
         {
             Name = rhs.Name;
             Description = rhs.Description;
@@ -63,7 +62,7 @@ namespace ExcelMvc.Functions
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public Argument[] Arguments;
 
-        public Function(int index, FunctionAttribute rhs, Argument[] arguments, IntPtr callback)
+        public Function(int index, ExcelFunctionAttribute rhs, Argument[] arguments, IntPtr callback)
         {
             Index = index;
             Callback = callback; // Marshal.GetFunctionPointerForDelegate(callback);

@@ -8,7 +8,7 @@ namespace ExcelMvc.Tests
     [TestClass]
     public class FunctionDiscoveryTests
     {
-        [Function(Name = "uAdd")]
+        [Functions.ExcelFunction(Name = "uAdd")]
         public static double uAdd(double v1, double v2, double v3)
         {
             return v1 + v2 + v3;
