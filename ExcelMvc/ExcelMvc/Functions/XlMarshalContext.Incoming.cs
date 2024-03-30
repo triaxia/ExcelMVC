@@ -12,6 +12,7 @@ namespace ExcelMvc.Functions
         public static DateTime IntPtrToDateTime(IntPtr value) => DateTime.FromOADate(*(double*)value.ToPointer());
         public static float IntPtrToFloat(IntPtr value) => (float)*(double*)value.ToPointer();
         public static decimal IntPtrToDecimal(IntPtr value) => (decimal)*(double*)value.ToPointer();
+        public static long IntPtrToLong(IntPtr value) => (long)*(double*)value.ToPointer();
         public static int IntPtrToInt(IntPtr value) => *(int*)value.ToPointer();
         public static short IntPtrToShort(IntPtr value) => *(short*)value.ToPointer();
         public static byte IntPtrToByte(IntPtr value) => (byte)*(short*)value.ToPointer();
@@ -36,6 +37,7 @@ namespace ExcelMvc.Functions
                 { typeof(DateTime), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTime)) },
                 { typeof(decimal), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDecimal)) },
                 { typeof(float), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToFloat)) },
+                { typeof(long), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToLong)) },
                 { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToInt)) },
                 { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToShort)) },
                 { typeof(byte), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToByte)) },

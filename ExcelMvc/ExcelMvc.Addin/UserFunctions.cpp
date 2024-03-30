@@ -129,7 +129,8 @@ std::wstring MakeTypeString(LPCWSTR type)
 	if (wcscmp(type, L"System.Double") == 0
 		|| wcscmp(type, L"System.Float") == 0
 		|| wcscmp(type, L"System.Decimal") == 0
-		|| wcscmp(type, L"System.DateTime") == 0)
+		|| wcscmp(type, L"System.DateTime") == 0
+		|| wcscmp(type, L"System.Int64") == 0)
 		return L"E";
 	if (wcscmp(type, L"System.Boolean") == 0)
 		return L"L";

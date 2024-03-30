@@ -42,6 +42,11 @@ namespace ExcelMvc.Functions
             return DoubleValue;
         }
 
+        public IntPtr LongToIntPtr(long value)
+        {
+            *((double*)DoubleValue.ToPointer()) = value;
+            return DoubleValue;
+        }
         public IntPtr IntToIntPtr(int value)
         {
             *((int*)IntValue.ToPointer()) = value;
@@ -78,6 +83,7 @@ namespace ExcelMvc.Functions
                 { typeof(DateTime), typeof(XlMarshalContext).GetMethod(nameof(DateTimeToIntPtr)) },
                 { typeof(decimal), typeof(XlMarshalContext).GetMethod(nameof(DecimalToIntPtr)) },
                 { typeof(float), typeof(XlMarshalContext).GetMethod(nameof(FloatToIntPtr)) },
+                { typeof(long), typeof(XlMarshalContext).GetMethod(nameof(LongToIntPtr)) },
                 { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntToIntPtr)) },
                 { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(ShortToIntPtr)) },
                 { typeof(byte), typeof(XlMarshalContext).GetMethod(nameof(ByteToIntPtr)) },
