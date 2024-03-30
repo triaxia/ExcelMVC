@@ -7,9 +7,9 @@ namespace ExcelMvc.Functions
     public unsafe partial class XlMarshalContext
     {
         private readonly IntPtr DoubleValue;
-        private readonly IntPtr DecimalValue;
         private readonly IntPtr StringValue;
-        private readonly IntPtr LongValue;
+        private readonly IntPtr IntValue;
+        private readonly IntPtr ShortValue;
 
         // thread affinity for return pointers...
         private readonly static ThreadLocal<XlMarshalContext> ThreadInstance
@@ -19,22 +19,22 @@ namespace ExcelMvc.Functions
         public XlMarshalContext()
         {
             DoubleValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(double)));
-            DecimalValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(decimal)));
             StringValue = Marshal.AllocCoTaskMem(XLOPER12.MaxStringLength + 1);
-            LongValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(long)));
+            IntValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)));
+            ShortValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(short)));
 
             DoubleToIntPtr(0);
-            LongToIntPtr(0);
-            DecimalToIntPtr(0);
+            IntToIntPtr(0);
+            ShortToIntPtr(0);
             StringToIntPtr("");
         }
 
         ~XlMarshalContext()
         {
             Marshal.FreeCoTaskMem(DoubleValue);
-            Marshal.FreeCoTaskMem(DecimalValue);
             Marshal.FreeCoTaskMem(StringValue);
-            Marshal.FreeCoTaskMem(LongValue);
+            Marshal.FreeCoTaskMem(IntValue);
+            Marshal.FreeCoTaskMem(ShortValue);
         }
     }
 }

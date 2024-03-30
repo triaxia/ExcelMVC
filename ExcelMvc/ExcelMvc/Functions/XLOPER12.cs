@@ -51,7 +51,7 @@ namespace ExcelMvc.Functions
                 Marshal.FreeHGlobal((IntPtr)array.lparray);
         }
 
-        private XLOPER12(object value)
+        public XLOPER12(object value, XlTypes freeBit = XlTypes.xlbitDLLFree)
         {
             num = 0;
             w = 0;
@@ -64,10 +64,10 @@ namespace ExcelMvc.Functions
             };
             xltype = (uint)XlTypes.xltypeNil;
             err = 0;
-            Init(value);
+            Init(value, freeBit);
         }
 
-        private void Init(object value)
+        public void Init(object value, XlTypes freeBit = XlTypes.xlbitDLLFree)
         {
             num = 0;
             w = 0;
@@ -169,12 +169,12 @@ namespace ExcelMvc.Functions
                     }
                 xltype = (uint)XlTypes.xltypeMulti;
             }
-            xltype = (uint)((XlTypes)xltype | XlTypes.xlbitDLLFree);
+            xltype = (uint)((XlTypes)xltype | freeBit);
         }
 
-        private object ToObject()
+        public object ToObject()
         {
-            var type = (XlTypes)xltype & ~XlTypes.xlbitDLLFree;
+            var type = (XlTypes)xltype & ~XlTypes.xlbitDLLFree & ~XlTypes.xlbitXLFree;
             switch (type)
             {
                 case XlTypes.xltypeInt: return w;
