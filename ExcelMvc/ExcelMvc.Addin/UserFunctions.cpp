@@ -124,14 +124,32 @@ LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
 	return result;
 }
 
-void MakeArgumentList(ExcelFunction* pFunction, std::wstring &names, std::wstring& types)
+std::wstring MakeTypeString(LPCWSTR type)
 {
-	types = pFunction->IsAsync ? L">" : L"E";
+	if (wcscmp(type, L"System.Double") == 0
+		|| wcscmp(type, L"System.Float") == 0
+		|| wcscmp(type, L"System.Decimal") == 0
+		|| wcscmp(type, L"System.DateTime") == 0)
+		return L"E";
+	if (wcscmp(type, L"System.Boolean") == 0)
+		return L"L";
+	if (wcscmp(type, L"System.Int16") == 0
+		|| wcscmp(type, L"System.Byte") == 0)
+		return L"M";
+	if (wcscmp(type, L"System.Int32") == 0
+		|| wcscmp(type, L"System.UInt16") == 0)
+		return L"N";
+	return L"Q";
+}
+
+void MakeArgumentList(ExcelFunction* pFunction, std::wstring& names, std::wstring& types)
+{
+	types = pFunction->IsAsync ? L">" : MakeTypeString(pFunction->ReturnType);
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		if (idx > 0) names += L",";
 		names += NullCoalesce(pFunction->Arguments[idx].Name);
-		types += L"E";
+		types += MakeTypeString(pFunction->Arguments[idx].Type);
 	}
 	if (pFunction->IsAsync) types += L"X";
 	if (pFunction->IsVolatile) types += L"!";
@@ -156,12 +174,12 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 
 extern "C" extern ClrRuntimeHost * pClrHost;
 
- LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
+LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 {
 	UnregisterUserFunction(pFunction->Index);
 	auto regId = new XLOPER12();
 	FunctionRegIds[pFunction->Index] = regId;
-	ExportTable[pFunction->Index] = (PFN) pFunction->Callback;
+	ExportTable[pFunction->Index] = (PFN)pFunction->Callback;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText
@@ -218,12 +236,12 @@ extern "C" extern ClrRuntimeHost * pClrHost;
 	{
 		pParams[10 + idx] = idx == pFunction->ArgumentCount - 1 ?
 			TempStr12SpacesPadded(pFunction->Arguments[idx].Description, 2)
-			:TempStr12(NullCoalesce(pFunction->Arguments[idx].Description));
+			: TempStr12(NullCoalesce(pFunction->Arguments[idx].Description));
 	}
 
 	Excel12v(xlfRegister, regId, count, pParams);
 	delete[] pParams;
-	
+
 	/* C# Marshal.DestroyStructure<ExcelFunction> does not delete nested Argument texts, so
 	*  delete them here...
 	*/
@@ -237,32 +255,32 @@ extern "C" extern ClrRuntimeHost * pClrHost;
 
 	if (regId != NULL) regId->xltype = regId->xltype | xlbitDLLFree;
 	return regId;
- }
+}
 
- LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
- {
-	 auto status = new XLOPER12();
-	 result->xltype = result->xltype | xlbitDLLFree;
-	 Excel12(xlAsyncReturn, status, 2, handle, result);
-	 status->xltype = status->xltype | xlbitDLLFree;
-	 return status;
- }
+LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
+{
+	auto status = new XLOPER12();
+	result->xltype = result->xltype | xlbitDLLFree;
+	Excel12(xlAsyncReturn, status, 2, handle, result);
+	status->xltype = status->xltype | xlbitDLLFree;
+	return status;
+}
 
- LPXLOPER12 __stdcall RtdCall(FunctionArgs* args)
- {
-	 auto pParams = new LPXLOPER12[MAX_ARG_COUNT];
-	 auto count = 0;
-	 auto jdx = 0;
-	 for (auto idx = 0; idx < MAX_ARG_COUNT; idx++)
-	 {
-		 if (args->Args[idx] == NULL || args->Args[idx]->xltype == xltypeNil) continue;
+LPXLOPER12 __stdcall RtdCall(FunctionArgs* args)
+{
+	auto pParams = new LPXLOPER12[MAX_ARG_COUNT];
+	auto count = 0;
+	auto jdx = 0;
+	for (auto idx = 0; idx < MAX_ARG_COUNT; idx++)
+	{
+		if (args->Args[idx] == NULL || args->Args[idx]->xltype == xltypeNil) continue;
 		pParams[jdx++] = args->Args[idx];
 		count++;
-	 }
-	 auto result = new XLOPER12();
-	 memset(result, 0, sizeof(XLOPER12));
-	 Excel12v(xlfRtd, result, count, pParams);
-	 result->xltype = result->xltype | xlbitDLLFree;
-	 delete[] pParams;
-	 return result;
- }
+	}
+	auto result = new XLOPER12();
+	memset(result, 0, sizeof(XLOPER12));
+	Excel12v(xlfRtd, result, count, pParams);
+	result->xltype = result->xltype | xlbitDLLFree;
+	delete[] pParams;
+	return result;
+}

@@ -5,9 +5,25 @@ namespace Samples
     public static class FunctionTests
     {
         [ExcelFunction(Name = "uAdd2", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
-        public static double uAdd2(
-            [ExcelArgument(Name = "v1", Description = "argument 1")] double v1,
-            [ExcelArgument(Name = "v2", Description = "argument 2")] double v2)
+        public static double uAdd2(double v1, double v2)
+        {
+            return v1 + v2;
+        }
+
+        [ExcelFunction(Name = "uAdd3", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
+        public static short uAdd3(short v1, short v2)
+        {
+            return (short) (v1 + v2);
+        }
+
+        [ExcelFunction(Name = "uAdd4", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
+        public static bool uAdd4(bool v1, bool v2)
+        {
+            return v1 && v2;
+        }
+
+        [ExcelFunction(Name = "uAdd5", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
+        public static int uAdd5(int v1, int v2)
         {
             return v1 + v2;
         }
