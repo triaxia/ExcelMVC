@@ -75,8 +75,6 @@ struct FunctionArgs
 };
 
 static std::map<int, LPXLOPER12> FunctionRegIds;
-static std::map<int, bool> FunctionAsync;
-static std::map<int, int> FunctionArgCount;
 static XLOPER12 xDll;
 
 void RegisterUserFunctions()
@@ -105,18 +103,6 @@ void UnregisterUserFunction(int index)
 			FreeXLOper12T(it->second);
 			FunctionRegIds.erase(index);
 		}
-	}
-
-	{
-		auto it = FunctionAsync.find(index);
-		if (it != FunctionAsync.end())
-			FunctionAsync.erase(index);
-	}
-
-	{
-		auto it = FunctionArgCount.find(index);
-		if (it != FunctionArgCount.end())
-			FunctionArgCount.erase(index);
 	}
 }
 
@@ -176,8 +162,6 @@ extern "C" extern ClrRuntimeHost * pClrHost;
 	UnregisterUserFunction(pFunction->Index);
 	auto regId = new XLOPER12();
 	FunctionRegIds[pFunction->Index] = regId;
-	FunctionArgCount[pFunction->Index] = pFunction->ArgumentCount;
-	FunctionAsync[pFunction->Index] = pFunction->IsAsync;
 	ExportTable[pFunction->Index] = (PFN) pFunction->Callback;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
