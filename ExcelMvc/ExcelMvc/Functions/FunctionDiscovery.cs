@@ -52,6 +52,7 @@ namespace ExcelMvc.Functions
         public static IntPtr MakeCallback(MethodInfo method)
         {
             var e = DelegateFactory.MakeOuterDelegate(method);
+            GCHandle.Alloc(e);
             return Marshal.GetFunctionPointerForDelegate(e);
         }
     }

@@ -244,17 +244,6 @@ LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 	Excel12v(xlfRegister, regId, count, pParams);
 	delete[] pParams;
 
-	/* C# Marshal.DestroyStructure<ExcelFunction> does not delete nested Argument texts, so
-	*  delete them here...
-	*/
-	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
-	{
-		delete[] pFunction->Arguments[idx].Name;
-		delete[] pFunction->Arguments[idx].Description;
-		pFunction->Arguments[idx].Name = NULL;
-		pFunction->Arguments[idx].Description = NULL;
-	}
-
 	if (regId != NULL) regId->xltype = regId->xltype | xlbitDLLFree;
 	return regId;
 }
