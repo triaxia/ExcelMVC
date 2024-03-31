@@ -14,6 +14,11 @@ namespace ExcelMvc.Tests
         {
             return a + (double) b + (double) c + (double) d + (double) e;
         }
+
+        public static string ConcatString(string a, string b)
+        {
+            return a + b;
+        }
     }
 
     [TestClass]
@@ -44,6 +49,18 @@ namespace ExcelMvc.Tests
             var p5 = new XlMarshalContext();
             var result = func(p1.DoubleToIntPtr(1), p2.LongToIntPtr(2), p3.IntToIntPtr(3), p4.DecimalToIntPtr(4), p5.ByteToIntPtr(5));
             Assert.AreEqual(15.0, XlMarshalContext.IntPtrToDouble(result));
+        }
+
+        [TestMethod]
+        public void MarshalMixedType_Concat_ExpectSum()
+        {
+            var method = typeof(TestMethods).GetMethod("ConcatString");
+            var func = (FunctionDelegate.Function2)DelegateFactory.MakeOuterDelegate(method);
+
+            var p1 = new XlMarshalContext();
+            var p2 = new XlMarshalContext();
+            var result = func(p1.StringToIntPtr("abc"), p2.StringToIntPtr("efg"));
+            Assert.AreEqual("abcefg", XlMarshalContext.IntPtrToString(result));
         }
     }
 }

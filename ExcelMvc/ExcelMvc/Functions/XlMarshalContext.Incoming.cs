@@ -20,10 +20,12 @@ namespace ExcelMvc.Functions
         {
             if (value == IntPtr.Zero) return null;
 
-            char* p = (char*)value.ToPointer();
-            var len = (short)p[0];
-            return len == 0 ? string.Empty : new string(p, 1, len);
+            short* p = (short*)value.ToPointer();
+            var len =0;
+            while (p[len] != 0) len++;
+            return len == 0 ? string.Empty : new string((char*)p, 0, len);
         }
+
         public static object IntPtrToObject(IntPtr value)
         {
             return null;

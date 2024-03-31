@@ -139,6 +139,8 @@ std::wstring MakeTypeString(LPCWSTR type)
 		return L"M";
 	if (wcscmp(type, L"System.Int32") == 0)
 		return L"N";
+	if (wcscmp(type, L"System.String") == 0)
+		return L"C%";
 	return L"Q";
 }
 

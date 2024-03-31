@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Xaml;
 
 namespace ExcelMvc.Functions
 {
     public unsafe partial class XlMarshalContext
     {
         private readonly IntPtr DoubleValue;
-        private readonly IntPtr StringValue;
+        private IntPtr StringValue;
         private readonly IntPtr IntValue;
         private readonly IntPtr ShortValue;
 
@@ -19,7 +20,7 @@ namespace ExcelMvc.Functions
         public XlMarshalContext()
         {
             DoubleValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(double)));
-            StringValue = Marshal.AllocCoTaskMem(XLOPER12.MaxStringLength + 1);
+            StringValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(sizeof(short)));
             IntValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)));
             ShortValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(short)));
 

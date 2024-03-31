@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
 {
@@ -14,7 +15,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr BoolToIntPtr(bool value)
         {
-            *((short*)ShortValue.ToPointer()) = value ? (short) 1 : (short) 0;
+            *((short*)ShortValue.ToPointer()) = value ? (short)1 : (short)0;
             return ShortValue;
         }
 
@@ -38,7 +39,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr DecimalToIntPtr(decimal value)
         {
-            *((double*)DoubleValue.ToPointer()) = (double) value;
+            *((double*)DoubleValue.ToPointer()) = (double)value;
             return DoubleValue;
         }
 
@@ -52,7 +53,7 @@ namespace ExcelMvc.Functions
             *((int*)IntValue.ToPointer()) = value;
             return IntValue;
         }
-        
+
         public IntPtr ShortToIntPtr(short value)
         {
             *((short*)ShortValue.ToPointer()) = value;
@@ -67,11 +68,13 @@ namespace ExcelMvc.Functions
 
         public IntPtr StringToIntPtr(string value)
         {
-            var len = (ushort)Math.Min(value.Length, XLOPER12.MaxStringLength);
-            char* p = (char*)StringValue.ToPointer();
-            p[0] = (char)len;
-            for (ushort idx = 0; idx < len; idx++)
-                p[idx + 1] = value[idx];
+            Marshal.FreeCoTaskMem(StringValue);
+            var len = value?.Length ?? 0;
+            StringValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(sizeof(short)) * (len + 1));
+            short* p = (short*)StringValue.ToPointer();
+            p[len] = 0;
+            for (var idx = 0; idx < len; idx++)
+                p[idx] = (short)value[idx];
             return StringValue;
         }
 

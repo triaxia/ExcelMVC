@@ -4,6 +4,7 @@ namespace Samples
 {
     public static class FunctionTests
     {
+        /*
         [ExcelFunction(Name = "uAdd2", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
         public static double uAdd2(double v1, double v2)
         {
@@ -24,6 +25,13 @@ namespace Samples
 
         [ExcelFunction(Name = "uAdd5", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
         public static int uAdd5(int v1, int v2)
+        {
+            return v1 + v2;
+        }
+        */
+
+        [ExcelFunction(Name = "uAdd6", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
+        public static string uAdd6(string v1, string v2)
         {
             return v1 + v2;
         }
