@@ -73,11 +73,8 @@ namespace ExcelMvc.Functions
             StringValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(sizeof(short)) * (len + 1));
             short* p = (short*)StringValue.ToPointer();
             p[len] = 0;
-            fixed (char *src = value)
-            {
-                for (var idx = 0; idx < len; idx++)
-                    p[idx] = (short)src[idx];
-            }
+            for (var idx = 0; idx < len; idx++)
+                p[idx] = (short)value[idx];
             return StringValue;
         }
 

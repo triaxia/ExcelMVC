@@ -21,7 +21,7 @@ namespace ExcelMvc.Functions
             if (value == IntPtr.Zero) return null;
 
             short* p = (short*)value.ToPointer();
-            var len =0;
+            var len = 0;
             while (p[len] != 0) len++;
             return len == 0 ? string.Empty : new string((char*)p, 0, len);
         }
