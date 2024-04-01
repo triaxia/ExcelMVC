@@ -13,9 +13,13 @@ namespace ExcelMvc.Functions
         public static float IntPtrToFloat(IntPtr value) => (float)*(double*)value.ToPointer();
         public static decimal IntPtrToDecimal(IntPtr value) => (decimal)*(double*)value.ToPointer();
         public static long IntPtrToLong(IntPtr value) => (long)*(double*)value.ToPointer();
+        public static ulong IntPtrToULong(IntPtr value) => (ulong)*(double*)value.ToPointer();
         public static int IntPtrToInt(IntPtr value) => *(int*)value.ToPointer();
+        public static uint IntPtrToUInt(IntPtr value) => (uint)*(double*)value.ToPointer();
         public static short IntPtrToShort(IntPtr value) => *(short*)value.ToPointer();
+        public static ushort IntPtrToUShort(IntPtr value) => (ushort) * (int*)value.ToPointer();
         public static byte IntPtrToByte(IntPtr value) => (byte)*(short*)value.ToPointer();
+        public static sbyte IntPtrToSByte(IntPtr value) => (sbyte)*(short*)value.ToPointer();
         public static string IntPtrToString(IntPtr value)
         {
             if (value == IntPtr.Zero)
@@ -76,9 +80,13 @@ namespace ExcelMvc.Functions
                 { typeof(decimal), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDecimal)) },
                 { typeof(float), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToFloat)) },
                 { typeof(long), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToLong)) },
+                { typeof(ulong), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToULong)) },
                 { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToInt)) },
+                { typeof(uint), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToUInt)) },
                 { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToShort)) },
+                { typeof(ushort), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToUShort)) },
                 { typeof(byte), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToByte)) },
+                { typeof(sbyte), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToSByte)) },
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToString)) },
                 { typeof(double[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDoubleArray)) },
                 { typeof(double[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDoubleMatrix)) },

@@ -130,14 +130,18 @@ std::wstring MakeTypeString(LPCWSTR type)
 		|| wcscmp(type, L"System.Float") == 0
 		|| wcscmp(type, L"System.Decimal") == 0
 		|| wcscmp(type, L"System.DateTime") == 0
-		|| wcscmp(type, L"System.Int64") == 0)
+		|| wcscmp(type, L"System.Int64") == 0
+		|| wcscmp(type, L"System.UInt32") == 0
+		|| wcscmp(type, L"System.UInt64") == 0)
 		return L"E";
 	if (wcscmp(type, L"System.Boolean") == 0)
 		return L"L";
 	if (wcscmp(type, L"System.Int16") == 0
-		|| wcscmp(type, L"System.Byte") == 0)
+		|| wcscmp(type, L"System.Byte") == 0
+		|| wcscmp(type, L"System.SByte") == 0)
 		return L"M";
-	if (wcscmp(type, L"System.Int32") == 0)
+	if (wcscmp(type, L"System.Int32") == 0
+		|| wcscmp(type, L"System.UInt16") == 0)
 		return L"N";
 	if (wcscmp(type, L"System.String") == 0)
 		return L"C%";
