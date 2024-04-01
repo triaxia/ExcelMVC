@@ -25,17 +25,17 @@ namespace ExcelMvc.Functions
 
         public static Delegate MakeInnerDelegate(MethodInfo method)
         {
-            // option 1, works!
             var parameters = method.GetParameters();
-            var outerParameters = parameters.Select(p => Expression.Parameter(typeof(IntPtr), p.Name)).ToArray();
-            var innerParameters = new Expression[outerParameters.Length];
+            var outerParameters = new ParameterExpression[parameters.Length];
+            var innerParameters = new MethodCallExpression[parameters.Length];
             for (var index = 0; index < parameters.Length; index++)
             {
-                var type = parameters[index].ParameterType;
-                innerParameters[index] = Expression.Call(XlMarshalContext.IncomingConverter(type), outerParameters[index]);
+                outerParameters[index] = Expression.Parameter(typeof(IntPtr), parameters[index].Name);
+                innerParameters[index] = Expression.Call(XlMarshalContext.IncomingConverter(parameters[index].ParameterType)
+                    , outerParameters[index]);
             }
 
-            /* option 2, does not work, lambda.Compile() throws an error, cannot work out why!
+            /* below does not work, lambda.Compile() throws an error, cannot work out why!
             var expressions = method.GetParameters()
                 .Select(x => (x.ParameterType, expression: Expression.Parameter(typeof(IntPtr), x.Name)));
             var outerParameters = expressions.Select(x => x.expression)
@@ -61,9 +61,7 @@ namespace ExcelMvc.Functions
                 var context = Expression.Variable(typeof(XlMarshalContext), "context");
                 var value = Expression.Call(typeof(XlMarshalContext), nameof(XlMarshalContext.GetThreadInstance), null);
                 innerCall = Expression.Call(context, XlMarshalContext.OutgoingConverter(method.ReturnType), innerCall);
-
                 var catcher = Expression.Call(context, XlMarshalContext.OutgoingConverter(typeof(object)), exHandler);
-
                 var body = Expression.Block(
                     typeof(IntPtr),
                     new ParameterExpression[] { context },
