@@ -37,16 +37,17 @@ namespace ExcelMvc.Diagnostics
     using System;
     using System.Collections.Concurrent;
     using System.ComponentModel;
+    using System.Linq;
 
     internal class Messages : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public string Error =>
-            string.Join(System.Environment.NewLine, ErrorLines.ToArray());
+            string.Join(System.Environment.NewLine, ErrorLines.ToArray().Reverse());
 
         public string Info =>
-            string.Join(System.Environment.NewLine, InfoLines.ToArray());
+            string.Join(System.Environment.NewLine, InfoLines.ToArray().Reverse());
 
         public int LineLimit { get; set; }
 

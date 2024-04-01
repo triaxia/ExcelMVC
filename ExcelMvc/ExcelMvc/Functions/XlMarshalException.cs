@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExcelMvc.Diagnostics;
+using System;
 using System.Reflection;
 
 namespace ExcelMvc.Functions
@@ -19,6 +20,7 @@ namespace ExcelMvc.Functions
         public static event EventHandler<EventArgs> Failed;
         public static object HandleUnhandledException(object ex)
         {
+            Messages.Instance.AddErrorLine($"{ex}");
             if (Failed == null) return XlErrors.xlerrValue;
             try
             {
@@ -26,8 +28,9 @@ namespace ExcelMvc.Functions
                 Failed.Invoke(null, args);
                 return args.Value;
             }
-            catch
+            catch(Exception e)
             {
+                Messages.Instance.AddErrorLine($"{e}");
                 return XlErrors.xlerrValue;
             }
         }

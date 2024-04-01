@@ -74,6 +74,7 @@ namespace ExcelMvc.Functions
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters
             = new Dictionary<Type, MethodInfo>()
             {
+                { typeof(IntPtr), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToIntPtr)) },
                 { typeof(bool), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToBool)) },
                 { typeof(double), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDouble)) },
                 { typeof(DateTime), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTime)) },
