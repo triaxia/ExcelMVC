@@ -3,31 +3,18 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExcelMvc.Tests
 {
-    public class TestMethods
+    [TestClass]
+    public class XlMarshalTests
     {
         public static double AddDouble(double x, double y)
         {
             return x + y;
         }
 
-        public static double AddMixed(double a, long b, int c, decimal d, byte e)
-        {
-            return a + (double) b + (double) c + (double) d + (double) e;
-        }
-
-        public static string ConcatString(string a, string b)
-        {
-            return a + b;
-        }
-    }
-
-    [TestClass]
-    public class XlMarshalTests
-    {
         [TestMethod]
-        public void MarshalSameType_AddTwoDouble_ExpectSum()
+        public void MarshalSameType_AddTwoDouble()
         {
-            var method = typeof(TestMethods).GetMethod("AddDouble");
+            var method = typeof(XlMarshalTests).GetMethod("AddDouble");
             var func = (FunctionDelegate.Function2) DelegateFactory.MakeOuterDelegate(method);
 
             var p1 = new XlMarshalContext();
@@ -36,10 +23,15 @@ namespace ExcelMvc.Tests
             Assert.AreEqual(5.0, XlMarshalContext.IntPtrToDouble(result));
         }
 
-        [TestMethod]
-        public void MarshalMixedType_AddTwoDouble_ExpectSum()
+        public static double AddMixed(double a, long b, int c, decimal d, byte e)
         {
-            var method = typeof(TestMethods).GetMethod("AddMixed");
+            return a + (double)b + (double)c + (double)d + (double)e;
+        }
+
+        [TestMethod]
+        public void MarshalMixedType_AddMany()
+        {
+            var method = typeof(XlMarshalTests).GetMethod("AddMixed");
             var func = (FunctionDelegate.Function5)DelegateFactory.MakeOuterDelegate(method);
 
             var p1 = new XlMarshalContext();
@@ -51,10 +43,15 @@ namespace ExcelMvc.Tests
             Assert.AreEqual(15.0, XlMarshalContext.IntPtrToDouble(result));
         }
 
-        [TestMethod]
-        public void MarshalMixedType_Concat_ExpectSum()
+        public static string ConcatString(string a, string b)
         {
-            var method = typeof(TestMethods).GetMethod("ConcatString");
+            return a + b;
+        }
+
+        [TestMethod]
+        public void MarshalString_Concat()
+        {
+            var method = typeof(XlMarshalTests).GetMethod("ConcatString");
             var func = (FunctionDelegate.Function2)DelegateFactory.MakeOuterDelegate(method);
 
             var p1 = new XlMarshalContext();

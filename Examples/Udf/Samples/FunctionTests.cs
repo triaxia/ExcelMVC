@@ -31,9 +31,9 @@ namespace Samples
         */
 
         [ExcelFunction(Name = "uAdd6", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
-        public static string uAdd6(string v1, string v2)
+        public static double[,] uAdd6(double [,] v1)
         {
-            return v1 + v2;
+            return v1;
         }
 
         /*

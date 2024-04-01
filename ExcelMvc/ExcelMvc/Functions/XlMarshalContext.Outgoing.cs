@@ -70,12 +70,46 @@ namespace ExcelMvc.Functions
         {
             Marshal.FreeCoTaskMem(StringValue);
             var len = value?.Length ?? 0;
-            StringValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(sizeof(short)) * (len + 1));
-            short* p = (short*)StringValue.ToPointer();
-            p[len] = 0;
+            StringValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(char)) * (len + 1));
+            char* p = (char*)StringValue.ToPointer();
+            p[len] = '\0';
             for (var idx = 0; idx < len; idx++)
-                p[idx] = (short)value[idx];
+                p[idx] = value[idx];
             return StringValue;
+        }
+
+        public IntPtr DoubleArrayToIntPtr(double[] value)
+        {
+            Marshal.FreeCoTaskMem(DoubleArrayValue);
+            var len = value?.Length ?? 0;
+            DoubleArrayValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)) * 2 +
+                Marshal.SizeOf(typeof(double)) * len);
+            int* p = (int*)DoubleArrayValue.ToPointer();
+            p[0] = 1;
+            p[1] = len;
+
+            double* d = (double*)&p[2];
+            for (var idx = 0; idx < len; idx++)
+                d[idx] = value[idx];
+            return DoubleArrayValue;
+        }
+
+        public IntPtr DoubleMatrixToIntPtr(double[,] value)
+        {
+            Marshal.FreeCoTaskMem(DoubleArrayValue);
+            var rows = value?.GetLength(0) ?? 0;
+            var cols = value?.GetLength(1) ?? 0;
+            DoubleArrayValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)) * 2 +
+                Marshal.SizeOf(typeof(double)) * rows * cols);
+            int* p = (int*)DoubleArrayValue.ToPointer();
+            p[0] = rows;
+            p[1] = cols;
+
+            double* d = (double*)&p[2];
+            for (var row = 0; row < rows; row++)
+                for (var col = 0; col < cols; col++)
+                    d[row * cols + col] = value[row, col];
+            return DoubleArrayValue;
         }
 
         private static readonly Dictionary<Type, MethodInfo> OutgoingConverters
@@ -91,6 +125,8 @@ namespace ExcelMvc.Functions
                 { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(ShortToIntPtr)) },
                 { typeof(byte), typeof(XlMarshalContext).GetMethod(nameof(ByteToIntPtr)) },
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(StringToIntPtr)) },
+                { typeof(double[]), typeof(XlMarshalContext).GetMethod(nameof(DoubleArrayToIntPtr)) },
+                { typeof(double[,]), typeof(XlMarshalContext).GetMethod(nameof(DoubleMatrixToIntPtr)) },
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtr)) },
             };
 

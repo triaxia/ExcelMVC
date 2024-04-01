@@ -8,9 +8,10 @@ namespace ExcelMvc.Functions
     public unsafe partial class XlMarshalContext
     {
         private readonly IntPtr DoubleValue;
-        private IntPtr StringValue;
+        private IntPtr StringValue = IntPtr.Zero;
         private readonly IntPtr IntValue;
         private readonly IntPtr ShortValue;
+        private IntPtr DoubleArrayValue = IntPtr.Zero;
 
         // thread affinity for return pointers...
         private readonly static ThreadLocal<XlMarshalContext> ThreadInstance
@@ -20,14 +21,12 @@ namespace ExcelMvc.Functions
         public XlMarshalContext()
         {
             DoubleValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(double)));
-            StringValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(sizeof(short)));
             IntValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)));
             ShortValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(short)));
 
             DoubleToIntPtr(0);
             IntToIntPtr(0);
             ShortToIntPtr(0);
-            StringToIntPtr("");
         }
 
         ~XlMarshalContext()

@@ -18,12 +18,48 @@ namespace ExcelMvc.Functions
         public static byte IntPtrToByte(IntPtr value) => (byte)*(short*)value.ToPointer();
         public static string IntPtrToString(IntPtr value)
         {
-            if (value == IntPtr.Zero) return null;
+            if (value == IntPtr.Zero)
+                return null;
 
-            short* p = (short*)value.ToPointer();
-            var len = 0;
-            while (p[len] != 0) len++;
-            return len == 0 ? string.Empty : new string((char*)p, 0, len);
+            char* p = (char*)value.ToPointer();
+            return new string(p);
+        }
+
+        public static double[] IntPtrToDoubleArray(IntPtr value)
+        {
+            if (value == IntPtr.Zero)
+                return null;
+
+            int* p = (int*)value.ToPointer();
+            var rows = p[0];
+            var cols = p[1];
+            if (rows == 0 || cols == 0)
+                return new double[] { };
+            var len = rows * cols;
+            var result = new double[len];
+            double *x = (double*) &p[2];
+            for (var i = 0; i < len; i++)
+                result[i] = x[i];
+            return result;
+        }
+
+        public static double[,] IntPtrToDoubleMatrix(IntPtr value)
+        {
+            if (value == IntPtr.Zero)
+                return null;
+
+            int* p = (int*)value.ToPointer();
+            var rows = p[0];
+            var cols = p[1];
+            if (rows == 0 || cols == 0)
+                return new double[,] { };
+            var len = rows * cols;
+            var result = new double[rows, cols];
+            double* x = (double*)&p[2];
+            for (var row = 0; row < rows; row++)
+                for (var col = 0; col < cols; col++)
+                    result[row, col] = x[row * cols + col];
+            return result;
         }
 
         public static object IntPtrToObject(IntPtr value)
@@ -44,7 +80,9 @@ namespace ExcelMvc.Functions
                 { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToShort)) },
                 { typeof(byte), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToByte)) },
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToString)) },
-                { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObject)) },
+                { typeof(double[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDoubleArray)) },
+                { typeof(double[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDoubleMatrix)) },
+                { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObject)) }
             };
 
         public static MethodInfo IncomingConverter(Type result) =>
