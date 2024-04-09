@@ -7,17 +7,14 @@ namespace ExcelMvc.Functions
     public unsafe partial class XlMarshalContext
     {
         public static IntPtr IntPtrToIntPtr(IntPtr value) => value;
-        public static bool IntPtrToBool(IntPtr value) => *(short*)value.ToPointer() != 0;
+        public static bool IntPtrToBoolean(IntPtr value) => *(short*)value.ToPointer() != 0;
         public static double IntPtrToDouble(IntPtr value) => *(double*)value.ToPointer();
         public static DateTime IntPtrToDateTime(IntPtr value) => DateTime.FromOADate(*(double*)value.ToPointer());
-        public static float IntPtrToFloat(IntPtr value) => (float)*(double*)value.ToPointer();
-        public static decimal IntPtrToDecimal(IntPtr value) => (decimal)*(double*)value.ToPointer();
-        public static long IntPtrToLong(IntPtr value) => (long)*(double*)value.ToPointer();
-        public static ulong IntPtrToULong(IntPtr value) => (ulong)*(double*)value.ToPointer();
-        public static int IntPtrToInt(IntPtr value) => *(int*)value.ToPointer();
-        public static uint IntPtrToUInt(IntPtr value) => (uint)*(double*)value.ToPointer();
-        public static short IntPtrToShort(IntPtr value) => *(short*)value.ToPointer();
-        public static ushort IntPtrToUShort(IntPtr value) => (ushort) * (int*)value.ToPointer();
+        public static float IntPtrToSingle(IntPtr value) => (float)*(double*)value.ToPointer();
+        public static int IntPtrToInt32(IntPtr value) => *(int*)value.ToPointer();
+        public static uint IntPtrToUInt32(IntPtr value) => (uint)*(int*)value.ToPointer();
+        public static short IntPtrToInt16(IntPtr value) => *(short*)value.ToPointer();
+        public static ushort IntPtrToUInt16(IntPtr value) => (ushort) *(short*)value.ToPointer();
         public static byte IntPtrToByte(IntPtr value) => (byte)*(short*)value.ToPointer();
         public static sbyte IntPtrToSByte(IntPtr value) => (sbyte)*(short*)value.ToPointer();
         public static string IntPtrToString(IntPtr value)
@@ -75,17 +72,14 @@ namespace ExcelMvc.Functions
             = new Dictionary<Type, MethodInfo>()
             {
                 { typeof(IntPtr), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToIntPtr)) },
-                { typeof(bool), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToBool)) },
+                { typeof(bool), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToBoolean)) },
                 { typeof(double), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDouble)) },
                 { typeof(DateTime), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTime)) },
-                { typeof(decimal), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDecimal)) },
-                { typeof(float), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToFloat)) },
-                { typeof(long), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToLong)) },
-                { typeof(ulong), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToULong)) },
-                { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToInt)) },
-                { typeof(uint), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToUInt)) },
-                { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToShort)) },
-                { typeof(ushort), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToUShort)) },
+                { typeof(float), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToSingle)) },
+                { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToInt32)) },
+                { typeof(uint), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToUInt32)) },
+                { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToInt16)) },
+                { typeof(ushort), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToUInt16)) },
                 { typeof(byte), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToByte)) },
                 { typeof(sbyte), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToSByte)) },
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToString)) },

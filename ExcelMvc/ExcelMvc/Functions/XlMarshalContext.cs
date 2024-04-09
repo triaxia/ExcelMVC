@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Xaml;
 
 namespace ExcelMvc.Functions
 {
@@ -25,8 +24,8 @@ namespace ExcelMvc.Functions
             ShortValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(short)));
 
             DoubleToIntPtr(0);
-            IntToIntPtr(0);
-            ShortToIntPtr(0);
+            Int32ToIntPtr(0);
+            Int16ToIntPtr(0);
         }
 
         ~XlMarshalContext()
@@ -35,6 +34,7 @@ namespace ExcelMvc.Functions
             Marshal.FreeCoTaskMem(StringValue);
             Marshal.FreeCoTaskMem(IntValue);
             Marshal.FreeCoTaskMem(ShortValue);
+            Marshal.FreeCoTaskMem(DoubleArrayValue);
         }
     }
 }

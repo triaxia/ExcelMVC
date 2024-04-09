@@ -13,7 +13,7 @@ namespace ExcelMvc.Functions
             return IntPtr.Zero;
         }
 
-        public IntPtr BoolToIntPtr(bool value)
+        public IntPtr BooleanToIntPtr(bool value)
         {
             *((short*)ShortValue.ToPointer()) = value ? (short)1 : (short)0;
             return ShortValue;
@@ -31,52 +31,34 @@ namespace ExcelMvc.Functions
             return DoubleValue;
         }
 
-        public IntPtr FloatToIntPtr(float value)
+        public IntPtr SingleToIntPtr(float value)
         {
             *((double*)DoubleValue.ToPointer()) = value;
             return DoubleValue;
         }
 
-        public IntPtr DecimalToIntPtr(decimal value)
-        {
-            *((double*)DoubleValue.ToPointer()) = (double)value;
-            return DoubleValue;
-        }
-
-        public IntPtr LongToIntPtr(long value)
-        {
-            *((double*)DoubleValue.ToPointer()) = value;
-            return DoubleValue;
-        }
-
-        public IntPtr ULongToIntPtr(ulong value)
-        {
-            *((double*)DoubleValue.ToPointer()) = value;
-            return DoubleValue;
-        }
-
-        public IntPtr IntToIntPtr(int value)
+        public IntPtr Int32ToIntPtr(int value)
         {
             *((int*)IntValue.ToPointer()) = value;
             return IntValue;
         }
 
-        public IntPtr UIntToIntPtr(uint value)
+        public IntPtr UInt32ToIntPtr(uint value)
         {
-            *((double*)DoubleValue.ToPointer()) = value;
-            return DoubleValue;
+            *((int*)IntValue.ToPointer()) =(int) value;
+            return IntValue;
         }
 
-        public IntPtr ShortToIntPtr(short value)
+        public IntPtr Int16ToIntPtr(short value)
         {
             *((short*)ShortValue.ToPointer()) = value;
             return ShortValue;
         }
 
-        public IntPtr UShortToIntPtr(ushort value)
+        public IntPtr UInt16ToIntPtr(ushort value)
         {
-            *((int*)IntValue.ToPointer()) = value;
-            return IntValue;
+            *((short*)ShortValue.ToPointer()) = (short) value;
+            return ShortValue;
         }
 
         public IntPtr ByteToIntPtr(byte value)
@@ -140,17 +122,14 @@ namespace ExcelMvc.Functions
         private static readonly Dictionary<Type, MethodInfo> OutgoingConverters
             = new Dictionary<Type, MethodInfo>()
             {
-                { typeof(bool), typeof(XlMarshalContext).GetMethod(nameof(BoolToIntPtr)) },
+                { typeof(bool), typeof(XlMarshalContext).GetMethod(nameof(BooleanToIntPtr)) },
                 { typeof(double), typeof(XlMarshalContext).GetMethod(nameof(DoubleToIntPtr)) },
                 { typeof(DateTime), typeof(XlMarshalContext).GetMethod(nameof(DateTimeToIntPtr)) },
-                { typeof(decimal), typeof(XlMarshalContext).GetMethod(nameof(DecimalToIntPtr)) },
-                { typeof(float), typeof(XlMarshalContext).GetMethod(nameof(FloatToIntPtr)) },
-                { typeof(long), typeof(XlMarshalContext).GetMethod(nameof(LongToIntPtr)) },
-                { typeof(ulong), typeof(XlMarshalContext).GetMethod(nameof(ULongToIntPtr)) },
-                { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntToIntPtr)) },
-                { typeof(uint), typeof(XlMarshalContext).GetMethod(nameof(UIntToIntPtr)) },
-                { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(ShortToIntPtr)) },
-                { typeof(ushort), typeof(XlMarshalContext).GetMethod(nameof(UShortToIntPtr)) },
+                { typeof(float), typeof(XlMarshalContext).GetMethod(nameof(SingleToIntPtr)) },
+                { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(Int32ToIntPtr)) },
+                { typeof(uint), typeof(XlMarshalContext).GetMethod(nameof(UInt32ToIntPtr)) },
+                { typeof(short), typeof(XlMarshalContext).GetMethod(nameof(Int16ToIntPtr)) },
+                { typeof(ushort), typeof(XlMarshalContext).GetMethod(nameof(UInt16ToIntPtr)) },
                 { typeof(byte), typeof(XlMarshalContext).GetMethod(nameof(ByteToIntPtr)) },
                 { typeof(sbyte), typeof(XlMarshalContext).GetMethod(nameof(SByteToIntPtr)) },
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(StringToIntPtr)) },

@@ -45,6 +45,7 @@ namespace ExcelMvc.Runtime
     using Extensions;
 #if NET6_0_OR_GREATER
     using System.Runtime.Loader;
+    using System.Reflection.Metadata.Ecma335;
 #endif
     /// <summary>
     /// Generic object factory
@@ -53,13 +54,16 @@ namespace ExcelMvc.Runtime
     public static class ObjectFactory<T>
     {
         private static List<T> Instances { get; } = new List<T>();
-        private static bool EqualsNoCase(string lhs, string rhs)
+        private static bool EqualsIgnoreCase(string lhs, string rhs)
             => StringComparer.InvariantCultureIgnoreCase.Equals(lhs, rhs);
+        private static bool StartsWithIgnoreCase(string lhs, string rhs)
+            => lhs.StartsWith(rhs, StringComparison.InvariantCultureIgnoreCase);
 
         /// <summary>
         /// The function that selects all assemblies.
         /// </summary>
-        public static Func<string, bool, bool> SelectAllAssembly = (name, loaded) => true;
+        public static Func<string, bool, bool> SelectAllAssembly
+            = (name, loaded) => !StartsWithIgnoreCase(name, "Microsoft") && !StartsWithIgnoreCase(name, "System");
 
         /// <summary>
         /// Create instances of type T in the current AppDomain.
@@ -159,7 +163,7 @@ namespace ExcelMvc.Runtime
                 {
                     var path = Path.GetDirectoryName(location);
                     var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
-                        .Where(x => asms.All(y => !EqualsNoCase(y.Location, x)));
+                        .Where(x => asms.All(y => !EqualsIgnoreCase(y.Location, x)));
                     if (selectAssembly != null)
                         files = files.Where(x => selectAssembly(Path.GetFileNameWithoutExtension(x), true));
                     var dllTypes = files.SelectMany(x => DiscoverTypes(x, getTypes));
@@ -252,7 +256,7 @@ namespace ExcelMvc.Runtime
             {
 #if NET6_0_OR_GREATER
             var loaded = AssemblyContext.Assemblies
-                .SingleOrDefault(a => !a.IsDynamic && EqualsNoCase(a.Location, assemblyPath));
+                .SingleOrDefault(a => !a.IsDynamic && EqualsIgnoreCase(a.Location, assemblyPath));
             return loaded ?? AssemblyContext.LoadFromAssemblyPath(assemblyPath);
 #else
                 return Assembly.ReflectionOnlyLoadFrom(assemblyPath);
