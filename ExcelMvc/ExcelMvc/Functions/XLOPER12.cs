@@ -111,14 +111,29 @@ namespace ExcelMvc.Functions
                 w = st;
                 xltype = (uint)XlTypes.xltypeInt;
             }
+            else if (value is ushort ust)
+            {
+                w = ust;
+                xltype = (uint)XlTypes.xltypeInt;
+            }
             else if (value is int it)
             {
                 w = it;
                 xltype = (uint)XlTypes.xltypeInt;
             }
+            else if (value is uint uit)
+            {
+                w =(int) uit;
+                xltype = (uint)XlTypes.xltypeInt;
+            }
             else if (value is long lg)
             {
                 num = lg;
+                xltype = (uint)XlTypes.xltypeNum;
+            }
+            else if (value is ulong ulg)
+            {
+                num = ulg;
                 xltype = (uint)XlTypes.xltypeNum;
             }
             else if (value is string sr)
@@ -139,14 +154,15 @@ namespace ExcelMvc.Functions
             else if (value is object[] sa)
             {
                 if (sa.Length == 0) return;
-                array.rows = sa.Length;
-                array.columns = 1;
+                array.rows = 1;
+                array.columns = sa.Length;
                 array.lparray = (XLOPER12*)Marshal.AllocHGlobal(sa.Length * sizeof(XLOPER12));
-                var row0 = sa.GetLowerBound(0);
-                for (var row = row0; row <= sa.GetUpperBound(0); row++)
+                var col0 = sa.GetLowerBound(0);
+                var colx = sa.GetUpperBound(0);
+                for (var col = col0; col <= colx; col++)
                 {
-                    var ele = array.lparray + row - row0;
-                    ele->Init(sa[row]);
+                    var ele = array.lparray + col - col0;
+                    ele->Init(sa[col]);
                 }
                 xltype = (uint)XlTypes.xltypeMulti;
             }
@@ -158,9 +174,11 @@ namespace ExcelMvc.Functions
                 var xxx = Marshal.SizeOf(typeof(XLOPER12));
                 array.lparray = (XLOPER12*)Marshal.AllocHGlobal(array.rows * array.columns * sizeof(XLOPER12));
                 var row0 = da.GetLowerBound(0);
+                var rowx = da.GetUpperBound(0);
                 var col0 = da.GetLowerBound(1);
-                for (var row = row0; row <= da.GetUpperBound(0); row++)
-                    for (var col = col0; col <= da.GetUpperBound(1); col++)
+                var colx = da.GetUpperBound(1);
+                for (var row = row0; row <= rowx; row++)
+                    for (var col = col0; col <= colx; col++)
                     {
                         var ele = array.lparray + (row - row0) * array.columns + col - col0;
                         ele->Init(da[row, col]);
