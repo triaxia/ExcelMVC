@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Windows.Controls;
 
 namespace ExcelMvc.Functions
 {
@@ -46,6 +45,21 @@ namespace ExcelMvc.Functions
             return result;
         }
 
+        public static DateTime[] IntPtrToDateTimeArray(IntPtr value)
+        {
+            if (value == IntPtr.Zero)
+                return null;
+
+            var cells = IntPtrToDoubleArray(value);
+            if (cells.Length == 0)
+                return new DateTime[] { };
+
+            var result = new DateTime[cells.Length];
+            for (var i = 0; i < cells.Length; i++)
+                result[i] = DateTime.FromOADate(cells[i]);
+            return result;
+        }
+
         public static double[,] IntPtrToDoubleMatrix(IntPtr value)
         {
             if (value == IntPtr.Zero)
@@ -62,6 +76,23 @@ namespace ExcelMvc.Functions
             for (var row = 0; row < rows; row++)
                 for (var col = 0; col < cols; col++)
                     result[row, col] = x[row * cols + col];
+            return result;
+        }
+
+        public static DateTime[,] IntPtrToDateTimeMatrix(IntPtr value)
+        {
+            if (value == IntPtr.Zero)
+                return null;
+            var cells = IntPtrToDoubleMatrix(value);
+
+            var rows = cells.GetLength(0);
+            var cols = cells.GetLength(1);
+            if (rows == 0 || cols == 0)
+                return new DateTime[,] { };
+            var result = new DateTime[rows, cols];
+            for (var row = 0; row < rows; row++)
+                for (var col = 0; col < cols; col++)
+                    result[row, col] = DateTime.FromOADate(cells[row, col]);
             return result;
         }
 
@@ -88,6 +119,8 @@ namespace ExcelMvc.Functions
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToString)) },
                 { typeof(double[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDoubleArray)) },
                 { typeof(double[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDoubleMatrix)) },
+                { typeof(DateTime[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTimeArray)) },
+                { typeof(DateTime[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTimeMatrix)) },
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObject)) }
             };
 

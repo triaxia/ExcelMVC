@@ -143,7 +143,9 @@ std::wstring MakeTypeString(LPCWSTR type)
 	if (wcscmp(type, L"System.String") == 0)
 		return L"C%";
 	if (wcscmp(type, L"System.Double[,]") == 0
-		|| wcscmp(type, L"System.Double[]") == 0)
+		|| wcscmp(type, L"System.Double[]") == 0
+		|| wcscmp(type, L"System.DateTime[,]") == 0
+		|| wcscmp(type, L"System.DateTime[]") == 0)
 		return L"K%"; // O% does not work!?
 	return L"Q";
 }

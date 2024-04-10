@@ -1,6 +1,8 @@
 ﻿using ExcelMvc.Functions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections;
+using System.Diagnostics.Eventing.Reader;
 using System.Reflection;
 
 namespace ExcelMvc.Tests
@@ -107,16 +109,57 @@ namespace ExcelMvc.Tests
             AssertMarshal<string>(method, Guid.NewGuid().ToString());
         }
 
-        private static void AssertMarshal<TValue>(MethodInfo method, TValue value)
+        public static double[] MarshalDoubleArray(double[] x) => x;
+        [TestMethod]
+        public void Marshal_DoubleArray()
+        {
+            var method = typeof(XlMarshalTests).GetMethod(nameof(MarshalDoubleArray));
+            AssertMarshal<double[]>(method, new double[] { 1, 2, 3, 4 }, true);
+        }
+
+        public static DateTime[] MarshalDateTimeArray(DateTime[] x) => x;
+        [TestMethod]
+        public void Marshal_DateTimeArray()
+        {
+            var method = typeof(XlMarshalTests).GetMethod(nameof(MarshalDateTimeArray));
+            var start = DateTime.FromOADate(DateTime.Now.ToOADate());
+            AssertMarshal<DateTime[]>(method, new DateTime[] { start.AddDays(1), start.AddDays(2), start.AddDays(3)}, true);
+        }
+
+        public static double[,] MarshalDoubleMatrix(double[,] x) => x;
+        [TestMethod]
+        public void Marshal_DoubleMatrix()
+        {
+            var method = typeof(XlMarshalTests).GetMethod(nameof(MarshalDoubleMatrix));
+            AssertMarshal<double[,]>(method, new double[,] { { 11, 12, 13, 14 }, { 21, 22, 23, 24 } }, true);
+        }
+
+        public static DateTime[,] MarshalDateTimeMatrix(DateTime[,] x) => x;
+        [TestMethod]
+        public void Marshal_DateTimeMatrix()
+        {
+            var method = typeof(XlMarshalTests).GetMethod(nameof(MarshalDateTimeMatrix));
+            var start = DateTime.FromOADate(DateTime.Now.ToOADate());
+            AssertMarshal<DateTime[,]>(method, new DateTime[,] { 
+                { start.AddDays(11), start.AddDays(12), start.AddDays(13) },
+                { start.AddDays(21), start.AddDays(22), start.AddDays(23) } }, true);
+        }
+
+        private static void AssertMarshal<TValue>(MethodInfo method, TValue value
+            ,bool isCollection = false)
         {
             var func = (FunctionDelegate.Function1)DelegateFactory.MakeOuterDelegate(method);
-            var name = typeof(TValue).Name;
+            var name = typeof(TValue).Name.Replace("[]", "Array").Replace("[,]", "Matrix");
             var p1 = new XlMarshalContext();
             var incoming = p1.GetType().GetMethod($"{name}ToIntPtr");
 
-            var result = func((IntPtr)incoming.Invoke(p1, new object[] { value }));
+            var inner = func((IntPtr)incoming.Invoke(p1, new object[] { value }));
             var outgoing = typeof(XlMarshalContext).GetMethod($"IntPtrTo{name}");
-            Assert.AreEqual(value, outgoing.Invoke(null, new object[] { result }));
+            var outer = outgoing.Invoke(null, new object[] { inner });
+            if (isCollection)
+                CollectionAssert.AreEqual((ICollection)value, (ICollection)outer);
+            else
+                Assert.AreEqual(value, outer);
         }
     }
 }

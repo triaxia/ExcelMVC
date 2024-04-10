@@ -1,73 +1,98 @@
 ﻿using ExcelMvc.Functions;
+using System;
 
 namespace Samples
 {
     public static class FunctionTests
     {
-        /*
-        [ExcelFunction(Name = "uAdd2", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
-        public static double uAdd2(double v1, double v2)
-        {
-            return v1 + v2;
-        }
-
-        [ExcelFunction(Name = "uAdd3", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
-        public static short uAdd3(short v1, short v2)
-        {
-            return (short) (v1 + v2);
-        }
-
-        [ExcelFunction(Name = "uAdd4", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
-        public static bool uAdd4(bool v1, bool v2)
-        {
-            return v1 && v2;
-        }
-
-        [ExcelFunction(Name = "uAdd5", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
-        public static int uAdd5(int v1, int v2)
-        {
-            return v1 + v2;
-        }
-        */
-
-        [ExcelFunction(Name = "uAdd6", IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
-        public static double[,] uAdd6(double [,] v1)
-        {
-            return v1;
-        }
-
-        /*
-        [Function(Name = "uAdd3", IsAsync = false, IsThreadSafe = false, Description = "Add 2 numbers", HelpTopic = "https://www.microsoft.com")]
-        public static double Add3(
-            [Argument(Name = "v1", Description = "argument 1")] double v1,
-            [Argument(Name = "v2", Description = "argument 2")] double v2,
-            [Argument(Name = "v3", Description = "argument 3")] double v3)
-        {
-            return v1 + v2 + v3;
-        }
-
-        [Function(Name = "uArg", IsAsync = false, IsThreadSafe = false, Description = "Returns Args", HelpTopic = "https://www.microsoft.com")]
-        public static object uFeed(object value)
+        [ExcelFunction(Name = "uDouble")]
+        public static double Double(double value)
         {
             return value;
         }
 
-        [Function(Name = "uRtdTime", IsAsync = false, IsThreadSafe = false, Description = "Timer Rtd", HelpTopic = "https://www.microsoft.com")]
-        public static object uRtdTime(
-            [Argument(Name = "v1", Description = "argument 1")] string v1,
-            [Argument(Name = "v2", Description = "argument 2")] string v2
-)
+        [ExcelFunction(Name = "uFloat")]
+        public static double Float(double value)
         {
-            return FunctionExecution.ExecuteRtd(typeof(TimerServer), () => new TimerServer(), v1, v2);
+            return value;
         }
-        [Function(Name = "uRtdRandom", IsAsync = false, IsThreadSafe = false, Description = "Ramdon Rtd", HelpTopic = "https://www.microsoft.com")]
-        public static object uRtdRandom(
-            [Argument(Name = "v1", Description = "argument 1")] string v1,
-            [Argument(Name = "v2", Description = "argument 2")] string v2
-)
+
+        [ExcelFunction(Name = "uDateTime")]
+        public static double DatTime(double value)
         {
-            return FunctionExecution.ExecuteRtd(typeof(RandomTimer), () => new RandomTimer(), v1, v2);
+            return value;
         }
-        */
+
+        [ExcelFunction(Name = "uInt32")]
+        public static int Int32(int value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uUInt32")]
+        public static uint UInt32(uint value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uInt16")]
+        public static short Int16(short value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uUInt16")]
+        public static ushort UInt16(ushort value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uByte")]
+        public static byte Byte(byte value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uSByte")]
+        public static sbyte SByte(sbyte value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uBoolean")]
+        public static bool Boolean(bool value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uString")]
+        public static string String(string value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uDoubleArray")]
+        public static double[] DoubleArray(double[] value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uDoubleMatrix")]
+        public static double[,] DoubleMatrix(double[,] value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uDateTimeArray")]
+        public static DateTime[] DateTimeArray(DateTime[] value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uDateTimeMatrix")]
+        public static DateTime[,] DateTimeMatrix(DateTime[,] value)
+        {
+            return value;
+        }
     }
 }

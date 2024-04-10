@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -102,6 +103,11 @@ namespace ExcelMvc.Functions
             return DoubleArrayValue;
         }
 
+        public IntPtr DateTimeArrayToIntPtr(DateTime[] value)
+        {
+            return DoubleArrayToIntPtr(value.Select(x=>x.ToOADate()).ToArray());
+        }
+
         public IntPtr DoubleMatrixToIntPtr(double[,] value)
         {
             Marshal.FreeCoTaskMem(DoubleArrayValue);
@@ -120,6 +126,19 @@ namespace ExcelMvc.Functions
             return DoubleArrayValue;
         }
 
+        public IntPtr DateTimeMatrixToIntPtr(DateTime[,] value)
+        {
+            var rows = value?.GetLength(0) ?? 0;
+            var cols = value?.GetLength(1) ?? 0;
+            if (rows == 0 || cols == 0)
+                return DoubleMatrixToIntPtr(new double[,] { });
+            var cells = new double[rows, cols];
+            for (var row = 0; row < rows; row++)
+                for (var col = 0; col < cols; col++)
+                    cells[row, col] = value[row, col].ToOADate();
+            return DoubleMatrixToIntPtr(cells);
+        }
+
         private static readonly Dictionary<Type, MethodInfo> OutgoingConverters
             = new Dictionary<Type, MethodInfo>()
             {
@@ -136,6 +155,8 @@ namespace ExcelMvc.Functions
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(StringToIntPtr)) },
                 { typeof(double[]), typeof(XlMarshalContext).GetMethod(nameof(DoubleArrayToIntPtr)) },
                 { typeof(double[,]), typeof(XlMarshalContext).GetMethod(nameof(DoubleMatrixToIntPtr)) },
+                { typeof(DateTime[]), typeof(XlMarshalContext).GetMethod(nameof(DateTimeArrayToIntPtr)) },
+                { typeof(DateTime[,]), typeof(XlMarshalContext).GetMethod(nameof(DateTimeMatrixToIntPtr)) },
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtr)) },
             };
 
