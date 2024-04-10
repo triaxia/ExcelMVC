@@ -11,7 +11,7 @@ namespace ExcelMvc.Functions
         public IntPtr ObjectToIntPtr(object value)
         {
             XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
-            p->Init(value, 0);
+            p->Init(value);
             return ObjectValue;
         }
 

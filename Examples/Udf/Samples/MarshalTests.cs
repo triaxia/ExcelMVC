@@ -3,7 +3,7 @@ using System;
 
 namespace Samples
 {
-    public static class FunctionTests
+    public static class MarshalTests
     {
         [ExcelFunction(Name = "uDouble")]
         public static double Double(double value)

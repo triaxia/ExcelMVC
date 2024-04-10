@@ -49,7 +49,7 @@ namespace ExcelMvc.Functions
                 Marshal.FreeCoTaskMem((IntPtr)array.lparray);
         }
 
-        public XLOPER12(object value, XlTypes freeBit = XlTypes.xlbitDLLFree)
+        public XLOPER12(object value)
         {
             num = 0;
             w = 0;
@@ -62,10 +62,10 @@ namespace ExcelMvc.Functions
             };
             xltype = (uint)XlTypes.xltypeNil;
             err = 0;
-            Init(value, freeBit);
+            Init(value);
         }
 
-        public void Init(object value, XlTypes freeBit = XlTypes.xlbitDLLFree)
+        public void Init(object value)
         {
             Dispose();
             num = 0;
@@ -186,7 +186,6 @@ namespace ExcelMvc.Functions
                     }
                 xltype = (uint)XlTypes.xltypeMulti;
             }
-            xltype = (uint)((XlTypes)xltype | freeBit);
         }
 
         public object ToObject()

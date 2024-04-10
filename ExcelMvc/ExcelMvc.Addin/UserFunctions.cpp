@@ -257,7 +257,6 @@ LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
 {
 	auto status = new XLOPER12();
-	result->xltype = result->xltype | xlbitDLLFree;
 	Excel12(xlAsyncReturn, status, 2, handle, result);
 	status->xltype = status->xltype | xlbitDLLFree;
 	return status;
