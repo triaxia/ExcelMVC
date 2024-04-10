@@ -147,6 +147,8 @@ std::wstring MakeTypeString(LPCWSTR type)
 		|| wcscmp(type, L"System.DateTime[,]") == 0
 		|| wcscmp(type, L"System.DateTime[]") == 0)
 		return L"K%"; // O% does not work!?
+	if (wcscmp(type, L"System.IntPtr") == 0)
+		return L"X";
 	return L"Q";
 }
 
@@ -159,7 +161,6 @@ void MakeArgumentList(ExcelFunction* pFunction, std::wstring& names, std::wstrin
 		names += NullCoalesce(pFunction->Arguments[idx].Name);
 		types += MakeTypeString(pFunction->Arguments[idx].Type);
 	}
-	if (pFunction->IsAsync) types += L"X";
 	if (pFunction->IsVolatile) types += L"!";
 	if (pFunction->IsThreadSafe) types += L"$";
 	if (pFunction->IsClusterSafe) types += L"&";
