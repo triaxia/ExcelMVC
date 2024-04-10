@@ -9,8 +9,9 @@ namespace ExcelMvc.Functions
     {
         public IntPtr ObjectToIntPtr(object value)
         {
-            // TODO
-            return IntPtr.Zero;
+            XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
+            p->Init(value, 0);
+            return ObjectValue;
         }
 
         public IntPtr BooleanToIntPtr(bool value)

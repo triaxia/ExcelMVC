@@ -134,11 +134,11 @@ std::wstring MakeTypeString(LPCWSTR type)
 		return L"L";
 	if (wcscmp(type, L"System.Int16") == 0
 		|| wcscmp(type, L"System.Byte") == 0
-		|| wcscmp(type, L"System.SByte") == 0)
+		|| wcscmp(type, L"System.SByte") == 0
+		|| wcscmp(type, L"System.UInt16") == 0)
 		return L"M";
 	if (wcscmp(type, L"System.Int32") == 0
-		|| wcscmp(type, L"System.UInt32") == 0
-		|| wcscmp(type, L"System.UInt16") == 0)
+		|| wcscmp(type, L"System.UInt32") == 0)
 		return L"N";
 	if (wcscmp(type, L"System.String") == 0)
 		return L"C%";

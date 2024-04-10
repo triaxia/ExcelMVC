@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Windows.Controls;
 
 namespace ExcelMvc.Functions
 {
@@ -17,6 +18,7 @@ namespace ExcelMvc.Functions
         public static ushort IntPtrToUInt16(IntPtr value) => (ushort) *(short*)value.ToPointer();
         public static byte IntPtrToByte(IntPtr value) => (byte)*(short*)value.ToPointer();
         public static sbyte IntPtrToSByte(IntPtr value) => (sbyte)*(short*)value.ToPointer();
+      
         public static string IntPtrToString(IntPtr value)
         {
             if (value == IntPtr.Zero)
@@ -65,7 +67,8 @@ namespace ExcelMvc.Functions
 
         public static object IntPtrToObject(IntPtr value)
         {
-            return null;
+            XLOPER12* p = (XLOPER12*)value.ToPointer();
+            return p->ToObject();
         }
 
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters

@@ -44,9 +44,9 @@ namespace ExcelMvc.Functions
         public void Dispose()
         {
             if (xltype == (uint)XlTypes.xltypeStr && any != null)
-                Marshal.FreeHGlobal((IntPtr)any);
+                Marshal.FreeCoTaskMem((IntPtr)any);
             if (xltype == (uint)XlTypes.xltypeMulti && array.lparray != null)
-                Marshal.FreeHGlobal((IntPtr)array.lparray);
+                Marshal.FreeCoTaskMem((IntPtr)array.lparray);
         }
 
         public XLOPER12(object value, XlTypes freeBit = XlTypes.xlbitDLLFree)
@@ -67,6 +67,7 @@ namespace ExcelMvc.Functions
 
         public void Init(object value, XlTypes freeBit = XlTypes.xlbitDLLFree)
         {
+            Dispose();
             num = 0;
             w = 0;
             any = null;
@@ -138,7 +139,7 @@ namespace ExcelMvc.Functions
             }
             else if (value is string sr)
             {
-                any = (char*)Marshal.AllocHGlobal((sr.Length + 2) * sizeof(char));
+                any = (char*)Marshal.AllocCoTaskMem((sr.Length + 2) * sizeof(char));
                 char* p = (char*)any;
                 p[0] = (char)sr.Length;
                 for (var idx = 1; idx <= sr.Length; idx++)
@@ -156,7 +157,7 @@ namespace ExcelMvc.Functions
                 if (sa.Length == 0) return;
                 array.rows = 1;
                 array.columns = sa.Length;
-                array.lparray = (XLOPER12*)Marshal.AllocHGlobal(sa.Length * sizeof(XLOPER12));
+                array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(sa.Length * sizeof(XLOPER12));
                 var col0 = sa.GetLowerBound(0);
                 var colx = sa.GetUpperBound(0);
                 for (var col = col0; col <= colx; col++)
@@ -172,7 +173,7 @@ namespace ExcelMvc.Functions
                 array.rows = da.GetLength(0);
                 array.columns = da.GetLength(1);
                 var xxx = Marshal.SizeOf(typeof(XLOPER12));
-                array.lparray = (XLOPER12*)Marshal.AllocHGlobal(array.rows * array.columns * sizeof(XLOPER12));
+                array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(array.rows * array.columns * sizeof(XLOPER12));
                 var row0 = da.GetLowerBound(0);
                 var rowx = da.GetUpperBound(0);
                 var col0 = da.GetLowerBound(1);

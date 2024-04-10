@@ -11,6 +11,7 @@ namespace ExcelMvc.Functions
         private readonly IntPtr IntValue;
         private readonly IntPtr ShortValue;
         private IntPtr DoubleArrayValue = IntPtr.Zero;
+        private readonly IntPtr ObjectValue;
 
         // thread affinity for return pointers...
         private readonly static ThreadLocal<XlMarshalContext> ThreadInstance
@@ -22,6 +23,7 @@ namespace ExcelMvc.Functions
             DoubleValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(double)));
             IntValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)));
             ShortValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(short)));
+            ObjectValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(XLOPER12)));
 
             DoubleToIntPtr(0);
             Int32ToIntPtr(0);
@@ -35,6 +37,12 @@ namespace ExcelMvc.Functions
             Marshal.FreeCoTaskMem(IntValue);
             Marshal.FreeCoTaskMem(ShortValue);
             Marshal.FreeCoTaskMem(DoubleArrayValue);
+            if (ObjectValue != IntPtr.Zero) 
+            {
+                XLOPER12 *p = (XLOPER12 *) ObjectValue.ToPointer();
+                p->Dispose();
+                Marshal.FreeCoTaskMem(ObjectValue);
+            }
         }
     }
 }
