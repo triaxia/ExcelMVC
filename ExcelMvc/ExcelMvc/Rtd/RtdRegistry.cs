@@ -59,7 +59,7 @@ namespace ExcelMvc.Rtd
                 var impl = implFactory?.Invoke() ?? (IRtdServerImpl)Activator.CreateInstance(implType);
                 var server = new RtdServer(impl);
                 Factories[guid] = new RtdComClassFactory(server);
-                return (new RtdServer(impl), progId);
+                return (server, progId);
             });
             ProgId = pair.progId;
         }
