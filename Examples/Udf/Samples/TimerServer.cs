@@ -70,7 +70,7 @@ namespace Samples
         {
             ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine("Time Ticked");
             var now = DateTime.Now;
-            foreach (var pair in Topics)
+            foreach (var pair in Topics.ToArray())
                 pair.Value.value = DateTime.Now;
             Updated?.Invoke(this, EventArgs.Empty);
         }
