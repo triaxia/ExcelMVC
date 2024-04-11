@@ -49,14 +49,14 @@ namespace ExcelMvc.Rtd
 
         private bool Registered { get; set; }
 
-        public RtdRegistry(Type implType, Func<IRtdServerImpl> implFactory)
+        public RtdRegistry(Type type, Func<IRtdServerImpl> factory)
         {
-            var key = implType.FullName;
+            var key = type.FullName;
             var pair = Servers.GetOrAdd(key, _ =>
             {
                 Registered = true;
                 var (progId, guid) = RegistryFunctions.Register();
-                var impl = implFactory?.Invoke() ?? (IRtdServerImpl)Activator.CreateInstance(implType);
+                var impl = factory?.Invoke() ?? (IRtdServerImpl)Activator.CreateInstance(type);
                 var server = new RtdServer(impl);
                 Factories[guid] = new RtdComClassFactory(server);
                 return (server, progId);
