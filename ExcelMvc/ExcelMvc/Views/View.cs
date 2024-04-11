@@ -2,7 +2,7 @@
 Copyright (C) 2013 =>
 
 Creator:           Peter Gu, Australia
-Contributor:       Wolfgang Stamm, Germany
+Contributor:       Wolfgang Stamm, Germany (2013)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
