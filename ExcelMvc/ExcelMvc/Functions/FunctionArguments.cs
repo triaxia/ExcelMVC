@@ -30,61 +30,47 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-
-using Microsoft.Office.Interop.Excel;
-using System;
 using System.Linq;
-using ExcelMvc.Functions;
+using System.Runtime.InteropServices;
 
-namespace ExcelMvc.Rtd
+namespace ExcelMvc.Functions
 {
-    public class RtdServer : IRtdServer
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct FunctionArgument
     {
-        private IRTDUpdateEvent CallbackObject { get; set; }
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string Name;
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string Value;
 
-        public IRtdServerImpl Impl { get; }
-        public RtdServer(IRtdServerImpl impl) => Impl = impl;
-
-        public int ServerStart(IRTDUpdateEvent callbackObject)
+        public FunctionArgument(string name, string value)
         {
-            CallbackObject = callbackObject;
-            void OnUpdated(object sender, EventArgs args)
-            {
-                CallbackObject.UpdateNotify();
-            }
-            Impl.Updated -= OnUpdated;
-            Impl.Updated += OnUpdated;
-            return Impl.Start();
+            Name = name;
+            Value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct FunctionArguments
+    {
+        public const ushort MaxArguments = 32;
+        [MarshalAs(UnmanagedType.U1)]
+        public byte ArgumentCount;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
+        public FunctionArgument[] Arguments;
+
+        public FunctionArguments(FunctionArgument[] arguments)
+        {
+            ArgumentCount = (byte) arguments.Length;   
+            Arguments = Pad(arguments);
         }
 
-        public object ConnectData(int TopicID, ref Array Strings, ref bool GetNewValues)
+        private static FunctionArgument[] Pad(FunctionArgument[] arguments)
         {
-            GetNewValues = true;
-            var args = Strings.Cast<object>().Select(x => $"{x}").ToArray();
-            return Impl.Connect(TopicID, args);
-        }
-
-        public Array RefreshData(ref int TopicCount)
-        {
-            var values = Impl.GetTopicValues();
-            TopicCount = values.GetLength(1);
-            return values;
-        }
-
-        public void DisconnectData(int TopicID)
-        {
-            Impl.Disconnect(TopicID);
-        }
-
-        public int Heartbeat()
-        {
-            return Impl.Heartbeat();
-        }
-
-        public void ServerTerminate()
-        {
-            Impl.Stop();
-            RtdRegistry.OnTerminated(this);
+            var args = (arguments ?? new FunctionArgument[] { });
+            while (args.Length < MaxArguments)
+                args = args.Concat(new[] { new FunctionArgument() }).ToArray();
+            return args;
         }
     }
 }

@@ -64,9 +64,6 @@ namespace ExcelMvc.Functions
         }
     }
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void FunctionCallback(IntPtr args);
-
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct Function
     {

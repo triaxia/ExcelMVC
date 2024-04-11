@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections;
-using System.Diagnostics.Eventing.Reader;
 using System.Reflection;
 
 namespace ExcelMvc.Tests

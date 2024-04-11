@@ -172,7 +172,7 @@ namespace ExcelMvc.Functions
             }
             else if (value is string sr)
             {
-                any = (char*)Marshal.AllocCoTaskMem((sr.Length + 2) * sizeof(char));
+                any = (char*)Marshal.AllocCoTaskMem((sr.Length + 1) * sizeof(char));
                 char* p = (char*)any;
                 p[0] = (char)sr.Length;
                 for (var idx = 1; idx <= sr.Length; idx++)

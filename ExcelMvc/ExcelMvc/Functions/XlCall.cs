@@ -31,7 +31,9 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using ExcelMvc.Rtd;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
@@ -57,12 +59,12 @@ namespace ExcelMvc.Functions
 
         public static void RegisterFunction(Function function)
         {
-            using (var func = new StructIntPtr<Function>(ref function))
+            using (var pFunction = new StructIntPtr<Function>(ref function))
             {
                 if (Environment.Is64BitProcess)
-                    xlAutoFree64(RegisterFunction64(func.Ptr));
+                   RegisterFunction64(pFunction.Ptr);
                 else
-                    xlAutoFree32(RegisterFunction32(func.Ptr));
+                   RegisterFunction32(pFunction.Ptr);
             }
         }
 
@@ -72,14 +74,6 @@ namespace ExcelMvc.Functions
                 xlAutoFree64(AsyncReturn64(handle, result));
             else
                 xlAutoFree32(AsyncReturn32(handle, result));
-        }
-
-        public static IntPtr RtdCall(IntPtr args)
-        {
-            if (Environment.Is64BitProcess)
-                return RtdCall64(args);
-            else
-                return RtdCall32(args);
         }
 
         public static void SetAsyncResult(IntPtr handle, object result)
@@ -93,6 +87,29 @@ namespace ExcelMvc.Functions
             finally
             {
                 outcome.Dispose();
+            }
+        }
+
+        public static object CallRtd(Type implType, Func<IRtdServerImpl> implFactory
+            , string arg0, params string[] args)
+        {
+            using (var reg = new RtdRegistry(implType, implFactory))
+            {
+                var arguments = new string[] { reg.ProgId, "", arg0 }
+                    .Concat(args)
+                    .Select((x, idx) => new FunctionArgument($"p{idx}", x))
+                    .ToArray();
+                var fArgs = new FunctionArguments(arguments);
+                IntPtr ptr = IntPtr.Zero;
+                using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
+                {
+                    if (Environment.Is64BitProcess)
+                        ptr = RtdCall64(pArgs.Ptr);
+                    else
+                        ptr = RtdCall32(pArgs.Ptr);
+                }
+                var result = XLOPER12.FromIntPtr(ptr);
+                return result == null ? null : XLOPER12.ToObject(result.Value);
             }
         }
     }

@@ -37,7 +37,7 @@ Boston, MA 02110-1301 USA.
 
 extern "C" { extern PFN ExportTable[]; }
 
-struct ExceArgument
+struct ExcelArgument
 {
 	LPCWSTR Name;
 	LPCWSTR Description;
@@ -62,15 +62,19 @@ struct ExcelFunction
 	LPCWSTR Description;
 	LPCWSTR HelpTopic;
 	byte ArgumentCount;
-	ExceArgument Arguments[];
+	ExcelArgument Arguments[];
 };
 
-const int MAX_ARG_COUNT = 32;
-struct FunctionArgs
+struct FunctionArgument
 {
-	LPXLOPER12 Result;
-	LPXLOPER12 Args[MAX_ARG_COUNT];
-	int Index;
+	LPCWSTR Name;
+	LPCWSTR Value;
+};
+
+struct FunctionArguments
+{
+	byte ArgumentCount;
+	FunctionArgument Arguments[];
 };
 
 static std::map<int, LPXLOPER12> FunctionRegIds;
@@ -262,21 +266,17 @@ LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
 	return status;
 }
 
-LPXLOPER12 __stdcall RtdCall(FunctionArgs* args)
+LPXLOPER12 __stdcall RtdCall(FunctionArguments * args)
 {
-	auto pParams = new LPXLOPER12[MAX_ARG_COUNT];
+	auto parameters = new LPXLOPER12[args->ArgumentCount];
 	auto count = 0;
-	auto jdx = 0;
-	for (auto idx = 0; idx < MAX_ARG_COUNT; idx++)
-	{
-		if (args->Args[idx] == NULL || args->Args[idx]->xltype == xltypeNil) continue;
-		pParams[jdx++] = args->Args[idx];
-		count++;
-	}
+	for (auto idx = 0; idx < args->ArgumentCount; idx++)
+		parameters[idx] = TempStr12(args->Arguments[idx].Value);
+
 	auto result = new XLOPER12();
 	memset(result, 0, sizeof(XLOPER12));
-	Excel12v(xlfRtd, result, count, pParams);
+	Excel12v(xlfRtd, result, args->ArgumentCount, parameters);
 	result->xltype = result->xltype | xlbitDLLFree;
-	delete[] pParams;
+	delete[] parameters;
 	return result;
 }
