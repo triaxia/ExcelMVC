@@ -68,7 +68,6 @@ namespace ExcelMvc.Rtd
         {
             if (Registered)
                 RegistryFunctions.Unregister(ProgId);
-            GC.SuppressFinalize(this);
         }
 
         public static RtdComClassFactory FindFactory(Guid guid)

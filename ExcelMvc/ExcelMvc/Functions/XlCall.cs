@@ -90,7 +90,7 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public static object CallRtd(Type implType, Func<IRtdServerImpl> implFactory
+        public unsafe static object CallRtd(Type implType, Func<IRtdServerImpl> implFactory
             , string arg0, params string[] args)
         {
             using (var reg = new RtdRegistry(implType, implFactory))
@@ -108,8 +108,8 @@ namespace ExcelMvc.Functions
                     else
                         ptr = RtdCall32(pArgs.Ptr);
                 }
-                var result = XLOPER12.FromIntPtr(ptr);
-                return result == null ? null : XLOPER12.ToObject(result.Value);
+                var result = (XLOPER12*)ptr.ToPointer();
+                return result == null ? null : result->ToObject();
             }
         }
     }

@@ -59,11 +59,6 @@ namespace ExcelMvc.Functions
             return new XLOPER12(value);
         }
 
-        public static XLOPER12? FromIntPtr(IntPtr value)
-        {
-            return value == IntPtr.Zero ? null : (XLOPER12?)Marshal.PtrToStructure<XLOPER12>(value);
-        }
-
         public static object ToObject(XLOPER12 value)
         {
             return value.ToObject();
