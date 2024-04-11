@@ -39,7 +39,7 @@ namespace ExcelMvc.Diagnostics
     using System.ComponentModel;
     using System.Linq;
 
-    internal class Messages : INotifyPropertyChanged
+    public class Messages : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 

@@ -277,6 +277,8 @@ LPXLOPER12 __stdcall RtdCall(FunctionArguments * args)
 	memset(result, 0, sizeof(XLOPER12));
 	Excel12v(xlfRtd, result, args->ArgumentCount, parameters);
 	result->xltype = result->xltype | xlbitDLLFree;
+
+	// actual XLOPER12 will be deleted by TempStr12!
 	delete[] parameters;
 	return result;
 }

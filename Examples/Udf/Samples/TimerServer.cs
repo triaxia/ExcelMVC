@@ -1,7 +1,7 @@
 ﻿using ExcelMvc.Rtd;
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
+//using System.Threading;
 
 namespace Samples
 {
@@ -16,19 +16,23 @@ namespace Samples
         public readonly ConcurrentDictionary<int, Topic> Topics
             = new ConcurrentDictionary<int, Topic>();
             
-        private Timer Timer { get; }
+        private System.Timers.Timer Timer { get; }
         public TimerServer()
         {
-            Timer = new Timer(OnTimer, null, 5000, 5000);
+            Timer = new System.Timers.Timer(5000);
+            Timer.Elapsed += Timer_Elapsed;
+            Timer.Start();
         }
 
         public object Connect(int topicId, string[] args)
         {
+            ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine($"{topicId} connected");
             return Topics[topicId] = new Topic { args = args, value = DateTime.Now };
         }
 
         public void Disconnect(int topicId)
         {
+            ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine($"{topicId} disconnected");
             Topics.TryRemove(topicId, out var _);
         }
 
@@ -51,17 +55,20 @@ namespace Samples
 
         public int Start()
         {
+            ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine("Started");
             return 1;
         }
 
         public void Stop()
         {
-            Timer.Change(0, Timeout.Infinite);
+            ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine("Stopped");
+            Timer.Stop();
             Topics.Clear();
         }
 
-        private void OnTimer(object state)
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine("Time Ticked");
             var now = DateTime.Now;
             foreach (var pair in Topics)
                 pair.Value.value = DateTime.Now;

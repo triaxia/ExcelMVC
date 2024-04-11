@@ -35,6 +35,7 @@ using Microsoft.Office.Interop.Excel;
 using System;
 using System.Linq;
 using ExcelMvc.Functions;
+using ExcelMvc.Diagnostics;
 
 namespace ExcelMvc.Rtd
 {
@@ -50,7 +51,15 @@ namespace ExcelMvc.Rtd
             CallbackObject = callbackObject;
             void OnUpdated(object sender, EventArgs args)
             {
-                CallbackObject.UpdateNotify();
+                try
+                {
+                    CallbackObject.UpdateNotify();
+                }
+                catch (Exception ex)
+                {
+                    // TODO
+                    Messages.Instance.AddErrorLine(ex);
+                }
             }
             Impl.Updated -= OnUpdated;
             Impl.Updated += OnUpdated;
