@@ -30,20 +30,57 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-
-using Microsoft.Office.Interop.Excel;
 using System;
 using System.Linq;
-using ExcelMvc.Functions;
+using System.Runtime.InteropServices;
 using ExcelMvc.Diagnostics;
 using ExcelMvc.Runtime;
 using ExcelMvc.Views;
 
 namespace ExcelMvc.Rtd
 {
+    [ComImport]
+    [Guid("A43788C1-D91B-11D3-8F39-00C04F3651B8")]
+    [InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IRTDUpdateEvent
+    {
+        [DispId(10)]
+        void UpdateNotify();
+
+        [DispId(11)]
+        int HeartbeatInterval { get; set; }
+
+        [DispId(12)]
+        void Disconnect();
+    }
+
+    [ComImport]
+    [Guid("EC0E6191-DB51-11D3-8F3E-00C04F3651B8")]
+    [InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IRtdServer
+    {
+        [DispId(10)]
+        int ServerStart([In][MarshalAs(UnmanagedType.Interface)] IRTDUpdateEvent CallbackObject);
+
+        [DispId(11)]
+        object ConnectData([In] int TopicID, [In][MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)] ref Array Strings, [In][Out] ref bool GetNewValues);
+
+        [DispId(12)]
+        [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)]
+        Array RefreshData([In][Out] ref int TopicCount);
+
+        [DispId(13)]
+        void DisconnectData([In] int TopicID);
+
+        [DispId(14)]
+        int Heartbeat();
+
+        [DispId(15)]
+        void ServerTerminate();
+    }
+
     public class RtdServer : IRtdServer
     {
-
         public static int ThrottleIntervalMilliseconds
         {
             get => App.Instance.Underlying.RTD.ThrottleInterval;
@@ -58,20 +95,6 @@ namespace ExcelMvc.Rtd
         public int ServerStart(IRTDUpdateEvent callbackObject)
         {
             CallbackObject = callbackObject;
-            void OnUpdated(object sender, EventArgs args)
-            {
-                AsyncActions.Post(_ =>
-                {
-                    try
-                    {
-                        CallbackObject.UpdateNotify();
-                    }
-                    catch (Exception ex)
-                    {
-                        Messages.Instance.AddErrorLine(ex);
-                    }
-                }, null, false);
-            }
             Impl.Updated -= OnUpdated;
             Impl.Updated += OnUpdated;
             return Impl.Start();
@@ -105,6 +128,21 @@ namespace ExcelMvc.Rtd
         {
             Impl.Stop();
             RtdRegistry.OnTerminated(this);
+        }
+
+        private void OnUpdated(object sender, EventArgs args)
+        {
+            AsyncActions.Post(_ =>
+            {
+                try
+                {
+                    CallbackObject.UpdateNotify();
+                }
+                catch (Exception ex)
+                {
+                    //Messages.Instance.AddErrorLine(ex);
+                }
+            }, null, false);
         }
     }
 }

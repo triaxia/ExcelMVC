@@ -223,6 +223,10 @@ namespace ExcelMvc.Functions
             {
                 xltype = (uint) XlTypes.xltypeMissing;
             }
+            else if (value is XlEmpty)
+            {
+                xltype = (uint)XlTypes.xltypeNil;
+            }
         }
 
         public object ToObject()
@@ -251,6 +255,8 @@ namespace ExcelMvc.Functions
                             result[row, col] = ele->ToObject();
                         }
                     return result;
+                case XlTypes.xltypeNil:
+                    return XlEmpty.Instance;
                 case XlTypes.xltypeMissing:
                     return XlMissing.Instance;
                 case XlTypes.xltypeErr:

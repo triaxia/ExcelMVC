@@ -54,7 +54,7 @@ namespace ExcelMvc.Functions
         public static object HandleUnhandledException(object ex)
         {
             Messages.Instance.AddErrorLine($"{ex}");
-            if (Failed == null) return XlErrors.xlerrValue;
+            if (Failed == null) return XlErrorValue.Instance;
             try
             {
                 var args = new XlMarshalExceptionEventArgs((Exception)ex);
@@ -64,7 +64,7 @@ namespace ExcelMvc.Functions
             catch(Exception e)
             {
                 Messages.Instance.AddErrorLine($"{e}");
-                return XlErrors.xlerrValue;
+                return XlErrorValue.Instance;
             }
         }
 

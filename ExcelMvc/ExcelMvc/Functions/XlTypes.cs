@@ -32,7 +32,6 @@ Boston, MA 02110-1301 USA.
 */
 
 using System;
-using System.Diagnostics;
 
 namespace ExcelMvc.Functions
 {
@@ -59,6 +58,12 @@ namespace ExcelMvc.Functions
     {
         private XlMissing() { }
         public static readonly XlMissing Instance = new XlMissing();
+    }
+
+    public class XlEmpty
+    {
+        private XlEmpty() { }
+        public static readonly XlEmpty Instance = new XlEmpty();
     }
 }
 
