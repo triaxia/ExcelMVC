@@ -37,11 +37,19 @@ using System.Linq;
 using ExcelMvc.Functions;
 using ExcelMvc.Diagnostics;
 using ExcelMvc.Runtime;
+using ExcelMvc.Views;
 
 namespace ExcelMvc.Rtd
 {
     public class RtdServer : IRtdServer
     {
+
+        public static int ThrottleIntervalMilliseconds
+        {
+            get => App.Instance.Underlying.RTD.ThrottleInterval;
+            set => App.Instance.Underlying.RTD.ThrottleInterval = value;
+        }
+
         private IRTDUpdateEvent CallbackObject { get; set; }
 
         public IRtdServerImpl Impl { get; }
@@ -52,7 +60,7 @@ namespace ExcelMvc.Rtd
             CallbackObject = callbackObject;
             void OnUpdated(object sender, EventArgs args)
             {
-                AsyncActions.Post(_=>
+                AsyncActions.Post(_ =>
                 {
                     try
                     {
