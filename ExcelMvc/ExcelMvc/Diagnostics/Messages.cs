@@ -44,10 +44,10 @@ namespace ExcelMvc.Diagnostics
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public string Error =>
-            string.Join(System.Environment.NewLine, ErrorLines.ToArray().Reverse());
+            string.Join(Environment.NewLine, ErrorLines.ToArray().Reverse());
 
         public string Info =>
-            string.Join(System.Environment.NewLine, InfoLines.ToArray().Reverse());
+            string.Join(Environment.NewLine, InfoLines.ToArray().Reverse());
 
         public int LineLimit { get; set; }
 

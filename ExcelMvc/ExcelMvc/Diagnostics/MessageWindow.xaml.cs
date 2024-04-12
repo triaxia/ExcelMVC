@@ -59,15 +59,12 @@ namespace ExcelMvc.Diagnostics
         /// </summary>
         public static void ShowInstance()
         {
-            AsyncActions.Post(
-                state =>
-                {
-                    CreateInstance();
-                    // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
-                    Instance.Show();
-                },
-                null,
-                false);
+            AsyncActions.Post(_ =>
+            {
+                CreateInstance();
+                // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
+                Instance.Show();
+            }, null, false);
         }
 
         /// <summary>
@@ -75,13 +72,7 @@ namespace ExcelMvc.Diagnostics
         /// </summary>
         public static void HideInstance()
         {
-            AsyncActions.Post(
-                state =>
-                { 
-                    Instance?.Hide(); 
-                },
-                null,
-                false);
+            AsyncActions.Post(_ => { Instance?.Hide(); }, null, false);
         }
 
         public static void CreateInstance()

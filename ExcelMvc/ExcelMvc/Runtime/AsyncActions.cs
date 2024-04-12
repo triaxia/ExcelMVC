@@ -125,8 +125,8 @@ namespace ExcelMvc.Runtime
         /// <summary>
         /// Executes the next action in the queue
         /// </summary>
-        /// <param name="exectueMacro">Execute the next macro</param>
-        public static void Execute(bool exectueMacro)
+        /// <param name="executeMacro">Execute the next macro</param>
+        public static void Execute(bool executeMacro)
         {
             void Do(ConcurrentQueue<Item> queue)
             {
@@ -134,7 +134,7 @@ namespace ExcelMvc.Runtime
                 if (queue.TryDequeue(out var item))
                     item.Action(item.State);
             }
-            if (exectueMacro)
+            if (executeMacro)
                 Do(Macros);
             else
                 Do(Actions);
