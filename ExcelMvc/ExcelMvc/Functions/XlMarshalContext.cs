@@ -41,6 +41,7 @@ namespace ExcelMvc.Functions
     {
         private readonly IntPtr DoubleValue;
         private IntPtr StringValue = IntPtr.Zero;
+        private IntPtr LargeStringValue = IntPtr.Zero;
         private readonly IntPtr IntValue;
         private readonly IntPtr ShortValue;
         private IntPtr DoubleArrayValue = IntPtr.Zero;
@@ -67,6 +68,7 @@ namespace ExcelMvc.Functions
         {
             Marshal.FreeCoTaskMem(DoubleValue);
             Marshal.FreeCoTaskMem(StringValue);
+            Marshal.FreeCoTaskMem(LargeStringValue);
             Marshal.FreeCoTaskMem(IntValue);
             Marshal.FreeCoTaskMem(ShortValue);
             Marshal.FreeCoTaskMem(DoubleArrayValue);

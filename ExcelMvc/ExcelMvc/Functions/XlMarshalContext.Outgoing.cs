@@ -110,22 +110,29 @@ namespace ExcelMvc.Functions
 
         public IntPtr StringToIntPtr(string value)
         {
-            Marshal.FreeCoTaskMem(StringValue);
+            const int SmallSize = 2048;
             var len = value?.Length ?? 0;
-            StringValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(char)) * (len + 1));
-            char* p = (char*)StringValue.ToPointer();
-            p[len] = '\0';
-            for (var idx = 0; idx < len; idx++)
-                p[idx] = value[idx];
-            return StringValue;
+            if (len + 1 <= SmallSize)
+            {
+                if (StringValue == IntPtr.Zero)
+                    StringValue = Marshal.AllocCoTaskMem(sizeof(char) * SmallSize);
+                Copy(value, len, StringValue);
+                return StringValue;
+            }
+            else
+            {
+                Marshal.FreeCoTaskMem(LargeStringValue);
+                LargeStringValue = Marshal.AllocCoTaskMem(sizeof(char) * (len + 1));
+                Copy(value, len, LargeStringValue);
+                return LargeStringValue;
+            }
         }
 
         public IntPtr DoubleArrayToIntPtr(double[] value)
         {
             Marshal.FreeCoTaskMem(DoubleArrayValue);
             var len = value?.Length ?? 0;
-            DoubleArrayValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)) * 2 +
-                Marshal.SizeOf(typeof(double)) * len);
+            DoubleArrayValue = Marshal.AllocCoTaskMem(sizeof(int) * 2 + sizeof(double) * len);
             int* p = (int*)DoubleArrayValue.ToPointer();
             p[0] = 1;
             p[1] = len;
@@ -146,8 +153,7 @@ namespace ExcelMvc.Functions
             Marshal.FreeCoTaskMem(DoubleArrayValue);
             var rows = value?.GetLength(0) ?? 0;
             var cols = value?.GetLength(1) ?? 0;
-            DoubleArrayValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)) * 2 +
-                Marshal.SizeOf(typeof(double)) * rows * cols);
+            DoubleArrayValue = Marshal.AllocCoTaskMem(sizeof(int) * 2 + sizeof(double) * rows * cols);
             int* p = (int*)DoubleArrayValue.ToPointer();
             p[0] = rows;
             p[1] = cols;
@@ -170,6 +176,14 @@ namespace ExcelMvc.Functions
                 for (var col = 0; col < cols; col++)
                     cells[row, col] = value[row, col].ToOADate();
             return DoubleMatrixToIntPtr(cells);
+        }
+
+        private static void Copy(string source, int length, IntPtr target)
+        {
+            char* p = (char*)target.ToPointer();
+            p[length] = '\0';
+            for (var idx = 0; idx < length; idx++)
+                p[idx] = source[idx];
         }
 
         private static readonly Dictionary<Type, MethodInfo> OutgoingConverters
