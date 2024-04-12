@@ -33,6 +33,7 @@ Boston, MA 02110-1301 USA.
 
 using ExcelMvc.Runtime;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -82,10 +83,12 @@ namespace ExcelMvc.Functions
             //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
 
+        private static readonly ConcurrentBag<GCHandle> Handles
+            = new ConcurrentBag<GCHandle>();
         public static IntPtr MakeCallback(MethodInfo method)
         {
             var e = DelegateFactory.MakeOuterDelegate(method);
-            GCHandle.Alloc(e);
+            Handles.Add(GCHandle.Alloc(e));
             return Marshal.GetFunctionPointerForDelegate(e);
         }
     }

@@ -31,10 +31,14 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace ExcelMvc.Functions
 {
     public enum XlErrors
     {
+        xlerrUnknown = -1,
         xlerrNull = 0,
         xlerrDiv0 = 7,
         xlerrValue = 15,
@@ -43,5 +47,96 @@ namespace ExcelMvc.Functions
         xlerrNum = 36,
         xlerrNA = 42,
         xlerrGettingData = 43
+    }
+
+    public interface XlError
+    {
+        XlErrors Type { get; }
+    }
+
+    public class XlErrorKnown : XlError
+    {
+        public XlErrors Type => XlErrors.xlerrUnknown;
+        public static readonly XlErrorKnown Instance = new XlErrorKnown();
+        public override string ToString() => "#???!";
+    }
+
+    public class XlErrorNull : XlError
+    {
+        public XlErrors Type => XlErrors.xlerrNull;
+        public static readonly XlErrorNull Instance = new XlErrorNull();
+        public override string ToString() => "#NULL!";
+    }
+
+    public class XlErrorDiv0 : XlError
+    {
+        public XlErrors Type => XlErrors.xlerrDiv0;
+        public static readonly XlErrorDiv0 Instance = new XlErrorDiv0();
+        public override string ToString() => "#DIV0!";
+    }
+
+    public class XlErrorValue : XlError
+    {
+        public XlErrors Type => XlErrors.xlerrValue;
+        public static readonly XlErrorValue Instance = new XlErrorValue();
+        public override string ToString() => "#VALUE!";
+    }
+
+    public class XlErrorRef : XlError
+    {
+        public XlErrors Type => XlErrors.xlerrRef;
+        public static readonly XlErrorRef Instance = new XlErrorRef();
+        public override string ToString() => "#REF!";
+    }
+
+    public class XlErrorName : XlError
+    {
+        public XlErrors Type => XlErrors.xlerrName;
+        public static readonly XlErrorName Instance = new XlErrorName();
+        public override string ToString() => "#NAME?";
+    }
+
+    public class XlErrorNum: XlError
+    {
+        public XlErrors Type => XlErrors.xlerrNum;
+        public static readonly XlErrorNum Instance = new XlErrorNum();
+        public override string ToString() => "#NUM!";
+    }
+
+    public class XlErrorNA : XlError
+    {
+        public XlErrors Type => XlErrors.xlerrNA;
+        public static readonly XlErrorNA Instance = new XlErrorNA();
+        public override string ToString() => "#N/A";
+    }
+
+    public class XlErrorGettingData : XlError
+    {
+        public XlErrors Type => XlErrors.xlerrGettingData;
+        public static readonly XlErrorGettingData Instance = new XlErrorGettingData();
+        public override string ToString() => "#Data!";
+    }
+
+    public static class XlErrorFactory
+    {
+        private static Dictionary<XlErrors, XlError> Errors;
+        static XlErrorFactory()
+        {
+            Errors = new Dictionary<XlErrors, XlError>()
+             {
+                 {XlErrors.xlerrNull, XlErrorNull.Instance},
+                 {XlErrors.xlerrDiv0, XlErrorDiv0.Instance},
+                 {XlErrors.xlerrValue, XlErrorValue.Instance},
+                 {XlErrors.xlerrRef, XlErrorRef.Instance},
+                 {XlErrors.xlerrName, XlErrorName.Instance},
+                 {XlErrors.xlerrNum, XlErrorNum.Instance},
+                 {XlErrors.xlerrNA, XlErrorNA.Instance},
+                 {XlErrors.xlerrGettingData, XlErrorGettingData.Instance}
+             };
+        }
+        public static XlError TypeToObject(XlErrors type)
+            => Errors.TryGetValue(type, out var value) ? value : Errors[XlErrors.xlerrUnknown];
+        public static XlErrors ObjectToType(XlError obj)
+            => Errors.Single(x => x.Value == obj).Key;
     }
 }

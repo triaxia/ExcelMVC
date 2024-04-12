@@ -152,7 +152,7 @@ namespace ExcelMvc.Functions
             }
             else if (value is uint uit)
             {
-                w =(int) uit;
+                w = (int)uit;
                 xltype = (uint)XlTypes.xltypeInt;
             }
             else if (value is long lg)
@@ -214,6 +214,15 @@ namespace ExcelMvc.Functions
                     }
                 xltype = (uint)XlTypes.xltypeMulti;
             }
+            else if (value is XlError xle)
+            {
+                xltype = (uint)XlTypes.xltypeErr;
+                err = (int)XlErrorFactory.ObjectToType(xle);
+            }
+            else if (value is XlMissing)
+            {
+                xltype = (uint) XlTypes.xltypeMissing;
+            }
         }
 
         public object ToObject()
@@ -243,7 +252,9 @@ namespace ExcelMvc.Functions
                         }
                     return result;
                 case XlTypes.xltypeMissing:
-                    return null;
+                    return XlMissing.Instance;
+                case XlTypes.xltypeErr:
+                    return XlErrorFactory.TypeToObject((XlErrors)err);
             }
             return null;
         }

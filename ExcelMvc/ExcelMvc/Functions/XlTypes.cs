@@ -32,6 +32,7 @@ Boston, MA 02110-1301 USA.
 */
 
 using System;
+using System.Diagnostics;
 
 namespace ExcelMvc.Functions
 {
@@ -52,6 +53,12 @@ namespace ExcelMvc.Functions
         xlbitXLFree = 0x1000,
         xlbitDLLFree = 0x4000,
         xltypeBigData = xltypeStr | xltypeInt
+    }
+
+    public class XlMissing
+    {
+        private XlMissing() { }
+        public static readonly XlMissing Instance = new XlMissing();
     }
 }
 
