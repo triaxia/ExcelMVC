@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using ExcelMvc.Diagnostics;
 
 namespace Samples
 {
@@ -18,16 +19,35 @@ namespace Samples
 
         private Timer Timer { get; set; }
 
+        public int Start()
+        {
+            Timer = new Timer(TimerElapsed, null, 1000, 1000);
+            Messages.Instance.AddInfoLine("Started");
+            return 1;
+        }
+
+        public void Stop()
+        {
+            Messages.Instance.AddInfoLine("Stopped");
+            Timer.Dispose();
+            Topics.Clear();
+        }
+
+        public int Heartbeat()
+        {
+            return 1;
+        }
+
         public object Connect(int topicId, string[] args)
         {
-            //ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine($"{topicId} connected");
+            Messages.Instance.AddInfoLine($"{topicId} connected");
             Topics[topicId] = new Topic { args = args, value = DateTime.Now };
             return Format(Topics[topicId]);
         }
 
         public void Disconnect(int topicId)
         {
-            //ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine($"{topicId} disconnected");
+            Messages.Instance.AddInfoLine($"{topicId} disconnected");
             Topics.TryRemove(topicId, out var _);
         }
 
@@ -43,35 +63,16 @@ namespace Samples
             return values;
         }
 
-        public int Heartbeat()
-        {
-            return 1;
-        }
-
-        public int Start()
-        {
-            Timer = new Timer(TimerElapsed, null, 5000, 5000);
-            //ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine("Started");
-            return 1;
-        }
-
-        public void Stop()
-        {
-            //ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine("Stopped");
-            Timer.Dispose();
-            Topics.Clear();
-        }
-
-        private static string Format(Topic topic)
-            => $"{topic.value:O}{string.Join(",", topic.args)}";
-
         private void TimerElapsed(object _)
         {
-            //ExcelMvc.Diagnostics.Messages.Instance.AddInfoLine("Time Ticked");
+            Messages.Instance.AddInfoLine("Time Ticked");
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
                 pair.Value.value = DateTime.Now;
             Updated?.Invoke(this, EventArgs.Empty);
         }
+
+        private static string Format(Topic topic)
+            => $"{topic.value:O}{string.Join(",", topic.args)}";
     }
 }
