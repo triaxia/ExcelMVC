@@ -56,6 +56,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorKnown : XlError
     {
+        private XlErrorKnown() { }
         public XlErrors Type => XlErrors.xlerrUnknown;
         public static readonly XlErrorKnown Instance = new XlErrorKnown();
         public override string ToString() => "#???!";
@@ -63,6 +64,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorNull : XlError
     {
+        private XlErrorNull() { }
         public XlErrors Type => XlErrors.xlerrNull;
         public static readonly XlErrorNull Instance = new XlErrorNull();
         public override string ToString() => "#NULL!";
@@ -70,6 +72,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorDiv0 : XlError
     {
+        private XlErrorDiv0() { }
         public XlErrors Type => XlErrors.xlerrDiv0;
         public static readonly XlErrorDiv0 Instance = new XlErrorDiv0();
         public override string ToString() => "#DIV0!";
@@ -77,6 +80,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorValue : XlError
     {
+        private XlErrorValue() { }
         public XlErrors Type => XlErrors.xlerrValue;
         public static readonly XlErrorValue Instance = new XlErrorValue();
         public override string ToString() => "#VALUE!";
@@ -84,6 +88,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorRef : XlError
     {
+        private XlErrorRef() { }
         public XlErrors Type => XlErrors.xlerrRef;
         public static readonly XlErrorRef Instance = new XlErrorRef();
         public override string ToString() => "#REF!";
@@ -91,6 +96,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorName : XlError
     {
+        private XlErrorName() { }
         public XlErrors Type => XlErrors.xlerrName;
         public static readonly XlErrorName Instance = new XlErrorName();
         public override string ToString() => "#NAME?";
@@ -98,6 +104,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorNum: XlError
     {
+        private XlErrorNum() { }
         public XlErrors Type => XlErrors.xlerrNum;
         public static readonly XlErrorNum Instance = new XlErrorNum();
         public override string ToString() => "#NUM!";
@@ -105,6 +112,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorNA : XlError
     {
+        private XlErrorNA() { }
         public XlErrors Type => XlErrors.xlerrNA;
         public static readonly XlErrorNA Instance = new XlErrorNA();
         public override string ToString() => "#N/A";
@@ -112,6 +120,7 @@ namespace ExcelMvc.Functions
 
     public class XlErrorGettingData : XlError
     {
+        private XlErrorGettingData() { }
         public XlErrors Type => XlErrors.xlerrGettingData;
         public static readonly XlErrorGettingData Instance = new XlErrorGettingData();
         public override string ToString() => "#Data!";
