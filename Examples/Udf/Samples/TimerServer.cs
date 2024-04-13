@@ -68,7 +68,7 @@ namespace Samples
             Messages.Instance.AddInfoLine("Time Ticked");
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
-                pair.Value.value = DateTime.Now;
+                pair.Value.value = now;
             Updated?.Invoke(this, EventArgs.Empty);
         }
 
