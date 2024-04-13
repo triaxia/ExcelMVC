@@ -73,6 +73,6 @@ namespace Samples
         }
 
         private static string Format(Topic topic)
-            => $"{topic.value:O}{string.Join(",", topic.args)}";
+            => $"time:{topic.value:O} topic:{string.Join(",", topic.args)}";
     }
 }
