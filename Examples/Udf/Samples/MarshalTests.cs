@@ -94,5 +94,17 @@ namespace Samples
         {
             return value;
         }
+
+        [ExcelFunction(Name = "uObjectArray")]
+        public static object[] ObjectArray(object[] value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uObjectMatrix")]
+        public static object[,] ObjectMatrix(object[,] value)
+        {
+            return value;
+        }
     }
 }

@@ -54,14 +54,15 @@ namespace ExcelMvc.Functions
 
         public XlMarshalContext()
         {
-            DoubleValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(double)));
-            IntValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)));
-            ShortValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(short)));
-            ObjectValue = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(XLOPER12)));
+            DoubleValue = Marshal.AllocCoTaskMem(sizeof(double));
+            IntValue = Marshal.AllocCoTaskMem(sizeof(int));
+            ShortValue = Marshal.AllocCoTaskMem(sizeof(short));
+            ObjectValue = Marshal.AllocCoTaskMem(sizeof(XLOPER12));
 
             DoubleToIntPtr(0);
             Int32ToIntPtr(0);
             Int16ToIntPtr(0);
+            InitObjectValue();
         }
 
         ~XlMarshalContext()
@@ -74,8 +75,7 @@ namespace ExcelMvc.Functions
             Marshal.FreeCoTaskMem(DoubleArrayValue);
             if (ObjectValue != IntPtr.Zero) 
             {
-                XLOPER12 *p = (XLOPER12 *) ObjectValue.ToPointer();
-                p->Dispose();
+                FreeObjectValue();
                 Marshal.FreeCoTaskMem(ObjectValue);
             }
         }

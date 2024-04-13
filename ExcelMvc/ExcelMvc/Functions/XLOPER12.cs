@@ -91,12 +91,12 @@ namespace ExcelMvc.Functions
             };
             xltype = (uint)XlTypes.xltypeNil;
             err = 0;
-            Init(value);
+            Init(value, false);
         }
 
-        public void Init(object value)
+        public void Init(object value, bool dispose)
         {
-            Dispose();
+            if (dispose) Dispose();
             num = 0;
             w = 0;
             any = null;
@@ -193,7 +193,7 @@ namespace ExcelMvc.Functions
                     for (var col = col0; col <= colx; col++)
                     {
                         var ele = array.lparray + col - col0;
-                        ele->Init(sa[col]);
+                        ele->Init(sa[col], false);
                     }
                 }
                 xltype = (uint)XlTypes.xltypeMulti;
@@ -213,7 +213,7 @@ namespace ExcelMvc.Functions
                         for (var col = col0; col <= colx; col++)
                         {
                             var ele = array.lparray + (row - row0) * array.columns + col - col0;
-                            ele->Init(da[row, col]);
+                            ele->Init(da[row, col], false);
                         }
                 }
                 xltype = (uint)XlTypes.xltypeMulti;

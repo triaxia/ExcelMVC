@@ -41,10 +41,22 @@ namespace ExcelMvc.Functions
 {
     public unsafe partial class XlMarshalContext
     {
+        public void InitObjectValue()
+        {
+            XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
+            p->Init(null, false);
+        }
+
+        public void FreeObjectValue()
+        {
+            XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
+            p->Dispose();
+        }
+
         public IntPtr ObjectToIntPtr(object value)
         {
             XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
-            p->Init(value);
+            p->Init(value, true);
             return ObjectValue;
         }
 
@@ -182,14 +194,14 @@ namespace ExcelMvc.Functions
         public IntPtr ObjectArrayToIntPtr(object[] value)
         {
             var x = (XLOPER12 *) ObjectValue.ToPointer();
-            x->Init(value);
+            x->Init(value, true);
             return ObjectValue;
         }
 
         public IntPtr ObjectMatrixToIntPtr(object[,] value)
         {
             var x = (XLOPER12*)ObjectValue.ToPointer();
-            x->Init(value);
+            x->Init(value, true);
             return ObjectValue;
         }
 
