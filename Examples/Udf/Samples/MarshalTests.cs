@@ -106,5 +106,11 @@ namespace Samples
         {
             return value;
         }
+
+        [ExcelFunction(Name = "uObject")]
+        public static object Object(object value)
+        {
+            return value;
+        }
     }
 }
