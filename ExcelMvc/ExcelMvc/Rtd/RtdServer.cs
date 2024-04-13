@@ -34,7 +34,6 @@ using System;
 using System.Linq;
 using ExcelMvc.Diagnostics;
 using ExcelMvc.Runtime;
-using ExcelMvc.Views;
 using Microsoft.Office.Interop.Excel;
 
 namespace ExcelMvc.Rtd

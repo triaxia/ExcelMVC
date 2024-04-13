@@ -47,10 +47,10 @@ namespace ExcelMvc.Functions
         public static int IntPtrToInt32(IntPtr value) => *(int*)value.ToPointer();
         public static uint IntPtrToUInt32(IntPtr value) => (uint)*(int*)value.ToPointer();
         public static short IntPtrToInt16(IntPtr value) => *(short*)value.ToPointer();
-        public static ushort IntPtrToUInt16(IntPtr value) => (ushort) *(short*)value.ToPointer();
+        public static ushort IntPtrToUInt16(IntPtr value) => (ushort)*(short*)value.ToPointer();
         public static byte IntPtrToByte(IntPtr value) => (byte)*(short*)value.ToPointer();
         public static sbyte IntPtrToSByte(IntPtr value) => (sbyte)*(short*)value.ToPointer();
-      
+
         public static string IntPtrToString(IntPtr value)
         {
             if (value == IntPtr.Zero)
@@ -72,7 +72,7 @@ namespace ExcelMvc.Functions
                 return new double[] { };
             var len = rows * cols;
             var result = new double[len];
-            double *x = (double*) &p[2];
+            double* x = (double*)&p[2];
             for (var i = 0; i < len; i++)
                 result[i] = x[i];
             return result;
@@ -135,6 +135,24 @@ namespace ExcelMvc.Functions
             return p->ToObject();
         }
 
+        public static object[] IntPtrToObjectArray(IntPtr value)
+        {
+            /*
+            XLOPER12* p = (XLOPER12*)value.ToPointer();
+            return p->ToObject();
+            */
+            return null;
+        }
+
+        public static object[,] IntPtrToObjectMatrix(IntPtr value)
+        {
+            /*
+            XLOPER12* p = (XLOPER12*)value.ToPointer();
+            return p->ToObject();
+            */
+            return null;
+        }
+
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters
             = new Dictionary<Type, MethodInfo>()
             {
@@ -154,7 +172,9 @@ namespace ExcelMvc.Functions
                 { typeof(double[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDoubleMatrix)) },
                 { typeof(DateTime[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTimeArray)) },
                 { typeof(DateTime[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTimeMatrix)) },
-                { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObject)) }
+                { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObject)) },
+                { typeof(object[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObjectArray)) },
+                { typeof(object[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObjectMatrix)) }
             };
 
         public static MethodInfo IncomingConverter(Type result) =>

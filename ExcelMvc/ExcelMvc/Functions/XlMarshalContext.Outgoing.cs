@@ -143,11 +143,6 @@ namespace ExcelMvc.Functions
             return DoubleArrayValue;
         }
 
-        public IntPtr DateTimeArrayToIntPtr(DateTime[] value)
-        {
-            return DoubleArrayToIntPtr(value.Select(x=>x.ToOADate()).ToArray());
-        }
-
         public IntPtr DoubleMatrixToIntPtr(double[,] value)
         {
             Marshal.FreeCoTaskMem(DoubleArrayValue);
@@ -165,6 +160,11 @@ namespace ExcelMvc.Functions
             return DoubleArrayValue;
         }
 
+        public IntPtr DateTimeArrayToIntPtr(DateTime[] value)
+        {
+            return DoubleArrayToIntPtr(value.Select(x => x.ToOADate()).ToArray());
+        }
+
         public IntPtr DateTimeMatrixToIntPtr(DateTime[,] value)
         {
             var rows = value?.GetLength(0) ?? 0;
@@ -176,6 +176,17 @@ namespace ExcelMvc.Functions
                 for (var col = 0; col < cols; col++)
                     cells[row, col] = value[row, col].ToOADate();
             return DoubleMatrixToIntPtr(cells);
+        }
+
+
+        public IntPtr ObjectArrayToIntPtr(object[] value)
+        {
+            return IntPtr.Zero;
+        }
+
+        public IntPtr ObjectMatrixToIntPtr(object[,] value)
+        {
+            return IntPtr.Zero;
         }
 
         private static void Copy(string source, int length, IntPtr target)
@@ -205,6 +216,8 @@ namespace ExcelMvc.Functions
                 { typeof(DateTime[]), typeof(XlMarshalContext).GetMethod(nameof(DateTimeArrayToIntPtr)) },
                 { typeof(DateTime[,]), typeof(XlMarshalContext).GetMethod(nameof(DateTimeMatrixToIntPtr)) },
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtr)) },
+                { typeof(object[]), typeof(XlMarshalContext).GetMethod(nameof(ObjectArrayToIntPtr)) },
+                { typeof(object[,]), typeof(XlMarshalContext).GetMethod(nameof(ObjectMatrixToIntPtr)) }
             };
 
         public static MethodInfo OutgoingConverter(Type result) =>
