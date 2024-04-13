@@ -31,6 +31,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using ExcelMvc.Diagnostics;
 using System;
 using System.Runtime.InteropServices;
 
@@ -182,36 +183,39 @@ namespace ExcelMvc.Functions
             }
             else if (value is object[] sa)
             {
-                if (sa.Length == 0) return;
-                array.rows = 1;
+                array.rows = sa.Length > 0 ? 1 : 0;
                 array.columns = sa.Length;
-                array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(sa.Length * sizeof(XLOPER12));
-                var col0 = sa.GetLowerBound(0);
-                var colx = sa.GetUpperBound(0);
-                for (var col = col0; col <= colx; col++)
+                if (array.rows != 0 && array.columns != 0)
                 {
-                    var ele = array.lparray + col - col0;
-                    ele->Init(sa[col]);
+                    array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(sa.Length * sizeof(XLOPER12));
+                    var col0 = sa.GetLowerBound(0);
+                    var colx = sa.GetUpperBound(0);
+                    for (var col = col0; col <= colx; col++)
+                    {
+                        var ele = array.lparray + col - col0;
+                        ele->Init(sa[col]);
+                    }
                 }
                 xltype = (uint)XlTypes.xltypeMulti;
             }
             else if (value is object[,] da)
             {
-                if (da.Length == 0) return;
                 array.rows = da.GetLength(0);
                 array.columns = da.GetLength(1);
-                var xxx = Marshal.SizeOf(typeof(XLOPER12));
-                array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(array.rows * array.columns * sizeof(XLOPER12));
-                var row0 = da.GetLowerBound(0);
-                var rowx = da.GetUpperBound(0);
-                var col0 = da.GetLowerBound(1);
-                var colx = da.GetUpperBound(1);
-                for (var row = row0; row <= rowx; row++)
-                    for (var col = col0; col <= colx; col++)
-                    {
-                        var ele = array.lparray + (row - row0) * array.columns + col - col0;
-                        ele->Init(da[row, col]);
-                    }
+                if (array.rows != 0 && array.columns != 0)
+                {
+                    array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(array.rows * array.columns * sizeof(XLOPER12));
+                    var row0 = da.GetLowerBound(0);
+                    var rowx = da.GetUpperBound(0);
+                    var col0 = da.GetLowerBound(1);
+                    var colx = da.GetUpperBound(1);
+                    for (var row = row0; row <= rowx; row++)
+                        for (var col = col0; col <= colx; col++)
+                        {
+                            var ele = array.lparray + (row - row0) * array.columns + col - col0;
+                            ele->Init(da[row, col]);
+                        }
+                }
                 xltype = (uint)XlTypes.xltypeMulti;
             }
             else if (value is XlError xle)
@@ -221,7 +225,7 @@ namespace ExcelMvc.Functions
             }
             else if (value is XlMissing)
             {
-                xltype = (uint) XlTypes.xltypeMissing;
+                xltype = (uint)XlTypes.xltypeMissing;
             }
             else if (value is XlEmpty)
             {
@@ -247,6 +251,8 @@ namespace ExcelMvc.Functions
                         d[idx - 1] = p[idx];
                     return new string(d);
                 case XlTypes.xltypeMulti:
+                    if (array.rows == 0 || array.columns == 0)
+                        return new object[] { };
                     var result = new object[array.rows, array.columns];
                     for (var row = 0; row < array.rows; row++)
                         for (var col = 0; col < array.columns; col++)
@@ -263,6 +269,82 @@ namespace ExcelMvc.Functions
                     return XlErrorFactory.TypeToObject((XlErrors)err);
             }
             return null;
+        }
+
+        public object[] ToObjectArray()
+        {
+            var type = (XlTypes)xltype & ~XlTypes.xlbitDLLFree & ~XlTypes.xlbitXLFree;
+            switch (type)
+            {
+                case XlTypes.xltypeInt: return new object[] { w };
+                case XlTypes.xltypeNum: return new object[] { num };
+                case XlTypes.xltypeBool: return new object[] { w != 0 };
+                case XlTypes.xltypeStr:
+                    char* p = (char*)any;
+                    var length = p[0];
+                    if (length == 0)
+                        return new object[] { String.Empty };
+                    var d = new char[length];
+                    for (var idx = 1; idx <= length; idx++)
+                        d[idx - 1] = p[idx];
+                    return new object[] { new string(d) };
+                case XlTypes.xltypeMulti:
+                    if (array.rows == 0 || array.columns == 0)
+                        return new object[] { };
+                    var result = new object[array.rows * array.columns];
+                    for (var row = 0; row < array.rows; row++)
+                        for (var col = 0; col < array.columns; col++)
+                        {
+                            var ele = array.lparray + row * array.columns + col;
+                            result[row * array.columns + col] = ele->ToObject();
+                        }
+                    return result;
+                case XlTypes.xltypeNil:
+                    return new object[] { XlEmpty.Instance };
+                case XlTypes.xltypeMissing:
+                    return new object[] { XlMissing.Instance };
+                case XlTypes.xltypeErr:
+                    return new object[] { XlErrorFactory.TypeToObject((XlErrors)err) };
+            }
+            return new object[] { };
+        }
+
+        public object[,] ToObjectMatrix()
+        {
+            var type = (XlTypes)xltype & ~XlTypes.xlbitDLLFree & ~XlTypes.xlbitXLFree;
+            switch (type)
+            {
+                case XlTypes.xltypeInt: return new object[,] { { w } };
+                case XlTypes.xltypeNum: return new object[,] { { num } };
+                case XlTypes.xltypeBool: return new object[,] { { w != 0 } };
+                case XlTypes.xltypeStr:
+                    char* p = (char*)any;
+                    var length = p[0];
+                    if (length == 0)
+                        return new object[,] { { String.Empty } };
+                    var d = new char[length];
+                    for (var idx = 1; idx <= length; idx++)
+                        d[idx - 1] = p[idx];
+                    return new object[,] { { new string(d) } };
+                case XlTypes.xltypeMulti:
+                    if (array.rows == 0 || array.columns == 0)
+                        return new object[,] { };
+                    var result = new object[array.rows, array.columns];
+                    for (var row = 0; row < array.rows; row++)
+                        for (var col = 0; col < array.columns; col++)
+                        {
+                            var ele = array.lparray + row * array.columns + col;
+                            result[row, col] = ele->ToObject();
+                        }
+                    return result;
+                case XlTypes.xltypeNil:
+                    return new object[,] { { XlEmpty.Instance } };
+                case XlTypes.xltypeMissing:
+                    return new object[,] { { XlMissing.Instance } };
+                case XlTypes.xltypeErr:
+                    return new object[,] { { XlErrorFactory.TypeToObject((XlErrors)err) } };
+            }
+            return new object[,] { };
         }
     }
 }

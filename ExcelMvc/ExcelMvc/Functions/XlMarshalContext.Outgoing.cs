@@ -181,12 +181,16 @@ namespace ExcelMvc.Functions
 
         public IntPtr ObjectArrayToIntPtr(object[] value)
         {
-            return IntPtr.Zero;
+            var x = (XLOPER12 *) ObjectValue.ToPointer();
+            x->Init(value);
+            return ObjectValue;
         }
 
         public IntPtr ObjectMatrixToIntPtr(object[,] value)
         {
-            return IntPtr.Zero;
+            var x = (XLOPER12*)ObjectValue.ToPointer();
+            x->Init(value);
+            return ObjectValue;
         }
 
         private static void Copy(string source, int length, IntPtr target)

@@ -137,20 +137,14 @@ namespace ExcelMvc.Functions
 
         public static object[] IntPtrToObjectArray(IntPtr value)
         {
-            /*
             XLOPER12* p = (XLOPER12*)value.ToPointer();
-            return p->ToObject();
-            */
-            return null;
+            return p->ToObjectArray();
         }
 
         public static object[,] IntPtrToObjectMatrix(IntPtr value)
         {
-            /*
             XLOPER12* p = (XLOPER12*)value.ToPointer();
-            return p->ToObject();
-            */
-            return null;
+            return p->ToObjectMatrix();
         }
 
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters

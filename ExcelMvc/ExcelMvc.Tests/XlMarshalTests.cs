@@ -144,6 +144,22 @@ namespace ExcelMvc.Tests
                 { start.AddDays(21), start.AddDays(22), start.AddDays(23) } }, true);
         }
 
+        public static object[] MarshalObjectArray(object[] x) => x;
+        [TestMethod]
+        public void Marshal_ObjectArray()
+        {
+            var method = typeof(XlMarshalTests).GetMethod(nameof(MarshalObjectArray));
+            AssertMarshal<object[]>(method, new object[] { "a", "b", "c", 1, 2, 3 }, true);
+        }
+
+        public static object[,] MarshalObjectMatrix(object[,] x) => x;
+        [TestMethod]
+        public void Marshal_ObjectMatrix()
+        {
+            var method = typeof(XlMarshalTests).GetMethod(nameof(MarshalObjectMatrix));
+            AssertMarshal<object[,]>(method, new object[,] { { "a", "b", "c" }, { 1, 2, 3 } }, true);
+        }
+
         private static void AssertMarshal<TValue>(MethodInfo method, TValue value
             ,bool isCollection = false)
         {
