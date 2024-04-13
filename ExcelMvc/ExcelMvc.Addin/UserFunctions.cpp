@@ -226,33 +226,34 @@ LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 	NormaliseHelpTopic(pFunction, pxHelpTopic);
 
 	auto count = 10 + pFunction->ArgumentCount;
-	auto pParams = new LPXLOPER12[count];
+	auto parameters = new LPXLOPER12[count];
 
-	pParams[0] = &xDll;
-	pParams[1] = TempStr12(pxProcedure);
-	pParams[2] = TempStr12(pxTypeText.c_str());
-	pParams[3] = TempStr12(pxFunctionText);
-	pParams[4] = TempStr12(pxArgumentText.c_str());
-	pParams[5] = TempInt12(pxMacroType);
-	pParams[6] = TempStr12(pxCategory);
-	pParams[7] = TempStr12(pxShortcutText);
-	pParams[8] = TempStr12(pxHelpTopic.c_str());
+	parameters[0] = &xDll;
+	parameters[1] = TempStr12(pxProcedure);
+	parameters[2] = TempStr12(pxTypeText.c_str());
+	parameters[3] = TempStr12(pxFunctionText);
+	parameters[4] = TempStr12(pxArgumentText.c_str());
+	parameters[5] = TempInt12(pxMacroType);
+	parameters[6] = TempStr12(pxCategory);
+	parameters[7] = TempStr12(pxShortcutText);
+	parameters[8] = TempStr12(pxHelpTopic.c_str());
 
 	// Excel function Wizard truncates total function help text by up to two characters...
 	// So we fool it by adding two spaces.
-	pParams[9] = pFunction->ArgumentCount == 0 ?
+	parameters[9] = pFunction->ArgumentCount == 0 ?
 		TempStr12SpacesPadded(pFunction->Description, 2)
 		: TempStr12(NullCoalesce(pFunction->Description));
 
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
-		pParams[10 + idx] = idx == pFunction->ArgumentCount - 1 ?
+		parameters[10 + idx] = idx == pFunction->ArgumentCount - 1 ?
 			TempStr12SpacesPadded(pFunction->Arguments[idx].Description, 2)
 			: TempStr12(NullCoalesce(pFunction->Arguments[idx].Description));
 	}
 
-	Excel12v(xlfRegister, regId, count, pParams);
-	delete[] pParams;
+	Excel12v(xlfRegister, regId, count, parameters);
+	FreeAllTempMemory();
+	delete[] parameters;
 
 	if (regId != NULL) regId->xltype = regId->xltype | xlbitDLLFree;
 	return regId;
@@ -278,7 +279,7 @@ LPXLOPER12 __stdcall RtdCall(FunctionArguments * args)
 	Excel12v(xlfRtd, result, args->ArgumentCount, parameters);
 	result->xltype = result->xltype | xlbitDLLFree;
 
-	// actual XLOPER12 will be deleted by TempStr12!
+	FreeAllTempMemory();
 	delete[] parameters;
 	return result;
 }
