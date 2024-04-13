@@ -59,7 +59,7 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Intialises an instance of Window
+        /// Initializes an instance of Window
         /// </summary>
         public AsyncWindow()
         {

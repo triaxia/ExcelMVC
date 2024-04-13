@@ -32,6 +32,7 @@ Boston, MA 02110-1301 USA.
 */
 
 using ExcelMvc.Rtd;
+using ExcelMvc.Views;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -41,23 +42,23 @@ namespace ExcelMvc.Functions
     public static class XlCall
     {
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RegisterFunction")]
-        public static extern IntPtr RegisterFunction64(IntPtr function);
+        internal static extern IntPtr RegisterFunction64(IntPtr function);
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RegisterFunction")]
-        public static extern IntPtr RegisterFunction32(IntPtr function);
+        internal static extern IntPtr RegisterFunction32(IntPtr function);
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "AsyncReturn")]
-        public static extern IntPtr AsyncReturn64(IntPtr handle, IntPtr result);
+        internal static extern IntPtr AsyncReturn64(IntPtr handle, IntPtr result);
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "AsyncReturn")]
-        public static extern IntPtr AsyncReturn32(IntPtr handle, IntPtr result);
+        internal static extern IntPtr AsyncReturn32(IntPtr handle, IntPtr result);
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "xlAutoFree12")]
-        public static extern IntPtr xlAutoFree64(IntPtr handle);
+        internal static extern IntPtr xlAutoFree64(IntPtr handle);
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "xlAutoFree12")]
-        public static extern IntPtr xlAutoFree32(IntPtr handle);
+        internal static extern IntPtr xlAutoFree32(IntPtr handle);
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RtdCall")]
-        public static extern IntPtr RtdCall64(IntPtr args);
+        internal static extern IntPtr RtdCall64(IntPtr args);
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RtdCall")]
-        public static extern IntPtr RtdCall32(IntPtr args);
+        internal static extern IntPtr RtdCall32(IntPtr args);
 
-        public static void RegisterFunction(Function function)
+        internal static void RegisterFunction(Function function)
         {
             using (var pFunction = new StructIntPtr<Function>(ref function))
             {
@@ -68,7 +69,7 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public static void AsyncReturn(IntPtr handle, IntPtr result)
+        internal static void AsyncReturn(IntPtr handle, IntPtr result)
         {
             if (Environment.Is64BitProcess)
                 xlAutoFree64(AsyncReturn64(handle, result));
@@ -90,7 +91,13 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public unsafe static object CallRtd(Type implType, Func<IRtdServerImpl> implFactory
+        public static int RTDThrottleIntervalMilliseconds
+        {
+            get => App.Instance.Underlying.RTD.ThrottleInterval;
+            set => App.Instance.Underlying.RTD.ThrottleInterval = value;
+        }
+
+        public unsafe static object RTD(Type implType, Func<IRtdServerImpl> implFactory
             , string arg0, params string[] args)
         {
             using (var reg = new RtdRegistry(implType, implFactory))
@@ -109,7 +116,13 @@ namespace ExcelMvc.Functions
                         ptr = RtdCall32(pArgs.Ptr);
                 }
                 var result = (XLOPER12*)ptr.ToPointer();
-                return result == null ? null : result->ToObject();
+                var obj = result == null ? null : result->ToObject();
+
+                if (Environment.Is64BitProcess)
+                    xlAutoFree64(ptr);
+                else
+                    xlAutoFree32(ptr);
+                return obj;
             }
         }
     }

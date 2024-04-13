@@ -41,12 +41,6 @@ namespace ExcelMvc.Rtd
 {
     public class RtdServer : IRtdServer
     {
-        public static int ThrottleIntervalMilliseconds
-        {
-            get => App.Instance.Underlying.RTD.ThrottleInterval;
-            set => App.Instance.Underlying.RTD.ThrottleInterval = value;
-        }
-
         private IRTDUpdateEvent CallbackObject { get; set; }
 
         public IRtdServerImpl Impl { get; }

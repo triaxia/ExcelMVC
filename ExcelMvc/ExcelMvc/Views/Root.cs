@@ -44,7 +44,7 @@ namespace ExcelMvc.Views
     {
 
         /// <summary>
-        /// Intialises an instance of Window
+        /// Initializes an instance of Window
         /// </summary>
         /// <param name="hwnd">Window handle</param>
         public Root(int hwnd)
