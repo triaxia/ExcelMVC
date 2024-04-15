@@ -31,6 +31,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -40,7 +41,18 @@ namespace ExcelMvc.Functions
     {
         public static Delegate MakeOuterDelegate(MethodInfo method)
         {
-            var instance = new LazyDelegate(() => MakeInnerDelegate(method));
+            var instance = new LazyDelegate(() =>
+            {
+                try
+                {
+                    return MakeInnerDelegate(method);
+                }
+                catch (Exception ex)
+                {
+                    XlMarshalException.HandleUnhandledException(ex);
+                    return MakeZeroDelegate(method);
+                }
+            });
             var count = method.GetParameters().Length;
             if (method.ReturnType.Equals(typeof(void)))
             {
@@ -66,15 +78,6 @@ namespace ExcelMvc.Functions
                     , outerParameters[index]);
             }
 
-            /* below does not work, lambda.Compile() throws an error, cannot work out why!
-            var expressions = method.GetParameters()
-                .Select(x => (x.ParameterType, expression: Expression.Parameter(typeof(IntPtr), x.Name)));
-            var outerParameters = expressions.Select(x => x.expression)
-                .ToArray();
-            var innerParameters = expressions.Select(x => Expression.Call(XlMarshalContext.IncomingConverter(x.ParameterType), x.expression))
-                .ToArray();
-            */
-
             var innerCall = Expression.Call(method, innerParameters);
 
             var ex = Expression.Variable(typeof(Exception), "ex");
@@ -82,7 +85,7 @@ namespace ExcelMvc.Functions
 
             if (method.ReturnType == typeof(void))
             {
-                var catcher = Expression.Block(exHandler, Expression.Empty()); // TODO
+                var catcher = Expression.Block(exHandler, Expression.Empty());
                 var body = Expression.TryCatch(innerCall, Expression.Catch(ex, catcher));
                 var delegateType = ActionDelegate.Actions[outerParameters.Length];
                 return Expression.Lambda(delegateType, body, method.Name, outerParameters).Compile();
@@ -101,6 +104,25 @@ namespace ExcelMvc.Functions
 
                 var delegateType = FunctionDelegate.Functions[outerParameters.Length];
                 var lambda = Expression.Lambda(delegateType, body, method.Name, outerParameters);
+                return lambda.Compile();
+            }
+        }
+
+        public static Delegate MakeZeroDelegate(MethodInfo method)
+        {
+            var outerParameters = method.GetParameters()
+                .Select(x => Expression.Parameter(typeof(IntPtr), x.Name))
+                .ToArray();
+
+            if (method.ReturnType == typeof(void))
+            {
+                var delegateType = ActionDelegate.Actions[outerParameters.Length];
+                return Expression.Lambda(delegateType, Expression.Empty(), method.Name, outerParameters).Compile();
+            }
+            else
+            {
+                var delegateType = FunctionDelegate.Functions[outerParameters.Length];
+                var lambda = Expression.Lambda(delegateType, Expression.Constant(IntPtr.Zero), method.Name, outerParameters);
                 return lambda.Compile();
             }
         }
