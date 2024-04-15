@@ -50,10 +50,10 @@ namespace ExcelMvc.Functions
 
     public static class XlMarshalException
     {
-        public static event EventHandler<EventArgs> Failed;
-        public static object HandleUnhandledException(object ex)
+        public static event EventHandler<XlMarshalExceptionEventArgs> Failed;
+        public static object HandleUnhandledException(Exception ex)
         {
-            Messages.Instance.AddErrorLine($"{ex}");
+            Messages.Instance.AddErrorLine(ex);
             if (Failed == null) return XlErrorValue.Instance;
             try
             {
@@ -63,7 +63,7 @@ namespace ExcelMvc.Functions
             }
             catch(Exception e)
             {
-                Messages.Instance.AddErrorLine($"{e}");
+                Messages.Instance.AddErrorLine(e);
                 return XlErrorValue.Instance;
             }
         }
