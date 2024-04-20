@@ -31,7 +31,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-using ExcelMvc.Diagnostics;
 using System;
 using System.Runtime.InteropServices;
 
@@ -156,15 +155,13 @@ namespace ExcelMvc.Functions
                 w = (int)uit;
                 xltype = (uint)XlTypes.xltypeInt;
             }
-            else if (value is long lg)
+            else if (value is long ln)
             {
-                num = lg;
-                xltype = (uint)XlTypes.xltypeNum;
+                Init(ln.ToString(), true);
             }
-            else if (value is ulong ulg)
+            else if (value is ulong uln)
             {
-                num = ulg;
-                xltype = (uint)XlTypes.xltypeNum;
+                Init(uln.ToString(), true);
             }
             else if (value is string sr)
             {
@@ -183,40 +180,48 @@ namespace ExcelMvc.Functions
             }
             else if (value is object[] sa)
             {
-                array.rows = sa.Length > 0 ? 1 : 0;
-                array.columns = sa.Length;
-                if (array.rows != 0 && array.columns != 0)
+                if (sa.Length == 0)
                 {
+                    Init("", true);
+                }
+                else
+                {
+                    array.rows = sa.Length > 0 ? 1 : 0;
+                    array.columns = sa.Length;
                     array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(sa.Length * sizeof(XLOPER12));
                     var col0 = sa.GetLowerBound(0);
-                    var colx = sa.GetUpperBound(0);
-                    for (var col = col0; col <= colx; col++)
+                    var col1 = sa.GetUpperBound(0);
+                    for (var col = col0; col <= col1; col++)
                     {
                         var ele = array.lparray + col - col0;
                         ele->Init(sa[col], false);
                     }
+                    xltype = (uint)XlTypes.xltypeMulti;
                 }
-                xltype = (uint)XlTypes.xltypeMulti;
             }
             else if (value is object[,] da)
             {
-                array.rows = da.GetLength(0);
-                array.columns = da.GetLength(1);
-                if (array.rows != 0 && array.columns != 0)
+                if (da.Length == 0)
                 {
+                    Init("", true);
+                }
+                else
+                {
+                    array.rows = da.GetLength(0);
+                    array.columns = da.GetLength(1);
                     array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(array.rows * array.columns * sizeof(XLOPER12));
                     var row0 = da.GetLowerBound(0);
-                    var rowx = da.GetUpperBound(0);
+                    var row1 = da.GetUpperBound(0);
                     var col0 = da.GetLowerBound(1);
-                    var colx = da.GetUpperBound(1);
-                    for (var row = row0; row <= rowx; row++)
-                        for (var col = col0; col <= colx; col++)
+                    var col1 = da.GetUpperBound(1);
+                    for (var row = row0; row <= row1; row++)
+                        for (var col = col0; col <= col1; col++)
                         {
                             var ele = array.lparray + (row - row0) * array.columns + col - col0;
                             ele->Init(da[row, col], false);
                         }
+                    xltype = (uint)XlTypes.xltypeMulti;
                 }
-                xltype = (uint)XlTypes.xltypeMulti;
             }
             else if (value is XlError xle)
             {
@@ -245,7 +250,7 @@ namespace ExcelMvc.Functions
                     char* p = (char*)any;
                     var length = p[0];
                     if (length == 0)
-                        return String.Empty;
+                        return string.Empty;
                     var d = new char[length];
                     for (var idx = 1; idx <= length; idx++)
                         d[idx - 1] = p[idx];

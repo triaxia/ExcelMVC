@@ -142,54 +142,73 @@ namespace ExcelMvc.Functions
 
         public IntPtr DoubleArrayToIntPtr(double[] value)
         {
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
             Marshal.FreeCoTaskMem(DoubleArrayValue);
-            var len = value?.Length ?? 0;
+            var len = value.Length;
             DoubleArrayValue = Marshal.AllocCoTaskMem(sizeof(int) * 2 + sizeof(double) * len);
             int* p = (int*)DoubleArrayValue.ToPointer();
             p[0] = 1;
             p[1] = len;
 
             double* d = (double*)&p[2];
-            for (var idx = 0; idx < len; idx++)
-                d[idx] = value[idx];
+            var col0 = value.GetLowerBound(0);
+            for (var col = 0; col < len; col++)
+                d[col] = value[col0 + col];
             return DoubleArrayValue;
         }
 
         public IntPtr DoubleMatrixToIntPtr(double[,] value)
         {
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
             Marshal.FreeCoTaskMem(DoubleArrayValue);
-            var rows = value?.GetLength(0) ?? 0;
-            var cols = value?.GetLength(1) ?? 0;
+            var rows = value.GetLength(0);
+            var cols = value.GetLength(1);
             DoubleArrayValue = Marshal.AllocCoTaskMem(sizeof(int) * 2 + sizeof(double) * rows * cols);
             int* p = (int*)DoubleArrayValue.ToPointer();
             p[0] = rows;
             p[1] = cols;
 
             double* d = (double*)&p[2];
+            var row0= value.GetLowerBound(0);
+            var col0 = value.GetLowerBound(1);
             for (var row = 0; row < rows; row++)
                 for (var col = 0; col < cols; col++)
-                    d[row * cols + col] = value[row, col];
+                    d[row * cols + col] = value[row0 + row, col0 + col];
             return DoubleArrayValue;
         }
 
         public IntPtr DateTimeArrayToIntPtr(DateTime[] value)
         {
-            return DoubleArrayToIntPtr(value.Select(x => x.ToOADate()).ToArray());
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
+            var cols = value.Length;
+            var cells = new double[cols];
+            var col0 = value.GetLowerBound(0);
+            for (var col = 0; col < cols; col++)
+                cells[col] = value[col0 + col].ToOADate();
+            return DoubleArrayToIntPtr(cells);
         }
 
         public IntPtr DateTimeMatrixToIntPtr(DateTime[,] value)
         {
-            var rows = value?.GetLength(0) ?? 0;
-            var cols = value?.GetLength(1) ?? 0;
-            if (rows == 0 || cols == 0)
-                return DoubleMatrixToIntPtr(new double[,] { });
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
+            var rows = value.GetLength(0);
+            var cols = value.GetLength(1);
             var cells = new double[rows, cols];
+            var row0 = value.GetLowerBound(0);
+            var col0 = value.GetLowerBound(1);
             for (var row = 0; row < rows; row++)
                 for (var col = 0; col < cols; col++)
-                    cells[row, col] = value[row, col].ToOADate();
+                    cells[row, col] = value[row0 + row, col0 + col].ToOADate();
             return DoubleMatrixToIntPtr(cells);
         }
-
 
         public IntPtr ObjectArrayToIntPtr(object[] value)
         {
