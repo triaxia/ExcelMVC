@@ -77,17 +77,29 @@ namespace ExcelMvc.Functions
                 xlAutoFree32(AsyncReturn32(handle, result));
         }
 
+        public static IntPtr GetAsyncHandle(IntPtr handle)
+        {
+            unsafe
+            {
+                var p = (XLOPER12*)handle.ToPointer();
+                return p->bigdata.data;
+            }
+        }
+
         public static void SetAsyncResult(IntPtr handle, object result)
         {
-            var outcome = XLOPER12.FromObject(result);
+            var xlhandle = XLOPER12.FromObject(handle);
+            var xlresult = XLOPER12.FromObject(result);
             try
             {
-                using (var ptr = new StructIntPtr<XLOPER12>(ref outcome))
-                    AsyncReturn(handle, ptr.Ptr);
+                using (var p1 = new StructIntPtr<XLOPER12>(ref xlhandle))
+                using (var p2 = new StructIntPtr<XLOPER12>(ref xlresult))
+                    AsyncReturn(p1.Ptr, p2.Ptr);
             }
             finally
             {
-                outcome.Dispose();
+                xlresult.Dispose();
+                xlhandle.Dispose();
             }
         }
 

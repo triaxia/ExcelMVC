@@ -37,6 +37,13 @@ using System.Runtime.InteropServices;
 namespace ExcelMvc.Functions
 {
     [StructLayout(LayoutKind.Sequential)]
+    unsafe public struct XLBigData
+    {
+        public IntPtr data;
+        public long cbCount;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     unsafe public struct XLArray
     {
         public XLOPER12* lparray;
@@ -50,8 +57,9 @@ namespace ExcelMvc.Functions
         [FieldOffset(0)] public double num;
         [FieldOffset(0)] public int w;
         [FieldOffset(0)] public int err;
-        [FieldOffset(0)] public void* any;
-        [FieldOffset(0)] XLArray array;
+        [FieldOffset(0)] public char* str;
+        [FieldOffset(0)] public XLBigData bigdata;
+        [FieldOffset(0)] public XLArray array;
         [FieldOffset(24)] public uint xltype;
 
         public static XLOPER12 FromObject(object value)
@@ -71,8 +79,8 @@ namespace ExcelMvc.Functions
 
         public void Dispose()
         {
-            if (xltype == (uint)XlTypes.xltypeStr && any != null)
-                Marshal.FreeCoTaskMem((IntPtr)any);
+            if (xltype == (uint)XlTypes.xltypeStr && str != null)
+                Marshal.FreeCoTaskMem((IntPtr)str);
             if (xltype == (uint)XlTypes.xltypeMulti && array.lparray != null)
                 Marshal.FreeCoTaskMem((IntPtr)array.lparray);
         }
@@ -81,12 +89,17 @@ namespace ExcelMvc.Functions
         {
             num = 0;
             w = 0;
-            any = null;
+            str = null;
             array = new XLArray
             {
                 rows = 0,
                 columns = 0,
                 lparray = null
+            };
+            bigdata = new XLBigData
+            {
+                data = IntPtr.Zero,
+                cbCount = 0,
             };
             xltype = (uint)XlTypes.xltypeNil;
             err = 0;
@@ -98,7 +111,7 @@ namespace ExcelMvc.Functions
             if (dispose) Dispose();
             num = 0;
             w = 0;
-            any = null;
+            str = null;
             array = new XLArray
             {
                 rows = 0,
@@ -165,12 +178,11 @@ namespace ExcelMvc.Functions
             }
             else if (value is string sr)
             {
-                any = (char*)Marshal.AllocCoTaskMem((sr.Length + 1) * sizeof(char));
-                char* p = (char*)any;
-                p[0] = (char)sr.Length;
+                str = (char*)Marshal.AllocCoTaskMem((sr.Length + 1) * sizeof(char));
+                str[0] = (char)sr.Length;
                 for (var idx = 1; idx <= sr.Length; idx++)
-                    p[idx] = sr[idx - 1];
-                p[sr.Length + 1] = (char)0;
+                    str[idx] = sr[idx - 1];
+                str[sr.Length + 1] = (char)0;
                 xltype = (uint)XlTypes.xltypeStr;
             }
             else if (value is DateTime dt)
@@ -236,6 +248,12 @@ namespace ExcelMvc.Functions
             {
                 xltype = (uint)XlTypes.xltypeNil;
             }
+            else if (value is IntPtr)
+            {
+                bigdata.data = (IntPtr)value;
+                bigdata.cbCount = 0;
+                xltype = (uint)XlTypes.xltypeBigData;
+            }
         }
 
         public object ToObject()
@@ -247,13 +265,12 @@ namespace ExcelMvc.Functions
                 case XlTypes.xltypeNum: return num;
                 case XlTypes.xltypeBool: return w != 0;
                 case XlTypes.xltypeStr:
-                    char* p = (char*)any;
-                    var length = p[0];
+                    var length = str[0];
                     if (length == 0)
                         return string.Empty;
                     var d = new char[length];
                     for (var idx = 1; idx <= length; idx++)
-                        d[idx - 1] = p[idx];
+                        d[idx - 1] = str[idx];
                     return new string(d);
                 case XlTypes.xltypeMulti:
                     if (array.rows == 0 || array.columns == 0)
@@ -285,13 +302,12 @@ namespace ExcelMvc.Functions
                 case XlTypes.xltypeNum: return new object[] { num };
                 case XlTypes.xltypeBool: return new object[] { w != 0 };
                 case XlTypes.xltypeStr:
-                    char* p = (char*)any;
-                    var length = p[0];
+                    var length = str[0];
                     if (length == 0)
                         return new object[] { String.Empty };
                     var d = new char[length];
                     for (var idx = 1; idx <= length; idx++)
-                        d[idx - 1] = p[idx];
+                        d[idx - 1] = str[idx];
                     return new object[] { new string(d) };
                 case XlTypes.xltypeMulti:
                     if (array.rows == 0 || array.columns == 0)
@@ -323,13 +339,12 @@ namespace ExcelMvc.Functions
                 case XlTypes.xltypeNum: return new object[,] { { num } };
                 case XlTypes.xltypeBool: return new object[,] { { w != 0 } };
                 case XlTypes.xltypeStr:
-                    char* p = (char*)any;
-                    var length = p[0];
+                    var length = str[0];
                     if (length == 0)
                         return new object[,] { { String.Empty } };
                     var d = new char[length];
                     for (var idx = 1; idx <= length; idx++)
-                        d[idx - 1] = p[idx];
+                        d[idx - 1] = str[idx];
                     return new object[,] { { new string(d) } };
                 case XlTypes.xltypeMulti:
                     if (array.rows == 0 || array.columns == 0)
