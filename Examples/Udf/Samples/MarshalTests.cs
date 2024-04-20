@@ -83,6 +83,18 @@ namespace Samples
             return value;
         }
 
+        [ExcelFunction(Name = "uInt32Array")]
+        public static int[] Int32Array(int[] value)
+        {
+            return value;
+        }
+
+        [ExcelFunction(Name = "uInt32Matrix")]
+        public static int[,] Int32Matrix(int[,] value)
+        {
+            return value;
+        }
+
         [ExcelFunction(Name = "uDateTimeArray")]
         public static DateTime[] DateTimeArray(DateTime[] value)
         {

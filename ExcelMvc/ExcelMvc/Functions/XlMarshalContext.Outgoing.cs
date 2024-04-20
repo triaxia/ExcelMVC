@@ -210,6 +210,35 @@ namespace ExcelMvc.Functions
             return DoubleMatrixToIntPtr(cells);
         }
 
+        public IntPtr Int32ArrayToIntPtr(int[] value)
+        {
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
+            var cols = value.Length;
+            var cells = new double[cols];
+            var col0 = value.GetLowerBound(0);
+            for (var col = 0; col < cols; col++)
+                cells[col] = value[col0 + col];
+            return DoubleArrayToIntPtr(cells);
+        }
+
+        public IntPtr Int32MatrixToIntPtr(int[,] value)
+        {
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
+            var rows = value.GetLength(0);
+            var cols = value.GetLength(1);
+            var cells = new double[rows, cols];
+            var row0 = value.GetLowerBound(0);
+            var col0 = value.GetLowerBound(1);
+            for (var row = 0; row < rows; row++)
+                for (var col = 0; col < cols; col++)
+                    cells[row, col] = value[row0 + row, col0 + col];
+            return DoubleMatrixToIntPtr(cells);
+        }
+
         public IntPtr ObjectArrayToIntPtr(object[] value)
         {
             var x = (XLOPER12 *) ObjectValue.ToPointer();
@@ -248,6 +277,8 @@ namespace ExcelMvc.Functions
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(StringToIntPtr)) },
                 { typeof(double[]), typeof(XlMarshalContext).GetMethod(nameof(DoubleArrayToIntPtr)) },
                 { typeof(double[,]), typeof(XlMarshalContext).GetMethod(nameof(DoubleMatrixToIntPtr)) },
+                { typeof(int[]), typeof(XlMarshalContext).GetMethod(nameof(Int32ArrayToIntPtr)) },
+                { typeof(int[,]), typeof(XlMarshalContext).GetMethod(nameof(Int32MatrixToIntPtr)) },
                 { typeof(DateTime[]), typeof(XlMarshalContext).GetMethod(nameof(DateTimeArrayToIntPtr)) },
                 { typeof(DateTime[,]), typeof(XlMarshalContext).GetMethod(nameof(DateTimeMatrixToIntPtr)) },
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtr)) },
