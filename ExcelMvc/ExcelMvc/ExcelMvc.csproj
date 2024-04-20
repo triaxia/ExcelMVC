@@ -6,7 +6,7 @@
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Version>2.0.2-alpha</Version>
-		<Description>Writing Excel applications in .NET using Function.Definitions/MVVM pattern. This package supercedes ExcelMvc.</Description>
+		<Description>Writing Excel applications in .NET using MVC pattern &amp; high performance user defined fuctions. This package supercedes ExcelMvc.</Description>
 		<Copyright>Copyright © 2013 Peter Gu (Creator) &amp; Wolfgang Stamm (Contributor)</Copyright>
 		<RepositoryUrl>https://github.com/triaxia/ExcelMVC</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -27,11 +27,6 @@
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
-
-	<!--this supposed to work for .NET 8 and from VS 1.7.8, but not, perhaps wait until the office release?!-->
-	<ItemGroup>
-		<RuntimeHostConfigurationOption Include="System.Runtime.InteropServices.COM.LoadComponentInDefaultContext" Value="true" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="Microsoft.Office.Interop.Excel">

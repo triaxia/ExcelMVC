@@ -167,7 +167,7 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Sets visibiliy for all columns (portrait table) or for all rows (landscape table)
+        /// Sets visibility for all columns (portrait table) or for all rows (landscape table)
         /// </summary>
         public void SetCategoryVisibility()
         {
@@ -492,7 +492,7 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Sets visibiliy for a single column (portrait table) or for a single row (landscape table)
+        /// Sets visibility for a single column (portrait table) or for a single row (landscape table)
         /// </summary>
         private void SetCategoryVisibility(Binding binding)
         {
