@@ -253,6 +253,20 @@ namespace ExcelMvc.Functions
             return ObjectValue;
         }
 
+        public IntPtr StringArrayToIntPtr(string[] value)
+        {
+            var x = (XLOPER12*)ObjectValue.ToPointer();
+            x->Init(value, true);
+            return ObjectValue;
+        }
+
+        public IntPtr StringMatrixToIntPtr(string[,] value)
+        {
+            var x = (XLOPER12*)ObjectValue.ToPointer();
+            x->Init(value, true);
+            return ObjectValue;
+        }
+
         private static void Copy(string source, int length, IntPtr target)
         {
             char* p = (char*)target.ToPointer();
@@ -281,6 +295,8 @@ namespace ExcelMvc.Functions
                 { typeof(int[,]), typeof(XlMarshalContext).GetMethod(nameof(Int32MatrixToIntPtr)) },
                 { typeof(DateTime[]), typeof(XlMarshalContext).GetMethod(nameof(DateTimeArrayToIntPtr)) },
                 { typeof(DateTime[,]), typeof(XlMarshalContext).GetMethod(nameof(DateTimeMatrixToIntPtr)) },
+                { typeof(string[]), typeof(XlMarshalContext).GetMethod(nameof(StringArrayToIntPtr)) },
+                { typeof(string[,]), typeof(XlMarshalContext).GetMethod(nameof(StringMatrixToIntPtr)) },
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtr)) },
                 { typeof(object[]), typeof(XlMarshalContext).GetMethod(nameof(ObjectArrayToIntPtr)) },
                 { typeof(object[,]), typeof(XlMarshalContext).GetMethod(nameof(ObjectMatrixToIntPtr)) }

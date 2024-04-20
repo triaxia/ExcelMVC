@@ -31,8 +31,10 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace ExcelMvc.Functions
@@ -160,11 +162,10 @@ namespace ExcelMvc.Functions
             if (value == IntPtr.Zero)
                 return null;
             var cells = IntPtrToDoubleMatrix(value);
-
+            if (cells.Length == 0) 
+                return new int[,] { };
             var rows = cells.GetLength(0);
             var cols = cells.GetLength(1);
-            if (rows == 0 || cols == 0)
-                return new int[,] { };
             var result = new int[rows, cols];
             for (var row = 0; row < rows; row++)
                 for (var col = 0; col < cols; col++)
@@ -196,6 +197,31 @@ namespace ExcelMvc.Functions
             return p->ToObjectMatrix();
         }
 
+        public static string[] IntPtrToStringArray(IntPtr value)
+        {
+            if (value == IntPtr.Zero)
+                return null;
+            XLOPER12* p = (XLOPER12*)value.ToPointer();
+            return p->ToObjectArray().Select(x=>$"{x}").ToArray();
+        }
+
+        public static string[,] IntPtrToStringMatrix(IntPtr value)
+        {
+            if (value == IntPtr.Zero)
+                return null;
+            XLOPER12* p = (XLOPER12*)value.ToPointer();
+            var cells = p->ToObjectMatrix();
+            if (cells.Length == 0)
+                return new string[,] { };
+            var rows = cells.GetLength(0);
+            var cols = cells.GetLength(1);
+            var result = new string[rows, cols];
+            for (var row = 0; row < rows; row++)
+                for (var col = 0; col < cols; col++)
+                    result[row, col] = $"{cells[row, col]}";
+            return result;
+        }
+
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters
             = new Dictionary<Type, MethodInfo>()
             {
@@ -217,6 +243,8 @@ namespace ExcelMvc.Functions
                 { typeof(int[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToInt32Matrix)) },
                 { typeof(DateTime[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTimeArray)) },
                 { typeof(DateTime[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToDateTimeMatrix)) },
+                { typeof(string[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToStringArray)) },
+                { typeof(string[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToStringMatrix)) },
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObject)) },
                 { typeof(object[]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObjectArray)) },
                 { typeof(object[,]), typeof(XlMarshalContext).GetMethod(nameof(IntPtrToObjectMatrix)) }
