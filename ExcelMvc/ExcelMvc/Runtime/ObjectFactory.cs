@@ -45,7 +45,6 @@ namespace ExcelMvc.Runtime
     using Extensions;
 #if NET6_0_OR_GREATER
     using System.Runtime.Loader;
-    using System.Reflection.Metadata.Ecma335;
 #endif
     /// <summary>
     /// Generic object factory
