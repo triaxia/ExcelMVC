@@ -74,7 +74,7 @@ namespace Samples
         [ExcelFunction(Name = "uDoubleArray")]
         public static double[] DoubleArray(double[] value)
         {
-            return new double [] { };
+            return value;
         }
 
         [ExcelFunction(Name = "uDoubleMatrix")]
@@ -98,7 +98,7 @@ namespace Samples
         [ExcelFunction(Name = "uObjectArray")]
         public static object[] ObjectArray(object[] value)
         {
-            return new object[] { };
+            return value;
         }
 
         [ExcelFunction(Name = "uObjectMatrix")]
