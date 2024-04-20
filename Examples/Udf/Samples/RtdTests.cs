@@ -11,8 +11,7 @@ namespace Samples
         [ExcelFunction(Name = "uTimer")]
         public static object uTimer(string name)
         {
-            var result = XlCall.RTD(typeof(TimerServer)
-                , () => new TimerServer(), name);
+            var result = XlCall.RTD<TimerServer>(() => new TimerServer(), name);
             return result;
         }
     }

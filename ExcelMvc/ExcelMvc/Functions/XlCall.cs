@@ -109,12 +109,12 @@ namespace ExcelMvc.Functions
             set => App.Instance.Underlying.RTD.ThrottleInterval = value;
         }
 
-        public unsafe static object RTD(Type implType, Func<IRtdServerImpl> implFactory
-            , string arg0, params string[] args)
+        public static object RTD<TRtdServerImpl>(Func<IRtdServerImpl> implFactory
+            , string arg0, params string[] args) where TRtdServerImpl : IRtdServerImpl
         {
-            using (var reg = new RtdRegistry(implType, implFactory))
+            using (var reg = new RtdRegistry(typeof(TRtdServerImpl), implFactory))
             {
-                var arguments = new string[] { reg.ProgId, "", arg0 }
+                var arguments = new string[] { reg.ProgId, string.Empty, arg0 }
                     .Concat(args)
                     .Select((x, idx) => new FunctionArgument($"p{idx}", x))
                     .ToArray();
@@ -127,14 +127,17 @@ namespace ExcelMvc.Functions
                     else
                         ptr = RtdCall32(pArgs.Ptr);
                 }
-                var result = (XLOPER12*)ptr.ToPointer();
-                var obj = result == null ? null : result->ToObject();
+                unsafe
+                {
+                    var result = (XLOPER12*)ptr.ToPointer();
+                    var obj = result == null ? null : result->ToObject();
 
-                if (Environment.Is64BitProcess)
-                    xlAutoFree64(ptr);
-                else
-                    xlAutoFree32(ptr);
-                return obj;
+                    if (Environment.Is64BitProcess)
+                        xlAutoFree64(ptr);
+                    else
+                        xlAutoFree32(ptr);
+                    return obj;
+                }
             }
         }
     }
