@@ -10,6 +10,7 @@ namespace Samples
         [ExcelFunction(Name = "uAsync", IsAsync = true)]
         public static void Async(double arg1, double arg2, IntPtr handle)
         {
+            handle = XlCall.GetAsyncHandle(handle);
             Task.Run(()=>
             {
                 Thread.Sleep(2000);
