@@ -1,5 +1,7 @@
 ﻿<Project>
 	<Target Name="ExcelMvc" AfterTargets="Build" Condition="'$(ExcelMvcIncludeAddIn)' == 'true'" >
+		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.txt"
+			  DestinationFolder="$(TargetDir)"></Copy>
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll"
 			  DestinationFolder="$(TargetDir)"></Copy>
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x64.xll"
@@ -7,6 +9,8 @@
 		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
 			  DestinationFolder="$(TargetDir)"></Copy>
+		<Message Importance="high"
+				 Text="$(MSBuildThisFileDirectory)ExcelMvc.txt"/>
 		<Message Importance="high"
 				 Text="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll copied"/>
 		<Message Importance="high"
