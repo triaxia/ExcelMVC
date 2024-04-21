@@ -34,8 +34,8 @@ Boston, MA 02110-1301 USA.
 
 namespace ExcelMvc.Extensions
 {
+    using ExcelMvc.Functions;
     using System;
-    using System.IO;
     using System.Runtime.InteropServices;
 
     /// <summary>
@@ -65,7 +65,7 @@ namespace ExcelMvc.Extensions
             catch (Exception ex)
             {
                 status = ex;
-                Log(ex);
+                XlCall.OnFailed(null, ex);
                 handler?.Invoke(ex);
             }
 
@@ -90,19 +90,6 @@ namespace ExcelMvc.Extensions
             }
 
             return status;
-        }
-        private static void Log(Exception exception)
-        {
-            try
-            {
-                var path = Path.GetDirectoryName(typeof(ActionExtensions).Assembly.Location);
-                if (File.Exists(Path.Combine(path, "ExcelMvc.EnableLogging")))
-                    File.AppendAllText(Path.Combine(path, "ExcelMvc.log"), $"{exception}{Environment.NewLine}");
-            }
-            catch
-            {
-                // discard!
-            }
         }
     }
 }

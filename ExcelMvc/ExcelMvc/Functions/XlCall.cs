@@ -31,14 +31,23 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using ExcelMvc.Diagnostics;
 using ExcelMvc.Rtd;
 using ExcelMvc.Views;
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace ExcelMvc.Functions
 {
+    public class MessageEventArgs : EventArgs
+    {
+        public string Message { get; }
+        public MessageEventArgs(string message)
+            => Message = message;
+    }
+
     public static class XlCall
     {
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RegisterFunction")]
@@ -77,6 +86,42 @@ namespace ExcelMvc.Functions
                 xlAutoFree32(AsyncReturn32(handle, result));
         }
 
+        /// <summary>
+        /// Occurs whenever errors are encountered.
+        /// </summary>
+        public static event EventHandler<ErrorEventArgs> Failed;
+
+        /// <summary>
+        /// Raises <see cref="Failed"/> event.
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="sender"></param>
+        public static void OnFailed(Exception ex, object sender = null)
+        {
+            Messages.Instance.AddErrorLine(ex);
+            Failed?.Invoke(sender, new ErrorEventArgs(ex));
+        }
+
+        /// <summary>
+        /// Occurs whenever messages are posted. 
+        /// </summary>
+        public static event EventHandler<MessageEventArgs> Posted;
+
+        /// <summary>
+        /// Raises <see cref="Posted"/> event.
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="sender"></param>
+        public static void OnPosted(string message, object sender = null)
+        {
+            Messages.Instance.AddInfoLine(message);
+            Posted?.Invoke(sender, new MessageEventArgs(message));
+        }
+
+        /// <summary>
+        /// Gets the Excel caller range
+        /// </summary>
+        /// <returns></returns>
         public static RangeReference GetCaller()
         {
             return new RangeReference(App.Instance.Underlying.Caller);
@@ -128,7 +173,7 @@ namespace ExcelMvc.Functions
         }
 
         /// <summary>
-        /// Calls the specfieid RTD server.
+        /// Calls the specified RTD server.
         /// </summary>
         /// <typeparam name="TRtdServerImpl"></typeparam>
         /// <param name="implFactory"></param>

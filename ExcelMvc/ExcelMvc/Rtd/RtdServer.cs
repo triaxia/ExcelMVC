@@ -32,7 +32,7 @@ Boston, MA 02110-1301 USA.
 */
 using System;
 using System.Linq;
-using ExcelMvc.Diagnostics;
+using ExcelMvc.Functions;
 using ExcelMvc.Runtime;
 using Microsoft.Office.Interop.Excel;
 
@@ -93,7 +93,7 @@ namespace ExcelMvc.Rtd
                 }
                 catch (Exception ex)
                 {
-                    Messages.Instance.AddErrorLine(ex);
+                    XlCall.OnFailed(ex);
                 }
             }, null, false);
         }

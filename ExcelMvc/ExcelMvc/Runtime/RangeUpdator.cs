@@ -36,11 +36,11 @@ namespace ExcelMvc.Runtime
     using System;
     using System.Runtime.InteropServices;
     using System.Threading;
-    using Diagnostics;
     using Extensions;
     using Microsoft.Office.Interop.Excel;
     using Range = Microsoft.Office.Interop.Excel.Range;
     using Views;
+    using ExcelMvc.Functions;
 
     /// <summary>
     /// Encapsulates Range updating functions
@@ -196,14 +196,14 @@ namespace ExcelMvc.Runtime
                 if (IsRecoverable(comex))
                 {
                     item.AgeMilliseconds += 100;
-                    if ( item.AgeMilliseconds > 10000)
-                        Messages.Instance.AddErrorLine(ex);
+                    if (item.AgeMilliseconds > 10000)
+                        XlCall.OnFailed(ex);
                     else
                         Enqueue(item, 100);
                 }
                 else
                 {
-                    Messages.Instance.AddErrorLine(ex);
+                    XlCall.OnFailed(ex);
                 }
             }
         }

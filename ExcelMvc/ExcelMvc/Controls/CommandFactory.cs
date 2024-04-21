@@ -38,8 +38,7 @@ namespace ExcelMvc.Controls
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Diagnostics;
+    using ExcelMvc.Functions;
     using Extensions;
     using Microsoft.Office.Interop.Excel;
     using Views;
@@ -77,7 +76,7 @@ namespace ExcelMvc.Controls
             Create(sheet, host, sheet.Shapes, names, commands);
 
             foreach (var cmd in commands.Values)
-                Messages.Instance.AddInfoLine(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
+                XlCall.OnPosted(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
         }
 
         /// <summary>

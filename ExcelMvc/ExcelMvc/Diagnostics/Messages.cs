@@ -34,10 +34,12 @@ Boston, MA 02110-1301 USA.
 
 namespace ExcelMvc.Diagnostics
 {
+    using ExcelMvc.Runtime;
     using System;
     using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.Linq;
+    using System.Threading;
 
     public class Messages : INotifyPropertyChanged
     {
@@ -58,17 +60,20 @@ namespace ExcelMvc.Diagnostics
 
         public static readonly Messages Instance = new Messages();
 
+        private System.Threading.Timer UpdateTimer { get;}
+        private ManualResetEventSlim UpdateOutstanding = new ManualResetEventSlim(false);
+
         public Messages()
         {
             LineLimit = 2000;
+            UpdateTimer = new Timer(OnUpdateTimer, null, 2000, 2000);
         }
 
         public void Clear()
         {
             while (ErrorLines.TryDequeue(out var _)) ;
             while (InfoLines.TryDequeue(out var _)) ;
-            RaiseErrorChanged();
-            RaiseInfoChanged();
+                RaiseChanged();
         }
 
         public void AddErrorLine(Exception ex)
@@ -80,24 +85,30 @@ namespace ExcelMvc.Diagnostics
         {
             ErrorLines.Enqueue($"{DateTime.Now:O} {message}");
             while (ErrorLines.Count > LineLimit) ErrorLines.TryDequeue(out var _);
-            RaiseErrorChanged();
+            UpdateOutstanding.Set();
         }
 
         public void AddInfoLine(string message)
         {
             InfoLines.Enqueue($"{DateTime.Now:O} {message}");
             while (InfoLines.Count > LineLimit) InfoLines.TryDequeue(out var _);
-            RaiseInfoChanged();
+            UpdateOutstanding.Set();
         }
 
-        private void RaiseErrorChanged()
+        private void OnUpdateTimer(object _)
         {
-            PropertyChanged(this, new PropertyChangedEventArgs("Error"));
+            if (UpdateOutstanding.Wait(0))
+                RaiseChanged();
         }
 
-        private void RaiseInfoChanged()
+        private void RaiseChanged()
         {
-            PropertyChanged(this, new PropertyChangedEventArgs("Info"));
+            AsyncActions.Post(_ =>
+            {
+                UpdateOutstanding.Reset();
+                PropertyChanged(this, new PropertyChangedEventArgs("Info"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Error"));
+            }, null, false);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace ExcelMvc.Runtime
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
-    using ExcelMvc.Diagnostics;
+    using ExcelMvc.Functions;
     using Extensions;
 #if NET6_0_OR_GREATER
     using System.Runtime.Loader;
@@ -82,7 +82,7 @@ namespace ExcelMvc.Runtime
                 {
                     var obj = (T)Activator.CreateInstance(Type.GetType(type));
                     Instances.Add(obj);
-                }, ex => Messages.Instance.AddErrorLine(ex));
+                }, ex => XlCall.OnFailed(ex));
             }
         }
 
@@ -190,7 +190,7 @@ namespace ExcelMvc.Runtime
                 var asm = LoadFrom(assemblyPath);
                 if (asm != null)
                     types = types.Concat(getTypes(asm));
-            }, ex => Messages.Instance.AddErrorLine(new FileLoadException(ex.Message, assemblyPath, ex)));
+            }, ex => XlCall.OnFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
             return types;
         }
             

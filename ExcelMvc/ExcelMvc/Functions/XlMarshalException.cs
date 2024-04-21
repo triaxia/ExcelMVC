@@ -31,7 +31,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-using ExcelMvc.Diagnostics;
 using System;
 using System.Reflection;
 
@@ -53,7 +52,7 @@ namespace ExcelMvc.Functions
         public static event EventHandler<XlMarshalExceptionEventArgs> Failed;
         public static object HandleUnhandledException(Exception ex)
         {
-            Messages.Instance.AddErrorLine(ex);
+            XlCall.OnFailed(ex);
             if (Failed == null) return XlErrorValue.Instance;
             try
             {
@@ -63,7 +62,7 @@ namespace ExcelMvc.Functions
             }
             catch(Exception e)
             {
-                Messages.Instance.AddErrorLine(e);
+                XlCall.OnFailed(e);
                 return XlErrorValue.Instance;
             }
         }

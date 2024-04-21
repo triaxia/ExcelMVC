@@ -3,6 +3,7 @@ using System.Windows;
 
 using ExcelMvc.Diagnostics;
 using ExcelMvc.Extensions;
+using ExcelMvc.Functions;
 using ExcelMvc.Rtd;
 using ExcelMvc.Views;
 
@@ -96,9 +97,8 @@ namespace ExcelMvc.Runtime
             string result = null;
             if (status != null)
             {
-                result = status.Message + Environment.NewLine + status.StackTrace;
-                Messages.Instance.AddErrorLine(status);
-                MessageBox.Show(result, typeof(Interface).Namespace, MessageBoxButton.OK, MessageBoxImage.Error);
+                XlCall.OnFailed(status);
+                MessageBox.Show($"{status}", typeof(Interface).Namespace, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return result;

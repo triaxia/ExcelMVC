@@ -40,7 +40,7 @@ namespace ExcelMvc.Views
 
     using Bindings;
     using Controls;
-    using Diagnostics;
+    using ExcelMvc.Functions;
     using Extensions;
     using Microsoft.Office.Interop.Excel;
     using Action = System.Action;
@@ -305,7 +305,7 @@ namespace ExcelMvc.Views
         public void OnBindingFailed(BindingFailedEventArgs args)
         {
             BindingFailed(this, args);
-            Messages.Instance.AddErrorLine(args.Exception);
+            XlCall.OnFailed(args.Exception);
         }
 
         /// <summary>
@@ -383,7 +383,7 @@ namespace ExcelMvc.Views
         public void OnOpened(ViewEventArgs args)
         {
             Opened(this, args);
-            Messages.Instance.AddInfoLine(string.Format(Resource.InfoViewCreated, args.View.Name
+            XlCall.OnPosted(string.Format(Resource.InfoViewCreated, args.View.Name
                 , args.View.Type, args.View.Parent == null ? string.Empty : args.View.Parent.Name));
         }
 
