@@ -11,6 +11,7 @@ namespace ExcelMvc.Functions
         public int FirstColumn { get; }
         public int LastRow { get; }
         public int LastColumn { get; }
+        public string Address { get; }
         
         internal RangeReference(Range range)
         {
@@ -18,8 +19,14 @@ namespace ExcelMvc.Functions
             SheetName = range.Parent.Name;
             FirstRow = range.Row;
             FirstColumn = range.Column;
-            LastRow = range.Row + range.Rows.Count;
-            LastColumn = range.Column + range.Columns.Count;
+            LastRow = range.Row + range.Rows.Count - 1;
+            LastColumn = range.Column + range.Columns.Count - 1;
+            Address = range.Address;
+        }
+
+        public override string ToString()
+        {
+            return $"[{BookName}]{SheetName}!{Address}";
         }
     }
 }

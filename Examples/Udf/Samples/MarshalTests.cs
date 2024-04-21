@@ -136,5 +136,11 @@ namespace Samples
         {
             return value;
         }
+
+        [ExcelFunction(Name = "uCaller")]
+        public static string Caller()
+        {
+            return $"{XlCall.GetCaller()}";
+        }
     }
 }

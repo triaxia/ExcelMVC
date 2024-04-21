@@ -11,6 +11,7 @@
 		<RepositoryUrl>https://github.com/triaxia/ExcelMVC</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<DebugType>embedded</DebugType>
+		<EmbedAllSources>true</EmbedAllSources>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageOutputPath>bin\NuGet</PackageOutputPath>
 		<PackageProjectUrl>https://github.com/triaxia/ExcelMVC</PackageProjectUrl>

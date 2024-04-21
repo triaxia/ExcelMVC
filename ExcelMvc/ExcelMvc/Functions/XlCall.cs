@@ -77,6 +77,16 @@ namespace ExcelMvc.Functions
                 xlAutoFree32(AsyncReturn32(handle, result));
         }
 
+        public static RangeReference GetCaller()
+        {
+            return new RangeReference(App.Instance.Underlying.Caller);
+        }
+
+        /// <summary>
+        /// Gets the Async handle from the specified XL handle (XLOPER12)
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <returns></returns>
         public static IntPtr GetAsyncHandle(IntPtr handle)
         {
             unsafe
@@ -86,6 +96,11 @@ namespace ExcelMvc.Functions
             }
         }
 
+        /// <summary>
+        /// Sets the asynchronous result.
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="result"></param>
         public static void SetAsyncResult(IntPtr handle, object result)
         {
             var xlhandle = XLOPER12.FromObject(handle);
@@ -103,12 +118,23 @@ namespace ExcelMvc.Functions
             }
         }
 
+        /// <summary>
+        /// Gets/Sets the RTD throttle
+        /// </summary>
         public static int RTDThrottleIntervalMilliseconds
         {
             get => App.Instance.Underlying.RTD.ThrottleInterval;
             set => App.Instance.Underlying.RTD.ThrottleInterval = value;
         }
 
+        /// <summary>
+        /// Calls the specfieid RTD server.
+        /// </summary>
+        /// <typeparam name="TRtdServerImpl"></typeparam>
+        /// <param name="implFactory"></param>
+        /// <param name="arg0"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static object RTD<TRtdServerImpl>(Func<IRtdServerImpl> implFactory
             , string arg0, params string[] args) where TRtdServerImpl : IRtdServerImpl
         {

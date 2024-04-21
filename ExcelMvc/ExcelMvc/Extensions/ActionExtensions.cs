@@ -53,7 +53,7 @@ namespace ExcelMvc.Extensions
         /// Executes an action, catches and/or handles any exceptions
         /// </summary>
         /// <param name="action">Action to be executed</param>
-        /// <param name="handler">Exception hadler to be used</param>
+        /// <param name="handler">Exception handler to be used</param>
         /// <returns>Exception caught</returns>
         public static Exception Try(Action action, ExceptionHandler handler = null)
         {
