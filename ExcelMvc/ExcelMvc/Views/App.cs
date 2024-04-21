@@ -178,9 +178,13 @@ namespace ExcelMvc.Views
                         throw new Exception(Resource.ErrorExcelAppFound);
 
                     AsyncActions.Initialise();
+                    XlCall.OnPosted($"AsyncActions.Initialise() done");
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
+                    XlCall.OnPosted($"ObjectFactory<ISession>.CreateAll done");
                     ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
+                    XlCall.OnPosted($"ObjectFactory<IValueConverter>.CreateAll done");
                     Try(() => FunctionDiscovery.RegisterFunctions());
+                    XlCall.OnPosted($"FunctionDiscovery.RegisterFunctions() done");
 
                     Underlying.WorkbookOpen += OpenBook;
                     Underlying.WorkbookBeforeClose += ClosingBook;
