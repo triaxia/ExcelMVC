@@ -2,19 +2,12 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net471;net8.0-windows</TargetFrameworks>
-		<!-- required for ExcelMvc.dll to be copied to the bin folder for a non-exe project targeting net6.0-windows-->
-     	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<!--<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>-->
-		<!--<ExcelMvcExcludeAddin>true</ExcelMvcExcludeAddin>-->
+		<ExcelMvcIncludeAddIn>false</ExcelMvcIncludeAddIn>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="ExcelMvc.Net" Version="2.0.2-alpha" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Update="FunctionTests.xlsx">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 </Project>

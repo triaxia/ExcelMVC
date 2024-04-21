@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Target Name="ExcelMvc" AfterTargets="Build" Condition="'$(ExcelMvcExcludeAddin)' != 'true'" >
+	<Target Name="ExcelMvc" AfterTargets="Build" Condition="'$(ExcelMvcIncludeAddIn)' == 'true'" >
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll"
 			  DestinationFolder="$(TargetDir)"></Copy>
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x64.xll"

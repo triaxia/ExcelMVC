@@ -179,12 +179,19 @@ namespace ExcelMvc.Views
 
                     AsyncActions.Initialise();
                     XlCall.OnPosted($"AsyncActions.Initialise() done");
+
+                    ObjectFactory<IExcelAddIn>.CreateAll(ObjectFactory<IExcelAddIn>.GetCreatableTypes, ObjectFactory<IExcelAddIn>.SelectAllAssembly);
+                    ObjectFactory<IExcelAddIn>.Instances.ForEach(x=>x.AutoOpen());  
+                    XlCall.OnPosted($"ObjectFactory<IExcelAddIn>.CreateAll done");
+
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
                     XlCall.OnPosted($"ObjectFactory<ISession>.CreateAll done");
+
                     ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
                     XlCall.OnPosted($"ObjectFactory<IValueConverter>.CreateAll done");
+                    
                     Try(() => FunctionDiscovery.RegisterFunctions());
-                    XlCall.OnPosted($"FunctionDiscovery.RegisterFunctions() done");
+                    XlCall.OnPosted($"FunctionDiscovery.RegisterFunctions done");
 
                     Underlying.WorkbookOpen += OpenBook;
                     Underlying.WorkbookBeforeClose += ClosingBook;

@@ -52,7 +52,7 @@ namespace ExcelMvc.Runtime
     /// <typeparam name="T">Type of object</typeparam>
     public static class ObjectFactory<T>
     {
-        private static List<T> Instances { get; } = new List<T>();
+        public static List<T> Instances { get; } = new List<T>();
         private static bool EqualsIgnoreCase(string lhs, string rhs)
             => StringComparer.InvariantCultureIgnoreCase.Equals(lhs, rhs);
         private static bool StartsWithIgnoreCase(string lhs, string rhs)

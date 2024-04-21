@@ -41,7 +41,7 @@ namespace ExcelMvc.Extensions
     /// <summary>
     /// Encapsulates commonly used extensions for Range
     /// </summary>
-    internal static class RangeExtentions
+    internal static class RangeExtensions
     {
 
         /// <summary>
