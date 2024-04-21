@@ -42,7 +42,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public class Root : NativeWindow
     {
-
         /// <summary>
         /// Initializes an instance of Window
         /// </summary>

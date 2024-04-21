@@ -63,7 +63,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public class ObjectChangedArgs : EventArgs
     {
-
         /// <summary>
         /// Initialises an instance of ObjectChangedArgs
         /// </summary>

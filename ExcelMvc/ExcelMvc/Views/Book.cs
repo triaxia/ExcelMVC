@@ -145,11 +145,11 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Finds a specfic command
+        /// Finds a specific command
         /// </summary>
         /// <param name="sheet">Sheet hosts the command</param>
         /// <param name="name">Name of the command</param>
-        /// <returns>Command found or nullf if not found</returns>
+        /// <returns>Command found or null if not found</returns>
         internal Command FindCommand(Worksheet sheet, string name)
         {
             Command cmd = null;
