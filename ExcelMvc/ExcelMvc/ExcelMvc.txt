@@ -1,4 +1,4 @@
-﻿# This file contains assemly file name patterns used by ExceMvc runtime
+﻿# This file contains assembly file name patterns used by ExceMvc runtime
 # to discover objects using reflection. Each line specifies one pattern.
 # 
 # If this file is missing, then *.dll is assumed.

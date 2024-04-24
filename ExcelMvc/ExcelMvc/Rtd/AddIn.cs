@@ -44,6 +44,7 @@ namespace ExcelMvc.Rtd
     {
         public static string ModuleFileName { get; private set; }
         internal delegate HRESULT fn_dll_get_class_object(CLSID rclsid, IID riid, out IntPtr ppunk);
+       
         [StructLayout(LayoutKind.Sequential)]
         public struct AddInHead
         {

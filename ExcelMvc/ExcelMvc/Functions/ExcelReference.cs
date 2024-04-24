@@ -1,9 +1,7 @@
 ﻿
-using Microsoft.Office.Interop.Excel;
-
 namespace ExcelMvc.Functions
 {
-    public class RangeReference
+    public class ExcelReference
     {
         public string BookName { get; }
         public string SheetName { get; }
@@ -12,8 +10,12 @@ namespace ExcelMvc.Functions
         public int LastRow { get; }
         public int LastColumn { get; }
         public string Address { get; }
-        
-        internal RangeReference(Range range)
+
+        public ExcelReference()
+        {
+        }
+
+        internal ExcelReference(Microsoft.Office.Interop.Excel.Range range)
         {
             BookName = range.Parent.Parent.Name;
             SheetName = range.Parent.Name;
@@ -26,7 +28,11 @@ namespace ExcelMvc.Functions
 
         public override string ToString()
         {
-            return $"[{BookName}]{SheetName}!{Address}";
+            var bn = string.IsNullOrWhiteSpace(BookName) 
+                ? string.Empty : $"[{BookName}]";
+            var sn = string.IsNullOrWhiteSpace(SheetName)
+                ? string.Empty : $"{SheetName}!";
+            return $"{bn}{sn}{Address}";
         }
     }
 }

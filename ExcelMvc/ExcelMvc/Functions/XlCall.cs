@@ -122,9 +122,11 @@ namespace ExcelMvc.Functions
         /// Gets the Excel caller range
         /// </summary>
         /// <returns></returns>
-        public static RangeReference GetCaller()
+        public static ExcelReference GetCaller()
         {
-            return new RangeReference(App.Instance.Underlying.Caller);
+            dynamic caller = App.Instance.Underlying.Caller;
+            return caller is Microsoft.Office.Interop.Excel.Range range ? new ExcelReference(range)
+                : new ExcelReference();
         }
 
         /// <summary>
@@ -173,7 +175,7 @@ namespace ExcelMvc.Functions
         }
 
         /// <summary>
-        /// Calls the specified RTD server.
+        /// Calls the specified <see cref="IRtdServerImpl"/> server.
         /// </summary>
         /// <typeparam name="TRtdServerImpl"></typeparam>
         /// <param name="implFactory"></param>
@@ -185,30 +187,42 @@ namespace ExcelMvc.Functions
         {
             using (var reg = new RtdRegistry(typeof(TRtdServerImpl), implFactory))
             {
-                var arguments = new string[] { reg.ProgId, string.Empty, arg0 }
-                    .Concat(args)
-                    .Select((x, idx) => new FunctionArgument($"p{idx}", x))
-                    .ToArray();
-                var fArgs = new FunctionArguments(arguments);
-                IntPtr ptr = IntPtr.Zero;
-                using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
-                {
-                    if (Environment.Is64BitProcess)
-                        ptr = RtdCall64(pArgs.Ptr);
-                    else
-                        ptr = RtdCall32(pArgs.Ptr);
-                }
-                unsafe
-                {
-                    var result = (XLOPER12*)ptr.ToPointer();
-                    var obj = result == null ? null : result->ToObject();
+                return RTD( reg.ProgId, arg0, args );
+            }
+        }
 
-                    if (Environment.Is64BitProcess)
-                        xlAutoFree64(ptr);
-                    else
-                        xlAutoFree32(ptr);
-                    return obj;
-                }
+        /// <summary>
+        /// Calls the specified server.
+        /// </summary>
+        /// <param name="progId"></param>
+        /// <param name="arg0"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static object RTD(string progId, string arg0, params string[] args)
+        {
+            var arguments = new string[] { progId, string.Empty, arg0 }
+                .Concat(args)
+                .Select((x, idx) => new FunctionArgument($"p{idx}", x))
+                .ToArray();
+            var fArgs = new FunctionArguments(arguments);
+            IntPtr ptr = IntPtr.Zero;
+            using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
+            {
+                if (Environment.Is64BitProcess)
+                    ptr = RtdCall64(pArgs.Ptr);
+                else
+                    ptr = RtdCall32(pArgs.Ptr);
+            }
+            unsafe
+            {
+                var result = (XLOPER12*)ptr.ToPointer();
+                var obj = result == null ? null : result->ToObject();
+
+                if (Environment.Is64BitProcess)
+                    xlAutoFree64(ptr);
+                else
+                    xlAutoFree32(ptr);
+                return obj;
             }
         }
     }
