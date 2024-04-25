@@ -7,16 +7,32 @@ namespace Samples
 {
     public static class AsyncTests
     {
+        private static readonly Semaphore OneWay = new Semaphore(1, 1);
+        private static IntPtr Handle;
+
         [ExcelFunction(Name = "uAsync", IsAsync = true)]
         public static void Async(double arg1, double arg2, IntPtr handle)
         {
-            handle = XlCall.GetAsyncHandle(handle);
+            Handle = XlCall.GetAsyncHandle(handle);
+            if (!OneWay.WaitOne(0)) return;
             Task.Run(()=>
             {
-                Thread.Sleep(2000);
-                var sum = arg1 + arg2;
-                XlCall.SetAsyncResult(handle, sum);
+                try
+                {
+                    Thread.Sleep(2000);
+                    Add(arg1, arg2);
+                }
+                finally
+                {
+                    OneWay.Release();
+                }
             });
+        }
+
+        private static void Add(double arg1, double arg2) 
+        {
+            var sum = arg1 + arg2;
+            XlCall.SetAsyncResult(Handle, sum);
         }
     }
 }

@@ -38,6 +38,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using static System.Net.WebRequestMethods;
 
 namespace ExcelMvc.Functions
 {
@@ -228,6 +229,26 @@ namespace ExcelMvc.Functions
                 AddIn.AutoFree(ptr);
                 return obj;
             }
+        }
+
+        public static bool IsInFunctionWizard()
+            => IsEditing();
+
+        public static bool IsEditing()
+        {
+            var app = App.Instance.Underlying;
+            if (!app.Interactive)
+                return false;
+            try
+            {
+                app.Interactive = false;
+                app.Interactive = true;
+            }
+            catch
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

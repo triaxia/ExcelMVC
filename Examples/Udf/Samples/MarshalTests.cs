@@ -150,5 +150,13 @@ namespace Samples
             reference.SetValue(value, true);
             return reference.GetValue();
         }
+
+        [ExcelFunction(Name = "uIsEditing")]
+        public static object IsEditing(int a, int b, int c)
+        {
+            if (XlCall.IsEditing())
+                return "editing...";
+            return a + b + c;
+        }
     }
 }

@@ -58,12 +58,14 @@ namespace ExcelMvc.Functions
     {
         private XlMissing() { }
         public static readonly XlMissing Instance = new XlMissing();
+        public static bool IsMe(object value) => value == Instance;
     }
 
     public class XlEmpty
     {
         private XlEmpty() { }
         public static readonly XlEmpty Instance = new XlEmpty();
+        public static bool IsMe(object value) => value == Instance;
     }
 }
 
