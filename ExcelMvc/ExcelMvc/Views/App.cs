@@ -306,7 +306,6 @@ namespace ExcelMvc.Views
                 while (pMonkEnum.Next(1, pmon, fetched) == 0)
                 {
                     prot.GetObject(pmon[0], out object result);
-                    var book = result as Workbook;
                     var excel = result as Application;
                     if (excel == null) excel = (result as Workbook)?.Application;
                     if (excel != null)

@@ -37,8 +37,6 @@ using ExcelMvc.Views;
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using static System.Net.WebRequestMethods;
 
 namespace ExcelMvc.Functions
 {
@@ -182,8 +180,12 @@ namespace ExcelMvc.Functions
         /// </summary>
         public static int RTDThrottleIntervalMilliseconds
         {
-            get => App.Instance.Underlying.RTD.ThrottleInterval;
-            set => App.Instance.Underlying.RTD.ThrottleInterval = value;
+            get => App.Instance.Underlying?.RTD.ThrottleInterval ?? 0;
+            set
+            {
+                if (App.Instance.Underlying != null)
+                    App.Instance.Underlying.RTD.ThrottleInterval = value;
+            }
         }
 
         /// <summary>

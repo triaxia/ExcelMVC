@@ -62,7 +62,6 @@ namespace ExcelMvc.Diagnostics
             AsyncActions.Post(_ =>
             {
                 CreateInstance();
-                // var interop = new WindowInteropHelper(Instance) { Owner = App.Instance.MainWindow.Handle };
                 Instance.Show();
             }, null, false);
         }
