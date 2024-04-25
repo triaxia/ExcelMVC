@@ -151,10 +151,10 @@ namespace Samples
             return reference.GetValue();
         }
 
-        [ExcelFunction(Name = "uIsEditing")]
-        public static object IsEditing(int a, int b, int c)
+        [ExcelFunction(Name = "uInteractiveEditing")]
+        public static object IsInteractiveEditing(int a, int b, int c)
         {
-            if (XlCall.IsEditing())
+            if (XlCall.IsInteractiveEditing())
                 return "editing...";
             return a + b + c;
         }

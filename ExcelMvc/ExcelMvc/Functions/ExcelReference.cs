@@ -38,7 +38,7 @@ namespace ExcelMvc.Functions
 
         public static ExcelReference GetCaller()
         {
-            dynamic caller = App.Instance.Underlying.Caller;
+            dynamic caller = App.Instance.Underlying?.Caller;
             return caller is Range range ? new ExcelReference(range)
                 : new ExcelReference();
         }

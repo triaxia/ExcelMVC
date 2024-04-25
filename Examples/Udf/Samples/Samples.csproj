@@ -4,7 +4,6 @@
 		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
 		<!--<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>-->
-		<ExcelMvcIncludeAddIn>false</ExcelMvcIncludeAddIn>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -232,13 +232,14 @@ namespace ExcelMvc.Functions
         }
 
         public static bool IsInFunctionWizard()
-            => IsEditing();
+            => IsInteractiveEditing();
 
-        public static bool IsEditing()
+        public static bool IsInteractiveEditing()
         {
             var app = App.Instance.Underlying;
-            if (!app.Interactive)
+            if (!(app?.Interactive ?? false))
                 return false;
+            
             try
             {
                 app.Interactive = false;
