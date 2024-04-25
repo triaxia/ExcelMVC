@@ -45,11 +45,11 @@ namespace ExcelMvc.Functions
     {
         public static void RegisterFunctions()
         {
-            var functions = FunctionDiscovery.Discover()
-                .Select((x, idx) => (index: idx, x.method, x.function, x.args, callback: MakeCallback(x.method)))
-                .ToDictionary(x => x.index, x => new Function(x.index, x.function, x.args, x.callback, x.method.ReturnType));
-            foreach (var pair in functions)
-                XlCall.RegisterFunction(pair.Value);
+            var functions = Discover()
+                .Select(x=> (x.method, x.function, x.args, callback: MakeCallback(x.method)))
+                .Select(x => new Function(x.function, x.args, x.callback, x.method.ReturnType))
+                .ToArray();
+            XlCall.RegisterFunctions(new Functions(functions));
         }
 
         public static IEnumerable<(MethodInfo method, ExcelFunctionAttribute function, Argument[] args)> Discover()

@@ -70,7 +70,7 @@ AddInHead* CreateAddInHead()
 extern void RegisterMvcFunctions();
 extern void UnregisterMvcFunctions();
 extern void RegisterUserFunctions();
-extern void UnregisterUserFunctions();
+extern void UnregisterUserFunctions(bool freeXll);
 
 BOOL IsExcelThere()
 {
@@ -150,7 +150,7 @@ BOOL __stdcall xlAutoOpen(void)
 BOOL __stdcall xlAutoClose(void)
 {
 	UnregisterMvcFunctions();
-	UnregisterUserFunctions();
+	UnregisterUserFunctions(false);
 	return TRUE;
 }
 

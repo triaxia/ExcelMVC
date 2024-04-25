@@ -6,7 +6,7 @@ DllCanUnloadNow			PRIVATE
 xlAutoOpen              PRIVATE
 xlAutoClose             PRIVATE 
 xlAutoFree12            PRIVATE
-RegisterFunction        PRIVATE
+RegisterFunctions       PRIVATE
 AsyncReturn             PRIVATE
 RtdCall                 PRIVATE 
 ExcelMvcAttach          PRIVATE

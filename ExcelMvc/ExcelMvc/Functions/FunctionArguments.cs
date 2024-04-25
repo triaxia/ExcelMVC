@@ -53,7 +53,7 @@ namespace ExcelMvc.Functions
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct FunctionArguments
     {
-        public const ushort MaxArguments = 32;
+        public const ushort MaxArguments = 64;
         [MarshalAs(UnmanagedType.U1)]
         public byte ArgumentCount;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
@@ -61,15 +61,17 @@ namespace ExcelMvc.Functions
 
         public FunctionArguments(FunctionArgument[] arguments)
         {
-            ArgumentCount = (byte) arguments.Length;   
+            ArgumentCount = (byte)arguments.Length;
             Arguments = Pad(arguments);
         }
 
         private static FunctionArgument[] Pad(FunctionArgument[] arguments)
         {
-            var args = (arguments ?? new FunctionArgument[] { });
-            while (args.Length < MaxArguments)
-                args = args.Concat(new[] { new FunctionArgument() }).ToArray();
+            var args = arguments ?? new FunctionArgument[] { };
+            var count = MaxArguments - args.Length;
+            if (count > 0)
+                args = args.Concat(Enumerable.Range(0, count).Select(_ => new FunctionArgument()))
+                    .ToArray();
             return args;
         }
     }

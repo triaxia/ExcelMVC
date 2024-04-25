@@ -67,9 +67,7 @@ namespace ExcelMvc.Functions
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct Function
     {
-        public const ushort MaxArguments = 32;
-        [MarshalAs(UnmanagedType.U4)]
-        public int Index;
+        public const ushort MaxArguments = 64;
         [MarshalAs(UnmanagedType.LPWStr)]
         public string ReturnType;
         // ulong works too
@@ -101,10 +99,9 @@ namespace ExcelMvc.Functions
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public Argument[] Arguments;
 
-        public Function(int index, ExcelFunctionAttribute rhs, Argument[] arguments
+        public Function(ExcelFunctionAttribute rhs, Argument[] arguments
             , IntPtr callback, Type returnType)
         {
-            Index = index;
             Callback = callback; 
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
@@ -128,6 +125,32 @@ namespace ExcelMvc.Functions
             while (args.Length < MaxArguments)
                 args = args.Concat(new[] { new Argument() }).ToArray();
             return args;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct Functions
+    {
+        public const ushort MaxFunctions = 10000;
+        [MarshalAs(UnmanagedType.U4)]
+        public int FunctionCount;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxFunctions)]
+        public Function[] Items;
+
+        public Functions(Function[] functions)
+        {
+            FunctionCount = functions.Length;
+            Items = Pad(functions);
+        }
+
+        private static Function[] Pad(Function[] functions)
+        {
+            var items = functions ?? new Function[] { };
+            var count = MaxFunctions - items.Length;
+            if (count > 0)
+                items = items.Concat(Enumerable.Range(0, count).Select(_ => new Function()))
+                    .ToArray();
+            return items;
         }
     }
 }

@@ -46,7 +46,6 @@ struct ExcelArgument
 
 struct ExcelFunction
 {
-	int Index;
 	LPCWSTR ReturnType;
 	// "unsigned long long" works too.
 	//unsigned long long Callback; 
@@ -62,7 +61,13 @@ struct ExcelFunction
 	LPCWSTR Description;
 	LPCWSTR HelpTopic;
 	byte ArgumentCount;
-	ExcelArgument Arguments[];
+	ExcelArgument Arguments[64];
+};
+
+struct ExcelFunctions
+{
+	int FunctionCount;
+	ExcelFunction Functions[];
 };
 
 struct FunctionArgument
@@ -85,27 +90,15 @@ void RegisterUserFunctions()
 	Excel12f(xlGetName, &xDll, 0);
 }
 
-void UnregisterUserFunctions()
+void UnregisterUserFunctions(bool freeXll)
 {
 	for (auto it = FunctionRegIds.begin(); it != FunctionRegIds.end(); it++)
 	{
 		Excel12f(xlfUnregister, 0, 1, it->second);
 		FreeXLOper12T(it->second);
 	}
-	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
-}
-
-void UnregisterUserFunction(int index)
-{
-	{
-		auto it = FunctionRegIds.find(index);
-		if (it != FunctionRegIds.end())
-		{
-			Excel12f(xlfUnregister, 0, 1, it->second);
-			FreeXLOper12T(it->second);
-			FunctionRegIds.erase(index);
-		}
-	}
+	if (freeXll)
+		Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
 }
 
 LPCWSTR NullCoalesce(LPCWSTR value)
@@ -188,12 +181,11 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 
 extern "C" extern ClrRuntimeHost * pClrHost;
 
-LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
+void RegisterFunction(ExcelFunction *pFunction, int index)
 {
-	UnregisterUserFunction(pFunction->Index);
 	auto regId = new XLOPER12();
-	FunctionRegIds[pFunction->Index] = regId;
-	ExportTable[pFunction->Index] = (PFN)pFunction->Callback;
+	FunctionRegIds[index] = regId;
+	ExportTable[index] = (PFN)pFunction->Callback;
 	/*
 	https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	LPXLOPER12 pxModuleText
@@ -212,7 +204,7 @@ LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 	LPXLOPER12 pxArgumentHelp245
 	*/
 	TCHAR pxProcedure[10];
-	wsprintf(pxProcedure, L"udf%d", pFunction->Index);
+	wsprintf(pxProcedure, L"udf%d", index);
 
 	std::wstring pxArgumentText; std::wstring pxTypeText;
 	MakeArgumentList(pFunction, pxArgumentText, pxTypeText);
@@ -256,9 +248,17 @@ LPXLOPER12 __stdcall RegisterFunction(ExcelFunction* pFunction)
 	Excel12v(xlfRegister, regId, count, parameters);
 	FreeAllTempMemory();
 	delete[] parameters;
+	regId->xltype = regId->xltype | xlbitDLLFree;
+}
 
-	if (regId != NULL) regId->xltype = regId->xltype | xlbitDLLFree;
-	return regId;
+void __stdcall RegisterFunctions(ExcelFunctions* pFunctions)
+{
+	UnregisterUserFunctions(false);
+	for (auto index = 0; index < pFunctions->FunctionCount; index++)
+	{
+	   auto x = pFunctions->Functions[index];
+	   RegisterFunction(&x, index);
+	}
 }
 
 LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
@@ -269,7 +269,7 @@ LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
 	return status;
 }
 
-LPXLOPER12 __stdcall RtdCall(FunctionArguments * args)
+LPXLOPER12 __stdcall RtdCall(FunctionArguments* args)
 {
 	auto parameters = new LPXLOPER12[args->ArgumentCount];
 	auto count = 0;

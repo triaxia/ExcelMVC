@@ -50,9 +50,9 @@ namespace ExcelMvc.Functions
 
     public static class XlCall
     {
-        [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RegisterFunction")]
+        [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RegisterFunctions")]
         internal static extern IntPtr RegisterFunction64(IntPtr function);
-        [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RegisterFunction")]
+        [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RegisterFunctions")]
         internal static extern IntPtr RegisterFunction32(IntPtr function);
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "AsyncReturn")]
         internal static extern IntPtr AsyncReturn64(IntPtr handle, IntPtr result);
@@ -67,9 +67,9 @@ namespace ExcelMvc.Functions
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RtdCall")]
         internal static extern IntPtr RtdCall32(IntPtr args);
 
-        internal static void RegisterFunction(Function function)
+        internal static void RegisterFunctions(Functions functions)
         {
-            using (var pFunction = new StructIntPtr<Function>(ref function))
+            using (var pFunction = new StructIntPtr<Functions>(ref functions))
             {
                 if (Environment.Is64BitProcess)
                    RegisterFunction64(pFunction.Ptr);
