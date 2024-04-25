@@ -62,7 +62,8 @@ namespace ExcelMvc.Runtime
         /// The function that selects all assemblies.
         /// </summary>
         public static Func<string, bool, bool> SelectAllAssembly
-            = (name, loaded) => !StartsWithIgnoreCase(name, "Microsoft") && !StartsWithIgnoreCase(name, "System");
+            = (name, loaded) => !StartsWithIgnoreCase(name, "Microsoft")
+                             && !StartsWithIgnoreCase(name, "System");
 
         /// <summary>
         /// Create instances of type T in the current AppDomain.

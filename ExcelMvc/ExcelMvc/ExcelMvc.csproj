@@ -90,9 +90,6 @@
 		<Content Include="ExcelMvc.Net.targets">
 			<PackagePath>Build</PackagePath>
 		</Content>
-		<Content Include="ExcelMvc.txt">
-			<PackagePath>Build</PackagePath>
-		</Content>
 	</ItemGroup>
 
 	<ItemGroup>

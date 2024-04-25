@@ -100,6 +100,5 @@ namespace ExcelMvc.Extensions
             var end = range.Worksheet.Cells[range.Row + rowOffset + rows - 1, range.Column + +columnOffset + columns - 1];
             return range.Worksheet.Range[start, end];
         }
-
     }
 }

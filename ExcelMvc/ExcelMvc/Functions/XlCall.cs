@@ -50,23 +50,6 @@ namespace ExcelMvc.Functions
 
     public static class XlCall
     {
-        //[DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RegisterFunctions")]
-        //internal static extern IntPtr RegisterFunction64(IntPtr function);
-        //[DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RegisterFunctions")]
-        //internal static extern IntPtr RegisterFunction32(IntPtr function);
-        [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "AsyncReturn")]
-        internal static extern IntPtr AsyncReturn64(IntPtr handle, IntPtr result);
-        [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "AsyncReturn")]
-        internal static extern IntPtr AsyncReturn32(IntPtr handle, IntPtr result);
-        [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "xlAutoFree12")]
-        internal static extern IntPtr xlAutoFree64(IntPtr handle);
-        [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "xlAutoFree12")]
-        internal static extern IntPtr xlAutoFree32(IntPtr handle);
-        [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RtdCall")]
-        internal static extern IntPtr RtdCall64(IntPtr args);
-        [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RtdCall")]
-        internal static extern IntPtr RtdCall32(IntPtr args);
-
         internal static void RegisterFunctions(Functions functions)
         {
             using (var pFunction = new StructIntPtr<Functions>(ref functions))
