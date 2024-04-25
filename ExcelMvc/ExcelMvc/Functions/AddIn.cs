@@ -32,6 +32,7 @@ Boston, MA 02110-1301 USA.
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using ExcelMvc.Rtd;
 namespace ExcelMvc.Functions
@@ -43,6 +44,8 @@ namespace ExcelMvc.Functions
     public static class AddIn
     {
         public static string ModuleFileName { get; private set; }
+        public delegate HRESULT FuncDllGetClassObject(CLSID rclsid, IID riid, out IntPtr ppunk);
+
         public delegate void RegisterFunctionsDelegate(IntPtr functions);
         public static RegisterFunctionsDelegate RegisterFunctions { get; private set; }
         public delegate IntPtr AsyncReturnDelegate(IntPtr handle, IntPtr result);
@@ -51,8 +54,6 @@ namespace ExcelMvc.Functions
         public static RtdCallDelegate RtdCall { get; private set; }
         public delegate IntPtr AutoFreeDelegate(IntPtr args);
         public static AutoFreeDelegate AutoFree { get; private set; }
-
-        internal delegate HRESULT FuncDllGetClassObject(CLSID rclsid, IID riid, out IntPtr ppunk);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct AddInHead
@@ -65,6 +66,9 @@ namespace ExcelMvc.Functions
             public IntPtr pAutoFree;
         }
 
+        public static readonly ConcurrentBag<GCHandle> NoGarbageCollectableHandles
+             = new ConcurrentBag<GCHandle>();
+
         public static void OnAttach(IntPtr head)
         {
             unsafe
@@ -72,7 +76,7 @@ namespace ExcelMvc.Functions
                 AddInHead* pAddInHead = (AddInHead*)head;
                 ModuleFileName = Marshal.PtrToStringAuto(pAddInHead->ModuleFileName);
                 FuncDllGetClassObject fnDllGetClassObject = RtdServerFactory.DllGetClassObject;
-                GCHandle.Alloc(fnDllGetClassObject);
+                NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnDllGetClassObject));
                 pAddInHead->pDllGetClassObject = Marshal.GetFunctionPointerForDelegate(fnDllGetClassObject);
                 RegisterFunctions = Marshal.GetDelegateForFunctionPointer<RegisterFunctionsDelegate>(pAddInHead->pRegisterFunctions);
                 AsyncReturn = Marshal.GetDelegateForFunctionPointer<AsyncReturnDelegate>(pAddInHead->pAsyncResult);

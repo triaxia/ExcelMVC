@@ -83,12 +83,10 @@ namespace ExcelMvc.Functions
             //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
 
-        private static readonly ConcurrentBag<GCHandle> Handles
-            = new ConcurrentBag<GCHandle>();
         public static IntPtr MakeCallback(MethodInfo method)
         {
             var e = DelegateFactory.MakeOuterDelegate(method);
-            Handles.Add(GCHandle.Alloc(e));
+            AddIn.NoGarbageCollectableHandles.Add(GCHandle.Alloc(e));
             return Marshal.GetFunctionPointerForDelegate(e);
         }
     }
