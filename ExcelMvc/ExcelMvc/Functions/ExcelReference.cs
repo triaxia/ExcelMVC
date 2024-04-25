@@ -15,18 +15,20 @@ namespace ExcelMvc.Functions
         public int ColumnCount { get; }
         private string Address { get; }
 
-        public object Value
+        public object GetValue() => ToRange().Value;
+
+        public void SetValue(object value, bool async)
         {
-            get
-            {
-                return ToRange().Value;
-            }
-            set
+            if (async)
             {
                 AsyncActions.Post(_ =>
                 {
                     ToRange().Value = value;
                 }, null, false);
+            }
+            else
+            {
+                ToRange().Value = value;
             }
         }
 

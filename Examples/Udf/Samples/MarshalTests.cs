@@ -147,8 +147,8 @@ namespace Samples
         public static object ActiveSheetRangeValue(int row, int column, int rowCount, int columnCount, object value)
         {
             var reference = XlCall.GetActiveSheetReference(row, column, rowCount, columnCount);
-            reference.Value = value;
-            return reference.Value;
+            reference.SetValue(value, true);
+            return reference.GetValue();
         }
     }
 }
