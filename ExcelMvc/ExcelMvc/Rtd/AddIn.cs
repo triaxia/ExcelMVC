@@ -33,32 +33,51 @@ Boston, MA 02110-1301 USA.
 
 using System;
 using System.Runtime.InteropServices;
-using static ExcelMvc.Rtd.RtdServerFactory;
 namespace ExcelMvc.Rtd
 {
     using HRESULT = Int32;
     using IID = Guid;
     using CLSID = Guid;
 
-    public static unsafe class AddIn
+    public static class AddIn
     {
         public static string ModuleFileName { get; private set; }
-        internal delegate HRESULT fn_dll_get_class_object(CLSID rclsid, IID riid, out IntPtr ppunk);
-       
+        public delegate void RegisterFunctionsDelegate(IntPtr functions);
+        public static RegisterFunctionsDelegate RegisterFunctions { get; private set; }
+        public delegate IntPtr AsyncReturnDelegate(IntPtr handle, IntPtr result);
+        public static AsyncReturnDelegate AsyncReturn { get; private set; }
+        public delegate IntPtr RtdCallDelegate(IntPtr args);
+        public static RtdCallDelegate RtdCall { get; private set; }
+        public delegate IntPtr AutoFreeDelegate(IntPtr args);
+        public static AutoFreeDelegate AutoFree { get; private set; }
+
+        internal delegate HRESULT FuncDllGetClassObject(CLSID rclsid, IID riid, out IntPtr ppunk);
+      
         [StructLayout(LayoutKind.Sequential)]
         public struct AddInHead
         {
             public IntPtr ModuleFileName;
             public IntPtr pDllGetClassObject;
+            public IntPtr pRegisterFunctions;
+            public IntPtr pAsyncResult;
+            public IntPtr pRtdCall;
+            public IntPtr pAutoFree;
         }
 
         public static void OnAttach(IntPtr head)
         {
-            AddInHead* pAddInHead = (AddInHead*)head;
-            ModuleFileName = Marshal.PtrToStringAuto(pAddInHead->ModuleFileName);
-            fn_dll_get_class_object fnDllGetClassObject = (fn_dll_get_class_object)DllGetClassObject;
-            GCHandle.Alloc(fnDllGetClassObject);
-            pAddInHead->pDllGetClassObject = Marshal.GetFunctionPointerForDelegate(fnDllGetClassObject);
+            unsafe
+            {
+                AddInHead* pAddInHead = (AddInHead*)head;
+                ModuleFileName = Marshal.PtrToStringAuto(pAddInHead->ModuleFileName);
+                FuncDllGetClassObject fnDllGetClassObject = (FuncDllGetClassObject)RtdServerFactory.DllGetClassObject;
+                GCHandle.Alloc(fnDllGetClassObject);
+                pAddInHead->pDllGetClassObject = Marshal.GetFunctionPointerForDelegate(fnDllGetClassObject);
+                RegisterFunctions = Marshal.GetDelegateForFunctionPointer<RegisterFunctionsDelegate>(pAddInHead->pRegisterFunctions);
+                AsyncReturn = Marshal.GetDelegateForFunctionPointer<AsyncReturnDelegate>(pAddInHead->pAsyncResult);
+                RtdCall = Marshal.GetDelegateForFunctionPointer<RtdCallDelegate>(pAddInHead->pRtdCall);
+                AutoFree = Marshal.GetDelegateForFunctionPointer<AutoFreeDelegate>(pAddInHead->pAutoFree);
+            }
         }
     }
 }

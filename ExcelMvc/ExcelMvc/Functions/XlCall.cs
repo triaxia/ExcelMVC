@@ -50,10 +50,10 @@ namespace ExcelMvc.Functions
 
     public static class XlCall
     {
-        [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RegisterFunctions")]
-        internal static extern IntPtr RegisterFunction64(IntPtr function);
-        [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RegisterFunctions")]
-        internal static extern IntPtr RegisterFunction32(IntPtr function);
+        //[DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "RegisterFunctions")]
+        //internal static extern IntPtr RegisterFunction64(IntPtr function);
+        //[DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "RegisterFunctions")]
+        //internal static extern IntPtr RegisterFunction32(IntPtr function);
         [DllImport("ExcelMvc.Addin.x64.xll", EntryPoint = "AsyncReturn")]
         internal static extern IntPtr AsyncReturn64(IntPtr handle, IntPtr result);
         [DllImport("ExcelMvc.Addin.x86.xll", EntryPoint = "AsyncReturn")]
@@ -71,19 +71,13 @@ namespace ExcelMvc.Functions
         {
             using (var pFunction = new StructIntPtr<Functions>(ref functions))
             {
-                if (Environment.Is64BitProcess)
-                   RegisterFunction64(pFunction.Ptr);
-                else
-                   RegisterFunction32(pFunction.Ptr);
+                AddIn.RegisterFunctions(pFunction.Ptr);
             }
         }
 
         internal static void AsyncReturn(IntPtr handle, IntPtr result)
         {
-            if (Environment.Is64BitProcess)
-                xlAutoFree64(AsyncReturn64(handle, result));
-            else
-                xlAutoFree32(AsyncReturn32(handle, result));
+            AddIn.AutoFree(AddIn.AsyncReturn(handle, result));
         }
 
         /// <summary>
@@ -208,20 +202,13 @@ namespace ExcelMvc.Functions
             IntPtr ptr = IntPtr.Zero;
             using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
             {
-                if (Environment.Is64BitProcess)
-                    ptr = RtdCall64(pArgs.Ptr);
-                else
-                    ptr = RtdCall32(pArgs.Ptr);
+                ptr = AddIn.RtdCall(pArgs.Ptr);
             }
             unsafe
             {
                 var result = (XLOPER12*)ptr.ToPointer();
                 var obj = result == null ? null : result->ToObject();
-
-                if (Environment.Is64BitProcess)
-                    xlAutoFree64(ptr);
-                else
-                    xlAutoFree32(ptr);
+                AddIn.AutoFree(ptr);
                 return obj;
             }
         }

@@ -41,15 +41,41 @@ extern "C" { extern HMODULE hDll; }
 extern "C" const GUID __declspec(selectany) DIID__Workbook =
 { 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
 
-typedef HRESULT(__stdcall* PFN_DLLGETCLASSOBJECT)(CLSID clsid, IID iid, LPVOID* ppv);
+extern void __stdcall RegisterFunctions(void* handle); 
+extern LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result); 
+extern LPXLOPER12 __stdcall RtdCall(void* handle); 
+
+extern void RegisterMvcFunctions();
+extern void UnregisterMvcFunctions();
+extern void RegisterUserFunctions();
+extern void UnregisterUserFunctions(bool freeXll);
+
+typedef HRESULT(__stdcall* PFN_DllGetClassObject)(CLSID clsid, IID iid, LPVOID* ppv);
+typedef void(__stdcall* PFN_RegisterFunctions)(void* handle);
+typedef LPXLOPER12(__stdcall* PFN_AsyncReturn)(LPXLOPER12 handle, LPXLOPER12 result);
+typedef LPXLOPER12(__stdcall* PFN_RtdCall)(void* handle);
+typedef void(__stdcall* PFN_AutoFree)(LPXLOPER12 handle);
+
+void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
+{
+	if ((pxFree->xltype & xlbitDLLFree) != xlbitDLLFree)
+		return;
+	pxFree->xltype = pxFree->xltype & (~xlbitDLLFree);
+	FreeXLOper12T(pxFree);
+	free(pxFree);
+}
+
 struct AddInHead
 {
 	LPWSTR ModuleFileName;
-	PFN_DLLGETCLASSOBJECT pDllGetClassObject;
+	PFN_DllGetClassObject pDllGetClassObject;
+	PFN_RegisterFunctions pRegisterFunctions;
+	PFN_AsyncReturn pAsyncReturn;
+	PFN_RtdCall pRtdCall;
+	PFN_AutoFree pAutoFree;
 };
 
 AddInHead* pAddInHead = NULL;
-
 void DeleteAddInHead()
 {
 	if (pAddInHead == NULL) return;
@@ -64,13 +90,12 @@ AddInHead* CreateAddInHead()
 	pAddInHead->pDllGetClassObject = NULL;
 	pAddInHead->ModuleFileName = new WCHAR[MAX_PATH];
 	::GetModuleFileName(hDll, pAddInHead->ModuleFileName, MAX_PATH);
+	pAddInHead->pRegisterFunctions = RegisterFunctions;
+	pAddInHead->pAsyncReturn = AsyncReturn;
+	pAddInHead->pRtdCall = RtdCall;
+	pAddInHead->pAutoFree = xlAutoFree12;
 	return pAddInHead;
 }
-
-extern void RegisterMvcFunctions();
-extern void UnregisterMvcFunctions();
-extern void RegisterUserFunctions();
-extern void UnregisterUserFunctions(bool freeXll);
 
 BOOL IsExcelThere()
 {
@@ -152,15 +177,6 @@ BOOL __stdcall xlAutoClose(void)
 	UnregisterMvcFunctions();
 	UnregisterUserFunctions(false);
 	return TRUE;
-}
-
-void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
-{
-	if ((pxFree->xltype & xlbitDLLFree) != xlbitDLLFree)
-		return;
-	pxFree->xltype = pxFree->xltype & (~xlbitDLLFree);
-	FreeXLOper12T(pxFree);
-	free(pxFree);
 }
 
 HRESULT __stdcall DllRegisterServer()

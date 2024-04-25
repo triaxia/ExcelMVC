@@ -181,7 +181,7 @@ namespace ExcelMvc.Views
                     XlCall.OnPosted($"AsyncActions.Initialise() done");
 
                     ObjectFactory<IExcelAddIn>.CreateAll(ObjectFactory<IExcelAddIn>.GetCreatableTypes, ObjectFactory<IExcelAddIn>.SelectAllAssembly);
-                    ObjectFactory<IExcelAddIn>.Instances.ForEach(x=>x.AutoOpen());  
+                    ObjectFactory<IExcelAddIn>.Instances.ForEach(x => x.AutoOpen());
                     XlCall.OnPosted($"ObjectFactory<IExcelAddIn>.CreateAll done");
 
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
@@ -189,7 +189,7 @@ namespace ExcelMvc.Views
 
                     ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
                     XlCall.OnPosted($"ObjectFactory<IValueConverter>.CreateAll done");
-                    
+
                     Try(() => FunctionDiscovery.RegisterFunctions());
                     XlCall.OnPosted($"FunctionDiscovery.RegisterFunctions done");
 

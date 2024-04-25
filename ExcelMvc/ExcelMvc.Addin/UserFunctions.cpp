@@ -251,8 +251,9 @@ void RegisterFunction(ExcelFunction *pFunction, int index)
 	regId->xltype = regId->xltype | xlbitDLLFree;
 }
 
-void __stdcall RegisterFunctions(ExcelFunctions* pFunctions)
+void __stdcall RegisterFunctions(void* handle)
 {
+	auto pFunctions = (ExcelFunctions*)handle;
 	UnregisterUserFunctions(false);
 	for (auto index = 0; index < pFunctions->FunctionCount; index++)
 	{
@@ -269,8 +270,9 @@ LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
 	return status;
 }
 
-LPXLOPER12 __stdcall RtdCall(FunctionArguments* args)
+LPXLOPER12 __stdcall RtdCall(void* handle)
 {
+	auto args = (FunctionArguments*)handle;
 	auto parameters = new LPXLOPER12[args->ArgumentCount];
 	auto count = 0;
 	for (auto idx = 0; idx < args->ArgumentCount; idx++)
