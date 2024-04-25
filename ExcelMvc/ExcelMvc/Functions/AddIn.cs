@@ -33,7 +33,8 @@ Boston, MA 02110-1301 USA.
 
 using System;
 using System.Runtime.InteropServices;
-namespace ExcelMvc.Rtd
+using ExcelMvc.Rtd;
+namespace ExcelMvc.Functions
 {
     using HRESULT = Int32;
     using IID = Guid;
@@ -52,7 +53,7 @@ namespace ExcelMvc.Rtd
         public static AutoFreeDelegate AutoFree { get; private set; }
 
         internal delegate HRESULT FuncDllGetClassObject(CLSID rclsid, IID riid, out IntPtr ppunk);
-      
+
         [StructLayout(LayoutKind.Sequential)]
         public struct AddInHead
         {
@@ -70,7 +71,7 @@ namespace ExcelMvc.Rtd
             {
                 AddInHead* pAddInHead = (AddInHead*)head;
                 ModuleFileName = Marshal.PtrToStringAuto(pAddInHead->ModuleFileName);
-                FuncDllGetClassObject fnDllGetClassObject = (FuncDllGetClassObject)RtdServerFactory.DllGetClassObject;
+                FuncDllGetClassObject fnDllGetClassObject = RtdServerFactory.DllGetClassObject;
                 GCHandle.Alloc(fnDllGetClassObject);
                 pAddInHead->pDllGetClassObject = Marshal.GetFunctionPointerForDelegate(fnDllGetClassObject);
                 RegisterFunctions = Marshal.GetDelegateForFunctionPointer<RegisterFunctionsDelegate>(pAddInHead->pRegisterFunctions);

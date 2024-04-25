@@ -4,7 +4,6 @@ using System.Windows;
 using ExcelMvc.Diagnostics;
 using ExcelMvc.Extensions;
 using ExcelMvc.Functions;
-using ExcelMvc.Rtd;
 using ExcelMvc.Views;
 
 /*
