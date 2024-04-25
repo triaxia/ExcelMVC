@@ -9,8 +9,8 @@ namespace ExcelMvc.Functions
     {
         public string BookName { get; }
         public string SheetName { get; }
-        public int RowOffset { get; }
-        public int ColumnOffset { get; }
+        public int Row { get; }
+        public int Column { get; }
         public int RowCount { get; }
         public int ColumnCount { get; }
         private string Address { get; }
@@ -34,17 +34,24 @@ namespace ExcelMvc.Functions
         {
         }
 
+        public static ExcelReference GetCaller()
+        {
+            dynamic caller = App.Instance.Underlying.Caller;
+            return caller is Range range ? new ExcelReference(range)
+                : new ExcelReference();
+        }
+
         /// <summary>
         /// Initializes a new instance of <see cref="ExcelReference"/> on the active workbook.
         /// </summary>
         /// <param name="bookName"></param>
         /// <param name="sheetName"></param>
-        /// <param name="rowOffset"></param>
-        /// <param name="columnOffset"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
         /// <param name="rowCount"></param>
         /// <param name="columnCount"></param>
-        public ExcelReference(string bookName, string sheetName, int rowOffset, int columnOffset, int rowCount, int columnCount)
-            : this(GetRange(bookName, sheetName, rowOffset, columnOffset, rowCount, columnCount))
+        public ExcelReference(string bookName, string sheetName, int row, int column, int rowCount, int columnCount)
+            : this(GetRange(bookName, sheetName, row, column, rowCount, columnCount))
         {
         }
 
@@ -52,27 +59,27 @@ namespace ExcelMvc.Functions
         /// Initializes a new instance of <see cref="ExcelReference"/> on the active workbook.
         /// </summary>
         /// <param name="sheetName"></param>
-        /// <param name="rowOffset"></param>
-        /// <param name="columnOffset"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
         /// <param name="rowCount"></param>
         /// <param name="columnCount"></param>
-        public ExcelReference(string sheetName, int rowOffset, int columnOffset, int rowCount, int columnCount)
+        public ExcelReference(string sheetName, int row, int column, int rowCount, int columnCount)
             : this(GetRange(App.Instance.Underlying.ActiveWorkbook.Name, sheetName
-                , rowOffset, columnOffset, rowCount, columnCount))
+                , row, column, rowCount, columnCount))
         {
         }
 
         /// <summary>
         /// Initializes a new instance of <see cref="ExcelReference"/> on the active worksheet.
         /// </summary>
-        /// <param name="rowOffset"></param>
-        /// <param name="columnOffset"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
         /// <param name="rowCount"></param>
         /// <param name="columnCount"></param>
-        public ExcelReference(int rowOffset, int columnOffset, int rowCount, int columnCount)
+        public ExcelReference(int row, int column, int rowCount, int columnCount)
             : this(GetRange(App.Instance.Underlying.ActiveWorkbook.Name
                 , App.Instance.Underlying.ActiveSheet.Name as string
-                , rowOffset, columnOffset, rowCount, columnCount))
+                , row, column, rowCount, columnCount))
         {
         }
 
@@ -80,8 +87,8 @@ namespace ExcelMvc.Functions
         {
             BookName = range.Parent.Parent.Name;
             SheetName = range.Parent.Name;
-            RowOffset = range.Row;
-            ColumnOffset = range.Column;
+            Row = range.Row;
+            Column = range.Column;
             RowCount = range.Rows.Count;
             ColumnCount = range.Columns.Count;
             Address = range.Address;
@@ -98,15 +105,16 @@ namespace ExcelMvc.Functions
 
         private Range ToRange()
         {
-            return GetRange(BookName, SheetName, RowOffset, RowCount, ColumnOffset, ColumnCount);
+            return GetRange(BookName, SheetName, Row, Column, RowCount, ColumnCount);
         }
 
         private static Range GetRange(string bookName, string sheetName
-            , int rowOffset, int columnOffset, int rowCount, int columnCount)
+            , int row, int column, int rowCount, int columnCount)
         {
-            var sheet = App.Instance.Underlying.Workbooks[bookName].Worksheets[sheetName] as Worksheet;
-            var start = sheet.Cells[rowOffset, columnOffset];
-            var end = start.Cells[rowOffset + rowCount - 1, columnOffset + columnCount - 1];
+            var sheet = App.Instance.Underlying.Workbooks[bookName]
+                .Worksheets[sheetName] as Worksheet;
+            var start = sheet.Cells[row, column];
+            var end = start.Cells[row + rowCount - 1, column + columnCount - 1];
             return sheet.Range[start, end] as Range;
         }
     }

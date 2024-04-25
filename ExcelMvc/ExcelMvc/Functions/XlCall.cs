@@ -96,15 +96,49 @@ namespace ExcelMvc.Functions
         }
 
         /// <summary>
-        /// Gets the Excel caller range
+        /// Gets the Excel caller range.
         /// </summary>
         /// <returns></returns>
-        public static ExcelReference GetCaller()
-        {
-            dynamic caller = App.Instance.Underlying.Caller;
-            return caller is Microsoft.Office.Interop.Excel.Range range ? new ExcelReference(range)
-                : new ExcelReference();
-        }
+        public static ExcelReference GetCallerReference()
+            => ExcelReference.GetCaller();
+
+        /// <summary>
+        /// Gets a reference on the workbook and worksheet specified.
+        /// </summary>
+        /// <param name="bookName"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="rowCount"></param>
+        /// <param name="columnCount"></param>
+        /// <returns></returns>
+        public static ExcelReference GetReference(string bookName, string sheetName
+            , int row, int column, int rowCount, int columnCount)
+            => new ExcelReference(sheetName, row, column, rowCount, columnCount);
+
+        /// <summary>
+        /// Gets a reference on the active workbook.
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="rowCount"></param>
+        /// <param name="columnCount"></param>
+        /// <returns></returns>
+        public static ExcelReference GetActiveBookReference(string sheetName
+            , int row, int column, int rowCount, int columnCount)
+            => new ExcelReference(sheetName, row, column, rowCount, columnCount);
+
+        /// <summary>
+        /// Gets a reference on the active worksheet.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="rowCount"></param>
+        /// <param name="columnCount"></param>
+        /// <returns></returns>
+        public static ExcelReference GetActiveSheetReference(int row, int column, int rowCount, int columnCount)
+            => new ExcelReference(row, column, rowCount, columnCount);
 
         /// <summary>
         /// Gets the Async handle from the specified XL handle (XLOPER12)

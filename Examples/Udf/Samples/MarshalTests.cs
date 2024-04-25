@@ -140,7 +140,15 @@ namespace Samples
         [ExcelFunction(Name = "uCaller")]
         public static string Caller()
         {
-            return $"{XlCall.GetCaller()}";
+            return $"{XlCall.GetCallerReference()}";
+        }
+
+        [ExcelFunction(Name = "uActiveSheetRangeValue")]
+        public static object ActiveSheetRangeValue(int row, int column, int rowCount, int columnCount, object value)
+        {
+            var reference = XlCall.GetActiveSheetReference(row, column, rowCount, columnCount);
+            reference.Value = value;
+            return reference.Value;
         }
     }
 }
