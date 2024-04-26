@@ -51,16 +51,25 @@ namespace ExcelMvc.Functions
 
     public class RegisteringEventArgs : EventArgs
     {
-        public IEnumerable<Function> Functions { get; }
-        public RegisteringEventArgs(IEnumerable<Function> functions)
-            => Functions = functions;
+        public Function Function;
+        public RegisteringEventArgs(Function function)
+            => Function = function;
     }
 
     public static class XlCall
     {
         internal static void RegisterFunctions(Functions functions)
         {
-            OnRegistering(functions);
+            if (Registering != null) 
+            {
+                for (var idx = 0; idx < functions.Items.Length; idx++)
+                {
+                    var args = new RegisteringEventArgs(functions.Items[idx]);
+                    Registering?.Invoke(null, args);
+                    functions.Items[idx] = args.Function;
+                }
+            }
+
             using (var pFunction = new StructIntPtr<Functions>(ref functions))
             {
                 AddIn.RegisterFunctions(pFunction.Ptr);
@@ -275,11 +284,6 @@ namespace ExcelMvc.Functions
                 return true;
             }
             return false;
-        }
-
-        private static void OnRegistering(Functions functions, object sender = null)
-        {
-            Registering?.Invoke(sender, new RegisteringEventArgs(functions.Items));
         }
     }
 }

@@ -158,5 +158,11 @@ namespace Samples
                 return "editing...";
             return a + b + c;
         }
+
+        [ExcelFunction(Name = "uHelp")]
+        public static object uHelp(int a, int b, int c)
+        {
+            return "https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1";
+        }
     }
 }

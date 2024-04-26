@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Sample.AddIn
 {
-    internal class SampleAddIn : IExcelAddIn
+    public class SampleAddIn : IExcelAddIn
     {
         public void AutoClose()
         {
@@ -13,14 +13,9 @@ namespace Sample.AddIn
         {
             XlCall.Registering += (_, e) =>
             {
-                /*
-                var x = e.Functions.ToArray();
-                foreach (var function in x )
-                {
-                    var d = e.Functions.Last();
-                    d.HelpTopic = "e.Functions.ToArray(";
-                }
-                */
+                // overwrite function properties...
+                if (e.Function.Name == "uHelp")
+                    e.Function.HelpTopic = "https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1";
             };
         }
     }
