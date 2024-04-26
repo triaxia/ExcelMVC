@@ -32,10 +32,9 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-namespace ExcelMvc.Runtime
+namespace ExcelMvc.Windows
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Windows.Forms;
     using Views;
 
@@ -44,7 +43,6 @@ namespace ExcelMvc.Runtime
     /// </summary>
     internal sealed class AsyncWindow : NativeWindow
     {
-
         private static readonly uint AsyncActionMessage;
         private static readonly uint AsyncMacroMessage;
         private static readonly uint WindowsTimerMessage;
@@ -52,8 +50,8 @@ namespace ExcelMvc.Runtime
 
         static AsyncWindow()
         {
-            AsyncActionMessage = RegisterWindowMessage("__ExcelMvcAsyncAction__");
-            AsyncMacroMessage = RegisterWindowMessage("__ExcelMvcAsyncMacro__");
+            AsyncActionMessage = DllImports.RegisterWindowMessage("__ExcelMvcAsyncAction__");
+            AsyncMacroMessage = DllImports.RegisterWindowMessage("__ExcelMvcAsyncMacro__");
             WindowsTimerMessage = 0x113;
             TimerId = 0;
         }
@@ -63,7 +61,7 @@ namespace ExcelMvc.Runtime
         /// </summary>
         public AsyncWindow()
         {
-            var cp = new CreateParams {Parent = new IntPtr(App.Instance.Underlying.Application.Hwnd)};
+            var cp = new CreateParams { Parent = new IntPtr(App.Instance.Underlying.Application.Hwnd) };
             CreateHandle(cp);
         }
 
@@ -113,11 +111,11 @@ namespace ExcelMvc.Runtime
             if (pumpMilliseconds > 0)
             {
                 TimerId = TimerId == int.MaxValue ? 0 : TimerId + 1;
-                SetTimer(Handle.ToInt32(), TimerId, pumpMilliseconds, IntPtr.Zero);
+                DllImports.SetTimer(Handle.ToInt32(), TimerId, pumpMilliseconds, IntPtr.Zero);
             }
             else
             {
-                PostMessage(Handle, (int)message, 0, 0);
+                DllImports.PostMessage(Handle, (int)message, 0, 0);
             }
         }
 
@@ -139,24 +137,11 @@ namespace ExcelMvc.Runtime
             }
             if (m.Msg == WindowsTimerMessage)
             {
-                KillTimer(Handle, (int) m.WParam);
+                DllImports.KillTimer(Handle, (int)m.WParam);
                 PostAsyncMacroMessage();
                 return;
             }
             base.WndProc(ref m);
         }
-
-        [DllImport("user32.dll")]
-        private static extern int PostMessage(IntPtr hwnd, int msg, int wParam, int lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern uint RegisterWindowMessage(string lpProcName);
-
-        [DllImport("user32")]
-        public static extern int SetTimer(int hwnd, int nIDEvent, int uElapse, IntPtr lpTimerFunc);
-
-        [DllImport("user32")]
-        private static extern int KillTimer(IntPtr hwnd, int nIDEvent);
-
     }
 }

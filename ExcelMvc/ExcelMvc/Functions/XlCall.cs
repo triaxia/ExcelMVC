@@ -35,6 +35,7 @@ using ExcelMvc.Diagnostics;
 using ExcelMvc.Rtd;
 using ExcelMvc.Views;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -47,10 +48,18 @@ namespace ExcelMvc.Functions
             => Message = message;
     }
 
+    public class RegisteringEventArgs : EventArgs
+    {
+        public IEnumerable<Function> Functions { get; }
+        public RegisteringEventArgs(IEnumerable<Function> functions)
+            => Functions = functions;
+    }
+
     public static class XlCall
     {
         internal static void RegisterFunctions(Functions functions)
         {
+            OnRegistering(functions);
             using (var pFunction = new StructIntPtr<Functions>(ref functions))
             {
                 AddIn.RegisterFunctions(pFunction.Ptr);
@@ -82,6 +91,11 @@ namespace ExcelMvc.Functions
         /// Occurs whenever messages are posted. 
         /// </summary>
         public static event EventHandler<MessageEventArgs> Posted;
+
+        /// <summary>
+        /// Occurs before functions are registered to Excel. 
+        /// </summary>
+        public static event EventHandler<RegisteringEventArgs> Registering;
 
         /// <summary>
         /// Raises <see cref="Posted"/> event.
@@ -233,9 +247,17 @@ namespace ExcelMvc.Functions
             }
         }
 
+        /// <summary>
+        /// Indicates if the Excel function wizard window is open.
+        /// </summary>
+        /// <returns></returns>
         public static bool IsInFunctionWizard()
             => IsInteractiveEditing();
 
+        /// <summary>
+        /// Indicates if Excel is in editing mode.
+        /// </summary>
+        /// <returns></returns>
         public static bool IsInteractiveEditing()
         {
             var app = App.Instance.Underlying;
@@ -252,6 +274,11 @@ namespace ExcelMvc.Functions
                 return true;
             }
             return false;
+        }
+
+        private static void OnRegistering(Functions functions, object sender = null)
+        {
+            Registering?.Invoke(sender, new RegisteringEventArgs(functions.Items));
         }
     }
 }

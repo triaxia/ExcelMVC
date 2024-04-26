@@ -39,11 +39,11 @@ namespace ExcelMvc.Views
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.InteropServices;
-    using System.Runtime.InteropServices.ComTypes;
     using System.Windows.Data;
     using Bindings;
     using Controls;
     using ExcelMvc.Functions;
+    using ExcelMvc.Windows;
     using Microsoft.Office.Interop.Excel;
     using Runtime;
 
@@ -173,7 +173,7 @@ namespace ExcelMvc.Views
                 Try(() =>
                 {
                     Detach();
-                    Underlying = (state as Application) ?? Find();
+                    Underlying = (state as Application) ?? DllImports.FindExcel();
                     if (Underlying == null)
                         throw new Exception(Resource.ErrorExcelAppFound);
 
@@ -284,48 +284,6 @@ namespace ExcelMvc.Views
                 if (cmd != null && cmd.IsEnabled)
                     cmd.FireClicked();
             });
-        }
-
-        [DllImport("ole32.dll")]
-        private static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        private static Application Find()
-        {
-            var pid = Process.GetCurrentProcess().Id;
-            IRunningObjectTable prot = null;
-            IEnumMoniker pMonkEnum = null;
-            try
-            {
-                GetRunningObjectTable(0, out prot);
-                prot.EnumRunning(out pMonkEnum);
-                var pmon = new IMoniker[1];
-                var fetched = IntPtr.Zero;
-                while (pMonkEnum.Next(1, pmon, fetched) == 0)
-                {
-                    prot.GetObject(pmon[0], out object result);
-                    var excel = result as Application;
-                    if (excel == null) excel = (result as Workbook)?.Application;
-                    if (excel != null)
-                    {
-                        GetWindowThreadProcessId(new IntPtr(excel.Hwnd), out uint excelpid);
-                        if (pid == excelpid)
-                            return excel;
-                    }
-                    Marshal.ReleaseComObject(result);
-                }
-            }
-            finally
-            {
-                if (prot != null)
-                    Marshal.ReleaseComObject(prot);
-                if (pMonkEnum != null)
-                    Marshal.ReleaseComObject(pMonkEnum);
-            }
-
-            return null;
         }
 
         private void Activate(Workbook book)
