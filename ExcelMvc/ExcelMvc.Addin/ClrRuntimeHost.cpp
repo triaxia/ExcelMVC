@@ -50,14 +50,14 @@ ClrRuntimeHost::TestAndDisplayError()
 	return result;
 }
 
-BOOL ClrRuntimeHost::FindAppConfig(PCWSTR basePath, TCHAR *buffer, DWORD size)
+BOOL ClrRuntimeHost::FindAppConfig(PCWSTR basePath, PCWSTR pattern, TCHAR *buffer, DWORD size)
 {
-    TCHAR pattern[MAX_PATH];
-    swprintf(pattern, MAX_PATH, L"%s\\*.dll.config", basePath);
+    TCHAR file[MAX_PATH];
+    swprintf(file, MAX_PATH, L"%s\\%s", basePath, pattern);
 
     WIN32_FIND_DATA data;
-    HANDLE hfile = ::FindFirstFile(pattern, &data);
-    if (hfile != NULL)
+    HANDLE hfile = ::FindFirstFile(file, &data);
+    if (hfile != INVALID_HANDLE_VALUE)
     {
         swprintf(buffer, size, L"%s\\%s", basePath, data.cFileName);
         FindClose(hfile);

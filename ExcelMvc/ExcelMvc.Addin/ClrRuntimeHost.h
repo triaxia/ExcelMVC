@@ -19,7 +19,7 @@ public:
     virtual void Run() = 0;
 
     static BOOL TestAndDisplayError();
-    static BOOL FindAppConfig(PCWSTR basePath, TCHAR* buffer, DWORD size);
+    static BOOL FindAppConfig(PCWSTR basePath, PCWSTR pattern, TCHAR* buffer, DWORD size);
     static string_t GetBasePath();
     static string_t GetRuntimeConfigFile();
 

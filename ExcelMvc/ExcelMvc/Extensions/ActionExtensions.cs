@@ -65,7 +65,7 @@ namespace ExcelMvc.Extensions
             catch (Exception ex)
             {
                 status = ex;
-                XlCall.OnFailed(null, ex);
+                XlCall.OnFailed(ex);
                 handler?.Invoke(ex);
             }
 

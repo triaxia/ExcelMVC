@@ -149,9 +149,11 @@ ClrRuntimeHostV4::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName)
 		goto Cleanup;
 	}
 
-	// set app config file is there is one matching *.dll.config in the base path
+	// set app config file if there is one matching *.xll.config or *.dll.config 
+	// in the base path
 	TCHAR configFile[MAX_PATH];
-	if (FindAppConfig(basePath.c_str(), configFile, MAX_PATH))
+	if (FindAppConfig(basePath.c_str(), L"*.xll.config", configFile, MAX_PATH)
+	 || FindAppConfig(basePath.c_str(), L"*.dll.config", configFile, MAX_PATH))
 	{
 		bstr_t bstrconfigFile(configFile);
 		hr = pAppDomainSetup->put_ConfigurationFile(bstrconfigFile);
