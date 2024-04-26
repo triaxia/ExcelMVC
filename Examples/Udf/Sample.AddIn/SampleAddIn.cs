@@ -1,4 +1,5 @@
 ﻿using ExcelMvc.Functions;
+using System.Linq;
 
 namespace Sample.AddIn
 {
@@ -10,6 +11,17 @@ namespace Sample.AddIn
 
         public void AutoOpen()
         {
+            XlCall.Registering += (_, e) =>
+            {
+                /*
+                var x = e.Functions.ToArray();
+                foreach (var function in x )
+                {
+                    var d = e.Functions.Last();
+                    d.HelpTopic = "e.Functions.ToArray(";
+                }
+                */
+            };
         }
     }
 }

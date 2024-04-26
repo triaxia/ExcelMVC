@@ -1,13 +1,17 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using ExcelMvc.Views;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 
 namespace ExcelMvc.Windows
 {
     internal class DllImports
     {
+        internal delegate bool EnumWindowsCallback(IntPtr hwnd, IntPtr param);
+
         [DllImport("ole32.dll")]
         internal static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
 
@@ -26,6 +30,12 @@ namespace ExcelMvc.Windows
         [DllImport("user32")]
         internal static extern int KillTimer(IntPtr hwnd, int nIDEvent);
 
+        [DllImport("user32.dll")]
+        private static extern bool EnumChildWindows(IntPtr hWndParent, EnumWindowsCallback callback, IntPtr param);
+
+        [DllImport("user32.dll")]
+        internal static extern int GetClassNameW(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder buf, int nMaxCount);
+
         internal static Application FindExcel()
         {
             var pid = Process.GetCurrentProcess().Id;
@@ -33,7 +43,7 @@ namespace ExcelMvc.Windows
             IEnumMoniker pMonkEnum = null;
             try
             {
-                DllImports.GetRunningObjectTable(0, out prot);
+                _ = GetRunningObjectTable(0, out prot);
                 prot.EnumRunning(out pMonkEnum);
                 var pmon = new IMoniker[1];
                 var fetched = IntPtr.Zero;
@@ -44,7 +54,7 @@ namespace ExcelMvc.Windows
                     if (excel == null) excel = (result as Workbook)?.Application;
                     if (excel != null)
                     {
-                        DllImports.GetWindowThreadProcessId(new IntPtr(excel.Hwnd), out uint excelpid);
+                        _ = GetWindowThreadProcessId(new IntPtr(excel.Hwnd), out uint excelpid);
                         if (pid == excelpid)
                             return excel;
                     }
@@ -60,6 +70,28 @@ namespace ExcelMvc.Windows
             }
 
             return null;
+        }
+
+        internal static bool IsInFunctionWizard()
+        {
+            if (App.Instance.Underlying == null) return false;
+            return IsFunctionWizardWindow(new IntPtr(App.Instance.Underlying.Hwnd));
+        }
+
+        internal static bool IsFunctionWizardWindow(IntPtr hWnd)
+        {
+            StringBuilder buffer = new StringBuilder(256);
+            if (GetClassNameW(hWnd, buffer, buffer.Capacity) > 0
+                 && buffer.ToString().StartsWith("bosa_sdm_XL", StringComparison.InvariantCultureIgnoreCase))
+                return true;
+
+            EnumChildWindows(hWnd, delegate (IntPtr hChild, IntPtr param)
+            {
+                if (IsFunctionWizardWindow(hChild))
+                    return true;
+                return false;
+            }, IntPtr.Zero);
+            return false;
         }
     }
 }

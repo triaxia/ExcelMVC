@@ -34,6 +34,7 @@ Boston, MA 02110-1301 USA.
 using ExcelMvc.Diagnostics;
 using ExcelMvc.Rtd;
 using ExcelMvc.Views;
+using ExcelMvc.Windows;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -252,7 +253,7 @@ namespace ExcelMvc.Functions
         /// </summary>
         /// <returns></returns>
         public static bool IsInFunctionWizard()
-            => IsInteractiveEditing();
+            => IsInteractiveEditing(); // DllImports.IsInFunctionWizard();
 
         /// <summary>
         /// Indicates if Excel is in editing mode.
