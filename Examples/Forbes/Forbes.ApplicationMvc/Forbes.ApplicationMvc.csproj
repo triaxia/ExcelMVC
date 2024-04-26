@@ -8,6 +8,7 @@
 		<OutputPath>bin\$(Configuration)\</OutputPath>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
+		<ExcelMvcAddInName>Forbes.ApplicationMvc</ExcelMvcAddInName>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>full</DebugType>
@@ -17,7 +18,7 @@
 		<DefineConstants />
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.0.1" />
+		<PackageReference Include="ExcelMvc.Net" Version="2.0.2-alpha" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\Forbes.Views\Forbes2000.xlsx" Link="Forbes2000.xlsx">
