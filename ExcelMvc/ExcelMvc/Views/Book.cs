@@ -85,7 +85,14 @@ namespace ExcelMvc.Views
             get
             {
                 var value = string.Empty;
-                ActionExtensions.Try(() => value = ((DocumentProperties)Underlying.CustomDocumentProperties)[App.ExcelMvc].Value.ToString());
+                foreach (DocumentProperty x in Underlying.CustomDocumentProperties)
+                {
+                    if (x.Name.CompareNoCase(App.ExcelMvc) == 0)
+                    {
+                        value = x.Value;
+                        break;
+                    }
+                }
                 return value;
             }
         }

@@ -305,7 +305,6 @@ namespace ExcelMvc.Views
         public void OnBindingFailed(BindingFailedEventArgs args)
         {
             BindingFailed(this, args);
-            XlCall.OnFailed(args.Exception);
         }
 
         /// <summary>

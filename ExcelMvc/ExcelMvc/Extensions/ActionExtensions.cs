@@ -32,12 +32,12 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using ExcelMvc.Functions;
+using System;
+using System.Runtime.InteropServices;
+
 namespace ExcelMvc.Extensions
 {
-    using ExcelMvc.Functions;
-    using System;
-    using System.Runtime.InteropServices;
-
     /// <summary>
     /// Encapsulates commonly used extensions for Action
     /// </summary>
@@ -50,7 +50,7 @@ namespace ExcelMvc.Extensions
         public delegate void ExceptionHandler(Exception ex);
 
         /// <summary>
-        /// Executes an action, catches and/or handles any exceptions
+        /// Executes an action, catching and/or handles any exceptions
         /// </summary>
         /// <param name="action">Action to be executed</param>
         /// <param name="handler">Exception handler to be used</param>
@@ -65,7 +65,6 @@ namespace ExcelMvc.Extensions
             catch (Exception ex)
             {
                 status = ex;
-                XlCall.OnFailed(ex);
                 handler?.Invoke(ex);
             }
 

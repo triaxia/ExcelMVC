@@ -38,15 +38,15 @@ namespace ExcelMvc.Extensions
     using System;
 
     /// <summary>
-    /// Encapsualtes commonly used string extensions methods
+    /// Encapsulates commonly used string extensions methods
     /// </summary>
     public static class StringExtensions
     {
         private static readonly StringComparer NoCaseComparer
-            = StringComparer.CurrentCultureIgnoreCase;
+            = StringComparer.InvariantCultureIgnoreCase;
         
         /// <summary>
-        /// Compases two string with OrdinalIgnoreCase 
+        /// Compares two string with OrdinalIgnoreCase 
         /// </summary>
         /// <param name="lhs">left string</param>
         /// <param name="rhs">right string</param>
