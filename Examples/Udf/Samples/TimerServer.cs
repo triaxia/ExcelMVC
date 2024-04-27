@@ -1,8 +1,8 @@
 ﻿using ExcelMvc.Rtd;
 using System;
 using System.Collections.Concurrent;
+using ExcelMvc.Functions;
 using System.Threading;
-using ExcelMvc.Diagnostics;
 
 namespace Samples
 {
@@ -22,13 +22,13 @@ namespace Samples
         public int Start()
         {
             Timer = new Timer(TimerElapsed, null, 1000, 1000);
-            Messages.Instance.AddInfoLine("Started");
+            XlCall.OnPosted("Started");
             return 1;
         }
 
         public void Stop()
         {
-            Messages.Instance.AddInfoLine("Stopped");
+            XlCall.OnPosted("Stopped");
             Timer.Dispose();
             Topics.Clear();
         }
@@ -40,14 +40,14 @@ namespace Samples
 
         public object Connect(int topicId, string[] args)
         {
-            Messages.Instance.AddInfoLine($"{topicId} connected");
+            XlCall.OnPosted($"{topicId} connected");
             Topics[topicId] = new Topic { args = args, value = DateTime.Now };
             return Format(Topics[topicId]);
         }
 
         public void Disconnect(int topicId)
         {
-            Messages.Instance.AddInfoLine($"{topicId} disconnected");
+            XlCall.OnPosted($"{topicId} disconnected");
             Topics.TryRemove(topicId, out var _);
         }
 
@@ -65,7 +65,7 @@ namespace Samples
 
         private void TimerElapsed(object _)
         {
-            Messages.Instance.AddInfoLine("Time Ticked");
+            XlCall.OnPosted("Time Ticked");
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
                 pair.Value.value = now;
