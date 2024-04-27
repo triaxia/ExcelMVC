@@ -2,7 +2,7 @@
 #include "ClrRuntimeHost.h"
 #include <cwchar>
 
-extern "C" { extern HMODULE hDll; }
+extern "C" { extern WCHAR ModuleFileName[]; }
 
 WCHAR ClrRuntimeHost::ErrorBuffer[1024] = {};
 
@@ -68,18 +68,14 @@ BOOL ClrRuntimeHost::FindFile(PCWSTR basePath, PCWSTR pattern, TCHAR *buffer, DW
 
 string_t ClrRuntimeHost::GetModulePath()
 {
-    WCHAR buffer[MAX_PATH];
-    ::GetModuleFileName(hDll, buffer, sizeof(buffer) / sizeof(WCHAR));
-    string_t path = buffer;
+    string_t path = ModuleFileName;
     auto pos = path.find_last_of(L"\\");
     return path.substr(0, pos);
 }
 
 string_t ClrRuntimeHost::GetModuleName()
 {
-    WCHAR buffer[MAX_PATH];
-    ::GetModuleFileName(hDll, buffer, sizeof(buffer) / sizeof(WCHAR));
-    string_t path = buffer;
+    string_t path = ModuleFileName;
     auto pos = path.find_last_of(L"\\");
     return path.substr(pos + 1);
 }

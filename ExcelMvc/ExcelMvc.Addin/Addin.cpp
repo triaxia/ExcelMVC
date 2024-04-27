@@ -36,7 +36,7 @@ Boston, MA 02110-1301 USA.
 #include "framewrk.h"
 #include "ClrRuntimeHostFactory.h"
 
-extern "C" { extern HMODULE hDll; }
+extern "C" { extern WCHAR ModuleFileName[]; }
 
 extern "C" const GUID __declspec(selectany) DIID__Workbook =
 { 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
@@ -89,7 +89,7 @@ AddInHead* CreateAddInHead()
 	pAddInHead = new AddInHead();
 	pAddInHead->pDllGetClassObject = NULL;
 	pAddInHead->ModuleFileName = new WCHAR[MAX_PATH];
-	::GetModuleFileName(hDll, pAddInHead->ModuleFileName, MAX_PATH);
+	memcpy(pAddInHead->ModuleFileName, ModuleFileName, sizeof(WCHAR) * MAX_PATH);
 	pAddInHead->pRegisterFunctions = RegisterFunctions;
 	pAddInHead->pAsyncReturn = AsyncReturn;
 	pAddInHead->pRtdCall = RtdCall;
