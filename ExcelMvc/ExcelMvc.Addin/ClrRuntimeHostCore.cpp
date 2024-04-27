@@ -85,7 +85,7 @@ ClrRuntimeHostCore::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName)
 {
 	ClearError();
 	AssemblyName = pszAssemblyName;
-	BasePath = GetBasePath();
+	BasePath = GetModulePath();
 
 	if (!load_hostfxr())
 	{

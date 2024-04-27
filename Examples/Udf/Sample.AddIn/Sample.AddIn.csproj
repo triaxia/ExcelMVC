@@ -4,7 +4,7 @@
 		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
 		<!-- required for ExcelMvc.dll to be copied to the bin folder for a non-exe project targeting net6.0-windows-->
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<ExcelMvcAddInName>Sample.Addin</ExcelMvcAddInName>
+		<ExcelMvcAddInName>Sample.AddIn</ExcelMvcAddInName>
 	</PropertyGroup>
 
 	<ItemGroup>

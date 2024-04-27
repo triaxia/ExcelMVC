@@ -54,7 +54,7 @@ ClrRuntimeHostV4::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName)
 {
 	ClearError();
 
-	auto basePath = GetBasePath();
+	auto basePath = GetModulePath();
 	bstr_t bstrAssemblyName(pszAssemblyName);
 	bstr_t bstrBasePath(basePath.c_str());
 
@@ -152,8 +152,8 @@ ClrRuntimeHostV4::Start(PCWSTR pszAssemblyName, PCWSTR pszClassName)
 	// set app config file if there is one matching *.xll.config or *.dll.config 
 	// in the base path
 	TCHAR configFile[MAX_PATH];
-	if (FindAppConfig(basePath.c_str(), L"*.xll.config", configFile, MAX_PATH)
-	 || FindAppConfig(basePath.c_str(), L"*.dll.config", configFile, MAX_PATH))
+	if (FindFile(basePath.c_str(), L"*.xll.config", configFile, MAX_PATH)
+	 || FindFile(basePath.c_str(), L"*.dll.config", configFile, MAX_PATH))
 	{
 		bstr_t bstrconfigFile(configFile);
 		hr = pAppDomainSetup->put_ConfigurationFile(bstrconfigFile);

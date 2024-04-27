@@ -8,13 +8,11 @@
 		</Copy>
 		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
-			  DestinationFolder="$(TargetDir)"></Copy>
-		<Message Importance="high"
-				 Text="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll copied"/>
-		<Message Importance="high"
-				 Text="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x64.xll copied"/>
-		<Message Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
-			     Importance="high"
-				 Text="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json copied"/>
+		      DestinationFiles="$(TargetDir)$(ExcelMvcAddInName).xll.runtimeconfig.json">
+		</Copy>
+		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
+			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
+		      DestinationFiles="$(TargetDir)$(ExcelMvcAddInName).x64.xll.runtimeconfig.json">
+		</Copy>
 	</Target>
 </Project>

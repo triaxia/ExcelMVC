@@ -50,7 +50,7 @@ ClrRuntimeHost::TestAndDisplayError()
 	return result;
 }
 
-BOOL ClrRuntimeHost::FindAppConfig(PCWSTR basePath, PCWSTR pattern, TCHAR *buffer, DWORD size)
+BOOL ClrRuntimeHost::FindFile(PCWSTR basePath, PCWSTR pattern, TCHAR *buffer, DWORD size)
 {
     TCHAR file[MAX_PATH];
     swprintf(file, MAX_PATH, L"%s\\%s", basePath, pattern);
@@ -66,7 +66,7 @@ BOOL ClrRuntimeHost::FindAppConfig(PCWSTR basePath, PCWSTR pattern, TCHAR *buffe
     return false;
 }
 
-string_t ClrRuntimeHost::GetBasePath()
+string_t ClrRuntimeHost::GetModulePath()
 {
     WCHAR buffer[MAX_PATH];
     ::GetModuleFileName(hDll, buffer, sizeof(buffer) / sizeof(WCHAR));
@@ -75,7 +75,16 @@ string_t ClrRuntimeHost::GetBasePath()
     return path.substr(0, pos);
 }
 
+string_t ClrRuntimeHost::GetModuleName()
+{
+    WCHAR buffer[MAX_PATH];
+    ::GetModuleFileName(hDll, buffer, sizeof(buffer) / sizeof(WCHAR));
+    string_t path = buffer;
+    auto pos = path.find_last_of(L"\\");
+    return path.substr(pos + 1);
+}
+
 string_t ClrRuntimeHost::GetRuntimeConfigFile()
 {
-    return ClrRuntimeHost::GetBasePath() + L"\\ExcelMvc.runtimeconfig.json";
+    return GetModulePath() + L"\\" + GetModuleName() + L".runtimeconfig.json";
 }
