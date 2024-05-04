@@ -4,7 +4,7 @@
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).xll">
 		</Copy>
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x64.xll"
-			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).x64.xll">
+			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName)64.xll">
 		</Copy>
 		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
@@ -12,7 +12,7 @@
 		</Copy>
 		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
-		      DestinationFiles="$(TargetDir)$(ExcelMvcAddInName).x64.xll.runtimeconfig.json">
+		      DestinationFiles="$(TargetDir)$(ExcelMvcAddInName)64.xll.runtimeconfig.json">
 		</Copy>
 	</Target>
 </Project>

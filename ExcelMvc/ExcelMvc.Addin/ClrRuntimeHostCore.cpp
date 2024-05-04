@@ -51,7 +51,8 @@ load_assembly_and_get_function_pointer_fn get_dotnet_load_assembly(const char_t*
 	void* load_assembly_and_get_function_pointer = nullptr;
 	hostfxr_handle cxt = nullptr;
 	int rc = init_fptr(config_path, nullptr, &cxt);
-	if (rc != 0 || cxt == nullptr)
+	// rc = 0 done, rc = 1 already done
+	if (cxt == nullptr)
 	{
 		close_fptr(cxt);
 		return nullptr;

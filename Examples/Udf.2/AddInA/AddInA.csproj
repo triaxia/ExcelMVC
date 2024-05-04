@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
+		<!--<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>-->
+		<ExcelMvcAddInName>AddInA</ExcelMvcAddInName>
+		<!-- required for ExcelMvc.dll to be copied to the bin folder for a non-exe project targeting net6.0-windows-->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="ExcelMvc.Net" Version="2.0.3" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+</Project>

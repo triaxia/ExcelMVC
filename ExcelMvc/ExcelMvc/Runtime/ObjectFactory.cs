@@ -155,7 +155,8 @@ namespace ExcelMvc.Runtime
                     .Where(x => !x.IsDynamic);
                 asms = asms.Where(x => selectAssembly(x.GetName().Name, true));
 #if NET6_0_OR_GREATER
-                asms = asms.Where(x => !x.IsCollectible);
+                var me = AssemblyLoadContext.GetLoadContext(typeof(ObjectFactory<T>).Assembly);
+                asms = asms.Where(x => !x.IsCollectible && AssemblyLoadContext.GetLoadContext(x) == me);
 #endif
                 types.AddRange(asms.SelectMany(x => getTypes(x)));
                 var location = typeof(ObjectFactory<T>).Assembly.Location;
@@ -194,7 +195,7 @@ namespace ExcelMvc.Runtime
             }, ex => XlCall.OnFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
             return types;
         }
-            
+
         private static bool IsDerivedFrom(Type type, Type baseType)
         {
             bool IsEqual(Type lhs, Type rhs)
@@ -205,20 +206,20 @@ namespace ExcelMvc.Runtime
         }
 
 #if NET6_0_OR_GREATER
-        private static AssemblyLoadContext AssemblyContext {get; set;}
+        private static AssemblyLoadContext AssemblyContext { get; set; }
 #endif
         private static void LoadContext()
         {
 #if NET6_0_OR_GREATER
             UnloadContext();
             AssemblyContext = new AssemblyLoadContext($"ObjectFactory<{typeof(T)}>", true);
-            AssemblyContext.Resolving +=(sender, args) =>
+            AssemblyContext.Resolving += (sender, args) =>
             {
                 var basePath = Path.GetDirectoryName(typeof(ObjectFactory<object>).Assembly.Location);
                 var folders = sender.Assemblies
                     .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
                     .Select(x => Path.GetDirectoryName(x.Location))
-                    .Concat(new [] {basePath})
+                    .Concat(new[] { basePath })
                     .Distinct();
 
                 var file = folders.Select(x => Path.Combine(x!, $"{args.Name}.dll"))
@@ -255,13 +256,14 @@ namespace ExcelMvc.Runtime
             try
             {
 #if NET6_0_OR_GREATER
-            var loaded = AssemblyContext.Assemblies
-                .SingleOrDefault(a => !a.IsDynamic && EqualsIgnoreCase(a.Location, assemblyPath));
-            return loaded ?? AssemblyContext.LoadFromAssemblyPath(assemblyPath);
+                var loaded = AssemblyContext.Assemblies
+                    .SingleOrDefault(a => !a.IsDynamic && EqualsIgnoreCase(a.Location, assemblyPath));
+                return loaded ?? AssemblyContext.LoadFromAssemblyPath(assemblyPath);
 #else
                 return Assembly.ReflectionOnlyLoadFrom(assemblyPath);
 #endif
-            }catch (BadImageFormatException)
+            }
+            catch (BadImageFormatException)
             {
                 // ignore 
                 return null;
