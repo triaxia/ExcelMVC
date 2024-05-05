@@ -82,5 +82,5 @@ string_t ClrRuntimeHost::GetModuleName()
 
 string_t ClrRuntimeHost::GetRuntimeConfigFile()
 {
-    return GetModulePath() + L"\\" + GetModuleName() + L".runtimeconfig.json";
+    return GetModulePath() + L"\\ExcelMvc" + L".runtimeconfig.json";
 }

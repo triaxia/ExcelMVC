@@ -1,3 +1,5 @@
+// Read https://learn.microsoft.com/en-us/dotnet/core/tutorials/netcore-hosting
+// 
 
 #include "pch.h"
 #include "ClrRuntimeHostCore.h"
