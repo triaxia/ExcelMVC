@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelMvc", "ExcelMvc\ExcelMvc.csproj", "{C5B20430-E071-475E-B334-6CFF47BB2344}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A9887347-3E93-4E4E-96DF-227648E57B60} = {A9887347-3E93-4E4E-96DF-227648E57B60}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelMvc.AddIn", "ExcelMvc.Addin\ExcelMvc.Addin.vcxproj", "{A9887347-3E93-4E4E-96DF-227648E57B60}"
 EndProject

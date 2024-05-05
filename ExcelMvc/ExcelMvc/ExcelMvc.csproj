@@ -90,6 +90,12 @@
 		<Content Include="ExcelMvc.Net.targets">
 			<PackagePath>Build</PackagePath>
 		</Content>
+		<Content Include="ExcelMvc.reflection.ps1">
+			<PackagePath>Build</PackagePath>
+		</Content>
+		<Content Include="ExcelMvc.reflection.txt">
+			<PackagePath>Build</PackagePath>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>

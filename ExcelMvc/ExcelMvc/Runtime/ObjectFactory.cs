@@ -163,8 +163,7 @@ namespace ExcelMvc.Runtime
                 if (!string.IsNullOrWhiteSpace(location))
                 {
                     var path = Path.GetDirectoryName(location);
-                    var files = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly)
-                        .Where(x => asms.All(y => !EqualsIgnoreCase(y.Location, x)));
+                    var files = GetAssemblyFiles(path).Where(x => asms.All(y => !EqualsIgnoreCase(y.Location, x)));
                     if (selectAssembly != null)
                         files = files.Where(x => selectAssembly(Path.GetFileNameWithoutExtension(x), true));
                     var dllTypes = files.SelectMany(x => DiscoverTypes(x, getTypes));
@@ -283,6 +282,16 @@ namespace ExcelMvc.Runtime
             }
             if (reference.IsAlive)
                 throw new TimeoutException($"ObjectFactory<{typeof(T)}>.CreateAll timed out {timeout}");
+        }
+
+        private static string[] GetAssemblyFiles(string path)
+        {
+            var config = Path.Combine(path, "ExcelMvc.reflection.txt");
+            var patterns = File.Exists(config) ?
+                File.ReadAllLines(config).Select(x => x.Trim()).Where(x => x != "" && !x.StartsWith("#")).ToArray()
+                : new[] { "*.dll" };
+            return patterns.SelectMany(x => Directory.GetFiles(path, x, SearchOption.TopDirectoryOnly))
+                .Distinct().ToArray();
         }
     }
 }
