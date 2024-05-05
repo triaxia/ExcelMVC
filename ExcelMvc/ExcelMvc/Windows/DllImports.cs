@@ -31,13 +31,21 @@ namespace ExcelMvc.Windows
         internal static extern int KillTimer(IntPtr hwnd, int nIDEvent);
 
         [DllImport("user32.dll")]
-        private static extern bool EnumChildWindows(IntPtr hWndParent, EnumWindowsCallback callback, IntPtr param);
+        internal static extern bool EnumChildWindows(IntPtr hWndParent, EnumWindowsCallback callback, IntPtr param);
+
+        [DllImport("user32.dll")]
+        internal static extern bool EnumThreadWindows(uint dwThreadId, EnumWindowsCallback callback, IntPtr param);
 
         [DllImport("user32.dll")]
         internal static extern int GetClassNameW(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder buf, int nMaxCount);
 
+        [DllImport("Kernel32")]
+        internal static extern uint GetCurrentThreadId();
+
+        internal static uint MainNativeThreadId { get; set; }
         internal static Application FindExcel()
         {
+            MainNativeThreadId = GetCurrentThreadId();
             var pid = Process.GetCurrentProcess().Id;
             IRunningObjectTable prot = null;
             IEnumMoniker pMonkEnum = null;
@@ -74,24 +82,51 @@ namespace ExcelMvc.Windows
 
         internal static bool IsInFunctionWizard()
         {
-            if (App.Instance.Underlying == null) return false;
-            return IsFunctionWizardWindow(new IntPtr(App.Instance.Underlying.Hwnd));
+            if (App.Instance.Underlying == null)
+                return false;
+
+            var buffer = new StringBuilder(256);
+            var result = false;
+            EnumThreadWindows(MainNativeThreadId, delegate (IntPtr hWndEnum, IntPtr param)
+            {
+                if (IsFunctionWizardWindow(hWndEnum))
+                {
+                    result = true;
+                    return false;
+                }
+                return true;
+            }, IntPtr.Zero);
+            return result;
         }
 
         internal static bool IsFunctionWizardWindow(IntPtr hWnd)
         {
-            StringBuilder buffer = new StringBuilder(256);
-            if (GetClassNameW(hWnd, buffer, buffer.Capacity) > 0
-                 && buffer.ToString().StartsWith("bosa_sdm_XL", StringComparison.InvariantCultureIgnoreCase))
-                return true;
+            var buffer = new StringBuilder(256);
+            return GetClassNameW(hWnd, buffer, buffer.Capacity) > 0
+                && buffer.ToString().StartsWith("bosa_sdm_XL", StringComparison.InvariantCultureIgnoreCase)
+                && IsReallyFunctionWizardWindow(hWnd);
+        }
 
+        internal static bool IsReallyFunctionWizardWindow(IntPtr hWnd)
+        {
+            // Below is inspired by ExcelDna.Integration.ExcelDnaUtil.IsFunctionWizardWindow.
+            // Well until a better way is found!
+            var editBoxCount = 0;
+            var scrollbarCount = 0;
             EnumChildWindows(hWnd, delegate (IntPtr hChild, IntPtr param)
             {
-                if (IsFunctionWizardWindow(hChild))
+                var buffer = new StringBuilder(256);
+                if (GetClassNameW(hChild, buffer, buffer.Capacity) == 0)
                     return true;
-                return false;
+
+                var name = buffer.ToString();
+                if (name == "EDTBX") editBoxCount++;
+                if (name == "ScrollBar") scrollbarCount++;
+
+                return true;
             }, IntPtr.Zero);
-            return false;
+
+            return editBoxCount == 5 && scrollbarCount == 1;
         }
     }
 }

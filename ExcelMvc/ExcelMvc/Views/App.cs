@@ -36,9 +36,7 @@ namespace ExcelMvc.Views
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using System.Windows.Data;
     using Bindings;
     using Controls;

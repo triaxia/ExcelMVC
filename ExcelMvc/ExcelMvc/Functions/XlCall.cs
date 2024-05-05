@@ -36,7 +36,6 @@ using ExcelMvc.Rtd;
 using ExcelMvc.Views;
 using ExcelMvc.Windows;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -65,7 +64,7 @@ namespace ExcelMvc.Functions
                 for (var idx = 0; idx < functions.Items.Length; idx++)
                 {
                     var args = new RegisteringEventArgs(functions.Items[idx]);
-                    Registering?.Invoke(null, args);
+                    Registering.Invoke(null, args);
                     functions.Items[idx] = args.Function;
                 }
             }
@@ -137,7 +136,7 @@ namespace ExcelMvc.Functions
         /// <returns></returns>
         public static ExcelReference GetReference(string bookName, string sheetName
             , int row, int column, int rowCount, int columnCount)
-            => new ExcelReference(sheetName, row, column, rowCount, columnCount);
+            => new ExcelReference(bookName, sheetName, row, column, rowCount, columnCount);
 
         /// <summary>
         /// Gets a reference on the active workbook.
@@ -262,7 +261,7 @@ namespace ExcelMvc.Functions
         /// </summary>
         /// <returns></returns>
         public static bool IsInFunctionWizard()
-            => IsInteractiveEditing(); // DllImports.IsInFunctionWizard();
+            => DllImports.IsInFunctionWizard();
 
         /// <summary>
         /// Indicates if Excel is in editing mode.
