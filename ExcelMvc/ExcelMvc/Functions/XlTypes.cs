@@ -58,12 +58,14 @@ namespace ExcelMvc.Functions
     {
         private XlMissing() { }
         public static readonly XlMissing Instance = new XlMissing();
+        public override string ToString() => "";
         public static bool IsMe(object value) => value == Instance;
     }
 
     public class XlEmpty
     {
         private XlEmpty() { }
+        public override string ToString() => "";
         public static readonly XlEmpty Instance = new XlEmpty();
         public static bool IsMe(object value) => value == Instance;
     }
