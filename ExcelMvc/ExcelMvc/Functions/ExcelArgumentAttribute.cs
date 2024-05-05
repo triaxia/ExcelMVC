@@ -43,5 +43,8 @@ namespace ExcelMvc.Functions
 	{
 		public string Name;
 		public string Description;
-	}
+        public ExcelArgumentAttribute(){}
+        public ExcelArgumentAttribute(string description)
+			=>Description = description;	
+    }
 }

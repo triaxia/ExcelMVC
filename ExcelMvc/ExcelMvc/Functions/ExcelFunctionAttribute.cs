@@ -99,6 +99,9 @@ namespace ExcelMvc.Functions
         /// (pxTypeText += '&')
         /// </summary>
         public bool IsClusterSafe;
-    }
 
+        public ExcelFunctionAttribute() { }
+        public ExcelFunctionAttribute(string description)
+            => Description = description;
+    }
 }
