@@ -235,10 +235,10 @@ namespace ExcelMvc.Functions
                     xltype = (uint)XlTypes.xltypeMulti;
                 }
             }
-            else if (value is XlError xle)
+            else if (value is ExcelError xle)
             {
                 xltype = (uint)XlTypes.xltypeErr;
-                err = (int)XlErrorFactory.ObjectToType(xle);
+                err = (int)xle;
             }
             else if (value is ExcelMissing)
             {
@@ -288,7 +288,7 @@ namespace ExcelMvc.Functions
                 case XlTypes.xltypeMissing:
                     return ExcelMissing.Value;
                 case XlTypes.xltypeErr:
-                    return XlErrorFactory.TypeToObject((XlErrors)err);
+                    return (ExcelError)err;
             }
             return null;
         }
@@ -325,7 +325,7 @@ namespace ExcelMvc.Functions
                 case XlTypes.xltypeMissing:
                     return new object[] { ExcelMissing.Value };
                 case XlTypes.xltypeErr:
-                    return new object[] { XlErrorFactory.TypeToObject((XlErrors)err) };
+                    return new object[] { (ExcelError)err };
             }
             return new object[] { };
         }
@@ -362,7 +362,7 @@ namespace ExcelMvc.Functions
                 case XlTypes.xltypeMissing:
                     return new object[,] { { ExcelMissing.Value } };
                 case XlTypes.xltypeErr:
-                    return new object[,] { { XlErrorFactory.TypeToObject((XlErrors)err) } };
+                    return new object[,] { { (ExcelError)err } };
             }
             return new object[,] { };
         }

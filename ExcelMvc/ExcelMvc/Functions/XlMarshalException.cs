@@ -43,7 +43,7 @@ namespace ExcelMvc.Functions
         public XlMarshalExceptionEventArgs(Exception ex)
         {
             Exception = ex;
-            Value = XlErrors.xlerrValue;
+            Value = ExcelError.ExcelErrorValue;
         }
     }
 
@@ -53,7 +53,9 @@ namespace ExcelMvc.Functions
         public static object HandleUnhandledException(Exception ex)
         {
             XlCall.OnFailed(ex);
-            if (Failed == null) return XlErrorValue.Instance;
+            if (Failed == null)
+                return ExcelError.ExcelErrorValue;
+            
             try
             {
                 var args = new XlMarshalExceptionEventArgs((Exception)ex);
@@ -63,7 +65,7 @@ namespace ExcelMvc.Functions
             catch(Exception e)
             {
                 XlCall.OnFailed(e);
-                return XlErrorValue.Instance;
+                return ExcelError.ExcelErrorValue;
             }
         }
 

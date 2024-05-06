@@ -36,125 +36,30 @@ using System.Linq;
 
 namespace ExcelMvc.Functions
 {
-    public enum XlErrors
+    public enum ExcelError : short
     {
-        xlerrUnknown = -1,
-        xlerrNull = 0,
-        xlerrDiv0 = 7,
-        xlerrValue = 15,
-        xlerrRef = 23,
-        xlerrName = 29,
-        xlerrNum = 36,
-        xlerrNA = 42,
-        xlerrGettingData = 43
+        ExcelErrorNull = 0,
+        ExcelErrorDiv0 = 7,
+        ExcelErrorValue = 15,
+        ExcelErrorRef = 23,
+        ExcelErrorName = 29,
+        ExcelErrorNum = 36,
+        ExcelErrorNA = 42,
+        ExcelErrorGettingData = 43
     }
 
-    public interface XlError
+    public static class ExcelErrorMappings
     {
-        XlErrors Type { get; }
-    }
-
-    public class XlErrorKnown : XlError
-    {
-        private XlErrorKnown() { }
-        public XlErrors Type => XlErrors.xlerrUnknown;
-        public static readonly XlErrorKnown Instance = new XlErrorKnown();
-        public override string ToString() => "#???!";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public class XlErrorNull : XlError
-    {
-        private XlErrorNull() { }
-        public XlErrors Type => XlErrors.xlerrNull;
-        public static readonly XlErrorNull Instance = new XlErrorNull();
-        public override string ToString() => "#NULL!";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public class XlErrorDiv0 : XlError
-    {
-        private XlErrorDiv0() { }
-        public XlErrors Type => XlErrors.xlerrDiv0;
-        public static readonly XlErrorDiv0 Instance = new XlErrorDiv0();
-        public override string ToString() => "#DIV0!";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public class XlErrorValue : XlError
-    {
-        private XlErrorValue() { }
-        public XlErrors Type => XlErrors.xlerrValue;
-        public static readonly XlErrorValue Instance = new XlErrorValue();
-        public override string ToString() => "#VALUE!";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public class XlErrorRef : XlError
-    {
-        private XlErrorRef() { }
-        public XlErrors Type => XlErrors.xlerrRef;
-        public static readonly XlErrorRef Instance = new XlErrorRef();
-        public override string ToString() => "#REF!";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public class XlErrorName : XlError
-    {
-        private XlErrorName() { }
-        public XlErrors Type => XlErrors.xlerrName;
-        public static readonly XlErrorName Instance = new XlErrorName();
-        public override string ToString() => "#NAME?";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public class XlErrorNum: XlError
-    {
-        private XlErrorNum() { }
-        public XlErrors Type => XlErrors.xlerrNum;
-        public static readonly XlErrorNum Instance = new XlErrorNum();
-        public override string ToString() => "#NUM!";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public class XlErrorNA : XlError
-    {
-        private XlErrorNA() { }
-        public XlErrors Type => XlErrors.xlerrNA;
-        public static readonly XlErrorNA Instance = new XlErrorNA();
-        public override string ToString() => "#N/A";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public class XlErrorGettingData : XlError
-    {
-        private XlErrorGettingData() { }
-        public XlErrors Type => XlErrors.xlerrGettingData;
-        public static readonly XlErrorGettingData Instance = new XlErrorGettingData();
-        public override string ToString() => "#Data!";
-        public static bool IsMe(object value) => value == Instance;
-    }
-
-    public static class XlErrorFactory
-    {
-        private static Dictionary<XlErrors, XlError> Errors;
-        static XlErrorFactory()
+        public static Dictionary<ExcelError, string> Mappings = new Dictionary<ExcelError, string>
         {
-            Errors = new Dictionary<XlErrors, XlError>()
-             {
-                 {XlErrors.xlerrNull, XlErrorNull.Instance},
-                 {XlErrors.xlerrDiv0, XlErrorDiv0.Instance},
-                 {XlErrors.xlerrValue, XlErrorValue.Instance},
-                 {XlErrors.xlerrRef, XlErrorRef.Instance},
-                 {XlErrors.xlerrName, XlErrorName.Instance},
-                 {XlErrors.xlerrNum, XlErrorNum.Instance},
-                 {XlErrors.xlerrNA, XlErrorNA.Instance},
-                 {XlErrors.xlerrGettingData, XlErrorGettingData.Instance}
-             };
-        }
-        public static XlError TypeToObject(XlErrors type)
-            => Errors.TryGetValue(type, out var value) ? value : Errors[XlErrors.xlerrUnknown];
-        public static XlErrors ObjectToType(XlError obj)
-            => Errors.Single(x => x.Value == obj).Key;
+            { ExcelError.ExcelErrorNull,"#NULL!" },
+            { ExcelError.ExcelErrorDiv0,"#DIV0!" },
+            { ExcelError.ExcelErrorValue,"#VALUE!" },
+            { ExcelError.ExcelErrorRef,"#REF!" },
+            { ExcelError.ExcelErrorName,"#NAME?" },
+            { ExcelError.ExcelErrorNum,"#NUM!" },
+            { ExcelError.ExcelErrorNA,"#N/A" },
+            { ExcelError.ExcelErrorGettingData,"#Data!" }
+        };
     }
 }
