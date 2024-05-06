@@ -54,20 +54,20 @@ namespace ExcelMvc.Functions
         xltypeBigData = xltypeStr | xltypeInt
     }
 
-    public class XlMissing
+    public class ExcelMissing
     {
-        private XlMissing() { }
-        public static readonly XlMissing Instance = new XlMissing();
+        private ExcelMissing() { }
+        public static readonly ExcelMissing Value = new ExcelMissing();
         public override string ToString() => "";
-        public static bool IsMe(object value) => value == Instance;
+        public static bool IsMe(object value) => value == Value;
     }
 
-    public class XlEmpty
+    public class ExcelEmpty
     {
-        private XlEmpty() { }
+        private ExcelEmpty() { }
         public override string ToString() => "";
-        public static readonly XlEmpty Instance = new XlEmpty();
-        public static bool IsMe(object value) => value == Instance;
+        public static readonly ExcelEmpty Value = new ExcelEmpty();
+        public static bool IsMe(object value) => value == Value;
     }
 }
 

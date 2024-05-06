@@ -240,11 +240,11 @@ namespace ExcelMvc.Functions
                 xltype = (uint)XlTypes.xltypeErr;
                 err = (int)XlErrorFactory.ObjectToType(xle);
             }
-            else if (value is XlMissing)
+            else if (value is ExcelMissing)
             {
                 xltype = (uint)XlTypes.xltypeMissing;
             }
-            else if (value is XlEmpty)
+            else if (value is ExcelEmpty)
             {
                 xltype = (uint)XlTypes.xltypeNil;
             }
@@ -284,9 +284,9 @@ namespace ExcelMvc.Functions
                         }
                     return result;
                 case XlTypes.xltypeNil:
-                    return XlEmpty.Instance;
+                    return ExcelEmpty.Value;
                 case XlTypes.xltypeMissing:
-                    return XlMissing.Instance;
+                    return ExcelMissing.Value;
                 case XlTypes.xltypeErr:
                     return XlErrorFactory.TypeToObject((XlErrors)err);
             }
@@ -321,9 +321,9 @@ namespace ExcelMvc.Functions
                         }
                     return result;
                 case XlTypes.xltypeNil:
-                    return new object[] { XlEmpty.Instance };
+                    return new object[] { ExcelEmpty.Value };
                 case XlTypes.xltypeMissing:
-                    return new object[] { XlMissing.Instance };
+                    return new object[] { ExcelMissing.Value };
                 case XlTypes.xltypeErr:
                     return new object[] { XlErrorFactory.TypeToObject((XlErrors)err) };
             }
@@ -358,9 +358,9 @@ namespace ExcelMvc.Functions
                         }
                     return result;
                 case XlTypes.xltypeNil:
-                    return new object[,] { { XlEmpty.Instance } };
+                    return new object[,] { { ExcelEmpty.Value } };
                 case XlTypes.xltypeMissing:
-                    return new object[,] { { XlMissing.Instance } };
+                    return new object[,] { { ExcelMissing.Value } };
                 case XlTypes.xltypeErr:
                     return new object[,] { { XlErrorFactory.TypeToObject((XlErrors)err) } };
             }
