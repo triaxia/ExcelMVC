@@ -93,7 +93,7 @@ namespace ExcelMvc.Rtd
                 }
                 catch (Exception ex)
                 {
-                    XlCall.OnFailed(ex);
+                    XlCall.RaiseFailed(ex);
                 }
             }, null, false);
         }

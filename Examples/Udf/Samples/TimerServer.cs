@@ -22,13 +22,13 @@ namespace Samples
         public int Start()
         {
             Timer = new Timer(TimerElapsed, null, 1000, 1000);
-            XlCall.OnPosted("Started");
+            XlCall.RaisePosted("Started");
             return 1;
         }
 
         public void Stop()
         {
-            XlCall.OnPosted("Stopped");
+            XlCall.RaisePosted("Stopped");
             Timer.Dispose();
             Topics.Clear();
         }
@@ -40,14 +40,14 @@ namespace Samples
 
         public object Connect(int topicId, string[] args)
         {
-            XlCall.OnPosted($"{topicId} connected");
+            XlCall.RaisePosted($"{topicId} connected");
             Topics[topicId] = new Topic { args = args, value = DateTime.Now };
             return Format(Topics[topicId]);
         }
 
         public void Disconnect(int topicId)
         {
-            XlCall.OnPosted($"{topicId} disconnected");
+            XlCall.RaisePosted($"{topicId} disconnected");
             Topics.TryRemove(topicId, out var _);
         }
 
@@ -65,7 +65,7 @@ namespace Samples
 
         private void TimerElapsed(object _)
         {
-            XlCall.OnPosted("Time Ticked");
+            XlCall.RaisePosted("Time Ticked");
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
                 pair.Value.value = now;

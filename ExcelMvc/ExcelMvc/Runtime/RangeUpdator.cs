@@ -197,13 +197,13 @@ namespace ExcelMvc.Runtime
                 {
                     item.AgeMilliseconds += 100;
                     if (item.AgeMilliseconds > 10000)
-                        XlCall.OnFailed(ex);
+                        XlCall.RaiseFailed(ex);
                     else
                         Enqueue(item, 100);
                 }
                 else
                 {
-                    XlCall.OnFailed(ex);
+                    XlCall.RaiseFailed(ex);
                 }
             }
         }

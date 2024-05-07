@@ -38,6 +38,7 @@ using ExcelMvc.Windows;
 using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace ExcelMvc.Functions
 {
@@ -90,7 +91,7 @@ namespace ExcelMvc.Functions
         /// </summary>
         /// <param name="ex"></param>
         /// <param name="sender"></param>
-        public static void OnFailed(Exception ex, object sender = null)
+        public static void RaiseFailed(Exception ex, object sender = null)
         {
             Messages.Instance.AddErrorLine(ex);
             Failed?.Invoke(sender, new ErrorEventArgs(ex));
@@ -111,7 +112,7 @@ namespace ExcelMvc.Functions
         /// </summary>
         /// <param name="ex"></param>
         /// <param name="sender"></param>
-        public static void OnPosted(string message, object sender = null)
+        public static void RaisePosted(string message, object sender = null)
         {
             Messages.Instance.AddInfoLine(message);
             Posted?.Invoke(sender, new MessageEventArgs(message));
@@ -284,5 +285,10 @@ namespace ExcelMvc.Functions
             }
             return false;
         }
+
+        /// <summary>
+        /// Gets the Excel.Application object
+        /// </summary>
+        public static object Application => App.Instance.Underlying;
     }
 }

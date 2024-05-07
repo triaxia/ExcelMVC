@@ -14,6 +14,7 @@ namespace Samples
         public static void Async(double arg1, double arg2, IntPtr handle)
         {
             Handle = XlCall.GetAsyncHandle(handle);
+            //XlCall.SetAsyncResult(Handle, "...");
             if (!OneWay.WaitOne(0)) return;
             Task.Run(()=>
             {

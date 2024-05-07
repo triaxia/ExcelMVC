@@ -83,7 +83,7 @@ namespace ExcelMvc.Runtime
                 {
                     var obj = (T)Activator.CreateInstance(Type.GetType(type));
                     Instances.Add(obj);
-                }, ex => XlCall.OnFailed(ex));
+                }, ex => XlCall.RaiseFailed(ex));
             }
         }
 
@@ -191,7 +191,7 @@ namespace ExcelMvc.Runtime
                 var asm = LoadFrom(assemblyPath);
                 if (asm != null)
                     types = types.Concat(getTypes(asm));
-            }, ex => XlCall.OnFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
+            }, ex => XlCall.RaiseFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
             return types;
         }
 

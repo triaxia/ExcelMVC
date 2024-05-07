@@ -76,7 +76,7 @@ namespace ExcelMvc.Controls
             Create(sheet, host, sheet.Shapes, names, commands);
 
             foreach (var cmd in commands.Values)
-                XlCall.OnPosted(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
+                XlCall.RaisePosted(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
         }
 
         /// <summary>

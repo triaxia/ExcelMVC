@@ -96,7 +96,7 @@ namespace ExcelMvc.Runtime
             string result = null;
             if (status != null)
             {
-                XlCall.OnFailed(status);
+                XlCall.RaiseFailed(status);
                 MessageBox.Show($"{status}", typeof(Interface).Namespace, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 

@@ -52,7 +52,7 @@ namespace ExcelMvc.Functions
         public static event EventHandler<XlMarshalExceptionEventArgs> Failed;
         public static object HandleUnhandledException(Exception ex)
         {
-            XlCall.OnFailed(ex);
+            XlCall.RaiseFailed(ex);
             if (Failed == null)
                 return ExcelError.ExcelErrorValue;
             
@@ -64,7 +64,7 @@ namespace ExcelMvc.Functions
             }
             catch(Exception e)
             {
-                XlCall.OnFailed(e);
+                XlCall.RaiseFailed(e);
                 return ExcelError.ExcelErrorValue;
             }
         }
