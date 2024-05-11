@@ -46,7 +46,7 @@ namespace ExcelMvc.Functions
         {
             var functions = Discover()
                 .Select(x=> (x.method, x.function, x.args, callback: MakeCallback(x.method, x.args)))
-                .Select(x => new Function(x.function, x.args, x.callback, x.method.ReturnType))
+                .Select(x => new Function(x.function, x.args, x.callback, x.method))
                 .ToArray();
             XlCall.RegisterFunctions(new Functions(functions));
         }

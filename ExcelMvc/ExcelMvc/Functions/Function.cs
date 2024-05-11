@@ -101,7 +101,7 @@ namespace ExcelMvc.Functions
         public Argument[] Arguments;
 
         public Function(ExcelFunctionAttribute rhs, Argument[] arguments
-            , IntPtr callback, Type returnType)
+            , IntPtr callback, MethodInfo method)
         {
             Callback = callback; 
             FunctionType = rhs.FunctionType;
@@ -112,12 +112,12 @@ namespace ExcelMvc.Functions
             IsClusterSafe = rhs.IsClusterSafe;
             ArgumentCount = (byte)(arguments?.Length ?? 0);
             Category = rhs.Category ?? "";
-            Name = rhs.Name ?? "";
+            Name = rhs.Name ?? method.Name;
             Description = rhs.Description ?? "";
             HelpTopic = rhs.HelpTopic ?? "";
             Arguments = Pad(arguments);
             if (rhs.IsHidden) FunctionType = 0;
-            ReturnType = returnType.FullName;
+            ReturnType = method.ReturnType.FullName;
         }
 
         private static Argument[] Pad(Argument[] arguments)
