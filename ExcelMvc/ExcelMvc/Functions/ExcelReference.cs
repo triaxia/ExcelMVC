@@ -9,11 +9,11 @@ namespace ExcelMvc.Functions
     {
         public string BookName { get; }
         public string SheetName { get; }
-        public int Row { get; }
-        public int Column { get; }
-        public int RowCount { get; }
-        public int ColumnCount { get; }
-        private string Address { get; }
+        public int RowFirst { get; }
+        public int RowLast { get; }
+        public int ColumnFirst { get; }
+        public int ColumnLast { get; }
+        public string Address { get; }
 
         public object GetValue() => ToRange().Value;
 
@@ -48,12 +48,12 @@ namespace ExcelMvc.Functions
         /// </summary>
         /// <param name="bookName"></param>
         /// <param name="sheetName"></param>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="rowCount"></param>
-        /// <param name="columnCount"></param>
-        public ExcelReference(string bookName, string sheetName, int row, int column, int rowCount, int columnCount)
-            : this(GetRange(bookName, sheetName, row, column, rowCount, columnCount))
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
+        public ExcelReference(string bookName, string sheetName, int rowFirst, int rowLast, int columnFirst, int columnLast)
+            : this(GetRange(bookName, sheetName, rowFirst, rowLast, columnFirst, columnLast))
         {
         }
 
@@ -61,27 +61,27 @@ namespace ExcelMvc.Functions
         /// Initializes a new instance of <see cref="ExcelReference"/> on the active workbook.
         /// </summary>
         /// <param name="sheetName"></param>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="rowCount"></param>
-        /// <param name="columnCount"></param>
-        public ExcelReference(string sheetName, int row, int column, int rowCount, int columnCount)
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
+        public ExcelReference(string sheetName, int rowFirst, int rowLast, int columnFirst, int columnLast)
             : this(GetRange(App.Instance.Underlying.ActiveWorkbook.Name, sheetName
-                , row, column, rowCount, columnCount))
+                , rowFirst, rowLast, columnFirst, columnLast))
         {
         }
 
         /// <summary>
         /// Initializes a new instance of <see cref="ExcelReference"/> on the active worksheet.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="rowCount"></param>
-        /// <param name="columnCount"></param>
-        public ExcelReference(int row, int column, int rowCount, int columnCount)
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
+        public ExcelReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
             : this(GetRange(App.Instance.Underlying.ActiveWorkbook.Name
                 , App.Instance.Underlying.ActiveSheet.Name as string
-                , row, column, rowCount, columnCount))
+                , rowFirst, rowLast, columnFirst, columnLast))
         {
         }
 
@@ -89,10 +89,10 @@ namespace ExcelMvc.Functions
         {
             BookName = range.Parent.Parent.Name;
             SheetName = range.Parent.Name;
-            Row = range.Row;
-            Column = range.Column;
-            RowCount = range.Rows.Count;
-            ColumnCount = range.Columns.Count;
+            RowFirst = range.Row;
+            RowLast = RowFirst + range.Rows.Count - 1;
+            ColumnFirst = range.Column;
+            ColumnLast = RowFirst + range.Columns.Count - 1;
             Address = range.Address;
         }
 
@@ -107,16 +107,16 @@ namespace ExcelMvc.Functions
 
         private Range ToRange()
         {
-            return GetRange(BookName, SheetName, Row, Column, RowCount, ColumnCount);
+            return GetRange(BookName, SheetName, RowFirst, RowLast, ColumnFirst, ColumnLast);
         }
 
         private static Range GetRange(string bookName, string sheetName
-            , int row, int column, int rowCount, int columnCount)
+            , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
             var sheet = App.Instance.Underlying.Workbooks[bookName]
                 .Worksheets[sheetName] as Worksheet;
-            var start = sheet.Cells[row, column];
-            var end = start.Cells[row + rowCount - 1, column + columnCount - 1];
+            var start = sheet.Cells[rowFirst, columnFirst];
+            var end = start.Cells[rowLast, columnLast];
             return sheet.Range[start, end] as Range;
         }
     }

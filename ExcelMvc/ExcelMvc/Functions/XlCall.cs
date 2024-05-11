@@ -38,7 +38,6 @@ using ExcelMvc.Windows;
 using System;
 using System.IO;
 using System.Linq;
-using System.Windows;
 
 namespace ExcelMvc.Functions
 {
