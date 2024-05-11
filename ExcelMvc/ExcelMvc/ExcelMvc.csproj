@@ -16,7 +16,7 @@
 		<PackageOutputPath>bin\NuGet</PackageOutputPath>
 		<PackageProjectUrl>https://github.com/triaxia/ExcelMVC</PackageProjectUrl>
 		<PackageIcon>ExcelMvcIcon64.png</PackageIcon>
-		<PackageTags>Excel;MVC;MVVM</PackageTags>
+		<PackageTags>Excel;MVC;MVVM;UDFs;RTDs</PackageTags>
 		<PackageReleaseNotes>See the Releases folder under https://github.com/triaxia/ExcelMVC</PackageReleaseNotes>
 		<Authors>Peter Gu (Creator),Wolfgang Stamm (Contributor 2013)</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
