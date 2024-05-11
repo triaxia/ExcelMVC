@@ -50,7 +50,7 @@ namespace ExcelMvc.Functions
     public static class XlMarshalException
     {
         public static event EventHandler<XlMarshalExceptionEventArgs> Failed;
-        public static object HandleUnhandledException(Exception ex)
+        public static object HandleException(Exception ex)
         {
             XlCall.RaiseFailed(ex);
             if (Failed == null)
@@ -70,7 +70,7 @@ namespace ExcelMvc.Functions
         }
 
         public static MethodInfo HandlerMethod =>
-            typeof(XlMarshalException).GetMethod(nameof(XlMarshalException.HandleUnhandledException)
+            typeof(XlMarshalException).GetMethod(nameof(XlMarshalException.HandleException)
                 , BindingFlags.Static | BindingFlags.Public);
     }
 }

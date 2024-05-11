@@ -49,7 +49,7 @@ namespace ExcelMvc.Functions
                 }
                 catch (Exception ex)
                 {
-                    XlMarshalException.HandleUnhandledException(ex);
+                    XlMarshalException.HandleException(ex);
                     return MakeZeroDelegate(method);
                 }
             });
