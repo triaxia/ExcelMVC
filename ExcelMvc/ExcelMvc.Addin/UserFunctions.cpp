@@ -120,8 +120,12 @@ LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
 	return result;
 }
 
-std::wstring MakeTypeString(LPCWSTR type)
+std::wstring MakeTypeString(LPCWSTR type, LPCWSTR argName)
 {
+	// optional parameter to use Q
+	if (argName[0] == L'[' && argName[lstrlenW(argName) -1] == L']')
+		return L"Q";
+
 	if (wcscmp(type, L"System.Double") == 0
 		|| wcscmp(type, L"System.Float") == 0
 		|| wcscmp(type, L"System.DateTime") == 0)
@@ -152,12 +156,12 @@ std::wstring MakeTypeString(LPCWSTR type)
 
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring& names, std::wstring& types)
 {
-	types = pFunction->IsAsync ? L">" : MakeTypeString(pFunction->ReturnType);
+	types = pFunction->IsAsync ? L">" : MakeTypeString(pFunction->ReturnType, L"");
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		if (idx > 0) names += L",";
 		names += NullCoalesce(pFunction->Arguments[idx].Name);
-		types += MakeTypeString(pFunction->Arguments[idx].Type);
+		types += MakeTypeString(pFunction->Arguments[idx].Type, pFunction->Arguments[idx].Name);
 	}
 	if (pFunction->IsVolatile) types += L"!";
 	if (pFunction->IsThreadSafe) types += L"$";

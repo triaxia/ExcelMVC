@@ -41,27 +41,59 @@ namespace ExcelMvc.Functions
     public unsafe partial class XlMarshalContext
     {
         public static IntPtr IntPtrToIntPtr(IntPtr value)
-            => value;
+        {
+            return value;
+        }
+
         public static bool IntPtrToBoolean(IntPtr value)
-            => value == IntPtr.Zero ? false : *(short*)value.ToPointer() != 0;
+        {
+            return value == IntPtr.Zero ? false : *(short*)value.ToPointer() != 0;
+        }
+
         public static double IntPtrToDouble(IntPtr value)
-            => value == IntPtr.Zero ? 0 : *(double*)value.ToPointer();
+        {
+            return value == IntPtr.Zero ? 0 : *(double*)value.ToPointer();
+        }
+
         public static DateTime IntPtrToDateTime(IntPtr value)
-            => value == IntPtr.Zero ? DateTime.FromOADate(0) : DateTime.FromOADate(*(double*)value.ToPointer());
+        {
+            return value == IntPtr.Zero ? DateTime.FromOADate(0) : DateTime.FromOADate(*(double*)value.ToPointer());
+        }
+
         public static float IntPtrToSingle(IntPtr value)
-            => value == IntPtr.Zero ? 0 : (float)*(double*)value.ToPointer();
+        {
+            return value == IntPtr.Zero ? 0 : (float)*(double*)value.ToPointer();
+        }
+
         public static int IntPtrToInt32(IntPtr value)
-            => value == IntPtr.Zero ? 0 : *(int*)value.ToPointer();
+        {
+            return value == IntPtr.Zero ? 0 : *(int*)value.ToPointer();
+        }
+
         public static uint IntPtrToUInt32(IntPtr value)
-            => value == IntPtr.Zero ? 0 : (uint)*(int*)value.ToPointer();
+        {
+            return value == IntPtr.Zero ? 0 : (uint)*(int*)value.ToPointer();
+        }
+
         public static short IntPtrToInt16(IntPtr value)
-            => value == IntPtr.Zero ? (short)0 : *(short*)value.ToPointer();
+        {
+            return value == IntPtr.Zero ? (short)0 : *(short*)value.ToPointer();
+        }
+
         public static ushort IntPtrToUInt16(IntPtr value)
-            => value == IntPtr.Zero ? (ushort)0 : (ushort)*(short*)value.ToPointer();
+        {
+            return value == IntPtr.Zero ? (ushort)0 : (ushort)*(short*)value.ToPointer();
+        }
+
         public static byte IntPtrToByte(IntPtr value)
-            => value == IntPtr.Zero ? (byte)0 : (byte)*(short*)value.ToPointer();
+        {
+            return value == IntPtr.Zero ? (byte)0 : (byte)*(short*)value.ToPointer();
+        }
+
         public static sbyte IntPtrToSByte(IntPtr value)
-            => value == IntPtr.Zero ? (sbyte)0 : (sbyte)*(short*)value.ToPointer();
+        {
+            return value == IntPtr.Zero ? (sbyte)0 : (sbyte)*(short*)value.ToPointer();
+        }
 
         public static string IntPtrToString(IntPtr value)
         {
