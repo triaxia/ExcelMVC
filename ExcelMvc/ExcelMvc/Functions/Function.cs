@@ -62,6 +62,7 @@ namespace ExcelMvc.Functions
             }
             Type = parameter.ParameterType.FullName;
         }
+        public bool IsOptionalArg => Name.StartsWith("[") && Name.EndsWith("]");
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

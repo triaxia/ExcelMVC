@@ -45,7 +45,7 @@ namespace ExcelMvc.Functions
         public static void RegisterFunctions()
         {
             var functions = Discover()
-                .Select(x=> (x.method, x.function, x.args, callback: MakeCallback(x.method)))
+                .Select(x=> (x.method, x.function, x.args, callback: MakeCallback(x.method, x.args)))
                 .Select(x => new Function(x.function, x.args, x.callback, x.method.ReturnType))
                 .ToArray();
             XlCall.RegisterFunctions(new Functions(functions));
@@ -82,9 +82,9 @@ namespace ExcelMvc.Functions
             //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
 
-        public static IntPtr MakeCallback(MethodInfo method)
+        public static IntPtr MakeCallback(MethodInfo method, Argument[] args = null)
         {
-            var e = DelegateFactory.MakeOuterDelegate(method);
+            var e = DelegateFactory.MakeOuterDelegate(method, args);
             AddIn.NoGarbageCollectableHandles.Add(GCHandle.Alloc(e));
             return Marshal.GetFunctionPointerForDelegate(e);
         }

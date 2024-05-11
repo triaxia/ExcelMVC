@@ -39,13 +39,13 @@ namespace ExcelMvc.Functions
 {
     public static class DelegateFactory
     {
-        public static Delegate MakeOuterDelegate(MethodInfo method)
+        public static Delegate MakeOuterDelegate(MethodInfo method, Argument[] args)
         {
             var instance = new LazyDelegate(() =>
             {
                 try
                 {
-                    return MakeInnerDelegate(method);
+                    return MakeInnerDelegate(method, args);
                 }
                 catch (Exception ex)
                 {
@@ -66,7 +66,7 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public static Delegate MakeInnerDelegate(MethodInfo method)
+        public static Delegate MakeInnerDelegate(MethodInfo method, Argument[] args)
         {
             var parameters = method.GetParameters();
             var outerParameters = new ParameterExpression[parameters.Length];
@@ -75,7 +75,9 @@ namespace ExcelMvc.Functions
             {
                 outerParameters[index] = Expression.Parameter(typeof(IntPtr), parameters[index].Name);
                 innerParameters[index] = Expression.Call(XlMarshalContext.IncomingConverter(parameters[index].ParameterType)
-                    , outerParameters[index]);
+                    , outerParameters[index]
+                    , Expression.Constant(parameters[index])
+                    , Expression.Constant(args != null && args[index].IsOptionalArg));
             }
 
             var innerCall = Expression.Call(method, innerParameters);

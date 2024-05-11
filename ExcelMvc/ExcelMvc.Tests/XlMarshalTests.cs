@@ -163,7 +163,7 @@ namespace ExcelMvc.Tests
         private static void AssertMarshal<TValue>(MethodInfo method, TValue value
             ,bool isCollection = false)
         {
-            var func = (FunctionDelegate.Function1)DelegateFactory.MakeOuterDelegate(method);
+            var func = (FunctionDelegate.Function1)DelegateFactory.MakeOuterDelegate(method, null);
             var name = typeof(TValue).Name.Replace("[]", "Array").Replace("[,]", "Matrix");
             var p1 = new XlMarshalContext();
             var incoming = p1.GetType().GetMethod($"{name}ToIntPtr");

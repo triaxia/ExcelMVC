@@ -164,5 +164,13 @@ namespace Samples
         {
             return "https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1";
         }
+
+        [ExcelFunction(Name = "uDefaultValue")]
+        public static object uDefaultValue(int a, [ExcelArgument(Name = "[b]")] int b = 100, [ExcelArgument(Name = "[c]")] int c = 200)
+        {
+            if (XlCall.IsInFunctionWizard())
+                return "editing...";
+            return a + b + c;
+        }
     }
 }
