@@ -97,7 +97,7 @@ namespace ExcelMvc.Functions
                 var context = Expression.Variable(typeof(XlMarshalContext), "context");
                 var value = Expression.Call(typeof(XlMarshalContext), nameof(XlMarshalContext.GetThreadInstance), null);
                 innerCall = Expression.Call(context, XlMarshalContext.OutgoingConverter(method.ReturnType), innerCall);
-                var catcher = Expression.Call(context, XlMarshalContext.OutgoingConverter(typeof(object)), exHandler);
+                var catcher = Expression.Call(context, XlMarshalContext.ExceptionConverter(method.ReturnType), exHandler);
                 var body = Expression.Block(
                     typeof(IntPtr),
                     new ParameterExpression[] { context },

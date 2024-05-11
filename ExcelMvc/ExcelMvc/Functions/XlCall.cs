@@ -129,14 +129,14 @@ namespace ExcelMvc.Functions
         /// </summary>
         /// <param name="bookName"></param>
         /// <param name="sheetName"></param>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="rowCount"></param>
-        /// <param name="columnCount"></param>
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
         /// <returns></returns>
         public static ExcelReference GetReference(string bookName, string sheetName
-            , int row, int column, int rowCount, int columnCount)
-            => new ExcelReference(bookName, sheetName, row, column, rowCount, columnCount);
+            , int rowFirst, int rowLast, int columnFirst, int columnLast)
+            => new ExcelReference(bookName, sheetName, rowFirst, rowLast, columnFirst, columnLast);
 
         /// <summary>
         /// Gets a reference on the active workbook.
@@ -148,8 +148,8 @@ namespace ExcelMvc.Functions
         /// <param name="columnCount"></param>
         /// <returns></returns>
         public static ExcelReference GetActiveBookReference(string sheetName
-            , int row, int column, int rowCount, int columnCount)
-            => new ExcelReference(sheetName, row, column, rowCount, columnCount);
+            , int rowFirst, int rowLast, int columnFirst, int columnLast)
+            => new ExcelReference(sheetName, rowFirst, rowLast, columnFirst, columnLast);
 
         /// <summary>
         /// Gets a reference on the active worksheet.
@@ -159,8 +159,8 @@ namespace ExcelMvc.Functions
         /// <param name="rowCount"></param>
         /// <param name="columnCount"></param>
         /// <returns></returns>
-        public static ExcelReference GetActiveSheetReference(int row, int column, int rowCount, int columnCount)
-            => new ExcelReference(row, column, rowCount, columnCount);
+        public static ExcelReference GetActiveSheetReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
+            => new ExcelReference(rowFirst, rowLast, columnFirst, columnLast);
 
         /// <summary>
         /// Gets the Async handle from the specified XL handle (XLOPER12)
