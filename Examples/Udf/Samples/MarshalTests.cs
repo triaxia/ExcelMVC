@@ -8,6 +8,7 @@ namespace Samples
         [ExcelFunction(Name = "uDouble")]
         public static double Double(double value)
         {
+            throw new NotImplementedException();
             return value;
         }
 
@@ -174,7 +175,6 @@ namespace Samples
         [ExcelFunction(Name = "uExceptionSafe", IsExceptionSafe =true)]
         public static double uExceptionSafe(double a, double b)
         {
-            //when IsExceptionSafe is set = true, unhandled exceptions will crash Excel!
             return a + b;
         }
     }

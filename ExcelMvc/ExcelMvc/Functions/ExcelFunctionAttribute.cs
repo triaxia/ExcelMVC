@@ -101,8 +101,9 @@ namespace ExcelMvc.Functions
         public bool IsClusterSafe;
 
         /// <summary>
-        /// Indicates if the function throws no exceptions. Note when IsExceptionSafe
-        /// is set to true, unhandled exceptions will crash Excel.
+        /// Indicates if the function "throws" exceptions. Note when IsExceptionSafe
+        /// is set to false, XLOPER references are returned to Excel. When it is set
+        /// to true, number references are returned to Excel.
         /// </summary>
         public bool IsExceptionSafe = false;
 

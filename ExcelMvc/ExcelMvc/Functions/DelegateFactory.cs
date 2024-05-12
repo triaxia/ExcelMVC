@@ -101,11 +101,13 @@ namespace ExcelMvc.Functions
             if (method.ReturnType == typeof(void))
             {
                 Expression body;
+                /*
                 if (function.IsExceptionSafe)
                 {
                     body = innerCall;
                 }
                 else
+                */
                 {
                     var ex = Expression.Variable(typeof(Exception), "ex");
                     var handler = Expression.Block(Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex)
@@ -122,6 +124,7 @@ namespace ExcelMvc.Functions
                 innerCall = Expression.Call(context, XlMarshalContext.OutgoingConverter(method.ReturnType)
                     , innerCall, Expression.Constant(function.IsExceptionSafe));
                 Expression body;
+                /*
                 if (function.IsExceptionSafe)
                 {
                     body = Expression.Block(
@@ -131,10 +134,11 @@ namespace ExcelMvc.Functions
                         innerCall);
                 }
                 else
+                */
                 {
                     var ex = Expression.Variable(typeof(Exception), "ex");
                     var handler = Expression.Call(context, XlMarshalContext.ExceptionConverter(method.ReturnType)
-                        , Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex));
+                        , Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex), Expression.Constant(function.IsExceptionSafe));
                     body = Expression.Block(
                         typeof(IntPtr),
                         new ParameterExpression[] { context },
