@@ -164,7 +164,7 @@ namespace ExcelMvc.Tests
             ,bool isCollection = false)
         {
             var func = (FunctionDelegate.Function1)DelegateFactory.MakeOuterDelegate(method
-                , new Function { IsExceptionSafe = true});
+                , new Function { Name="Test", IsExceptionSafe = true});
             var name = typeof(TValue).Name.Replace("[]", "Array").Replace("[,]", "Matrix");
             var p1 = new XlMarshalContext();
             var incoming = p1.GetType().GetMethod($"{name}ToIntPtr");

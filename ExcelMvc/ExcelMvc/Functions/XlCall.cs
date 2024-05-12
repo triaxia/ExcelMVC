@@ -60,7 +60,9 @@ namespace ExcelMvc.Functions
         static XlCall()
         {
             XlMarshalExceptionHandler.Failed +=
-                (sender, e) => RaiseFailed(e.GetException());
+                (_, e) => RaiseFailed(e.GetException(), _);
+            DelegateFactory.Executing +=
+                (_, e) => Executing?.Invoke(_, e);
         }
 
         public static void RegisterFunctions(Functions functions)
@@ -90,6 +92,11 @@ namespace ExcelMvc.Functions
         /// Occurs before functions are registered to Excel. 
         /// </summary>
         public static event EventHandler<RegisteringEventArgs> Registering;
+
+        /// <summary>
+        /// Occurs before functions are being executed.
+        /// </summary>
+        public static event EventHandler<ExecutingEventArgs> Executing;
 
         /// <summary>
         /// Occurs whenever errors are encountered.

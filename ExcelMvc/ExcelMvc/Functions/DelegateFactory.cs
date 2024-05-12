@@ -37,8 +37,22 @@ using System.Reflection;
 
 namespace ExcelMvc.Functions
 {
+    public class ExecutingEventArgs : EventArgs
+    {
+        public string Name { get; }
+        public ExecutingEventArgs(string name) => Name = name;
+    }
     public static class DelegateFactory
     {
+        public static event EventHandler<ExecutingEventArgs> Executing;
+        public static void RaiseExecuting(string name)
+        {
+            if (Executing == null) return;
+            Executing.Invoke(null, new ExecutingEventArgs(name));
+        }
+        private static readonly MethodInfo RaiseExecutingMethod
+            = typeof(DelegateFactory).GetMethod(nameof(RaiseExecuting));
+
         public static Delegate MakeOuterDelegate(MethodInfo method, Function function)
         {
             var instance = new LazyDelegate(() =>
@@ -80,7 +94,9 @@ namespace ExcelMvc.Functions
                     , Expression.Constant(function.Arguments != null && function.Arguments[index].IsOptionalArg));
             }
 
-            var innerCall = Expression.Call(method, innerParameters);
+            var innerCall = (Expression) Expression.Call(method, innerParameters);
+            var logging = Expression.Call(RaiseExecutingMethod, Expression.Constant(function.Name));
+            innerCall = Expression.Block(logging, innerCall);
 
             if (method.ReturnType == typeof(void))
             {
@@ -92,8 +108,9 @@ namespace ExcelMvc.Functions
                 else
                 {
                     var ex = Expression.Variable(typeof(Exception), "ex");
-                    var catcher = Expression.Block(Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex), Expression.Empty());
-                    body = Expression.TryCatch(innerCall, Expression.Catch(ex, catcher));
+                    var handler = Expression.Block(Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex)
+                        , Expression.Empty());
+                    body = Expression.TryCatch(innerCall, Expression.Catch(ex, handler));
                 }
                 var delegateType = ActionDelegate.Actions[outerParameters.Length];
                 return Expression.Lambda(delegateType, body, method.Name, outerParameters).Compile();
@@ -116,13 +133,13 @@ namespace ExcelMvc.Functions
                 else
                 {
                     var ex = Expression.Variable(typeof(Exception), "ex");
-                    var catcher = Expression.Call(context, XlMarshalContext.ExceptionConverter(method.ReturnType)
+                    var handler = Expression.Call(context, XlMarshalContext.ExceptionConverter(method.ReturnType)
                         , Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex));
                     body = Expression.Block(
                         typeof(IntPtr),
                         new ParameterExpression[] { context },
                         Expression.Assign(context, value),
-                        Expression.TryCatch(innerCall, Expression.Catch(ex, catcher)));
+                        Expression.TryCatch(innerCall, Expression.Catch(ex, handler)));
                 }
 
                 var delegateType = FunctionDelegate.Functions[outerParameters.Length];

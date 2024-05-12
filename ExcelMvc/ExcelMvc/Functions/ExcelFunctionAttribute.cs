@@ -101,7 +101,8 @@ namespace ExcelMvc.Functions
         public bool IsClusterSafe;
 
         /// <summary>
-        /// Indicates if the function throws no exceptions.
+        /// Indicates if the function throws no exceptions. Note when IsExceptionSafe
+        /// is set to true, unhandled exceptions will crash Excel.
         /// </summary>
         public bool IsExceptionSafe = false;
 
