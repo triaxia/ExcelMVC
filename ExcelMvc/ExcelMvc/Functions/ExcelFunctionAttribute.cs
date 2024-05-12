@@ -100,6 +100,11 @@ namespace ExcelMvc.Functions
         /// </summary>
         public bool IsClusterSafe;
 
+        /// <summary>
+        /// Indicates if the function throws no exceptions.
+        /// </summary>
+        public bool IsExceptionSafe = false;
+
         public ExcelFunctionAttribute() { }
         public ExcelFunctionAttribute(string description)
             => Description = description;

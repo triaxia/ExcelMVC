@@ -33,45 +33,29 @@ Boston, MA 02110-1301 USA.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 namespace ExcelMvc.Functions
 {
-    public class XlMarshalExceptionEventArgs : EventArgs
+    public static class XlMarshalExceptionHandler
     {
-        public Exception Exception { get; }
-        public object Value { get; set; }
-        public XlMarshalExceptionEventArgs(Exception ex)
-        {
-            Exception = ex;
-            Value = ExcelError.ExcelErrorValue;
-        }
-    }
-
-    public static class XlMarshalException
-    {
-        public static event EventHandler<XlMarshalExceptionEventArgs> Failed;
+        public static event EventHandler<ErrorEventArgs> Failed;
         public static object HandleException(Exception ex)
         {
-            XlCall.RaiseFailed(ex);
-            if (Failed == null)
-                return ExcelError.ExcelErrorValue;
-
             try
             {
-                var args = new XlMarshalExceptionEventArgs((Exception)ex);
-                Failed.Invoke(null, args);
-                return args.Value;
+                Failed?.Invoke(null, new ErrorEventArgs(ex));
+                return ExcelError.ExcelErrorValue;
             }
-            catch (Exception e)
+            catch
             {
-                XlCall.RaiseFailed(e);
                 return ExcelError.ExcelErrorValue;
             }
         }
 
         public static MethodInfo HandlerMethod =>
-            typeof(XlMarshalException).GetMethod(nameof(XlMarshalException.HandleException)
+            typeof(XlMarshalExceptionHandler).GetMethod(nameof(XlMarshalExceptionHandler.HandleException)
                 , BindingFlags.Static | BindingFlags.Public);
     }
 

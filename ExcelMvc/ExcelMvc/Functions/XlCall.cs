@@ -57,7 +57,13 @@ namespace ExcelMvc.Functions
 
     public static class XlCall
     {
-        internal static void RegisterFunctions(Functions functions)
+        static XlCall()
+        {
+            XlMarshalExceptionHandler.Failed +=
+                (sender, e) => RaiseFailed(e.GetException());
+        }
+
+        public static void RegisterFunctions(Functions functions)
         {
             if (Registering != null) 
             {
@@ -75,16 +81,21 @@ namespace ExcelMvc.Functions
             }
         }
 
-        internal static void AsyncReturn(IntPtr handle, IntPtr result)
+        public static void AsyncReturn(IntPtr handle, IntPtr result)
         {
             AddIn.AutoFree(AddIn.AsyncReturn(handle, result));
         }
 
         /// <summary>
+        /// Occurs before functions are registered to Excel. 
+        /// </summary>
+        public static event EventHandler<RegisteringEventArgs> Registering;
+
+        /// <summary>
         /// Occurs whenever errors are encountered.
         /// </summary>
         public static event EventHandler<ErrorEventArgs> Failed;
-
+            
         /// <summary>
         /// Raises <see cref="Failed"/> event.
         /// </summary>
@@ -100,11 +111,6 @@ namespace ExcelMvc.Functions
         /// Occurs whenever messages are posted. 
         /// </summary>
         public static event EventHandler<MessageEventArgs> Posted;
-
-        /// <summary>
-        /// Occurs before functions are registered to Excel. 
-        /// </summary>
-        public static event EventHandler<RegisteringEventArgs> Registering;
 
         /// <summary>
         /// Raises <see cref="Posted"/> event.

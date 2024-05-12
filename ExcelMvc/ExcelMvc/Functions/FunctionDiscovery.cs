@@ -44,11 +44,14 @@ namespace ExcelMvc.Functions
     {
         public static void RegisterFunctions()
         {
-            var functions = Discover()
-                .Select(x=> (x.method, x.function, x.args, callback: MakeCallback(x.method, x.args)))
-                .Select(x => new Function(x.function, x.args, x.callback, x.method))
+            var items = Discover()
+                .Select(x => (x.method, x.function, x.args))
+                .Select(x => (function: new Function(x.function, x.args, IntPtr.Zero, x.method), x.method))
                 .ToArray();
-            XlCall.RegisterFunctions(new Functions(functions));
+            for (int index = 0; index < items.Length; index++)
+                items[index].function.Callback = MakeCallback(items[index].method, items[index].function);
+
+            XlCall.RegisterFunctions(new Functions(items.Select(x => x.function).ToArray()));
         }
 
         public static IEnumerable<(MethodInfo method, ExcelFunctionAttribute function, Argument[] args)> Discover()
@@ -82,9 +85,9 @@ namespace ExcelMvc.Functions
             //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
 
-        public static IntPtr MakeCallback(MethodInfo method, Argument[] args = null)
+        public static IntPtr MakeCallback(MethodInfo method, Function function)
         {
-            var e = DelegateFactory.MakeOuterDelegate(method, args);
+            var e = DelegateFactory.MakeOuterDelegate(method, function);
             AddIn.NoGarbageCollectableHandles.Add(GCHandle.Alloc(e));
             return Marshal.GetFunctionPointerForDelegate(e);
         }

@@ -56,6 +56,7 @@ struct ExcelFunction
 	bool IsAsync;
 	bool IsThreadSafe;
 	bool IsClusterSafe;
+	bool IsExceptionSafe;
 	LPCWSTR Category;
 	LPCWSTR Name;
 	LPCWSTR Description;
@@ -122,8 +123,8 @@ LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
 
 std::wstring MakeTypeString(LPCWSTR type, LPCWSTR argName)
 {
-	// optional parameter to use Q
-	if (argName[0] == L'[' && argName[lstrlenW(argName) -1] == L']')
+	// optional parameter to use Q, so we can set default values!
+	if (argName[0] == L'[' && argName[lstrlenW(argName) - 1] == L']')
 		return L"Q";
 
 	if (wcscmp(type, L"System.Double") == 0
@@ -156,7 +157,8 @@ std::wstring MakeTypeString(LPCWSTR type, LPCWSTR argName)
 
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring& names, std::wstring& types)
 {
-	types = pFunction->IsAsync ? L">" : MakeTypeString(pFunction->ReturnType, L"");
+	types = pFunction->IsAsync ? L">" :
+		(pFunction->IsExceptionSafe ? MakeTypeString(pFunction->ReturnType, L"") : L"Q");
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		if (idx > 0) names += L",";
@@ -185,7 +187,7 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 
 extern "C" extern ClrRuntimeHost * pClrHost;
 
-void RegisterFunction(ExcelFunction *pFunction, int index)
+void RegisterFunction(ExcelFunction* pFunction, int index)
 {
 	auto regId = new XLOPER12();
 	FunctionRegIds[index] = regId;
@@ -261,8 +263,8 @@ void __stdcall RegisterFunctions(void* handle)
 	UnregisterUserFunctions(false);
 	for (auto index = 0; index < pFunctions->FunctionCount; index++)
 	{
-	   auto x = pFunctions->Functions[index];
-	   RegisterFunction(&x, index);
+		auto x = pFunctions->Functions[index];
+		RegisterFunction(&x, index);
 	}
 }
 

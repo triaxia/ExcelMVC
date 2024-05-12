@@ -52,75 +52,98 @@ namespace ExcelMvc.Functions
             p->Dispose();
         }
 
-        public IntPtr ObjectToIntPtr(object value)
+        public IntPtr ObjectToIntPtr(object value, bool _)
         {
             XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
             p->Init(value, true);
             return ObjectValue;
         }
 
-        public IntPtr BooleanToIntPtr(bool value)
+        public IntPtr BooleanToIntPtr(bool value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((short*)ShortValue.ToPointer()) = value ? (short)1 : (short)0;
             return ShortValue;
         }
 
-        public IntPtr DoubleToIntPtr(double value)
+        public IntPtr DoubleToIntPtr(double value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((double*)DoubleValue.ToPointer()) = value;
             return DoubleValue;
         }
 
-        public IntPtr DateTimeToIntPtr(DateTime value)
+        public IntPtr DateTimeToIntPtr(DateTime value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((double*)DoubleValue.ToPointer()) = value.ToOADate();
             return DoubleValue;
         }
 
-        public IntPtr SingleToIntPtr(float value)
+        public IntPtr SingleToIntPtr(float value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((double*)DoubleValue.ToPointer()) = value;
             return DoubleValue;
         }
 
-        public IntPtr Int32ToIntPtr(int value)
+        public IntPtr Int32ToIntPtr(int value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((int*)IntValue.ToPointer()) = value;
             return IntValue;
         }
 
-        public IntPtr UInt32ToIntPtr(uint value)
+        public IntPtr UInt32ToIntPtr(uint value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((int*)IntValue.ToPointer()) =(int) value;
             return IntValue;
         }
 
-        public IntPtr Int16ToIntPtr(short value)
+        public IntPtr Int16ToIntPtr(short value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((short*)ShortValue.ToPointer()) = value;
             return ShortValue;
         }
 
-        public IntPtr UInt16ToIntPtr(ushort value)
+        public IntPtr UInt16ToIntPtr(ushort value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((short*)ShortValue.ToPointer()) = (short) value;
             return ShortValue;
         }
 
-        public IntPtr ByteToIntPtr(byte value)
+        public IntPtr ByteToIntPtr(byte value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((short*)ShortValue.ToPointer()) = value;
             return ShortValue;
         }
 
-        public IntPtr SByteToIntPtr(sbyte value)
+        public IntPtr SByteToIntPtr(sbyte value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             *((short*)ShortValue.ToPointer()) = value;
             return ShortValue;
         }
 
-        public IntPtr StringToIntPtr(string value)
+        public IntPtr StringToIntPtr(string value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
+
             const int SmallSize = 2048;
             var len = value?.Length ?? 0;
             if (len + 1 <= SmallSize)
@@ -139,8 +162,11 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public IntPtr DoubleArrayToIntPtr(double[] value)
+        public IntPtr DoubleArrayToIntPtr(double[] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
+
             if ((value?.Length ?? 0) == 0)
                 return IntPtr.Zero;
 
@@ -158,8 +184,11 @@ namespace ExcelMvc.Functions
             return DoubleArrayValue;
         }
 
-        public IntPtr DoubleMatrixToIntPtr(double[,] value)
+        public IntPtr DoubleMatrixToIntPtr(double[,] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
+
             if ((value?.Length ?? 0) == 0)
                 return IntPtr.Zero;
 
@@ -180,8 +209,11 @@ namespace ExcelMvc.Functions
             return DoubleArrayValue;
         }
 
-        public IntPtr DateTimeArrayToIntPtr(DateTime[] value)
+        public IntPtr DateTimeArrayToIntPtr(DateTime[] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
+
             if ((value?.Length ?? 0) == 0)
                 return IntPtr.Zero;
 
@@ -190,11 +222,14 @@ namespace ExcelMvc.Functions
             var col0 = value.GetLowerBound(0);
             for (var col = 0; col < cols; col++)
                 cells[col] = value[col0 + col].ToOADate();
-            return DoubleArrayToIntPtr(cells);
+            return DoubleArrayToIntPtr(cells, isExceptionSafe);
         }
 
-        public IntPtr DateTimeMatrixToIntPtr(DateTime[,] value)
+        public IntPtr DateTimeMatrixToIntPtr(DateTime[,] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
+
             if ((value?.Length ?? 0) == 0)
                 return IntPtr.Zero;
 
@@ -206,11 +241,14 @@ namespace ExcelMvc.Functions
             for (var row = 0; row < rows; row++)
                 for (var col = 0; col < cols; col++)
                     cells[row, col] = value[row0 + row, col0 + col].ToOADate();
-            return DoubleMatrixToIntPtr(cells);
+            return DoubleMatrixToIntPtr(cells, isExceptionSafe);
         }
 
-        public IntPtr Int32ArrayToIntPtr(int[] value)
+        public IntPtr Int32ArrayToIntPtr(int[] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
+
             if ((value?.Length ?? 0) == 0)
                 return IntPtr.Zero;
 
@@ -219,14 +257,15 @@ namespace ExcelMvc.Functions
             var col0 = value.GetLowerBound(0);
             for (var col = 0; col < cols; col++)
                 cells[col] = value[col0 + col];
-            return DoubleArrayToIntPtr(cells);
+            return DoubleArrayToIntPtr(cells, isExceptionSafe);
         }
 
-        public IntPtr Int32MatrixToIntPtr(int[,] value)
+        public IntPtr Int32MatrixToIntPtr(int[,] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             if ((value?.Length ?? 0) == 0)
                 return IntPtr.Zero;
-
             var rows = value.GetLength(0);
             var cols = value.GetLength(1);
             var cells = new double[rows, cols];
@@ -235,35 +274,52 @@ namespace ExcelMvc.Functions
             for (var row = 0; row < rows; row++)
                 for (var col = 0; col < cols; col++)
                     cells[row, col] = value[row0 + row, col0 + col];
-            return DoubleMatrixToIntPtr(cells);
+            return DoubleMatrixToIntPtr(cells, isExceptionSafe);
         }
 
-        public IntPtr ObjectArrayToIntPtr(object[] value)
+        public IntPtr ObjectArrayToIntPtr(object[] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             var x = (XLOPER12 *) ObjectValue.ToPointer();
             x->Init(value, true);
             return ObjectValue;
         }
 
-        public IntPtr ObjectMatrixToIntPtr(object[,] value)
+        public IntPtr ObjectMatrixToIntPtr(object[,] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             var x = (XLOPER12*)ObjectValue.ToPointer();
             x->Init(value, true);
             return ObjectValue;
         }
 
-        public IntPtr StringArrayToIntPtr(string[] value)
+        public IntPtr StringArrayToIntPtr(string[] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             var x = (XLOPER12*)ObjectValue.ToPointer();
             x->Init(value, true);
             return ObjectValue;
         }
 
-        public IntPtr StringMatrixToIntPtr(string[,] value)
+        public IntPtr StringMatrixToIntPtr(string[,] value, bool isExceptionSafe)
         {
+            if (TryExceptionUnSafe(value, isExceptionSafe, out var output))
+                return output;
             var x = (XLOPER12*)ObjectValue.ToPointer();
             x->Init(value, true);
             return ObjectValue;
+        }
+
+        private bool TryExceptionUnSafe(object value, bool isExceptionSafe, out IntPtr output)
+        { 
+            output = IntPtr.Zero;
+            if (isExceptionSafe) return false;
+
+            output = ObjectToIntPtr(value, isExceptionSafe);
+            return true;
         }
 
         private static void Copy(string source, int length, IntPtr target)

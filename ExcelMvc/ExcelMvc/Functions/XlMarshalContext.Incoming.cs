@@ -121,7 +121,7 @@ namespace ExcelMvc.Functions
                 return output;
 
             if (value == IntPtr.Zero)
-                return null;
+                return string.Empty;
 
             char* p = (char*)value.ToPointer();
             return new string(p);
@@ -133,7 +133,7 @@ namespace ExcelMvc.Functions
                 return output;
 
             if (value == IntPtr.Zero)
-                return null;
+                return new double[] { };
 
             int* p = (int*)value.ToPointer();
             var rows = p[0];
@@ -154,7 +154,7 @@ namespace ExcelMvc.Functions
                 return output;
 
             if (value == IntPtr.Zero)
-                return null;
+                return new double[,] { };
 
             int* p = (int*)value.ToPointer();
             var rows = p[0];
@@ -176,7 +176,8 @@ namespace ExcelMvc.Functions
                 return ToDateTime(output);
 
             if (value == IntPtr.Zero)
-                return null;
+                return new DateTime[] { };
+
             return ToDateTime(IntPtrToDoubleArray(value, parameter, isOptional));
         }
 
@@ -186,7 +187,7 @@ namespace ExcelMvc.Functions
                 return ToDateTime(output);
 
             if (value == IntPtr.Zero)
-                return null;
+                return new DateTime[,] { };
             return ToDateTime(IntPtrToDoubleMatrix(value, parameter, isOptional));
         }
 
@@ -196,7 +197,7 @@ namespace ExcelMvc.Functions
                 return output;
 
             if (value == IntPtr.Zero)
-                return null;
+                return new int[] { };
 
             var cells = IntPtrToDoubleArray(value, parameter, isOptional);
             if (cells.Length == 0)
@@ -214,7 +215,7 @@ namespace ExcelMvc.Functions
                 return output;
 
             if (value == IntPtr.Zero)
-                return null;
+                return new int[,] { };
 
             var cells = IntPtrToDoubleMatrix(value, parameter, isOptional);
             if ((cells?.Length ?? 0) == 0)
@@ -239,7 +240,7 @@ namespace ExcelMvc.Functions
         public static object[] IntPtrToObjectArray(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
             if (value == IntPtr.Zero)
-                return null;
+                return new object[] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
             return p->ToObjectArray();
         }
@@ -247,7 +248,7 @@ namespace ExcelMvc.Functions
         public static object[,] IntPtrToObjectMatrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
             if (value == IntPtr.Zero)
-                return null;
+                return new object[,] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
             return p->ToObjectMatrix();
         }
@@ -255,7 +256,7 @@ namespace ExcelMvc.Functions
         public static string[] IntPtrToStringArray(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
             if (value == IntPtr.Zero)
-                return null;
+                return new string[] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
             return p->ToObjectArray().Select(x => $"{x}").ToArray();
         }
@@ -263,7 +264,7 @@ namespace ExcelMvc.Functions
         public static string[,] IntPtrToStringMatrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
             if (value == IntPtr.Zero)
-                return null;
+                return new string[,] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
             var cells = p->ToObjectMatrix();
             if ((cells?.Length ?? 0) == 0)

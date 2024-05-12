@@ -60,7 +60,7 @@ namespace ExcelMvc.Diagnostics
 
         public static readonly Messages Instance = new Messages();
 
-        private System.Threading.Timer UpdateTimer { get;}
+        private Timer UpdateTimer { get;}
         private ManualResetEventSlim UpdateOutstanding = new ManualResetEventSlim(false);
 
         public Messages()

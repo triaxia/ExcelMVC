@@ -168,9 +168,14 @@ namespace Samples
         [ExcelFunction(Name = "uDefaultValue")]
         public static object uDefaultValue(int a, [ExcelArgument(Name = "[b]")] int b = 100, [ExcelArgument(Name = "[c]")] int c = 200)
         {
-            if (XlCall.IsInFunctionWizard())
-                return "editing...";
             return a + b + c;
+        }
+
+        [ExcelFunction(Name = "uExceptionSafe", IsExceptionSafe =true)]
+        public static double uExceptionSafe(double a, double b)
+        {
+            //when IsExceptionSafe is set = true, unhandled exceptions will crash Excel!
+            return a + b;
         }
     }
 }
