@@ -117,6 +117,7 @@
 		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyReferencedProjectAssetsToPackage</TargetsForTfmSpecificBuildOutput>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>D:\Source\ExcelMVC\ExcelMvc\ExcelMvc.snk</AssemblyOriginatorKeyFile>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<Target Name="CopyReferencedProjectAssetsToPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">

@@ -41,20 +41,45 @@ using System.Linq;
 
 namespace ExcelMvc.Functions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class MessageEventArgs : EventArgs
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string Message { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
         public MessageEventArgs(string message)
             => Message = message;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RegisteringEventArgs : EventArgs
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Function Function;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="function"></param>
         public RegisteringEventArgs(Function function)
             => Function = function;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class XlCall
     {
         static XlCall()
@@ -65,6 +90,10 @@ namespace ExcelMvc.Functions
                 (_, e) => Executing?.Invoke(_, e);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="functions"></param>
         public static void RegisterFunctions(Functions functions)
         {
             if (Registering != null) 
@@ -83,6 +112,11 @@ namespace ExcelMvc.Functions
             }
         }
 
+        /// <summary>
+        /// Sets the async function result.
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="result"></param>
         public static void AsyncReturn(IntPtr handle, IntPtr result)
         {
             AddIn.AutoFree(AddIn.AsyncReturn(handle, result));
@@ -127,7 +161,7 @@ namespace ExcelMvc.Functions
         /// <summary>
         /// Raises <see cref="Posted"/> event.
         /// </summary>
-        /// <param name="ex"></param>
+        /// <param name="message"></param>
         /// <param name="sender"></param>
         public static void RaisePosted(string message, object sender = null)
         {
@@ -160,10 +194,10 @@ namespace ExcelMvc.Functions
         /// Gets a reference on the active workbook.
         /// </summary>
         /// <param name="sheetName"></param>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="rowCount"></param>
-        /// <param name="columnCount"></param>
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
         /// <returns></returns>
         public static ExcelReference GetActiveBookReference(string sheetName
             , int rowFirst, int rowLast, int columnFirst, int columnLast)
@@ -172,10 +206,10 @@ namespace ExcelMvc.Functions
         /// <summary>
         /// Gets a reference on the active worksheet.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="rowCount"></param>
-        /// <param name="columnCount"></param>
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
         /// <returns></returns>
         public static ExcelReference GetActiveSheetReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
             => new ExcelReference(rowFirst, rowLast, columnFirst, columnLast);
