@@ -94,26 +94,16 @@ namespace ExcelMvc.Functions
                     , Expression.Constant(function.Arguments != null && function.Arguments[index].IsOptionalArg));
             }
 
-            var innerCall = (Expression) Expression.Call(method, innerParameters);
+            var innerCall = (Expression)Expression.Call(method, innerParameters);
             var logging = Expression.Call(RaiseExecutingMethod, Expression.Constant(function.Name));
             innerCall = Expression.Block(logging, innerCall);
 
             if (method.ReturnType == typeof(void))
             {
-                Expression body;
-                /*
-                if (function.IsExceptionSafe)
-                {
-                    body = innerCall;
-                }
-                else
-                */
-                {
-                    var ex = Expression.Variable(typeof(Exception), "ex");
-                    var handler = Expression.Block(Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex)
-                        , Expression.Empty());
-                    body = Expression.TryCatch(innerCall, Expression.Catch(ex, handler));
-                }
+                var ex = Expression.Variable(typeof(Exception), "ex");
+                var handler = Expression.Block(Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex)
+                    , Expression.Empty());
+                var body = Expression.TryCatch(innerCall, Expression.Catch(ex, handler));
                 var delegateType = ActionDelegate.Actions[outerParameters.Length];
                 return Expression.Lambda(delegateType, body, method.Name, outerParameters).Compile();
             }
@@ -121,30 +111,15 @@ namespace ExcelMvc.Functions
             {
                 var context = Expression.Variable(typeof(XlMarshalContext), "context");
                 var value = Expression.Call(typeof(XlMarshalContext), nameof(XlMarshalContext.GetThreadInstance), null);
-                innerCall = Expression.Call(context, XlMarshalContext.OutgoingConverter(method.ReturnType)
-                    , innerCall, Expression.Constant(function.IsExceptionSafe));
-                Expression body;
-                /*
-                if (function.IsExceptionSafe)
-                {
-                    body = Expression.Block(
-                        typeof(IntPtr),
-                        new ParameterExpression[] { context },
-                        Expression.Assign(context, value),
-                        innerCall);
-                }
-                else
-                */
-                {
-                    var ex = Expression.Variable(typeof(Exception), "ex");
-                    var handler = Expression.Call(context, XlMarshalContext.ExceptionConverter(method.ReturnType)
-                        , Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex), Expression.Constant(function.IsExceptionSafe));
-                    body = Expression.Block(
-                        typeof(IntPtr),
-                        new ParameterExpression[] { context },
-                        Expression.Assign(context, value),
-                        Expression.TryCatch(innerCall, Expression.Catch(ex, handler)));
-                }
+                innerCall = Expression.Call(context, XlMarshalContext.OutgoingConverter(method.ReturnType), innerCall);
+                var ex = Expression.Variable(typeof(Exception), "ex");
+                var handler = Expression.Call(context, XlMarshalContext.ExceptionConverter(method.ReturnType)
+                    , Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex));
+                var body = Expression.Block(
+                    typeof(IntPtr),
+                    new ParameterExpression[] { context },
+                    Expression.Assign(context, value),
+                    Expression.TryCatch(innerCall, Expression.Catch(ex, handler)));
 
                 var delegateType = FunctionDelegate.Functions[outerParameters.Length];
                 var lambda = Expression.Lambda(delegateType, body, method.Name, outerParameters);

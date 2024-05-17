@@ -87,8 +87,6 @@ namespace ExcelMvc.Functions
         public bool IsThreadSafe;
         [MarshalAs(UnmanagedType.U1)]
         public bool IsClusterSafe;
-        [MarshalAs(UnmanagedType.U1)]
-        public bool IsExceptionSafe;
         [MarshalAs(UnmanagedType.LPWStr)]
         public string Category;
         [MarshalAs(UnmanagedType.LPWStr)]
@@ -112,7 +110,6 @@ namespace ExcelMvc.Functions
             IsAsync = rhs.IsAsync;
             IsThreadSafe = rhs.IsThreadSafe;
             IsClusterSafe = rhs.IsClusterSafe;
-            IsExceptionSafe = rhs.IsExceptionSafe;
             ArgumentCount = (byte)(arguments?.Length ?? 0);
             Category = rhs.Category ?? "";
             Name = rhs.Name ?? method.Name;

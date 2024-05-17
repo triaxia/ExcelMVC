@@ -56,7 +56,6 @@ struct ExcelFunction
 	bool IsAsync;
 	bool IsThreadSafe;
 	bool IsClusterSafe;
-	bool IsExceptionSafe;
 	LPCWSTR Category;
 	LPCWSTR Name;
 	LPCWSTR Description;
@@ -157,8 +156,7 @@ std::wstring MakeTypeString(LPCWSTR type, LPCWSTR argName)
 
 void MakeArgumentList(ExcelFunction* pFunction, std::wstring& names, std::wstring& types)
 {
-	types = pFunction->IsAsync ? L">" :
-		(pFunction->IsExceptionSafe ? MakeTypeString(pFunction->ReturnType, L"") : L"Q");
+	types = pFunction->IsAsync ? L">" : MakeTypeString(pFunction->ReturnType, L"");
 	for (auto idx = 0; idx < pFunction->ArgumentCount; idx++)
 	{
 		if (idx > 0) names += L",";

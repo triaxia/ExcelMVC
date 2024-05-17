@@ -59,9 +59,9 @@ namespace ExcelMvc.Functions
             ShortValue = Marshal.AllocCoTaskMem(sizeof(short));
             ObjectValue = Marshal.AllocCoTaskMem(sizeof(XLOPER12));
 
-            DoubleToIntPtr(0, true);
-            Int32ToIntPtr(0, true);
-            Int16ToIntPtr(0, true);
+            DoubleToIntPtr(0);
+            Int32ToIntPtr(0);
+            Int16ToIntPtr(0);
             InitObjectValue();
         }
 

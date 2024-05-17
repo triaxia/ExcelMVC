@@ -61,18 +61,15 @@ namespace ExcelMvc.Functions
 
     public unsafe partial class XlMarshalContext
     {
-        public IntPtr ExceptionObjectToIntPtr(object value, bool isExceptionSafe)
+        public IntPtr ExceptionObjectToIntPtr(object value)
         {
             XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
             p->Init(value, true);
             return ObjectValue;
         }
 
-        public IntPtr ExceptionAnyToIntPtr(object value, bool isExceptionSafe)
+        public IntPtr ExceptionAnyToIntPtr(object value)
         {
-            if (!isExceptionSafe)
-                return ExceptionObjectToIntPtr(value, isExceptionSafe);
-
             return IntPtr.Zero;
         }
 

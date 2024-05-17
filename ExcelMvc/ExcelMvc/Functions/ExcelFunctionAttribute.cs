@@ -100,13 +100,6 @@ namespace ExcelMvc.Functions
         /// </summary>
         public bool IsClusterSafe;
 
-        /// <summary>
-        /// Indicates if the function "throws" exceptions. Note when IsExceptionSafe
-        /// is set to false, XLOPER references are returned to Excel. When it is set
-        /// to true, number references are returned to Excel.
-        /// </summary>
-        public bool IsExceptionSafe = false;
-
         public ExcelFunctionAttribute() { }
         public ExcelFunctionAttribute(string description)
             => Description = description;

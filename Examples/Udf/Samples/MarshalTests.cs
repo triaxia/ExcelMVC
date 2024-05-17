@@ -171,11 +171,5 @@ namespace Samples
         {
             return a + b + c;
         }
-
-        [ExcelFunction(Name = "uExceptionSafe", IsExceptionSafe =true)]
-        public static double uExceptionSafe(double a, double b)
-        {
-            return a + b;
-        }
     }
 }
