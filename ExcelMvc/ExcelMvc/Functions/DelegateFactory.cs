@@ -31,6 +31,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -45,7 +46,7 @@ namespace ExcelMvc.Functions
     public static class DelegateFactory
     {
         public static event EventHandler<ExecutingEventArgs> Executing;
-        public static void RaiseExecuting(string name)
+        public static void RaiseExecuting(string name, MethodInfo method)
         {
             if (Executing == null) return;
             Executing.Invoke(null, new ExecutingEventArgs(name));
@@ -84,19 +85,27 @@ namespace ExcelMvc.Functions
         {
             var parameters = method.GetParameters();
             var outerParameters = new ParameterExpression[parameters.Length];
-            var innerParameters = new MethodCallExpression[parameters.Length];
+            var variables = new ParameterExpression[parameters.Length];
+            var varLines = new BinaryExpression[parameters.Length];
             for (var index = 0; index < parameters.Length; index++)
             {
                 outerParameters[index] = Expression.Parameter(typeof(IntPtr), parameters[index].Name);
-                innerParameters[index] = Expression.Call(XlMarshalContext.IncomingConverter(parameters[index].ParameterType)
+                var innerParameter = Expression.Call(XlMarshalContext.IncomingConverter(parameters[index].ParameterType)
                     , outerParameters[index]
                     , Expression.Constant(parameters[index])
                     , Expression.Constant(function.Arguments != null && function.Arguments[index].IsOptionalArg));
+                var variable = Expression.Variable(parameters[index].ParameterType, $"_{parameters[index].Name}_");
+                variables[index] = variable;
+                varLines[index] = Expression.Assign(variable, innerParameter);
             }
 
-            var innerCall = (Expression)Expression.Call(method, innerParameters);
-            var logging = Expression.Call(RaiseExecutingMethod, Expression.Constant(function.Name));
-            innerCall = Expression.Block(logging, innerCall);
+            var innerCall = (Expression)Expression.Call(method, variables);
+            //var args = Expression.NewArrayInit(typeof(object), variables);
+            //var logging = Expression.Call(RaiseExecutingMethod, Expression.Constant(function.Name), Expression.Constant(method), args);
+            var logging = Expression.Call(RaiseExecutingMethod
+                , Expression.Constant(function.Name)
+                , Expression.Constant(method));
+            innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { logging, innerCall }));
             var ex = Expression.Variable(typeof(Exception), "ex");
 
             if (method.ReturnType == typeof(void))
