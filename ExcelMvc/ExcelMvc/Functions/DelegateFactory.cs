@@ -97,10 +97,10 @@ namespace ExcelMvc.Functions
             var innerCall = (Expression)Expression.Call(method, innerParameters);
             var logging = Expression.Call(RaiseExecutingMethod, Expression.Constant(function.Name));
             innerCall = Expression.Block(logging, innerCall);
+            var ex = Expression.Variable(typeof(Exception), "ex");
 
             if (method.ReturnType == typeof(void))
             {
-                var ex = Expression.Variable(typeof(Exception), "ex");
                 var handler = Expression.Block(Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex)
                     , Expression.Empty());
                 var body = Expression.TryCatch(innerCall, Expression.Catch(ex, handler));
@@ -112,7 +112,6 @@ namespace ExcelMvc.Functions
                 var context = Expression.Variable(typeof(XlMarshalContext), "context");
                 var value = Expression.Call(typeof(XlMarshalContext), nameof(XlMarshalContext.GetThreadInstance), null);
                 innerCall = Expression.Call(context, XlMarshalContext.OutgoingConverter(method.ReturnType), innerCall);
-                var ex = Expression.Variable(typeof(Exception), "ex");
                 var handler = Expression.Call(context, XlMarshalContext.ExceptionConverter(method.ReturnType)
                     , Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex));
                 var body = Expression.Block(
