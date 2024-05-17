@@ -319,5 +319,18 @@ namespace ExcelMvc.Functions
         /// Gets the Excel.Application object
         /// </summary>
         public static object Application => App.Instance.Underlying;
+
+        /// <summary>
+        /// Gets/Sets the Excel status bar text.
+        /// </summary>
+        public static string StatusBarText
+        {
+            get { return ((string) App.Instance.Underlying?.StatusBar) ?? ""; }
+            set
+            {
+                if (App.Instance.Underlying != null)
+                    App.Instance.Underlying.StatusBar = value;
+            }
+        }
     }
 }
