@@ -38,22 +38,8 @@ using System.Reflection;
 
 namespace ExcelMvc.Functions
 {
-    public class ExecutingEventArgs : EventArgs
+    public static partial class DelegateFactory
     {
-        public string Name { get; }
-        public ExecutingEventArgs(string name) => Name = name;
-    }
-    public static class DelegateFactory
-    {
-        public static event EventHandler<ExecutingEventArgs> Executing;
-        public static void RaiseExecuting(string name, MethodInfo method)
-        {
-            if (Executing == null) return;
-            Executing.Invoke(null, new ExecutingEventArgs(name));
-        }
-        private static readonly MethodInfo RaiseExecutingMethod
-            = typeof(DelegateFactory).GetMethod(nameof(RaiseExecuting));
-
         public static Delegate MakeOuterDelegate(MethodInfo method, Function function)
         {
             var instance = new LazyDelegate(() =>
@@ -100,12 +86,17 @@ namespace ExcelMvc.Functions
             }
 
             var innerCall = (Expression)Expression.Call(method, variables);
-            //var args = Expression.NewArrayInit(typeof(object), variables);
-            //var logging = Expression.Call(RaiseExecutingMethod, Expression.Constant(function.Name), Expression.Constant(method), args);
-            var logging = Expression.Call(RaiseExecutingMethod
-                , Expression.Constant(function.Name)
-                , Expression.Constant(method));
-            innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { logging, innerCall }));
+            if (Executing == null)
+            {
+                innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { innerCall }));
+            }
+            else
+            {
+                var args = variables.Select(x => Expression.Convert(x, typeof(object))).ToArray();
+                var logging = Expression.Call(LoggingMethod(args.Length)
+                    , new[] { (Expression)Expression.Constant(function.Name), Expression.Constant(method), }.Concat(args));
+                innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { logging, innerCall }));
+            }
             var ex = Expression.Variable(typeof(Exception), "ex");
 
             if (method.ReturnType == typeof(void))

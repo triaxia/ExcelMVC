@@ -20,7 +20,7 @@ namespace Sample.AddIn
             XlCall.Executing += (_, e) =>
             {
                 // do fast/async usage logging here...
-                XlCall.RaisePosted($"Executing {e.Name}");
+                XlCall.RaisePosted($"Executing {e}");
             };
         }
     }
