@@ -10,6 +10,7 @@ namespace Sample.AddIn
 
         public void AutoOpen()
         {
+            XlCall.StatusBarText = "what a wonderful world it is...";
             XlCall.Registering += (_, e) =>
             {
                 // overwrite function properties...
