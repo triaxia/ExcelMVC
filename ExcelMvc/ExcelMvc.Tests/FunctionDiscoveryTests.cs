@@ -38,7 +38,7 @@ namespace ExcelMvc.Tests
         [TestMethod]
         public void Discover()
         {
-            var functions = FunctionDiscovery.Discover().ToArray();
+            var functions = FunctionDiscovery.DiscoverFunctions().ToArray();
             Assert.AreEqual(2, functions.Length);
         }
     }

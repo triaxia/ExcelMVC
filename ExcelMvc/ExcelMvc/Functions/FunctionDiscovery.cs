@@ -44,17 +44,22 @@ namespace ExcelMvc.Functions
     {
         public static void RegisterFunctions()
         {
-            var items = Discover()
-                .Select(x => (x.method, x.function, x.args))
-                .Select(x => (function: new Function(x.function, x.args, IntPtr.Zero, x.method), x.method))
-                .ToArray();
+            var items = DiscoverFunctions().ToArray();
             for (int index = 0; index < items.Length; index++)
                 items[index].function.Callback = MakeCallback(items[index].method, items[index].function);
 
             XlCall.RegisterFunctions(new Functions(items.Select(x => x.function).ToArray()));
         }
 
-        public static IEnumerable<(MethodInfo method, ExcelFunctionAttribute function, Argument[] args)> Discover()
+        public static IEnumerable<(MethodInfo method, Function function)> DiscoverFunctions()
+        {
+            return Discover()
+                .Select(x => (x.method, x.function, x.args))
+                .Select(x => (x.method, function: new Function(x.function, x.args, IntPtr.Zero, x.method)))
+                .ToArray();
+        }
+
+        private static IEnumerable<(MethodInfo method, ExcelFunctionAttribute function, Argument[] args)> Discover()
         {
             return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
