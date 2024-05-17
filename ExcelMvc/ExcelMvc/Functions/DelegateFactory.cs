@@ -86,16 +86,16 @@ namespace ExcelMvc.Functions
             }
 
             var innerCall = (Expression)Expression.Call(method, variables);
-            if (Executing == null)
-            {
-                innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { innerCall }));
-            }
-            else
+            if (XlCall.ExecutingEventEnabled)
             {
                 var args = variables.Select(x => Expression.Convert(x, typeof(object))).ToArray();
                 var logging = Expression.Call(LoggingMethod(args.Length)
                     , new[] { (Expression)Expression.Constant(function.Name), Expression.Constant(method), }.Concat(args));
                 innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { logging, innerCall }));
+            }
+            else
+            {
+                innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { innerCall }));
             }
             var ex = Expression.Variable(typeof(Exception), "ex");
 

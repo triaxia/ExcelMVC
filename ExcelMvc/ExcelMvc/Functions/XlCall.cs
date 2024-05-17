@@ -94,6 +94,11 @@ namespace ExcelMvc.Functions
         public static event EventHandler<RegisteringEventArgs> Registering;
 
         /// <summary>
+        /// Sets/Gets the flag indicating if the <see cref="Executing"/> event is enabled.
+        /// </summary>
+        public static bool ExecutingEventEnabled { get; set; }
+
+        /// <summary>
         /// Occurs before functions are being executed.
         /// </summary>
         public static event EventHandler<ExecutingEventArgs> Executing;
@@ -275,28 +280,6 @@ namespace ExcelMvc.Functions
         /// <returns></returns>
         public static bool IsInFunctionWizard()
             => DllImports.IsInFunctionWizard();
-
-        /// <summary>
-        /// Indicates if Excel is in editing mode.
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsInteractiveEditing()
-        {
-            var app = App.Instance.Underlying;
-            if (!(app?.Interactive ?? false))
-                return false;
-            
-            try
-            {
-                app.Interactive = false;
-                app.Interactive = true;
-            }
-            catch
-            {
-                return true;
-            }
-            return false;
-        }
 
         /// <summary>
         /// Gets the Excel.Application object
