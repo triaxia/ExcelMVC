@@ -112,7 +112,7 @@ namespace ExcelMvc.Rtd
             {
                 using (key)
                 {
-                    ///[HKEY_CURRENT_USER\Software\Classes\Prog.ID]
+                    //[HKEY_CURRENT_USER\Software\Classes\Prog.ID]
                     using (var keyProgID = CreateSubKey(key, progId))
                     {
                         keyProgID.SetValue(null, progId);
@@ -121,16 +121,16 @@ namespace ExcelMvc.Rtd
                         using (var x = CreateSubKey(keyProgID, "Time")) x.SetValue(null, $"{DateTime.Now:O}");
                     }
 
-                    ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}]
+                    //[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}]
                     using (var clsKey = OpenSubKey(key, "CLSID") ?? CreateSubKey(key, "CLSID"))
                     {
                         using (var keyGuid = CreateSubKey(clsKey, guid))
                         {
                             keyGuid.SetValue(null, progId);
-                            ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\ProgId]
+                            //[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\ProgId]
                             using (var x = CreateSubKey(keyGuid, "ProgId")) x.SetValue(null, progId);
 
-                            ///[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
+                            //[HKEY_CURRENT_USER\Software\Classes\CLSID\{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\InprocServer32]
                             using (var inprocServer32 = keyGuid.CreateSubKey("InProcServer32"))
                             {
                                 inprocServer32.SetValue(null, AddIn.ModuleFileName);
