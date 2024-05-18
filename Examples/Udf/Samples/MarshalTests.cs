@@ -171,5 +171,33 @@ namespace Samples
         {
             return a + b + c;
         }
+
+        [ExcelFunction(Name = "uExceptionObject")]
+        public static object uExceptionObject()
+        {
+            XlCall.ExceptionToFunctionResult = _=> ExcelError.ExcelErrorValue;
+            throw new Exception(nameof(uExceptionObject));
+        }
+
+        [ExcelFunction(Name = "uExceptionString")]
+        public static string uExceptionString()
+        {
+            XlCall.ExceptionToFunctionResult = _ => ExcelError.ExcelErrorValue;
+            throw new Exception(nameof(uExceptionString));
+        }
+
+        [ExcelFunction(Name = "uExceptionInt")]
+        public static int uExceptionInt()
+        {
+            XlCall.ExceptionToFunctionResult = _ => ExcelError.ExcelErrorValue;
+            throw new Exception(nameof(uExceptionInt));
+        }
+
+        [ExcelFunction(Name = "uExceptionMessage")]
+        public static object uExceptionMessage()
+        {
+            XlCall.ExceptionToFunctionResult = e => $"{e}";
+            throw new Exception(nameof(uExceptionInt));
+        }
     }
 }

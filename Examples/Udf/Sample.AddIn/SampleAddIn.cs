@@ -17,12 +17,13 @@ namespace Sample.AddIn
                 if (e.Function.Name == "uHelp")
                     e.Function.HelpTopic = "https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1";
             };
-            XlCall.ExecutingEventEnabled = true;
+            XlCall.ExecutingEventRaised = true;
             XlCall.Executing += (_, e) =>
             {
                 // do fast/async usage logging here...
                 XlCall.RaisePosted($"Executing {e}");
             };
+            XlCall.ExceptionToFunctionResult = e => $"{e}";
         }
     }
 }

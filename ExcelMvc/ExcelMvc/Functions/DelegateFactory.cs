@@ -86,7 +86,7 @@ namespace ExcelMvc.Functions
             }
 
             var innerCall = (Expression)Expression.Call(method, variables);
-            if (XlCall.ExecutingEventEnabled)
+            if (XlCall.ExecutingEventRaised)
             {
                 var args = variables.Select(x => Expression.Convert(x, typeof(object))).ToArray();
                 var logging = Expression.Call(LoggingMethod(args.Length)

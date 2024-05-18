@@ -300,7 +300,7 @@ namespace ExcelMvc.Functions
                 { typeof(object[,]), typeof(XlMarshalContext).GetMethod(nameof(ObjectMatrixToIntPtr)) }
             };
 
-        public static MethodInfo OutgoingConverter(Type result) =>
-            OutgoingConverters.TryGetValue(result, out var value) ? value : OutgoingConverters[(typeof(object))];
+        public static MethodInfo OutgoingConverter(Type returnType) =>
+            OutgoingConverters.TryGetValue(returnType, out var value) ? value : OutgoingConverters[(typeof(object))];
     }
 }

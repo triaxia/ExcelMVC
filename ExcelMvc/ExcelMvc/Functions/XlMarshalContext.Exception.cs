@@ -41,16 +41,18 @@ namespace ExcelMvc.Functions
     public static class XlMarshalExceptionHandler
     {
         public static event EventHandler<ErrorEventArgs> Failed;
+        public static Func<Exception, object> ExceptionToFunctionResult { get; set; }
+
         public static object HandleException(Exception ex)
         {
             try
             {
                 Failed?.Invoke(null, new ErrorEventArgs(ex));
-                return ExcelError.ExcelErrorValue;
+                return ExceptionToFunctionResult?.Invoke(ex) ?? ExcelError.ExcelErrorValue;
             }
-            catch
+            catch (Exception fatal)
             {
-                return ExcelError.ExcelErrorValue;
+                return $"{fatal}";// ExcelError.ExcelErrorValue;
             }
         }
 
@@ -61,21 +63,27 @@ namespace ExcelMvc.Functions
 
     public unsafe partial class XlMarshalContext
     {
-        public IntPtr ExceptionObjectToIntPtr(object value)
+        public IntPtr ObjectToIntPtrOnException(object value)
         {
             XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
             p->Init(value, true);
             return ObjectValue;
         }
 
-        public IntPtr ExceptionAnyToIntPtr(object value)
+        public IntPtr IntToIntPtrOnException(object value)
         {
             return IntPtr.Zero;
+        }
+
+        public IntPtr StringToIntPtrOnException(object value)
+        {
+            return StringToIntPtr($"{value}");
         }
 
         private static readonly Dictionary<Type, MethodInfo> ExceptionConverters
             = new Dictionary<Type, MethodInfo>()
             {
+                /*
                 { typeof(bool), typeof(XlMarshalContext).GetMethod(nameof(ExceptionAnyToIntPtr)) },
                 { typeof(double), typeof(XlMarshalContext).GetMethod(nameof(ExceptionAnyToIntPtr)) },
                 { typeof(DateTime), typeof(XlMarshalContext).GetMethod(nameof(ExceptionAnyToIntPtr)) },
@@ -98,9 +106,13 @@ namespace ExcelMvc.Functions
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(ExceptionObjectToIntPtr)) },
                 { typeof(object[]), typeof(XlMarshalContext).GetMethod(nameof(ExceptionAnyToIntPtr)) },
                 { typeof(object[,]), typeof(XlMarshalContext).GetMethod(nameof(ExceptionAnyToIntPtr)) }
+                */
+                { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(StringToIntPtrOnException)) },
+                { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntToIntPtrOnException)) },
+                { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtrOnException)) },
             };
 
-        public static MethodInfo ExceptionConverter(Type result) =>
-            ExceptionConverters.TryGetValue(result, out var value) ? value : ExceptionConverters[(typeof(object))];
+        public static MethodInfo ExceptionConverter(Type returnType) =>
+            ExceptionConverters.TryGetValue(returnType, out var value) ? value : ExceptionConverters[(typeof(int))];
     }
 }

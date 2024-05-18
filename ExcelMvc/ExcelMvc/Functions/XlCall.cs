@@ -128,11 +128,6 @@ namespace ExcelMvc.Functions
         public static event EventHandler<RegisteringEventArgs> Registering;
 
         /// <summary>
-        /// Sets/Gets the flag indicating if the <see cref="Executing"/> event is enabled.
-        /// </summary>
-        public static bool ExecutingEventEnabled { get; set; }
-
-        /// <summary>
         /// Occurs before functions are being executed.
         /// </summary>
         public static event EventHandler<ExecutingEventArgs> Executing;
@@ -141,7 +136,22 @@ namespace ExcelMvc.Functions
         /// Occurs whenever errors are encountered.
         /// </summary>
         public static event EventHandler<ErrorEventArgs> Failed;
-            
+
+        /// <summary>
+        /// Sets/Gets the flag indicating if the <see cref="Executing"/> event is raised.
+        /// </summary>
+        public static bool ExecutingEventRaised { get; set; }
+
+        /// <summary>
+        /// Sets/Gets the handler that converts exception to return objects. Default return
+        /// object is <see cref="ExcelError.ExcelErrorValue"/>.
+        /// </summary>
+        public static Func<Exception, object> ExceptionToFunctionResult
+        { 
+            get { return XlMarshalExceptionHandler.ExceptionToFunctionResult; }
+            set { XlMarshalExceptionHandler.ExceptionToFunctionResult = value; } 
+        }
+
         /// <summary>
         /// Raises <see cref="Failed"/> event.
         /// </summary>
