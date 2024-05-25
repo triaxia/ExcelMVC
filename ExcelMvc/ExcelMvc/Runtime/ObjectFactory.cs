@@ -239,7 +239,7 @@ namespace ExcelMvc.Runtime
                     .Where(File.Exists)
                     .OrderByDescending(File.GetLastWriteTimeUtc)
                     .FirstOrDefault();
-                return file == null ? null : Assembly.ReflectionOnlyLoadFrom(file);
+                return file == null ? Assembly.ReflectionOnlyLoad(args.Name) : Assembly.ReflectionOnlyLoadFrom(file);
             };
 #endif
         }
