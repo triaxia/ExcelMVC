@@ -14,7 +14,6 @@ namespace Samples
         public static void Async(double arg1, double arg2, IntPtr handle)
         {
             Handle = Host.Instance.GetAsyncHandle(handle);
-            Host.Instance.SetAsyncResult(Handle, "...");
             if (!OneWay.WaitOne(0)) return;
             Task.Run(()=>
             {
