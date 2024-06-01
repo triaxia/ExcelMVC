@@ -59,15 +59,13 @@ namespace ExcelMvc.Functions
         private ExcelMissing() { }
         public static readonly ExcelMissing Value = new ExcelMissing();
         public override string ToString() => "";
-        public static bool IsMe(object value) => value == Value;
     }
 
     public class ExcelEmpty
     {
         private ExcelEmpty() { }
-        public override string ToString() => "";
         public static readonly ExcelEmpty Value = new ExcelEmpty();
-        public static bool IsMe(object value) => value == Value;
+        public override string ToString() => "";
     }
 }
 

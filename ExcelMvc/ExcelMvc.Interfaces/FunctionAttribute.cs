@@ -100,7 +100,15 @@ namespace Function.Interfaces
         /// </summary>
         public bool IsClusterSafe;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public FunctionAttribute() { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="description"></param>
         public FunctionAttribute(string description)
             => Description = description;
     }

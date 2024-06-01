@@ -167,6 +167,13 @@ namespace Function.Interfaces
         object ErrorData { get; }
 
         /// <summary>
+        /// Converts error object to there string representation.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        string ErrorToString(object value);
+
+        /// <summary>
         /// Gets/Sets the RTD throttle.
         /// </summary>
         int RTDThrottleIntervalMilliseconds { get; set; }

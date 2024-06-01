@@ -49,7 +49,7 @@ namespace ExcelMvc.Functions
 
     public static class ExcelErrorMappings
     {
-        public static Dictionary<ExcelError, string> Mappings = new Dictionary<ExcelError, string>
+        public static Dictionary<object, string> Mappings = new Dictionary<object, string>
         {
             { ExcelError.ExcelErrorNull,"#NULL!" },
             { ExcelError.ExcelErrorDiv0,"#DIV0!" },
