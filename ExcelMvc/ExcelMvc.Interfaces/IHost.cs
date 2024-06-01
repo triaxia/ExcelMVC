@@ -337,6 +337,12 @@ namespace Function.Interfaces
         /// <param name="value"></param>
         /// <param name="async"></param>
         void SetRangeValue(RangeReference range, object value, bool async);
+
+        /// <summary>
+        /// Registers the specified functions with the host.
+        /// </summary>
+        /// <param name="functions"></param>
+        void RegisterFunctions(FunctionDefinitions functions);
     }
 }
 

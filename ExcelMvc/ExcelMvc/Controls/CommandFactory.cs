@@ -37,9 +37,12 @@ namespace ExcelMvc.Controls
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Windows.Markup.Primitives;
     using ExcelMvc.Functions;
     using Extensions;
+    using Function.Interfaces;
     using Microsoft.Office.Interop.Excel;
     using Views;
 
@@ -76,7 +79,7 @@ namespace ExcelMvc.Controls
             Create(sheet, host, sheet.Shapes, names, commands);
 
             foreach (var cmd in commands.Values)
-                XlCall.RaisePosted(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
+                RaisePosted(string.Format(Resource.InfoCmdCreated, cmd.Name, cmd.GetType().Name,  cmd.Host.Name));
         }
 
         /// <summary>
@@ -207,5 +210,7 @@ namespace ExcelMvc.Controls
             return name.StartsWith(CommandFullPrefix, StringComparison.OrdinalIgnoreCase);
         }
 
+        private static void RaisePosted(string message)
+            => Host.Instance.RaisePosted(Host.Instance, new MessageEventArgs(message));
     }
 }

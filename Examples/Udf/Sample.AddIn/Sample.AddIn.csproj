@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.1.2" />
+		<PackageReference Include="ExcelMvc.Net" Version="2.1.3" />
 	</ItemGroup>
 
 	<ItemGroup>

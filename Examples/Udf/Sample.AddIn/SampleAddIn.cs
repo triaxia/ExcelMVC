@@ -22,7 +22,7 @@ namespace Sample.AddIn
             Host.Instance.Executing += (_, e) =>
             {
                 // do fast/async usage logging here...
-                XlCall.RaisePosted($"Executing {e}");
+                Host.Instance.RaisePosted(this, new MessageEventArgs($"Executing {e}"));
             };
             Host.Instance.ExceptionToFunctionResult = e => $"{e}";
         }

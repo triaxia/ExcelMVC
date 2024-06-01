@@ -37,12 +37,14 @@ namespace ExcelMvc.Runtime
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration.Assemblies;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using ExcelMvc.Functions;
     using Extensions;
+    using Function.Interfaces;
 #if NET6_0_OR_GREATER
     using System.Runtime.Loader;
 #endif
@@ -83,14 +85,14 @@ namespace ExcelMvc.Runtime
                 {
                     var obj = (T)Activator.CreateInstance(Type.GetType(type));
                     Instances.Add(obj);
-                }, ex => XlCall.RaiseFailed(ex));
+                }, ex => Host.Instance.RaiseFailed(Host.Instance, new ErrorEventArgs(ex)));
             }
         }
 
         /// <summary>
         /// Discovers types of type T in the current AppDomain.
         /// </summary>
-        /// <param name="selectedAssembly">A function (assembly name or file name, loaded or npt) that
+        /// <param name="selectAssembly">A function (assembly name or file name, loaded or npt) that
         /// returns true or false to indicate if an assembly should be included in the discover process</param>
         /// <returns></returns>
         public static List<string> GetTypes(Func<Assembly, IEnumerable<string>> getTypes,
@@ -191,7 +193,7 @@ namespace ExcelMvc.Runtime
                 var asm = LoadFrom(assemblyPath);
                 if (asm != null)
                     types = types.Concat(getTypes(asm));
-            }, ex => XlCall.RaiseFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
+            }, ex => RaiseFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
             return types;
         }
 
@@ -293,5 +295,8 @@ namespace ExcelMvc.Runtime
             return patterns.SelectMany(x => Directory.GetFiles(path, x, SearchOption.TopDirectoryOnly))
                 .Distinct().ToArray();
         }
+
+        private static void RaiseFailed(Exception ex)
+            => Host.Instance.RaiseFailed(Host.Instance, new ErrorEventArgs(ex));
     }
 }

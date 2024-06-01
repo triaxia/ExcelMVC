@@ -5,6 +5,7 @@ using ExcelMvc.Diagnostics;
 using ExcelMvc.Extensions;
 using ExcelMvc.Functions;
 using ExcelMvc.Views;
+using Function.Interfaces;
 
 /*
 Copyright (C) 2013 =>
@@ -96,7 +97,7 @@ namespace ExcelMvc.Runtime
             string result = null;
             if (status != null)
             {
-                XlCall.RaiseFailed(status);
+                Host.Instance.RaiseFailed(Host.Instance, new System.IO.ErrorEventArgs(status));
                 MessageBox.Show($"{status}", typeof(Interface).Namespace, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 

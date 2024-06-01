@@ -49,7 +49,7 @@ namespace ExcelMvc.Functions
             for (int index = 0; index < items.Length; index++)
                 items[index].function.Callback = MakeCallback(items[index].method, items[index].function);
 
-            XlCall.RegisterFunctions(new FunctionDefinitions(items.Select(x => x.function).ToArray()));
+            Host.Instance.RegisterFunctions(new FunctionDefinitions(items.Select(x => x.function).ToArray()));
         }
 
         public static IEnumerable<(MethodInfo method, FunctionDefinition function)> DiscoverFunctions()

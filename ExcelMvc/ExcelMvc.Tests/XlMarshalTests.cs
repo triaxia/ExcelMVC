@@ -10,6 +10,11 @@ namespace ExcelMvc.Tests
     [TestClass]
     public class XlMarshalTests
     {
+        public XlMarshalTests()
+        {
+            Host.Instance = new ExcelFunctionHost();
+        }
+
         public static double MarshalDouble(double x) => x;
         [TestMethod]
         public void Marshal_Double()

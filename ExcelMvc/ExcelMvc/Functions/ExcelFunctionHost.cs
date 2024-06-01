@@ -1,11 +1,14 @@
 ﻿using ExcelMvc.Diagnostics;
 using ExcelMvc.Rtd;
+using ExcelMvc.Runtime;
 using ExcelMvc.Views;
 using ExcelMvc.Windows;
 using Function.Interfaces;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.IO;
 using System.Linq;
+using Range = Microsoft.Office.Interop.Excel.Range;
 
 namespace ExcelMvc.Functions
 {
@@ -99,18 +102,6 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
         public IntPtr GetAsyncHandle(IntPtr handle)
         {
             unsafe
@@ -121,19 +112,74 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
+        public void SetAsyncResult(IntPtr handle, object result)
+        {
+            var xlhandle = XLOPER12.FromObject(handle);
+            var xlresult = XLOPER12.FromObject(result);
+            try
+            {
+                using (var p1 = new StructIntPtr<XLOPER12>(ref xlhandle))
+                using (var p2 = new StructIntPtr<XLOPER12>(ref xlresult))
+                    AsyncReturn(p1.Ptr, p2.Ptr);
+            }
+            finally
+            {
+                xlresult.Dispose();
+                xlhandle.Dispose();
+            }
+        }
+
+        /// <inheritdoc/>
         public RangeReference GetCallerReference()
         {
-            throw new NotImplementedException();
+            dynamic caller = App.Instance.Underlying?.Caller;
+            return caller is Range range ? RangeToReference(range)
+                : RangeToReference(null);
+        }
+
+        /// <inheritdoc/>
+        public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
+        {
+            var range = GetRange(App.Instance.Underlying.ActiveWorkbook.Name, pageName
+                , rowFirst, rowLast, columnFirst, columnLast);
+            return RangeToReference(range);
+        }
+
+        /// <inheritdoc/>
+        public RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
+        {
+            var range = GetRange(App.Instance.Underlying.ActiveWorkbook.Name
+                , App.Instance.Underlying.ActiveSheet.Name
+                , rowFirst, rowLast, columnFirst, columnLast);
+            return RangeToReference(range);
         }
 
         /// <inheritdoc/>
         public object GetRangeValue(RangeReference range)
         {
-            throw new NotImplementedException();
+            return GetRange(range)?.Value;
         }
 
         /// <inheritdoc/>
-        public RangeReference GetReference(string bookName, string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
+        public void SetRangeValue(RangeReference range, object value, bool async)
+        {
+            var x = GetRange(range);    
+            if (async)
+            {
+                AsyncActions.Post(_ =>
+                {
+                    x.Value = value;
+                }, null, false);
+            }
+            else
+            {
+                x.Value= value;
+            }
+        }
+
+        /// <inheritdoc/>
+        public RangeReference GetReference(string bookName, string pageName
+            , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
             throw new NotImplementedException();
         }
@@ -200,33 +246,6 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public void SetAsyncResult(IntPtr handle, object result)
-        {
-            var xlhandle = XLOPER12.FromObject(handle);
-            var xlresult = XLOPER12.FromObject(result);
-            try
-            {
-                using (var p1 = new StructIntPtr<XLOPER12>(ref xlhandle))
-                using (var p2 = new StructIntPtr<XLOPER12>(ref xlresult))
-                    AsyncReturn(p1.Ptr, p2.Ptr);
-            }
-            finally
-            {
-                xlresult.Dispose();
-                xlhandle.Dispose();
-            }
-        }
-
-        /// <inheritdoc/>
-        public void SetRangeValue(RangeReference range, object value, bool async)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="functions"></param>
         public void RegisterFunctions(FunctionDefinitions functions)
         {
             if (Registering != null)
@@ -248,6 +267,34 @@ namespace ExcelMvc.Functions
         private static void AsyncReturn(IntPtr handle, IntPtr result)
         {
             AddIn.AutoFree(AddIn.AsyncReturn(handle, result));
+        }
+
+        private static Range GetRange(RangeReference reference)
+        {
+            var sheet = App.Instance.Underlying.Workbooks[reference.BookName]
+                .Worksheets[reference.PageName] as Worksheet;
+            var start = sheet.Cells[reference.RowFirst, reference.ColumnFirst];
+            var end = start.Cells[reference.RowLast, reference.ColumnLast];
+            return sheet.Range[start, end] as Range;
+        }
+
+        private static Range GetRange(string bookName, string sheetName
+            , int rowFirst, int rowLast, int columnFirst, int columnLast)
+        {
+            var sheet = App.Instance.Underlying.Workbooks[bookName]
+                .Worksheets[sheetName] as Worksheet;
+            var start = sheet.Cells[rowFirst, columnFirst];
+            var end = start.Cells[rowLast, columnLast];
+            return sheet.Range[start, end] as Range;
+        }
+
+        private static RangeReference RangeToReference(Range range)
+        {
+            return range == null ? new RangeReference("", "", 0, 0, 0, 0, "")
+                : new RangeReference((string)range.Parent.Parent.Name, (string)range.Parent.Name
+                    , range.Row, range.Row + range.Rows.Count - 1
+                    , range.Column, range.Column + range.Columns.Count - 1
+                    , range.Address);
         }
     }
 }

@@ -94,7 +94,7 @@ namespace ExcelMvc.Rtd
                 }
                 catch (Exception ex)
                 {
-                    XlCall.RaiseFailed(ex);
+                    Host.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(ex));
                 }
             }, null, false);
         }

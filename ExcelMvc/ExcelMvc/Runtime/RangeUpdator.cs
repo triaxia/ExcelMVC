@@ -41,6 +41,8 @@ namespace ExcelMvc.Runtime
     using Range = Microsoft.Office.Interop.Excel.Range;
     using Views;
     using ExcelMvc.Functions;
+    using Function.Interfaces;
+    using System.IO;
 
     /// <summary>
     /// Encapsulates Range updating functions
@@ -197,13 +199,13 @@ namespace ExcelMvc.Runtime
                 {
                     item.AgeMilliseconds += 100;
                     if (item.AgeMilliseconds > 10000)
-                        XlCall.RaiseFailed(ex);
+                        Host.Instance.RaiseFailed(Host.Instance, new ErrorEventArgs(ex));
                     else
                         Enqueue(item, 100);
                 }
                 else
                 {
-                    XlCall.RaiseFailed(ex);
+                    Host.Instance.RaiseFailed(Host.Instance, new ErrorEventArgs(ex));
                 }
             }
         }

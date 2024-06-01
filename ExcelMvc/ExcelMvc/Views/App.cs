@@ -42,6 +42,7 @@ namespace ExcelMvc.Views
     using Controls;
     using ExcelMvc.Functions;
     using ExcelMvc.Windows;
+    using Function.Interfaces;
     using Microsoft.Office.Interop.Excel;
     using Runtime;
 
@@ -166,6 +167,7 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Attach(object app)
         {
+            Host.Instance = new ExcelFunctionHost();
             void Do(object state)
             {
                 Try(() =>
@@ -176,21 +178,21 @@ namespace ExcelMvc.Views
                         throw new Exception(Resource.ErrorExcelAppFound);
 
                     AsyncActions.Initialise();
-                    XlCall.RaisePosted($"AsyncActions.Initialise() done");
+                    RaisePosted($"AsyncActions.Initialise() done");
 
                     ObjectFactory<Function.Interfaces.IAddIn>.CreateAll(ObjectFactory<Function.Interfaces.IAddIn>.GetCreatableTypes
                         , ObjectFactory<Function.Interfaces.IAddIn>.SelectAllAssembly);
                     ObjectFactory<Function.Interfaces.IAddIn>.Instances.ForEach(x => x.AutoOpen());
-                    XlCall.RaisePosted($"ObjectFactory<IExcelAddIn>.CreateAll done");
+                    RaisePosted($"ObjectFactory<IExcelAddIn>.CreateAll done");
 
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
-                    XlCall.RaisePosted($"ObjectFactory<ISession>.CreateAll done");
+                    RaisePosted($"ObjectFactory<ISession>.CreateAll done");
 
                     ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
-                    XlCall.RaisePosted($"ObjectFactory<IValueConverter>.CreateAll done");
+                    RaisePosted($"ObjectFactory<IValueConverter>.CreateAll done");
 
                     Try(() => FunctionDiscovery.RegisterFunctions());
-                    XlCall.RaisePosted($"FunctionDiscovery.RegisterFunctions done");
+                    RaisePosted($"FunctionDiscovery.RegisterFunctions done");
 
                     Underlying.WorkbookOpen += OpenBook;
                     Underlying.WorkbookBeforeClose += ClosingBook;

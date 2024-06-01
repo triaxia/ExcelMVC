@@ -42,6 +42,7 @@ namespace ExcelMvc.Views
     using Controls;
     using ExcelMvc.Functions;
     using Extensions;
+    using Function.Interfaces;
     using Microsoft.Office.Interop.Excel;
     using Action = System.Action;
 
@@ -382,7 +383,7 @@ namespace ExcelMvc.Views
         public void OnOpened(ViewEventArgs args)
         {
             Opened(this, args);
-            XlCall.RaisePosted(string.Format(Resource.InfoViewCreated, args.View.Name
+            RaisePosted(string.Format(Resource.InfoViewCreated, args.View.Name
                 , args.View.Type, args.View.Parent == null ? string.Empty : args.View.Parent.Name));
         }
 
@@ -506,5 +507,7 @@ namespace ExcelMvc.Views
             }
         }
 
+        protected void RaisePosted(string message)
+            => Host.Instance.RaisePosted(this, new MessageEventArgs(message));
     }
 }
