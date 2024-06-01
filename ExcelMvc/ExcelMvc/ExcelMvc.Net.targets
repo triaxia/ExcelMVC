@@ -1,5 +1,9 @@
 ﻿<Project>
-	<Target Name="ExcelMvc" AfterTargets="Build" Condition="'$(ExcelMvcAddInName)' != ''" >
+	<PropertyGroup Condition="'$(ExcelMvcAddInName)' != ''">
+		<!-- required for ExcelMvc.dll to be copied to the bin folder for a non-exe project targeting net6.0-windows-->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+	<Target Name="ExcelMvcCopy" AfterTargets="Build" Condition="'$(ExcelMvcAddInName)' != ''" >
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).xll">
 		</Copy>
@@ -19,7 +23,7 @@
 		</Copy>
 		<Exec Command="powershell -Execution Unrestricted -File &quot;$(MSBuildThisFileDirectory)ExcelMvc.reflection.ps1&quot; -TargetPath  &quot;$(TargetDir)\&quot;" />
 	</Target>
-	<Target Name="ExcelMvc" AfterTargets="Build" Condition="'$(ExcelMvcAddInName)' == ''" >
+	<Target Name="ExcelMvcPurge" AfterTargets="Build" Condition="'$(ExcelMvcAddInName)' == ''" >
 		<Delete Files="$(TargetDir)ExcelMvc.dll" />
 		<Delete Files="$(TargetDir)Function.Interfaces.dll" />
 	</Target>
