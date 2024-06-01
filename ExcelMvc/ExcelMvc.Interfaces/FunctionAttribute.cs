@@ -75,7 +75,7 @@ namespace Function.Interfaces
         /// Registers the function as macro sheet equivalent, handling uncalculated cells.
         /// pxTypeText +='#'
         /// </summary>
-        public bool IsMacro;
+        public bool IsMacroType;
 
         /// <summary>
         /// Indicates if the function is listed in the Function Wizard.

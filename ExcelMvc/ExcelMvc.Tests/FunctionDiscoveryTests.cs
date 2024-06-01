@@ -16,7 +16,7 @@ namespace ExcelMvc.Tests
             IsVolatile = true,
             IsClusterSafe = true,
             IsHidden = true,
-            IsMacro = true)]
+            IsMacroType = true)]
         public static double uAdd3(double v1, double v2, double v3)
         {
             return v1 + v2 + v3;
@@ -30,7 +30,7 @@ namespace ExcelMvc.Tests
             IsVolatile = false,
             IsClusterSafe = false,
             IsHidden = false,
-            IsMacro = false)]
+            IsMacroType = false)]
         public static double uAdd2(double v1, double v2)
         {
             return v1 + v2;

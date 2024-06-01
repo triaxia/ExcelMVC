@@ -79,7 +79,7 @@ namespace Function.Interfaces
             Callback = callback; 
             FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
-            IsMacro = rhs.IsMacro;
+            IsMacro = rhs.IsMacroType;
             IsAsync = rhs.IsAsync;
             IsThreadSafe = rhs.IsThreadSafe;
             IsClusterSafe = rhs.IsClusterSafe;
