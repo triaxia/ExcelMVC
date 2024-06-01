@@ -167,7 +167,7 @@ namespace Function.Interfaces
         object ErrorData { get; }
 
         /// <summary>
-        /// Gets/Sets the RTD throttle
+        /// Gets/Sets the RTD throttle.
         /// </summary>
         int RTDThrottleIntervalMilliseconds { get; set; }
 
