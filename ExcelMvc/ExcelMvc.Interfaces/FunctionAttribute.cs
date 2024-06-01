@@ -96,7 +96,7 @@ namespace Function.Interfaces
 
         /// <summary>
         /// Indicates the function is cluster-safe.
-        /// (pxTypeText += '&')
+        /// (pxTypeText += '&amp;')
         /// </summary>
         public bool IsClusterSafe;
 

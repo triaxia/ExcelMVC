@@ -165,7 +165,7 @@ void MakeArgumentList(ExcelFunction* pFunction, std::wstring& names, std::wstrin
 	}
 	if (pFunction->IsVolatile) types += L"!";
 	if (pFunction->IsThreadSafe && !pFunction->IsMacroType) types += L"$";
-	if (pFunction->IsClusterSafe) types += L"&";
+	if (pFunction->IsClusterSafe && !pFunction->IsAsync) types += L"&";
 	if (pFunction->IsMacroType) types += L"#";
 }
 
