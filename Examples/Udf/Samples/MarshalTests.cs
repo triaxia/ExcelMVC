@@ -1,150 +1,151 @@
 ﻿using ExcelMvc.Functions;
+using Function.Interfaces;
 using System;
 
 namespace Samples
 {
     public static class MarshalTests
     {
-        [ExcelFunction(Name = "uDouble")]
+        [Function(Name = "uDouble")]
         public static double Double(double value)
         {
             throw new NotImplementedException();
             return value;
         }
 
-        [ExcelFunction(Name = "uFloat")]
+        [Function(Name = "uFloat")]
         public static double Float(double value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uDateTime")]
+        [Function(Name = "uDateTime")]
         public static double DatTime(double value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uInt32")]
+        [Function(Name = "uInt32")]
         public static int Int32(int value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uUInt32")]
+        [Function(Name = "uUInt32")]
         public static uint UInt32(uint value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uInt16")]
+        [Function(Name = "uInt16")]
         public static short Int16(short value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uUInt16")]
+        [Function(Name = "uUInt16")]
         public static ushort UInt16(ushort value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uByte")]
+        [Function(Name = "uByte")]
         public static byte Byte(byte value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uSByte")]
+        [Function(Name = "uSByte")]
         public static sbyte SByte(sbyte value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uBoolean")]
+        [Function(Name = "uBoolean")]
         public static bool Boolean(bool value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uString")]
+        [Function(Name = "uString")]
         public static string String(string value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uDoubleArray")]
+        [Function(Name = "uDoubleArray")]
         public static double[] DoubleArray(double[] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uDoubleMatrix")]
+        [Function(Name = "uDoubleMatrix")]
         public static double[,] DoubleMatrix(double[,] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uInt32Array")]
+        [Function(Name = "uInt32Array")]
         public static int[] Int32Array(int[] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uInt32Matrix")]
+        [Function(Name = "uInt32Matrix")]
         public static int[,] Int32Matrix(int[,] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uDateTimeArray")]
+        [Function(Name = "uDateTimeArray")]
         public static DateTime[] DateTimeArray(DateTime[] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uDateTimeMatrix")]
+        [Function(Name = "uDateTimeMatrix")]
         public static DateTime[,] DateTimeMatrix(DateTime[,] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uStringArray")]
+        [Function(Name = "uStringArray")]
         public static string[] StringArray(string[] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uStringMatrix")]
+        [Function(Name = "uStringMatrix")]
         public static string[,] StringMatrix(string[,] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uObjectArray")]
+        [Function(Name = "uObjectArray")]
         public static object[] ObjectArray(object[] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uObjectMatrix")]
+        [Function(Name = "uObjectMatrix")]
         public static object[,] ObjectMatrix(object[,] value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uObject")]
+        [Function(Name = "uObject")]
         public static object Object(object value)
         {
             return value;
         }
 
-        [ExcelFunction(Name = "uCaller")]
+        [Function(Name = "uCaller")]
         public static string Caller()
         {
             return $"{XlCall.GetCallerReference()}";
         }
 
-        [ExcelFunction(Name = "uActiveSheetRangeValue")]
+        [Function(Name = "uActiveSheetRangeValue")]
         public static object ActiveSheetRangeValue(int row, int column, int rowCount, int columnCount, object value)
         {
             var reference = XlCall.GetActiveSheetReference(row, column, rowCount, columnCount);
@@ -152,48 +153,48 @@ namespace Samples
             return reference.GetValue();
         }
 
-        [ExcelFunction(Name = "uIsInFunctionWizard")]
+        [Function(Name = "uIsInFunctionWizard")]
         public static object IsInFunctionWizard(int a, int b, int c)
         {
-            if (XlCall.IsInFunctionWizard())
+            if (Host.Call.IsInFunctionWizard())
                 return "editing...";
             return a + b + c;
         }
 
-        [ExcelFunction(Name = "uHelp")]
+        [Function(Name = "uHelp")]
         public static object uHelp(int a, int b, int c)
         {
             return "https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1";
         }
 
-        [ExcelFunction(Name = "uDefaultValue")]
-        public static object uDefaultValue(int a, [ExcelArgument(Name = "[b]")] int b = 100, [ExcelArgument(Name = "[c]")] int c = 200)
+        [Function(Name = "uDefaultValue")]
+        public static object uDefaultValue(int a, [Argument(Name = "[b]")] int b = 100, [Argument(Name = "[c]")] int c = 200)
         {
             return a + b + c;
         }
 
-        [ExcelFunction(Name = "uExceptionObject")]
+        [Function(Name = "uExceptionObject")]
         public static object uExceptionObject()
         {
-            XlCall.ExceptionToFunctionResult = _=> ExcelError.ExcelErrorValue;
+            XlCall.ExceptionToFunctionResult = _=> Host.Call.ErrorValue;
             throw new Exception(nameof(uExceptionObject));
         }
 
-        [ExcelFunction(Name = "uExceptionString")]
+        [Function(Name = "uExceptionString")]
         public static string uExceptionString()
         {
-            XlCall.ExceptionToFunctionResult = _ => ExcelError.ExcelErrorValue;
+            XlCall.ExceptionToFunctionResult = _ => Host.Call.ErrorValue;
             throw new Exception(nameof(uExceptionString));
         }
 
-        [ExcelFunction(Name = "uExceptionInt")]
+        [Function(Name = "uExceptionInt")]
         public static int uExceptionInt()
         {
-            XlCall.ExceptionToFunctionResult = _ => ExcelError.ExcelErrorValue;
+            XlCall.ExceptionToFunctionResult = _ => Host.Call.ErrorValue;
             throw new Exception(nameof(uExceptionInt));
         }
 
-        [ExcelFunction(Name = "uExceptionMessage")]
+        [Function(Name = "uExceptionMessage")]
         public static object uExceptionMessage()
         {
             XlCall.ExceptionToFunctionResult = e => $"{e}";

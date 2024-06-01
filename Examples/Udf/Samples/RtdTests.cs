@@ -1,4 +1,4 @@
-﻿using ExcelMvc.Functions;
+﻿using Function.Interfaces;
 
 namespace Samples
 {
@@ -6,13 +6,13 @@ namespace Samples
     {
         static RtdTests()
         {
-            XlCall.RTDThrottleIntervalMilliseconds = 1000;
+            Host.Call.RTDThrottleIntervalMilliseconds = 1000;
         }
-        [ExcelFunction(Name = "uTimer")]
+        [Function(Name = "uTimer")]
         public static object uTimer(string name)
         {
-            var result = XlCall.RTD<TimerServer>(() => new TimerServer(), name);
-            return result;
+            var result = Host.Call.RTD<TimerServer>(() => new TimerServer(), name);
+            return "";
         }
     }
 }

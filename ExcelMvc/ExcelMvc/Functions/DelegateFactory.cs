@@ -30,8 +30,8 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
+using Function.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -40,7 +40,7 @@ namespace ExcelMvc.Functions
 {
     public static partial class DelegateFactory
     {
-        public static Delegate MakeOuterDelegate(MethodInfo method, Function function)
+        public static Delegate MakeOuterDelegate(MethodInfo method, FunctionDefinition function)
         {
             var instance = new LazyDelegate(() =>
             {
@@ -67,7 +67,7 @@ namespace ExcelMvc.Functions
             }
         }
 
-        public static Delegate MakeInnerDelegate(MethodInfo method, Function function)
+        public static Delegate MakeInnerDelegate(MethodInfo method, FunctionDefinition function)
         {
             var parameters = method.GetParameters();
             var outerParameters = new ParameterExpression[parameters.Length];

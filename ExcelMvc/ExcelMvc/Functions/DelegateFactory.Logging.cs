@@ -1,29 +1,10 @@
-﻿using System;
+﻿using Function.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace ExcelMvc.Functions
 {
-    public class ExecutingEventArgs : EventArgs
-    {
-        public string Name { get; }
-        public (string Name, object Value) [] Args { get; }
-        public ExecutingEventArgs(string name, MethodInfo method, object[] args)
-        {
-            Name = name;
-            Args = method.GetParameters()
-                .Select((p, i) => (name: p.Name, value: args[i]))
-                .ToArray();
-        }
-
-        public override string ToString()
-        {
-            var args = string.Join(",", Args.Select(x => $"{x.Name}={x.Value}"));
-            return $"{Name}[{args}]";
-        }
-    }
-
     public static partial class DelegateFactory
     {
         public static event EventHandler<ExecutingEventArgs> Executing;

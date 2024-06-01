@@ -1,4 +1,5 @@
 using ExcelMvc.Functions;
+using Function.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
@@ -7,7 +8,7 @@ namespace ExcelMvc.Tests
     [TestClass]
     public class FunctionDiscoveryTests
     {
-        [ExcelFunction(Name = "uAdd3",
+        [Function(Name = "uAdd3",
             Description = nameof(uAdd3),
             HelpTopic ="https://microsoft.com",
             IsAsync = true,
@@ -21,7 +22,7 @@ namespace ExcelMvc.Tests
             return v1 + v2 + v3;
         }
 
-        [ExcelFunction(Name = "uAdd2",
+        [Function(Name = "uAdd2",
             Description = nameof(uAdd3),
             HelpTopic = "https://microsoft.com",
             IsAsync = false,

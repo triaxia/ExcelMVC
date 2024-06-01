@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\ExcelMvc.Interfaces\Function.Interfaces.csproj" />
 	  <ProjectReference Include="..\ExcelMvc\ExcelMvc.csproj" />
 	</ItemGroup>
 

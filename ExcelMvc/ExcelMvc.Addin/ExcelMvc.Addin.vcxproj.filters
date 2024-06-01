@@ -67,7 +67,4 @@
   <ItemGroup>
     <None Include="AddIn.def" />
   </ItemGroup>
-  <ItemGroup>
-    <MASM Include="Export64.asm" />
-  </ItemGroup>
 </Project>

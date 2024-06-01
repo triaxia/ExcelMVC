@@ -34,6 +34,7 @@ using System;
 using System.Linq;
 using ExcelMvc.Functions;
 using ExcelMvc.Runtime;
+using Function.Interfaces;
 using Microsoft.Office.Interop.Excel;
 
 namespace ExcelMvc.Rtd

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net471;net6.0</TargetFrameworks>
+		<!--<ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>-->
+		<Version>2.1.2</Version>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>D:\Source\ExcelMVC\ExcelMvc\ExcelMvc.snk</AssemblyOriginatorKeyFile>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" version="1.1.1" PrivateAssets="All" />
+	</ItemGroup>
+
+</Project>

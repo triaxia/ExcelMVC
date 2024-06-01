@@ -8,10 +8,6 @@
 		<Version>2.1.2</Version>
 		<Description>Writing Excel applications in .NET using MVC pattern &amp; high performance user defined fuctions, including RTD and asynchronous functions. This package supercedes ExcelMvc.</Description>
 		<Copyright>Copyright © 2013 Peter Gu (Creator) &amp; Wolfgang Stamm (Contributor 2013)</Copyright>
-		<RepositoryUrl>https://github.com/triaxia/ExcelMVC</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<DebugType>embedded</DebugType>
-		<EmbedAllSources>true</EmbedAllSources>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageOutputPath>bin\NuGet</PackageOutputPath>
 		<PackageProjectUrl>https://github.com/triaxia/ExcelMVC</PackageProjectUrl>
@@ -25,7 +21,6 @@
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<ContinuousIntegrationBuild Condition=" '$(Configuration)' == 'Release' ">true</ContinuousIntegrationBuild>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
 
@@ -46,7 +41,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -111,6 +105,10 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ExcelMvc.Interfaces\Function.Interfaces.csproj" PrivateAssets="All" />
 	</ItemGroup>
 
 	<PropertyGroup>

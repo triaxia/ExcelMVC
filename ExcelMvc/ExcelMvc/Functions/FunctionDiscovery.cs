@@ -32,6 +32,7 @@ Boston, MA 02110-1301 USA.
 */
 
 using ExcelMvc.Runtime;
+using Function.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,38 +49,38 @@ namespace ExcelMvc.Functions
             for (int index = 0; index < items.Length; index++)
                 items[index].function.Callback = MakeCallback(items[index].method, items[index].function);
 
-            XlCall.RegisterFunctions(new Functions(items.Select(x => x.function).ToArray()));
+            XlCall.RegisterFunctions(new FunctionDefinitions(items.Select(x => x.function).ToArray()));
         }
 
-        public static IEnumerable<(MethodInfo method, Function function)> DiscoverFunctions()
+        public static IEnumerable<(MethodInfo method, FunctionDefinition function)> DiscoverFunctions()
         {
             return Discover()
                 .Select(x => (x.method, x.function, x.args))
-                .Select(x => (x.method, function: new Function(x.function, x.args, IntPtr.Zero, x.method)))
+                .Select(x => (x.method, function: new FunctionDefinition(x.function, x.args, IntPtr.Zero, x.method)))
                 .ToArray();
         }
 
-        private static IEnumerable<(MethodInfo method, ExcelFunctionAttribute function, Argument[] args)> Discover()
+        private static IEnumerable<(MethodInfo method, FunctionAttribute function, ArgumentDefinition[] args)> Discover()
         {
             return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
-                .Select(x => (function: x.method.GetCustomAttribute<ExcelFunctionAttribute>(), x.method))
-                .Select(x => (x.method, (ExcelFunctionAttribute)x.function, GetArguments(x.method)));
+                .Select(x => (function: x.method.GetCustomAttribute<FunctionAttribute>(), x.method))
+                .Select(x => (x.method, (FunctionAttribute)x.function, GetArguments(x.method)));
         }
 
         private static IEnumerable<string> GetTypes(Assembly asm)
         {
             return asm.GetExportedTypes().Select(t => (type: t, methods: t.GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .Where(m => m.HasCustomAttribute<ExcelFunctionAttribute>())))
+                .Where(m => m.HasCustomAttribute<FunctionAttribute>())))
                 .SelectMany(t => t.methods.Select(m => $"{t.type.AssemblyQualifiedName}|{m.Name}"));
         }
 
-        private static Argument[] GetArguments(MethodInfo method)
+        private static ArgumentDefinition[] GetArguments(MethodInfo method)
         {
             return method.GetParameters()
-                .Select(x => (argument: x.GetCustomAttribute<ExcelArgumentAttribute>(), parameter: x))
-                .Select(x => new Argument(x.parameter, x.argument))
+                .Select(x => (argument: x.GetCustomAttribute<ArgumentAttribute>(), parameter: x))
+                .Select(x => new ArgumentDefinition(x.parameter, x.argument))
                 .ToArray();
         }
 
@@ -90,7 +91,7 @@ namespace ExcelMvc.Functions
             //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
 
-        public static IntPtr MakeCallback(MethodInfo method, Function function)
+        public static IntPtr MakeCallback(MethodInfo method, FunctionDefinition function)
         {
             var e = DelegateFactory.MakeOuterDelegate(method, function);
             AddIn.NoGarbageCollectableHandles.Add(GCHandle.Alloc(e));

@@ -36,37 +36,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace ExcelMvc.Functions
+namespace Function.Interfaces
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct Argument
-    {
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string Name;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string Description;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string Type;
-
-        public Argument(ParameterInfo parameter, ExcelArgumentAttribute argument)
-        {
-            if (argument == null)
-            {
-                Name = parameter.Name;
-                Description = "";
-            }
-            else
-            {
-                Name = argument.Name;
-                Description = argument.Description;
-            }
-            Type = parameter.ParameterType.FullName;
-        }
-        public bool IsOptionalArg => Name.StartsWith("[") && Name.EndsWith("]");
-    }
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct Function
+    public struct FunctionDefinition
     {
         public const ushort MaxArguments = 64;
         [MarshalAs(UnmanagedType.LPWStr)]
@@ -98,9 +71,9 @@ namespace ExcelMvc.Functions
         [MarshalAs(UnmanagedType.U1)]
         public byte ArgumentCount;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
-        public Argument[] Arguments;
+        public ArgumentDefinition[] Arguments;
 
-        public Function(ExcelFunctionAttribute rhs, Argument[] arguments
+        public FunctionDefinition(FunctionAttribute rhs, ArgumentDefinition[] arguments
             , IntPtr callback, MethodInfo method)
         {
             Callback = callback; 
@@ -120,36 +93,36 @@ namespace ExcelMvc.Functions
             ReturnType = method.ReturnType.FullName;
         }
 
-        private static Argument[] Pad(Argument[] arguments)
+        private static ArgumentDefinition[] Pad(ArgumentDefinition[] arguments)
         {
-            var args = (arguments ?? new Argument[] { });
+            var args = (arguments ?? new ArgumentDefinition[] { });
             while (args.Length < MaxArguments)
-                args = args.Concat(new[] { new Argument() }).ToArray();
+                args = args.Concat(new[] { new ArgumentDefinition() }).ToArray();
             return args;
         }
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct Functions
+    public struct FunctionDefinitions
     {
         public const ushort MaxFunctions = 10000;
         [MarshalAs(UnmanagedType.U4)]
         public int FunctionCount;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxFunctions)]
-        public Function[] Items;
+        public FunctionDefinition[] Items;
 
-        public Functions(Function[] functions)
+        public FunctionDefinitions(FunctionDefinition[] functions)
         {
             FunctionCount = functions.Length;
             Items = Pad(functions);
         }
 
-        private static Function[] Pad(Function[] functions)
+        private static FunctionDefinition[] Pad(FunctionDefinition[] functions)
         {
-            var items = functions ?? new Function[] { };
+            var items = functions ?? new FunctionDefinition[] { };
             var count = MaxFunctions - items.Length;
             if (count > 0)
-                items = items.Concat(Enumerable.Range(0, count).Select(_ => new Function()))
+                items = items.Concat(Enumerable.Range(0, count).Select(_ => new FunctionDefinition()))
                     .ToArray();
             return items;
         }

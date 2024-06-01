@@ -1,4 +1,4 @@
-﻿using ExcelMvc.Functions;
+﻿using Function.Interfaces;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,11 +10,11 @@ namespace Samples
         private static readonly Semaphore OneWay = new Semaphore(1, 1);
         private static IntPtr Handle;
 
-        [ExcelFunction(Name = "uAsync", IsAsync = true)]
+        [Function(Name = "uAsync", IsAsync = true)]
         public static void Async(double arg1, double arg2, IntPtr handle)
         {
-            Handle = XlCall.GetAsyncHandle(handle);
-            //XlCall.SetAsyncResult(Handle, "...");
+            Handle = Host.Call.GetAsyncHandle(handle);
+            Host.Call.SetAsyncResult(Handle, "...");
             if (!OneWay.WaitOne(0)) return;
             Task.Run(()=>
             {
@@ -33,7 +33,7 @@ namespace Samples
         private static void Add(double arg1, double arg2) 
         {
             var sum = arg1 + arg2;
-            XlCall.SetAsyncResult(Handle, sum);
+            Host.Call.SetAsyncResult(Handle, sum);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ExcelMvc.Functions;
+using Function.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections;
@@ -164,7 +165,7 @@ namespace ExcelMvc.Tests
             ,bool isCollection = false)
         {
             var func = (FunctionDelegate.Function1)DelegateFactory.MakeOuterDelegate(method
-                , new Function { Name="Test"});
+                , new FunctionDefinition { Name="Test"});
             var name = typeof(TValue).Name.Replace("[]", "Array").Replace("[,]", "Matrix");
             var p1 = new XlMarshalContext();
             var incoming = p1.GetType().GetMethod($"{name}ToIntPtr");

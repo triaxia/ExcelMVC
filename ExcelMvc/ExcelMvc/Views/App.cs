@@ -178,8 +178,9 @@ namespace ExcelMvc.Views
                     AsyncActions.Initialise();
                     XlCall.RaisePosted($"AsyncActions.Initialise() done");
 
-                    ObjectFactory<IExcelAddIn>.CreateAll(ObjectFactory<IExcelAddIn>.GetCreatableTypes, ObjectFactory<IExcelAddIn>.SelectAllAssembly);
-                    ObjectFactory<IExcelAddIn>.Instances.ForEach(x => x.AutoOpen());
+                    ObjectFactory<Function.Interfaces.IAddIn>.CreateAll(ObjectFactory<Function.Interfaces.IAddIn>.GetCreatableTypes
+                        , ObjectFactory<Function.Interfaces.IAddIn>.SelectAllAssembly);
+                    ObjectFactory<Function.Interfaces.IAddIn>.Instances.ForEach(x => x.AutoOpen());
                     XlCall.RaisePosted($"ObjectFactory<IExcelAddIn>.CreateAll done");
 
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);

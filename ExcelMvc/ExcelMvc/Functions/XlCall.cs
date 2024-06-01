@@ -35,49 +35,14 @@ using ExcelMvc.Diagnostics;
 using ExcelMvc.Rtd;
 using ExcelMvc.Views;
 using ExcelMvc.Windows;
+using Function.Interfaces;
 using System;
 using System.IO;
 using System.Linq;
 
 namespace ExcelMvc.Functions
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class MessageEventArgs : EventArgs
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Message { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="message"></param>
-        public MessageEventArgs(string message)
-            => Message = message;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class RegisteringEventArgs : EventArgs
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public Function Function;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="function"></param>
-        public RegisteringEventArgs(Function function)
-            => Function = function;
-    }
-
-    /// <summary>
+     /// <summary>
     /// 
     /// </summary>
     public static class XlCall
@@ -94,7 +59,7 @@ namespace ExcelMvc.Functions
         /// 
         /// </summary>
         /// <param name="functions"></param>
-        public static void RegisterFunctions(Functions functions)
+        public static void RegisterFunctions(FunctionDefinitions functions)
         {
             if (Registering != null) 
             {
@@ -106,7 +71,7 @@ namespace ExcelMvc.Functions
                 }
             }
 
-            using (var pFunction = new StructIntPtr<Functions>(ref functions))
+            using (var pFunction = new StructIntPtr<FunctionDefinitions>(ref functions))
             {
                 AddIn.RegisterFunctions(pFunction.Ptr);
             }

@@ -1,6 +1,6 @@
-﻿namespace ExcelMvc.Functions
+﻿namespace Function.Interfaces
 {
-    public interface IExcelAddIn
+    public interface IAddIn
     {
         void AutoOpen();
         void AutoClose();
