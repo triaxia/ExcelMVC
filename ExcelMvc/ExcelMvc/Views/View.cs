@@ -40,7 +40,6 @@ namespace ExcelMvc.Views
 
     using Bindings;
     using Controls;
-    using ExcelMvc.Functions;
     using Extensions;
     using Function.Interfaces;
     using Microsoft.Office.Interop.Excel;

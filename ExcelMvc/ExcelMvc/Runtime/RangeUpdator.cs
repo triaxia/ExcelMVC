@@ -40,7 +40,6 @@ namespace ExcelMvc.Runtime
     using Microsoft.Office.Interop.Excel;
     using Range = Microsoft.Office.Interop.Excel.Range;
     using Views;
-    using ExcelMvc.Functions;
     using Function.Interfaces;
     using System.IO;
 

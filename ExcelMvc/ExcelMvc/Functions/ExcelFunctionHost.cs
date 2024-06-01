@@ -214,19 +214,19 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public object RTD<TRtdServerImpl>(Func<IRtdServerImpl> implFactory, string arg0, params string[] args)
+        public object RTD<TRtdServerImpl>(Func<IRtdServerImpl> implFactory, string server, params string[] args)
             where TRtdServerImpl : IRtdServerImpl
         {
             using (var reg = new RtdRegistry(typeof(TRtdServerImpl), implFactory))
             {
-                return RTD(reg.ProgId, arg0, args);
+                return RTD(reg.ProgId, server, args);
             }
         }
 
         /// <inheritdoc/>
-        public object RTD(string progId, string arg0, params string[] args)
+        public object RTD(string progId, string server, params string[] args)
         {
-            var arguments = new string[] { progId, string.Empty, arg0 }
+            var arguments = new string[] { progId, server}
                 .Concat(args)
                 .Select((x, idx) => new FunctionArgument($"p{idx}", x))
                 .ToArray();

@@ -183,20 +183,20 @@ namespace Function.Interfaces
         /// </summary>
         /// <typeparam name="TRtdServerImpl"></typeparam>
         /// <param name="implFactory"></param>
-        /// <param name="arg0"></param>
+        /// <param name="server"></param>
         /// <param name="args"></param>
         /// <returns></returns>
         object RTD<TRtdServerImpl>(Func<IRtdServerImpl> implFactory
-            , string arg0, params string[] args) where TRtdServerImpl : IRtdServerImpl;
+            , string server, params string[] args) where TRtdServerImpl : IRtdServerImpl;
 
         /// <summary>
         /// Calls the specified server.
         /// </summary>
         /// <param name="progId"></param>
-        /// <param name="arg0"></param>
+        /// <param name="server"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        object RTD(string progId, string arg0, params string[] args);
+        object RTD(string progId, string server, params string[] args);
 
         /// <summary>
         /// Indicates if the function wizard window is open.

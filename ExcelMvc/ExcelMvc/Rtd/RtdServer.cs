@@ -32,7 +32,6 @@ Boston, MA 02110-1301 USA.
 */
 using System;
 using System.Linq;
-using ExcelMvc.Functions;
 using ExcelMvc.Runtime;
 using Function.Interfaces;
 using Microsoft.Office.Interop.Excel;

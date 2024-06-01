@@ -11,7 +11,7 @@ namespace Samples
         [Function(Name = "uTimer")]
         public static object uTimer(string name)
         {
-            return Host.Instance.RTD<TimerServer>(() => new TimerServer(), name);
+            return Host.Instance.RTD<TimerServer>(() => new TimerServer(), "", name);
         }
     }
 }

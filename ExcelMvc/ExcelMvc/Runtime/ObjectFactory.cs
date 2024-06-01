@@ -37,12 +37,10 @@ namespace ExcelMvc.Runtime
 {
     using System;
     using System.Collections.Generic;
-    using System.Configuration.Assemblies;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
-    using ExcelMvc.Functions;
     using Extensions;
     using Function.Interfaces;
 #if NET6_0_OR_GREATER

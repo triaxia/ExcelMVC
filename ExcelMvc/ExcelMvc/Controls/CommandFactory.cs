@@ -37,10 +37,7 @@ namespace ExcelMvc.Controls
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Windows.Markup.Primitives;
-    using ExcelMvc.Functions;
     using Extensions;
     using Function.Interfaces;
     using Microsoft.Office.Interop.Excel;
