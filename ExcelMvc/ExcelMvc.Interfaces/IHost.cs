@@ -30,6 +30,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
+using ExcelMvc.Functions;
 using System;
 using System.IO;
 using System.Linq;
@@ -113,8 +114,13 @@ namespace Function.Interfaces
     /// <summary>
     /// Provides functionality for calling functions on their hosts.
     /// </summary>
-    public interface Call
+    public interface IHost
     {
+        /// <summary>
+        /// Gets the underlying host object
+        /// </summary>
+        object Underlying { get; }
+
         /// <summary>
         /// Gets the object that represents a value is missing.
         /// </summary>
@@ -192,11 +198,6 @@ namespace Function.Interfaces
         bool IsInFunctionWizard();
 
         /// <summary>
-        /// Gets the function host object
-        /// </summary>
-        object Host { get; }
-
-        /// <summary>
         /// Gets/Sets the host status bar text.
         /// </summary>
         string StatusBarText { get; set; }
@@ -223,19 +224,21 @@ namespace Function.Interfaces
         /// <summary>
         /// Raises a <see cref="Posted"/> event.
         /// </summary>
+        /// <param name="sender"></param>
         /// <param name="args"></param>
-        void RaisePosted(RegisteringEventArgs args);
+        void RaisePosted(object sender, MessageEventArgs args);
 
         /// <summary>
-        /// Occurs before functions are registered to the host. 
+        /// Occurs before functions are registered with the host. 
         /// </summary>
         event EventHandler<RegisteringEventArgs> Registering;
 
         /// <summary>
         /// Raises a <see cref="Registering"/> event.
         /// </summary>
+        /// <param name="sender"></param>
         /// <param name="args"></param>
-        void RaiseRegistering(RegisteringEventArgs args);
+        void RaiseRegistering(object sender, RegisteringEventArgs args);
 
         /// <summary>
         /// Occurs whenever errors are encountered.
@@ -245,23 +248,88 @@ namespace Function.Interfaces
         /// <summary>
         /// Raises a <see cref="Failed"/> event.
         /// </summary>
+        /// <param name="sender"></param>
         /// <param name="args"></param>
-        void RaiseFailed(ErrorEventArgs args);
+        void RaiseFailed(object sender, ErrorEventArgs args);
+
+        /// <summary>
+        /// Gets/Sets the flag indicating whether the <see cref="Executing"/> event is
+        /// raised or not.
+        /// </summary>
+        bool ExecutingEventRaised { get; set; }
+
+        /// <summary>
+        /// Occurs whenever functions are executed.
+        /// </summary>
+        event EventHandler<ExecutingEventArgs> Executing;
+
+        /// <summary>
+        /// Raise an <see cref="Executing"/> event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void RaiseExecuting(object sender, ExecutingEventArgs args);
 
         /// <summary>
         /// Gets/Sets the function that converts an exception to object.
         /// </summary>
         Func<Exception, object> ExceptionToFunctionResult { get; set; }
-    }
 
-    /// <summary>
-    /// </summary>
-    public static class Host
-    {
         /// <summary>
-        /// Gets/Sets the Call instance
+        /// Gets the range of the caller.
         /// </summary>
-        public static Call Call { get; set; }
+        /// <returns></returns>
+        RangeReference GetCallerReference();
+
+        /// <summary>
+        /// Gets a reference on the book and page specified.
+        /// </summary>
+        /// <param name="bookName"></param>
+        /// <param name="pageName"></param>
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
+        /// <returns></returns>
+        RangeReference GetReference(string bookName, string pageName
+            , int rowFirst, int rowLast, int columnFirst, int columnLast);
+
+        /// <summary>
+        /// Gets a reference on the active book.
+        /// </summary>
+        /// <param name="pageName"></param>
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
+        /// <returns></returns>
+        RangeReference GetActiveBookReference(string pageName
+            , int rowFirst, int rowLast, int columnFirst, int columnLast);
+
+        /// <summary>
+        /// Gets a reference on the active page.
+        /// </summary>
+        /// <param name="rowFirst"></param>
+        /// <param name="rowLast"></param>
+        /// <param name="columnFirst"></param>
+        /// <param name="columnLast"></param>
+        /// <returns></returns>
+        RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast);
+
+        /// <summary>
+        /// Gets the value of the specified range.
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        object GetRangeValue(RangeReference range);
+
+        /// <summary>
+        /// Sets the value of the specified range.
+        /// </summary>
+        /// <param name="range"></param>
+        /// <param name="value"></param>
+        /// <param name="async"></param>
+        void SetRangeValue(RangeReference range, object value, bool async);
     }
 }
 

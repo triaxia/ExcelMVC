@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using ExcelMvc.Functions;
 using System.Threading;
 using Function.Interfaces;
 
@@ -22,13 +21,13 @@ namespace Samples
         public int Start()
         {
             Timer = new Timer(TimerElapsed, null, 1000, 1000);
-            XlCall.RaisePosted("Started");
+            Host.Instance.RaisePosted(this, new MessageEventArgs("Started"));
             return 1;
         }
 
         public void Stop()
         {
-            XlCall.RaisePosted("Stopped");
+            Host.Instance.RaisePosted(this, new MessageEventArgs("Stopped"));
             Timer.Dispose();
             Topics.Clear();
         }
@@ -40,14 +39,14 @@ namespace Samples
 
         public object Connect(int topicId, string[] args)
         {
-            XlCall.RaisePosted($"{topicId} connected");
+            Host.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} connected"));
             Topics[topicId] = new Topic { args = args, value = DateTime.Now };
             return Format(Topics[topicId]);
         }
 
         public void Disconnect(int topicId)
         {
-            XlCall.RaisePosted($"{topicId} disconnected");
+            Host.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} disconnected"));
             Topics.TryRemove(topicId, out var _);
         }
 
@@ -65,7 +64,7 @@ namespace Samples
 
         private void TimerElapsed(object _)
         {
-            XlCall.RaisePosted("Time Ticked");
+            Host.Instance.RaisePosted(this, new MessageEventArgs("Ticked"));
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
                 pair.Value.value = now;

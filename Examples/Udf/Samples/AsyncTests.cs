@@ -13,8 +13,8 @@ namespace Samples
         [Function(Name = "uAsync", IsAsync = true)]
         public static void Async(double arg1, double arg2, IntPtr handle)
         {
-            Handle = Host.Call.GetAsyncHandle(handle);
-            Host.Call.SetAsyncResult(Handle, "...");
+            Handle = Host.Instance.GetAsyncHandle(handle);
+            Host.Instance.SetAsyncResult(Handle, "...");
             if (!OneWay.WaitOne(0)) return;
             Task.Run(()=>
             {
@@ -33,7 +33,7 @@ namespace Samples
         private static void Add(double arg1, double arg2) 
         {
             var sum = arg1 + arg2;
-            Host.Call.SetAsyncResult(Handle, sum);
+            Host.Instance.SetAsyncResult(Handle, sum);
         }
     }
 }

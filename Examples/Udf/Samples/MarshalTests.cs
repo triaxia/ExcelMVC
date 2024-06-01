@@ -142,21 +142,21 @@ namespace Samples
         [Function(Name = "uCaller")]
         public static string Caller()
         {
-            return $"{XlCall.GetCallerReference()}";
+            return $"{Host.Instance.GetCallerReference()}";
         }
 
         [Function(Name = "uActiveSheetRangeValue")]
         public static object ActiveSheetRangeValue(int row, int column, int rowCount, int columnCount, object value)
         {
-            var reference = XlCall.GetActiveSheetReference(row, column, rowCount, columnCount);
-            reference.SetValue(value, true);
-            return reference.GetValue();
+            var reference = Host.Instance.GetActivePageReference(row, column, rowCount, columnCount);
+            Host.Instance.SetRangeValue(reference, value, true);
+            return Host.Instance.GetRangeValue(reference);
         }
 
         [Function(Name = "uIsInFunctionWizard")]
         public static object IsInFunctionWizard(int a, int b, int c)
         {
-            if (Host.Call.IsInFunctionWizard())
+            if (Host.Instance.IsInFunctionWizard())
                 return "editing...";
             return a + b + c;
         }
@@ -176,28 +176,28 @@ namespace Samples
         [Function(Name = "uExceptionObject")]
         public static object uExceptionObject()
         {
-            XlCall.ExceptionToFunctionResult = _=> Host.Call.ErrorValue;
+            Host.Instance.ExceptionToFunctionResult = _=> Host.Instance.ErrorValue;
             throw new Exception(nameof(uExceptionObject));
         }
 
         [Function(Name = "uExceptionString")]
         public static string uExceptionString()
         {
-            XlCall.ExceptionToFunctionResult = _ => Host.Call.ErrorValue;
+            Host.Instance.ExceptionToFunctionResult = _ => Host.Instance.ErrorValue;
             throw new Exception(nameof(uExceptionString));
         }
 
         [Function(Name = "uExceptionInt")]
         public static int uExceptionInt()
         {
-            XlCall.ExceptionToFunctionResult = _ => Host.Call.ErrorValue;
+            Host.Instance.ExceptionToFunctionResult = _ => Host.Instance.ErrorValue;
             throw new Exception(nameof(uExceptionInt));
         }
 
         [Function(Name = "uExceptionMessage")]
         public static object uExceptionMessage()
         {
-            XlCall.ExceptionToFunctionResult = e => $"{e}";
+            Host.Instance.ExceptionToFunctionResult = e => $"{e}";
             throw new Exception(nameof(uExceptionInt));
         }
     }
