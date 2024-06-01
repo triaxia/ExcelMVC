@@ -52,7 +52,7 @@ struct ExcelFunction
 	void* Callback;
 	byte MacroType;
 	bool IsVolatile;
-	bool IsMacro;
+	bool IsMacroType;
 	bool IsAsync;
 	bool IsThreadSafe;
 	bool IsClusterSafe;
@@ -164,9 +164,9 @@ void MakeArgumentList(ExcelFunction* pFunction, std::wstring& names, std::wstrin
 		types += MakeTypeString(pFunction->Arguments[idx].Type, pFunction->Arguments[idx].Name);
 	}
 	if (pFunction->IsVolatile) types += L"!";
-	if (pFunction->IsThreadSafe) types += L"$";
+	if (pFunction->IsThreadSafe && !pFunction->IsMacroType) types += L"$";
 	if (pFunction->IsClusterSafe) types += L"&";
-	if (pFunction->IsMacro) types += L"#";
+	if (pFunction->IsMacroType) types += L"#";
 }
 
 void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
