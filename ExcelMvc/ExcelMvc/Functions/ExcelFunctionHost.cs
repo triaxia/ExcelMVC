@@ -83,6 +83,8 @@ namespace ExcelMvc.Functions
             set { XlMarshalExceptionHandler.ExceptionToFunctionResult = value; }
         }
 
+        public int RtdThrottleIntervalMilliseconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         /// <inheritdoc/>
         public event EventHandler<MessageEventArgs> Posted;
 
@@ -94,6 +96,9 @@ namespace ExcelMvc.Functions
 
         /// <inheritdoc/>
         public event EventHandler<ExecutingEventArgs> Executing;
+
+        /// <inheritdoc/>
+        public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
 
         /// <inheritdoc/>
         public string ErrorToString(object value)
@@ -214,17 +219,17 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public object RTD<TRtdServerImpl>(Func<IRtdServerImpl> implFactory, string server, params string[] args)
+        public object Rtd<TRtdServerImpl>(Func<IRtdServerImpl> implFactory, string server, params string[] args)
             where TRtdServerImpl : IRtdServerImpl
         {
-            using (var reg = new RtdRegistry(typeof(TRtdServerImpl), implFactory))
+            using (var reg = new RtdRegistry(typeof(IRtdServerImpl), implFactory))
             {
-                return RTD(reg.ProgId, server, args);
+                return Rtd(reg.ProgId, server, args);
             }
         }
 
         /// <inheritdoc/>
-        public object RTD(string progId, string server, params string[] args)
+        public object Rtd(string progId, string server, params string[] args)
         {
             var arguments = new string[] { progId, server}
                 .Concat(args)
@@ -295,6 +300,12 @@ namespace ExcelMvc.Functions
                     , range.Row, range.Row + range.Rows.Count - 1
                     , range.Column, range.Column + range.Columns.Count - 1
                     , range.Address);
+        }
+
+        /// <inheritdoc/>
+        public void RaiseRtdUpdated(object sender, RtdServerUpdatedEventArgs args)
+        {
+            RtdUpdated?.Invoke(sender, args);   
         }
     }
 }

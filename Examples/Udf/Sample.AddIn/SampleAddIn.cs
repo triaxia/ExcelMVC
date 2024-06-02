@@ -25,6 +25,10 @@ namespace Sample.AddIn
                 Host.Instance.RaisePosted(this, new MessageEventArgs($"Executing {e}"));
             };
             Host.Instance.ExceptionToFunctionResult = e => $"{e}";
+            Host.Instance.RtdUpdated += (_, e) =>
+            {
+                Host.Instance.RaisePosted(this, new MessageEventArgs($"RtdUpdated {e}"));
+            };
         }
     }
 }

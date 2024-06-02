@@ -12,7 +12,7 @@ namespace Samples
     }
     public class TimerServer : IRtdServerImpl
     {
-        public event EventHandler<EventArgs> Updated;
+        public event EventHandler<RtdServerUpdatedEventArgs> Updated;
         public readonly ConcurrentDictionary<int, Topic> Topics
             = new ConcurrentDictionary<int, Topic>();
 
@@ -68,7 +68,7 @@ namespace Samples
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
                 pair.Value.value = now;
-            Updated?.Invoke(this, EventArgs.Empty);
+            Updated?.Invoke(this, new RtdServerUpdatedEventArgs(this));
         }
 
         private static string Format(Topic topic)

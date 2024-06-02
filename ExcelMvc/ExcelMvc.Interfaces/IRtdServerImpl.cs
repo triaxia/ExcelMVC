@@ -36,6 +36,24 @@ using System;
 namespace Function.Interfaces
 {
     /// <summary>
+    /// Provides data for Rtd updated events.
+    /// </summary>
+    public class RtdServerUpdatedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The message text.
+        /// </summary>
+        public IRtdServerImpl Impl { get; }
+
+        /// <summary>
+        /// Initialises a new instance of <see cref="RtdServerUpdatedEventArgs"/>.
+        /// </summary>
+        /// <param name="impl"></param>
+        public RtdServerUpdatedEventArgs(IRtdServerImpl impl)
+            => Impl = impl;
+    }
+
+    /// <summary>
     /// Defines the implementation interface of a real-time data (RTD) server.
     /// </summary>
     public interface IRtdServerImpl
@@ -43,7 +61,7 @@ namespace Function.Interfaces
         /// <summary>
         /// Occurs whenever topic values have been updated.
         /// </summary>
-        event EventHandler<EventArgs> Updated;
+        event EventHandler<RtdServerUpdatedEventArgs> Updated;
 
         /// <summary>
         /// Called immediately after a RTD server is instantiated. 

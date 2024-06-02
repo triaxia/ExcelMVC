@@ -35,6 +35,20 @@ using System.Collections.Generic;
 
 namespace ExcelMvc.Functions
 {
+    public class ExcelMissing
+    {
+        private ExcelMissing() { }
+        public static readonly ExcelMissing Value = new ExcelMissing();
+        public override string ToString() => "";
+    }
+
+    public class ExcelEmpty
+    {
+        private ExcelEmpty() { }
+        public static readonly ExcelEmpty Value = new ExcelEmpty();
+        public override string ToString() => "";
+    }
+
     public enum ExcelError : short
     {
         ExcelErrorNull = 0,
@@ -58,7 +72,9 @@ namespace ExcelMvc.Functions
             { ExcelError.ExcelErrorName,"#NAME?" },
             { ExcelError.ExcelErrorNum,"#NUM!" },
             { ExcelError.ExcelErrorNA,"#N/A" },
-            { ExcelError.ExcelErrorGettingData,"#Data!" }
+            { ExcelError.ExcelErrorGettingData,"#Data!" },
+            { ExcelMissing.Value, $"{ExcelMissing.Value}" },
+            { ExcelEmpty.Value, $"{ExcelEmpty.Value}" }
         };
     }
 }

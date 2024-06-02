@@ -6,12 +6,12 @@ namespace Samples
     {
         static RtdTests()
         {
-            Host.Instance.RTDThrottleIntervalMilliseconds = 1000;
+            Host.Instance.RtdThrottleIntervalMilliseconds = 1000;
         }
         [Function(Name = "uTimer")]
         public static object uTimer(string name)
         {
-            return Host.Instance.RTD<TimerServer>(() => new TimerServer(), "", name);
+            return Host.Instance.Rtd<TimerServer>(() => new TimerServer(), "", name);
         }
     }
 }

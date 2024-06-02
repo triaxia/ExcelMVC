@@ -54,6 +54,12 @@ namespace Function.Interfaces
         /// <param name="message"></param>
         public MessageEventArgs(string message)
             => Message = message;
+
+        /// <inheritdoc cref="object.ToString"/>
+        public override string ToString()
+        {
+            return $"Message:{Message}";
+        }
     }
 
     /// <summary>
@@ -72,6 +78,12 @@ namespace Function.Interfaces
         /// <param name="function"></param>
         public RegisteringEventArgs(FunctionDefinition function)
             => Function = function;
+
+        /// <inheritdoc cref="object.ToString"/>
+        public override string ToString()
+        {
+            return $"Function:{Function.Name}";
+        }
     }
 
     /// <summary>
@@ -117,17 +129,17 @@ namespace Function.Interfaces
     public interface IHost
     {
         /// <summary>
-        /// Gets the underlying host object
+        /// Gets the underlying host object.
         /// </summary>
         object Underlying { get; }
 
         /// <summary>
-        /// Gets the object that represents a value is missing.
+        /// Gets the object that represents a missing value.
         /// </summary>
         object ValueMissing { get; }
 
         /// <summary>
-        /// Gets the object that represents a value is empty.
+        /// Gets the object that represents an empty value.
         /// </summary>
         object ValueEmpty { get; }
 
@@ -174,19 +186,31 @@ namespace Function.Interfaces
         string ErrorToString(object value);
 
         /// <summary>
-        /// Gets/Sets the RTD throttle.
+        /// Occurs whenever Rtd servers are updated.
         /// </summary>
-        int RTDThrottleIntervalMilliseconds { get; set; }
+        event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
 
         /// <summary>
-        /// Calls the specified <see cref="IRtdServerImpl"/> server.
+        /// Raises a <see cref="RtdUpdated"/> event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void RaiseRtdUpdated(object sender, RtdServerUpdatedEventArgs args);
+
+        /// <summary>
+        /// Gets/Sets the RTD throttle.
+        /// </summary>
+        int RtdThrottleIntervalMilliseconds { get; set; }
+
+        /// <summary>
+        /// Calls the specified <see cref="ITDServerImpl"/> server.
         /// </summary>
         /// <typeparam name="TRtdServerImpl"></typeparam>
         /// <param name="implFactory"></param>
         /// <param name="server"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        object RTD<TRtdServerImpl>(Func<IRtdServerImpl> implFactory
+        object Rtd<TRtdServerImpl>(Func<IRtdServerImpl> implFactory
             , string server, params string[] args) where TRtdServerImpl : IRtdServerImpl;
 
         /// <summary>
@@ -196,7 +220,7 @@ namespace Function.Interfaces
         /// <param name="server"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        object RTD(string progId, string server, params string[] args);
+        object Rtd(string progId, string server, params string[] args);
 
         /// <summary>
         /// Indicates if the function wizard window is open.

@@ -31,6 +31,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 using System;
+using System.IO;
 using System.Linq;
 using ExcelMvc.Runtime;
 using Function.Interfaces;
@@ -83,9 +84,18 @@ namespace ExcelMvc.Rtd
             RtdRegistry.OnTerminated(this);
         }
 
-        private void OnUpdated(object sender, EventArgs args)
+        private void OnUpdated(object sender, RtdServerUpdatedEventArgs args)
         {
-            AsyncActions.Post(_ =>
+            try
+            {
+                Host.Instance.RaiseRtdUpdated(sender, new RtdServerUpdatedEventArgs(Impl));
+            }
+            catch (Exception ex)
+            {
+                Host.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
+            }
+
+            AsyncActions.Post(state =>
             {
                 try
                 {
@@ -93,9 +103,10 @@ namespace ExcelMvc.Rtd
                 }
                 catch (Exception ex)
                 {
-                    Host.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(ex));
+                    Host.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
+                    OnUpdated(sender, args);
                 }
-            }, null, false);
+            }, Impl, false);
         }
     }
 }

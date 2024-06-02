@@ -53,19 +53,5 @@ namespace ExcelMvc.Functions
         xlbitDLLFree = 0x4000,
         xltypeBigData = xltypeStr | xltypeInt
     }
-
-    public class ExcelMissing
-    {
-        private ExcelMissing() { }
-        public static readonly ExcelMissing Value = new ExcelMissing();
-        public override string ToString() => "";
-    }
-
-    public class ExcelEmpty
-    {
-        private ExcelEmpty() { }
-        public static readonly ExcelEmpty Value = new ExcelEmpty();
-        public override string ToString() => "";
-    }
 }
 
