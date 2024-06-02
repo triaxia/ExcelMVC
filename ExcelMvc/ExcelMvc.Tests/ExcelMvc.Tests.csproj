@@ -19,6 +19,7 @@
 	  <ProjectReference Include="..\ExcelMvc\ExcelMvc.csproj" />
 	</ItemGroup>
 
+	<!--
 	<ItemGroup>
 		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\x86\ExcelMvc.Addin.x86.xll">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -30,5 +31,6 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
+	-->
 
 </Project>
