@@ -70,7 +70,7 @@ namespace Function.Interfaces
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public ArgumentDefinition[] Arguments;
 
-        public FunctionDefinition(FunctionAttribute rhs, ArgumentDefinition[] arguments
+        public FunctionDefinition(IFunctionAttribute rhs, ArgumentDefinition[] arguments
             , IntPtr callback, MethodInfo method)
         {
             Callback = callback; 

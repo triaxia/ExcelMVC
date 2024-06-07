@@ -20,6 +20,8 @@ namespace ExcelMvc.Functions
                     (sender, e) => RaiseFailed(sender, e);
             DelegateFactory.Executing +=
                     (sender, e) => RaiseExecuting(sender, e);
+            FunctionAttributeType = typeof(FunctionAttribute);
+            ArgumentAttributeType = typeof(ArgumentAttribute);
         }
 
         /// <inheritdoc/>
@@ -53,7 +55,7 @@ namespace ExcelMvc.Functions
         public object ErrorData => ExcelError.ExcelErrorGettingData;
 
         /// <inheritdoc/>
-        public int RTDThrottleIntervalMilliseconds
+        public int RtdThrottleIntervalMilliseconds
         {
             get => App.Instance.Underlying?.RTD.ThrottleInterval ?? 0;
             set
@@ -83,7 +85,11 @@ namespace ExcelMvc.Functions
             set { XlMarshalExceptionHandler.ExceptionToFunctionResult = value; }
         }
 
-        public int RtdThrottleIntervalMilliseconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        /// <inheritdoc/>
+        public Type FunctionAttributeType { get; set; }
+
+        /// <inheritdoc/>
+        public Type ArgumentAttributeType { get; set; }
 
         /// <inheritdoc/>
         public event EventHandler<MessageEventArgs> Posted;
@@ -168,7 +174,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public void SetRangeValue(RangeReference range, object value, bool async)
         {
-            var x = GetRange(range);    
+            var x = GetRange(range);
             if (async)
             {
                 AsyncActions.Post(_ =>
@@ -178,7 +184,7 @@ namespace ExcelMvc.Functions
             }
             else
             {
-                x.Value= value;
+                x.Value = value;
             }
         }
 
@@ -186,7 +192,9 @@ namespace ExcelMvc.Functions
         public RangeReference GetReference(string bookName, string pageName
             , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            throw new NotImplementedException();
+            var range = GetRange(bookName, pageName
+                , rowFirst, rowLast, columnFirst, columnLast);
+            return RangeToReference(range);
         }
 
         /// <inheritdoc/>
@@ -231,7 +239,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public object Rtd(string progId, string server, params string[] args)
         {
-            var arguments = new string[] { progId, server}
+            var arguments = new string[] { progId, server }
                 .Concat(args)
                 .Select((x, idx) => new FunctionArgument($"p{idx}", x))
                 .ToArray();
@@ -305,7 +313,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public void RaiseRtdUpdated(object sender, RtdServerUpdatedEventArgs args)
         {
-            RtdUpdated?.Invoke(sender, args);   
+            RtdUpdated?.Invoke(sender, args);
         }
     }
 }

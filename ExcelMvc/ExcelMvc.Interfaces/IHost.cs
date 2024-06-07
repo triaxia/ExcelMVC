@@ -367,6 +367,16 @@ namespace Function.Interfaces
         /// </summary>
         /// <param name="functions"></param>
         void RegisterFunctions(FunctionDefinitions functions);
+
+        /// <summary>
+        /// Gets/Sets the type of <see cref="FunctionAttribute"/>
+        /// </summary>
+        Type FunctionAttributeType { get; set; }
+
+        /// <summary>
+        /// Gets/Sets the type of <see cref="ArgumentAttribute"/>
+        /// </summary>
+        Type ArgumentAttributeType { get; set; }
     }
 
     /// <summary>

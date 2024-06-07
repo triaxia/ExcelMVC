@@ -32,7 +32,7 @@ namespace Function.Interfaces
         /// </summary>
         /// <param name="parameter"></param>
         /// <param name="argument"></param>
-        public ArgumentDefinition(ParameterInfo parameter, ArgumentAttribute argument)
+        public ArgumentDefinition(ParameterInfo parameter, IArgumentAttribute argument)
         {
             if (argument == null)
             {

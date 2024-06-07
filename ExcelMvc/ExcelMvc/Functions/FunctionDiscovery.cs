@@ -65,28 +65,28 @@ namespace ExcelMvc.Functions
             return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
-                .Select(x => (function: x.method.GetCustomAttribute<FunctionAttribute>(), x.method))
+                .Select(x => (function: x.method.GetCustomAttribute(Host.Instance.FunctionAttributeType) as IFunctionAttribute, x.method))
                 .Select(x => (x.method, (FunctionAttribute)x.function, GetArguments(x.method)));
         }
 
         private static IEnumerable<string> GetTypes(Assembly asm)
         {
             return asm.GetExportedTypes().Select(t => (type: t, methods: t.GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .Where(m => m.HasCustomAttribute<FunctionAttribute>())))
+                .Where(m => m.HasCustomAttribute(Host.Instance.FunctionAttributeType))))
                 .SelectMany(t => t.methods.Select(m => $"{t.type.AssemblyQualifiedName}|{m.Name}"));
         }
 
         private static ArgumentDefinition[] GetArguments(MethodInfo method)
         {
             return method.GetParameters()
-                .Select(x => (argument: x.GetCustomAttribute<ArgumentAttribute>(), parameter: x))
+                .Select(x => (argument: x.GetCustomAttribute(Host.Instance.ArgumentAttributeType) as IArgumentAttribute, parameter: x))
                 .Select(x => new ArgumentDefinition(x.parameter, x.argument))
                 .ToArray();
         }
 
-        private static bool HasCustomAttribute<T>(this MethodInfo method) where T : Attribute
+        private static bool HasCustomAttribute(this MethodInfo method, Type attributeType)
         {
-            var name = typeof(T).AssemblyQualifiedName;
+            var name = attributeType.AssemblyQualifiedName;
             return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
         }
 
