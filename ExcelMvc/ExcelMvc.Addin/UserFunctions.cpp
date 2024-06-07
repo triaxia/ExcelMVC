@@ -50,9 +50,9 @@ struct ExcelFunction
 	// "unsigned long long" works too.
 	//unsigned long long Callback; 
 	void* Callback;
-	byte MacroType;
 	bool IsVolatile;
 	bool IsMacroType;
+	bool IsHidden;
 	bool IsAsync;
 	bool IsThreadSafe;
 	bool IsClusterSafe;
@@ -215,7 +215,7 @@ void RegisterFunction(ExcelFunction* pFunction, int index)
 
 	auto pxFunctionText = pFunction->Name;
 
-	auto pxMacroType = pFunction->MacroType;
+	auto pxMacroType = pFunction->IsHidden ? 0 : 1;
 
 	auto pxCategory = NullCoalesce(pFunction->Category);
 	auto pxShortcutText = L"";

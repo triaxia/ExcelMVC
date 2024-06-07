@@ -44,16 +44,13 @@ namespace Function.Interfaces
         public const ushort MaxArguments = 64;
         [MarshalAs(UnmanagedType.LPWStr)]
         public string ReturnType;
-        // ulong works too
-        //[MarshalAs(UnmanagedType.U8)]
-        //public ulong Callback;
         public IntPtr Callback;
-        [MarshalAs(UnmanagedType.U1)]
-        public byte FunctionType;
         [MarshalAs(UnmanagedType.U1)]
         public bool IsVolatile;
         [MarshalAs(UnmanagedType.U1)]
-        public bool IsMacro;
+        public bool IsMacroType;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool IsHidden;
         [MarshalAs(UnmanagedType.U1)]
         public bool IsAsync;
         [MarshalAs(UnmanagedType.U1)]
@@ -77,10 +74,10 @@ namespace Function.Interfaces
             , IntPtr callback, MethodInfo method)
         {
             Callback = callback; 
-            FunctionType = rhs.FunctionType;
             IsVolatile = rhs.IsVolatile;
-            IsMacro = rhs.IsMacroType;
+            IsMacroType = rhs.IsMacroType;
             IsAsync = rhs.IsAsync;
+            IsHidden = rhs.IsHidden;
             IsThreadSafe = rhs.IsThreadSafe;
             IsClusterSafe = rhs.IsClusterSafe;
             ArgumentCount = (byte)(arguments?.Length ?? 0);
@@ -89,7 +86,6 @@ namespace Function.Interfaces
             Description = rhs.Description ?? "";
             HelpTopic = rhs.HelpTopic ?? "";
             Arguments = Pad(arguments);
-            if (rhs.IsHidden) FunctionType = 0;
             ReturnType = method.ReturnType.FullName;
         }
 

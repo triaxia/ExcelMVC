@@ -39,66 +39,122 @@ namespace Function.Interfaces
     /// Decorates functions that are to be exported as User Defined Functions.
     /// https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    public class FunctionAttribute : Attribute
+    public interface IFunctionAttribute
     {
         /// <summary>
         /// Specifies which category that the function should be listed in the function wizard.
         /// </summary>
-        public string Category;
+        string Category { get; set; }
+        
         /// <summary>
         /// The function name as it will appear in the Function Wizard.
         /// </summary>
-        public string Name;
+        string Name { get; set; }
         /// <summary>
         /// The Description of the function when it is selected in the Function Wizard.
         /// </summary>
-        public string Description;
+        string Description { get; set; }
         /// <summary>
         /// The help information displayed when the Help button is clicked.
         /// It can be in either "chm-file!HelpContextID" or "https://address/path_to_file_in_site!0". 
         /// </summary>
-        public string HelpTopic;
-
-        /// <summary>
-        /// Indicates the type of function, 0, 1 or 2.
-        /// </summary>
-        public byte FunctionType = 1;
+        string HelpTopic { get; set; }
 
         /// <summary>
         /// Registers the function as volatile, i.e. recalculates every time the worksheet recalculates.
         /// (pxTypeText +='!')
         /// </summary>
-        public bool IsVolatile;
+        bool IsVolatile { get; set; }
 
         /// <summary>
         /// Registers the function as macro sheet equivalent, handling uncalculated cells.
         /// pxTypeText +='#'
         /// </summary>
-        public bool IsMacroType;
+        bool IsMacroType { get; set; }
 
         /// <summary>
         /// Indicates if the function is listed in the Function Wizard.
         /// </summary>
-        public bool IsHidden = false;
+        bool IsHidden { get; set; }
 
         /// <summary>
         /// Registers the function as an asynchronous function.
         /// (pxTypeText=>(pxArgsTypeText)X)
         /// </summary>
-        public bool IsAsync;
+        bool IsAsync { get; set; }
 
         /// <summary>
         /// Indicates the function is thread-safe.
         /// (pxTypeTex +='$')
         /// </summary>
-        public bool IsThreadSafe;
+        bool IsThreadSafe { get; set; }
 
         /// <summary>
         /// Indicates the function is cluster-safe.
         /// (pxTypeText += '&amp;')
         /// </summary>
-        public bool IsClusterSafe;
+        bool IsClusterSafe { get; set; }
+    }
+
+    /// <summary>
+    /// Decorates functions that are to be exported as User Defined Functions.
+    /// https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    public class FunctionAttribute : Attribute, IFunctionAttribute
+    {
+        /// <summary>
+        /// Specifies which category that the function should be listed in the function wizard.
+        /// </summary>
+        public string Category { get; set; }
+        /// <summary>
+        /// The function name as it will appear in the Function Wizard.
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// The Description of the function when it is selected in the Function Wizard.
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
+        /// The help information displayed when the Help button is clicked.
+        /// It can be in either "chm-file!HelpContextID" or "https://address/path_to_file_in_site!0". 
+        /// </summary>
+        public string HelpTopic { get; set; }
+
+        /// <summary>
+        /// Registers the function as volatile, i.e. recalculates every time the worksheet recalculates.
+        /// (pxTypeText +='!')
+        /// </summary>
+        public bool IsVolatile { get; set; }
+
+        /// <summary>
+        /// Registers the function as macro sheet equivalent, handling uncalculated cells.
+        /// pxTypeText +='#'
+        /// </summary>
+        public bool IsMacroType { get; set; }
+
+        /// <summary>
+        /// Indicates if the function is listed in the Function Wizard.
+        /// </summary>
+        public bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Registers the function as an asynchronous function.
+        /// (pxTypeText=>(pxArgsTypeText)X)
+        /// </summary>
+        public bool IsAsync { get; set; }
+
+        /// <summary>
+        /// Indicates the function is thread-safe.
+        /// (pxTypeTex +='$')
+        /// </summary>
+        public bool IsThreadSafe { get; set; }
+
+        /// <summary>
+        /// Indicates the function is cluster-safe.
+        /// (pxTypeText += '&amp;')
+        /// </summary>
+        public bool IsClusterSafe { get; set; }
 
         /// <summary>
         /// 

@@ -88,7 +88,6 @@ namespace ExcelMvc.Functions
         {
             var name = typeof(T).AssemblyQualifiedName;
             return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
-            //return method.GetCustomAttributes().Where(x => x.GetType().AssemblyQualifiedName == name).Any();
         }
 
         public static IntPtr MakeCallback(MethodInfo method, FunctionDefinition function)

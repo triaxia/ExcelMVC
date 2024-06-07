@@ -38,18 +38,35 @@ namespace Function.Interfaces
     /// <summary>
     /// Decorates arguments of exported functions.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
-    public class ArgumentAttribute : Attribute
+    public interface IArgumentAttribute
     {
         /// <summary>
         /// The name of the argument.
         /// </summary>
-        public string Name;
+        string Name { get; set; }
 
         /// <summary>
         /// The description of the argument.
         /// </summary>
-        public string Description;
+        string Description { get; set; }
+    }
+
+
+    /// <summary>
+    /// Decorates arguments of exported functions.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
+    public class ArgumentAttribute : Attribute, IArgumentAttribute
+    {
+        /// <summary>
+        /// The name of the argument.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The description of the argument.
+        /// </summary>
+        public string Description { get; set; }
 
         /// <summary>
         /// 
