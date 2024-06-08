@@ -1,8 +1,7 @@
 ﻿using Samples;
 using System;
-using FunctionAttribute = MvcDnaInterOp.FunctionAttribute;
-using ArgumentAttribute = MvcDnaInterOp.ArgumentAttribute;
-using Function.Interfaces;
+using MvcDnaInterOp;
+using FunctionHost = Function.Interfaces.FunctionHost;
 
 namespace FunctionLibrary
 {
@@ -20,7 +19,7 @@ namespace FunctionLibrary
             return x + Convert.ToDouble(y);
         }
 
-        [Function("Add 2 numbers")]
+        [Function("Create a timer")]
         public static object Timer([Argument("Argument name")] string name)
         {
             return FunctionHost.Instance.IsInFunctionWizard() ? ""
