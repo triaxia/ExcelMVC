@@ -26,6 +26,7 @@ namespace ExcelMvc.Functions
 
         /// <inheritdoc/>
         public object Underlying { get; set; } = App.Instance.Underlying;
+        private Application AsApp() => (Application)Underlying;
 
         /// <inheritdoc/>
         public object ValueMissing => ExcelMissing.Value;
@@ -57,21 +58,22 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public int RtdThrottleIntervalMilliseconds
         {
-            get => ((Application) Underlying)?.RTD.ThrottleInterval ?? 0;
+            get => AsApp()?.RTD.ThrottleInterval ?? 0;
             set
             {
-                if (((Application) Underlying) != null)
-                    ((Application) Underlying).RTD.ThrottleInterval = value;
+                if (AsApp() != null)
+                    AsApp().RTD.ThrottleInterval = value;
             }
         }
+
         /// <inheritdoc/>
         public string StatusBarText
         {
-            get { return ((string)((Application) Underlying)?.StatusBar) ?? ""; }
+            get { return ((string)AsApp()?.StatusBar) ?? ""; }
             set
             {
-                if (((Application) Underlying) != null)
-                    ((Application) Underlying).StatusBar = value;
+                if (AsApp() != null)
+                    AsApp().StatusBar = value;
             }
         }
 
@@ -143,7 +145,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetCallerReference()
         {
-            dynamic caller = ((Application) Underlying)?.Caller;
+            dynamic caller = AsApp()?.Caller;
             return caller is Range range ? RangeToReference(range)
                 : RangeToReference(null);
         }
@@ -151,7 +153,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var range = GetRange(((Application) Underlying).ActiveWorkbook.Name, pageName
+            var range = GetRange(AsApp().ActiveWorkbook.Name, pageName
                 , rowFirst, rowLast, columnFirst, columnLast);
             return RangeToReference(range);
         }
@@ -159,8 +161,8 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var range = GetRange(((Application) Underlying).ActiveWorkbook.Name
-                , ((Application) Underlying).ActiveSheet.Name
+            var range = GetRange(AsApp().ActiveWorkbook.Name
+                , AsApp().ActiveSheet.Name
                 , rowFirst, rowLast, columnFirst, columnLast);
             return RangeToReference(range);
         }
@@ -284,7 +286,7 @@ namespace ExcelMvc.Functions
 
         private Range GetRange(RangeReference reference)
         {
-            var sheet = ((Application) Underlying).Workbooks[reference.BookName]
+            var sheet = AsApp().Workbooks[reference.BookName]
                 .Worksheets[reference.PageName] as Worksheet;
             var start = sheet.Cells[reference.RowFirst, reference.ColumnFirst];
             var end = start.Cells[reference.RowLast, reference.ColumnLast];
@@ -294,7 +296,7 @@ namespace ExcelMvc.Functions
         private Range GetRange(string bookName, string sheetName
             , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var sheet = ((Application) Underlying).Workbooks[bookName]
+            var sheet = AsApp().Workbooks[bookName]
                 .Worksheets[sheetName] as Worksheet;
             var start = sheet.Cells[rowFirst, columnFirst];
             var end = start.Cells[rowLast, columnLast];
