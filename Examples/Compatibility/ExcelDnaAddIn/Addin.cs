@@ -21,9 +21,11 @@ namespace ExcelAddIn
 
         public void Open()
         {
-            FunctionHost.Instance = new ExcelFunctionHost();
-            FunctionHost.Instance.FunctionAttributeType = typeof(MvcDnaInterOp.FunctionAttribute);
-            FunctionHost.Instance.ArgumentAttributeType = typeof(MvcDnaInterOp.ArgumentAttribute);
+            FunctionHost.Instance = new ExcelFunctionHost
+            {
+                FunctionAttributeType = typeof(MvcDnaInterOp.FunctionAttribute),
+                ArgumentAttributeType = typeof(MvcDnaInterOp.ArgumentAttribute)
+            };
         }
     }
 }
