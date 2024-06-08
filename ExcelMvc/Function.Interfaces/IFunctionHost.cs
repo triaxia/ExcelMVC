@@ -377,6 +377,13 @@ namespace Function.Interfaces
         /// Gets/Sets the type of <see cref="ArgumentAttribute"/>
         /// </summary>
         Type ArgumentAttributeType { get; set; }
+
+        /// <summary>
+        /// Posts an async action to the main thread of the <see cref="Underlying"/> host.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="state"></param>
+        void Post(Action<object> action, object state);
     }
 
     /// <summary>

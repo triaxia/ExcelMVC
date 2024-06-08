@@ -20,7 +20,6 @@
 		<PackageId>ExcelMvc.Net</PackageId>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<ContinuousIntegrationBuild Condition=" '$(Configuration)' == 'Release' ">true</ContinuousIntegrationBuild>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>D:\Source\ExcelMVC\ExcelMvc\ExcelMvc.snk</AssemblyOriginatorKeyFile>

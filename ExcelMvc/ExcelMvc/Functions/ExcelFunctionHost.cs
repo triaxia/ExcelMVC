@@ -317,5 +317,11 @@ namespace ExcelMvc.Functions
         {
             RtdUpdated?.Invoke(sender, args);
         }
+
+        /// <inheritdoc/>
+        public void Post(Action<object> action, object state)
+        {
+            AsyncActions.Post(action, state, false);
+        }
     }
 }

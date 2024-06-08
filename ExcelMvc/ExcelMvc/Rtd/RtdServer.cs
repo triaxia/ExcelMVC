@@ -33,7 +33,6 @@ Boston, MA 02110-1301 USA.
 using System;
 using System.IO;
 using System.Linq;
-using ExcelMvc.Runtime;
 using Function.Interfaces;
 using Microsoft.Office.Interop.Excel;
 
@@ -95,7 +94,7 @@ namespace ExcelMvc.Rtd
                 FunctionHost.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
             }
 
-            AsyncActions.Post(state =>
+            FunctionHost.Instance.Post(state =>
             {
                 try
                 {
@@ -106,7 +105,7 @@ namespace ExcelMvc.Rtd
                     FunctionHost.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
                     OnUpdated(sender, args);
                 }
-            }, Impl, false);
+            }, Impl);
         }
     }
 }

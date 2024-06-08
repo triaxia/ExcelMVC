@@ -16,7 +16,7 @@ namespace ExcelAddIn
 
         public ExcelDnaHost()
         {
-            DelegateHost = new ExcelMvc.Functions.ExcelFunctionHost
+            DelegateHost = new ExcelFunctionHost
             {
                 Underlying = ExcelDnaUtil.Application
             };
@@ -168,6 +168,11 @@ namespace ExcelAddIn
         public void SetRangeValue(RangeReference range, object value, bool async)
         {
             DelegateHost.SetRangeValue(range, value, async);
+        }
+
+        public void Post(Action<object> action, object state)
+        {
+            // TODO
         }
     }
 }
