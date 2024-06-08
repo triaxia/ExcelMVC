@@ -12,7 +12,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelMvc.AddIn", "ExcelMvc.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelMvc.Tests", "ExcelMvc.Tests\ExcelMvc.Tests.csproj", "{FFC44D99-19D7-4A81-80A1-B894C1FFAB0D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Function.Interfaces", "ExcelMvc.Interfaces\Function.Interfaces.csproj", "{8093C919-69A3-4AE9-8772-5D632C55EFF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Function.Interfaces", "Function.Interfaces\Function.Interfaces.csproj", "{8093C919-69A3-4AE9-8772-5D632C55EFF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{AC3C08EF-8F36-4DCE-8ABA-8028DEF159BB}"
 EndProject

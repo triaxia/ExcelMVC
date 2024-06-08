@@ -110,7 +110,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\ExcelMvc.Interfaces\Function.Interfaces.csproj" PrivateAssets="None" />
+	  <ProjectReference Include="..\Function.Interfaces\Function.Interfaces.csproj" PrivateAssets="None"/>
 	</ItemGroup>
 
 	<PropertyGroup>

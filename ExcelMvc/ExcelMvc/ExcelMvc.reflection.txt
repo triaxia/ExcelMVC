@@ -2,5 +2,5 @@
 # assembly types at runtime. Each line specifies one pattern. Lines starting 
 # with # or blank lines are discarded. *.dll is used when this file is missing.
 #
-# Any files in $(TargetDir) ends with .reflection.txt will be used.
+# All files in $(TargetDir) ends with .reflection.txt will be used.
 
