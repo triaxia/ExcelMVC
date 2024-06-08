@@ -12,7 +12,7 @@ using Range = Microsoft.Office.Interop.Excel.Range;
 
 namespace ExcelMvc.Functions
 {
-    public class ExcelFunctionHost : IHost
+    public class ExcelFunctionHost : IFunctionHost
     {
         public ExcelFunctionHost()
         {

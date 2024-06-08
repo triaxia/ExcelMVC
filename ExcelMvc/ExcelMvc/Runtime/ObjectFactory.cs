@@ -83,7 +83,7 @@ namespace ExcelMvc.Runtime
                 {
                     var obj = (T)Activator.CreateInstance(Type.GetType(type));
                     Instances.Add(obj);
-                }, ex => Host.Instance.RaiseFailed(Host.Instance, new ErrorEventArgs(ex)));
+                }, ex => FunctionHost.Instance.RaiseFailed(FunctionHost.Instance, new ErrorEventArgs(ex)));
             }
         }
 
@@ -294,6 +294,6 @@ namespace ExcelMvc.Runtime
         }
 
         private static void RaiseFailed(Exception ex)
-            => Host.Instance.RaiseFailed(Host.Instance, new ErrorEventArgs(ex));
+            => FunctionHost.Instance.RaiseFailed(FunctionHost.Instance, new ErrorEventArgs(ex));
     }
 }

@@ -198,13 +198,13 @@ namespace ExcelMvc.Runtime
                 {
                     item.AgeMilliseconds += 100;
                     if (item.AgeMilliseconds > 10000)
-                        Host.Instance.RaiseFailed(Host.Instance, new ErrorEventArgs(ex));
+                        FunctionHost.Instance.RaiseFailed(FunctionHost.Instance, new ErrorEventArgs(ex));
                     else
                         Enqueue(item, 100);
                 }
                 else
                 {
-                    Host.Instance.RaiseFailed(Host.Instance, new ErrorEventArgs(ex));
+                    FunctionHost.Instance.RaiseFailed(FunctionHost.Instance, new ErrorEventArgs(ex));
                 }
             }
         }

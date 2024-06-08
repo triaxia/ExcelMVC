@@ -1,45 +1,16 @@
 ﻿using ExcelDna.Integration;
 using ExcelMvc.Functions;
 using Function.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace FunctionLibrary
+namespace ExcelDnaInterOp
 {
     /// <summary>
     /// Loses this class to lose ExcelDna!
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    public class FunctionAttribute : ExcelDna.Integration.ExcelFunctionAttribute, IFunctionAttribute
-    {
-        public bool IsAsync { get; set; }
-        public new string Category { get => base.Category; set => base.Category = value; }
-        public new string Name { get => base.Name; set => base.Name = value; }
-        public new string Description { get => base.Description; set => base.Description = value; }
-        public new string HelpTopic { get => base.HelpTopic; set => base.HelpTopic = value; }
-        public new bool IsVolatile { get => base.IsVolatile; set => base.IsVolatile = value; }
-        public new bool IsMacroType { get => base.IsMacroType; set => base.IsMacroType = value; }
-        public new bool IsHidden { get => base.IsHidden; set => base.IsHidden = value; }
-        public new bool IsThreadSafe { get => base.IsThreadSafe; set => base.IsThreadSafe = value; }
-        public new bool IsClusterSafe { get => base.IsClusterSafe; set => base.IsClusterSafe = value; }
-        public FunctionAttribute() { }
-        public FunctionAttribute(string description) => base.Description = description;
-    }
-
-    /// <summary>
-    /// Loses this class to lose ExcelDna!
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
-    public class ArgumentAttribute : ExcelDna.Integration.ExcelArgumentAttribute, IArgumentAttribute
-    {
-        public new string Name { get => base.Name; set => base.Name = value; }
-        public new string Description { get => base.Description; set => base.Description = value; }
-        public ArgumentAttribute() { }
-        public ArgumentAttribute(string description) => base.Description = description;
-    }
-
-    /// <summary>
-    /// Loses this class to lose ExcelDna!
-    /// </summary>
-    public class ExcelDnaHost : IHost
+    public class ExcelDnaHost : IFunctionHost
     {
         public object Underlying => ExcelDnaUtil.Application;
 
@@ -63,10 +34,11 @@ namespace FunctionLibrary
 
         public int RtdThrottleIntervalMilliseconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string StatusBarText { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool ExecutingEventRaised { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Func<Exception, object> ExceptionToFunctionResult { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Type FunctionAttributeType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Type ArgumentAttributeType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool ExecutingEventRaised { get; set; } = false;
+
+        public Func<Exception, object> ExceptionToFunctionResult { get; set; }
+        public Type FunctionAttributeType { get; set; } = typeof(FunctionAttribute);
+        public Type ArgumentAttributeType { get; set; } = typeof(ArgumentAttribute);
 
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
         public event EventHandler<MessageEventArgs> Posted;
@@ -110,7 +82,11 @@ namespace FunctionLibrary
 
         public RangeReference GetCallerReference()
         {
-            throw new NotImplementedException();
+            /*
+            var reference = XlCall.Excel(XlCall.xlfCaller) as ExcelReference;
+            return new RangeReference(reference.)
+            */
+            return null;
         }
 
         public object GetRangeValue(RangeReference range)
@@ -125,7 +101,7 @@ namespace FunctionLibrary
 
         public bool IsInFunctionWizard()
         {
-            return ExcelDna.Integration.ExcelDnaUtil.IsInFunctionWizard();
+            return ExcelDnaUtil.IsInFunctionWizard();
         }
 
         public void RaiseExecuting(object sender, ExecutingEventArgs args)
@@ -160,7 +136,7 @@ namespace FunctionLibrary
 
         public object Rtd(string progId, string server, params string[] args)
         {
-            throw new NotImplementedException();
+            return XlCall.RTD(progId, "", args);
         }
 
         public void SetAsyncResult(IntPtr handle, object result)

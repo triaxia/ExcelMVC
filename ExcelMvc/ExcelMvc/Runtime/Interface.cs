@@ -97,7 +97,7 @@ namespace ExcelMvc.Runtime
             string result = null;
             if (status != null)
             {
-                Host.Instance.RaiseFailed(Host.Instance, new System.IO.ErrorEventArgs(status));
+                FunctionHost.Instance.RaiseFailed(FunctionHost.Instance, new System.IO.ErrorEventArgs(status));
                 MessageBox.Show($"{status}", typeof(Interface).Namespace, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 

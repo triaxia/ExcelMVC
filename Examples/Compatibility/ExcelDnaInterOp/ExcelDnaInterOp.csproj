@@ -3,8 +3,9 @@
 	<PropertyGroup>
 		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
 	</PropertyGroup>
-
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.1.5" />
+		<PackageReference Include = "ExcelMvc.Net" Version="2.1.5" />
+		<PackageReference Include = "ExcelDna.Integration" Version="1.8.0" />
 	</ItemGroup>
+
 </Project>

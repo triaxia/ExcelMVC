@@ -2,16 +2,16 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
-		<ExcelMvcAddInName>Test</ExcelMvcAddInName>
+		<ExcelMvcAddInName>MyLib</ExcelMvcAddInName>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="ExcelMvc.Net" Version="2.1.5" />
-		<PackageReference Include="ExcelDna.Integration" Version="1.8.0" />
+		<PackageReference Include="ExcelDna.AddIn" Version="1.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\ExcelDnaInterOp\ExcelDnaInterOp.csproj" />
+	  <ProjectReference Include="..\FunctionLibrary\FunctionLibrary.csproj"/>
 	</ItemGroup>
 
 </Project>

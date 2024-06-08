@@ -55,9 +55,9 @@ namespace ExcelMvc.Rtd
         public const string GuidStringIUnknown = "00000000-0000-0000-C000-000000000046";
         public const string GuidStringClassFactory = "00000001-0000-0000-C000-000000000046";
         public const string GuidStringIRtdServer = "EC0E6191-DB51-11D3-8F3E-00C04F3651B8";
-        public static readonly Guid GuidIUnknown = new Guid(GuidStringIUnknown);
-        public static readonly Guid GuidClassFactory = new Guid(GuidStringClassFactory);
-        public static readonly Guid GuidIRtdServer = new Guid(GuidStringIRtdServer);
+        public static readonly CLSID GuidIUnknown = new CLSID(GuidStringIUnknown);
+        public static readonly CLSID GuidClassFactory = new CLSID(GuidStringClassFactory);
+        public static readonly CLSID GuidIRtdServer = new CLSID(GuidStringIRtdServer);
 
         [ComImport]
         [Guid(GuidStringClassFactory)]

@@ -88,11 +88,11 @@ namespace ExcelMvc.Rtd
         {
             try
             {
-                Host.Instance.RaiseRtdUpdated(sender, new RtdServerUpdatedEventArgs(Impl));
+                FunctionHost.Instance.RaiseRtdUpdated(sender, new RtdServerUpdatedEventArgs(Impl));
             }
             catch (Exception ex)
             {
-                Host.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
+                FunctionHost.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
             }
 
             AsyncActions.Post(state =>
@@ -103,7 +103,7 @@ namespace ExcelMvc.Rtd
                 }
                 catch (Exception ex)
                 {
-                    Host.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
+                    FunctionHost.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
                     OnUpdated(sender, args);
                 }
             }, Impl, false);

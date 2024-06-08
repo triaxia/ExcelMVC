@@ -1,10 +1,9 @@
 ﻿using ExcelDna.Integration;
 using Function.Interfaces;
-using FunctionLibrary;
 
-namespace ExcelDnaAddIn
+namespace ExcelAddIn
 {
-    public class Addin : IExcelAddIn
+    public class AddIn : IExcelAddIn, IFunctionAddIn
     {
         public void AutoClose()
         {
@@ -12,7 +11,17 @@ namespace ExcelDnaAddIn
 
         public void AutoOpen()
         {
-            Host.Instance = new ExcelDnaHost();
+            FunctionHost.Instance = new ExcelDnaInterOp.ExcelDnaHost();
+        }
+
+        public void Close()
+        {
+        }
+
+        public void Open()
+        {
+            FunctionHost.Instance.FunctionAttributeType = typeof(ExcelDnaInterOp.FunctionAttribute);
+            FunctionHost.Instance.ArgumentAttributeType = typeof(ExcelDnaInterOp.ArgumentAttribute);
         }
     }
 }

@@ -507,6 +507,8 @@ namespace ExcelMvc.Views
         }
 
         protected void RaisePosted(string message)
-            => Host.Instance.RaisePosted(this, new MessageEventArgs(message));
+            => FunctionHost.Instance.RaisePosted(this, new MessageEventArgs(message));
+        protected void RaiseFailed(Exception exception)
+            => FunctionHost.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(exception));
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading;
 using ExcelDna.Integration.Rtd;
 using Function.Interfaces;
 
@@ -9,8 +12,11 @@ namespace Samples
         public string[] args;
         public DateTime value;
     }
+
     public class TimerServer : IRtdServerImpl, IRtdServer
     {
+        private IRTDUpdateEvent CallbackObject;
+
         public event EventHandler<RtdServerUpdatedEventArgs> Updated;
         public readonly ConcurrentDictionary<int, Topic> Topics
             = new ConcurrentDictionary<int, Topic>();
@@ -20,13 +26,13 @@ namespace Samples
         public int Start()
         {
             Timer = new Timer(TimerElapsed, null, 1000, 1000);
-            Host.Instance.RaisePosted(this, new MessageEventArgs("Started"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Started"));
             return 1;
         }
 
         public void Stop()
         {
-            Host.Instance.RaisePosted(this, new MessageEventArgs("Stopped"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Stopped"));
             Timer.Dispose();
             Topics.Clear();
         }
@@ -38,14 +44,14 @@ namespace Samples
 
         public object Connect(int topicId, string[] args)
         {
-            Host.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} connected"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} connected"));
             Topics[topicId] = new Topic { args = args, value = DateTime.Now };
             return Format(Topics[topicId]);
         }
 
         public void Disconnect(int topicId)
         {
-            Host.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} disconnected"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} disconnected"));
             Topics.TryRemove(topicId, out var _);
         }
 
@@ -63,18 +69,20 @@ namespace Samples
 
         private void TimerElapsed(object _)
         {
-            Host.Instance.RaisePosted(this, new MessageEventArgs("Ticked"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Ticked"));
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
                 pair.Value.value = now;
             Updated?.Invoke(this, new RtdServerUpdatedEventArgs(this));
+            CallbackObject?.UpdateNotify();
         }
 
         private static string Format(Topic topic)
             => $"time:{topic.value:O} topic:{string.Join(",", topic.args)}";
 
-        public int ServerStart(IRTDUpdateEvent CallbackObject)
+        public int ServerStart(IRTDUpdateEvent callbackObject)
         {
+            CallbackObject = callbackObject;
             return Start();
         }
 

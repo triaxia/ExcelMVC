@@ -41,8 +41,8 @@ namespace Function.Interfaces
             }
             else
             {
-                Name = argument.Name;
-                Description = argument.Description;
+                Name = argument.Name ?? parameter.Name;
+                Description = argument.Description ?? "";
             }
             Type = parameter.ParameterType.FullName;
         }

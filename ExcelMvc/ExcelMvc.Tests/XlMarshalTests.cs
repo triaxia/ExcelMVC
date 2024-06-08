@@ -12,7 +12,7 @@ namespace ExcelMvc.Tests
     {
         public XlMarshalTests()
         {
-            Host.Instance = new ExcelFunctionHost();
+            FunctionHost.Instance = new ExcelFunctionHost();
         }
 
         public static double MarshalDouble(double x) => x;

@@ -126,7 +126,7 @@ namespace Function.Interfaces
     /// <summary>
     /// Provides functionality for calling functions on their hosts.
     /// </summary>
-    public interface IHost
+    public interface IFunctionHost
     {
         /// <summary>
         /// Gets the underlying host object.
@@ -381,12 +381,12 @@ namespace Function.Interfaces
 
     /// <summary>
     /// </summary>
-    public static class Host
+    public static class FunctionHost
     {
         /// <summary>
-        /// Gets/Sets the implementation of <see cref="IHost"/>.
+        /// Gets/Sets the implementation of <see cref="IFunctionHost"/>.
         /// </summary>
-        public static IHost Instance { get; set; }
+        public static IFunctionHost Instance { get; set; }
     }
 }
 

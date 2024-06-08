@@ -9,7 +9,6 @@ namespace Samples
         [Function(Name = "uDouble")]
         public static double Double(double value)
         {
-            throw new NotImplementedException();
             return value;
         }
 
@@ -142,21 +141,21 @@ namespace Samples
         [Function(Name = "uCaller")]
         public static string Caller()
         {
-            return $"{Host.Instance.GetCallerReference()}";
+            return $"{FunctionHost.Instance.GetCallerReference()}";
         }
 
         [Function(Name = "uActiveSheetRangeValue")]
         public static object ActiveSheetRangeValue(int row, int column, int rowCount, int columnCount, object value)
         {
-            var reference = Host.Instance.GetActivePageReference(row, column, rowCount, columnCount);
-            Host.Instance.SetRangeValue(reference, value, true);
-            return Host.Instance.GetRangeValue(reference);
+            var reference = FunctionHost.Instance.GetActivePageReference(row, column, rowCount, columnCount);
+            FunctionHost.Instance.SetRangeValue(reference, value, true);
+            return FunctionHost.Instance.GetRangeValue(reference);
         }
 
         [Function(Name = "uIsInFunctionWizard")]
         public static object IsInFunctionWizard(int a, int b, int c)
         {
-            if (Host.Instance.IsInFunctionWizard())
+            if (FunctionHost.Instance.IsInFunctionWizard())
                 return "editing...";
             return a + b + c;
         }
@@ -176,28 +175,28 @@ namespace Samples
         [Function(Name = "uExceptionObject")]
         public static object uExceptionObject()
         {
-            Host.Instance.ExceptionToFunctionResult = _=> Host.Instance.ErrorValue;
+            FunctionHost.Instance.ExceptionToFunctionResult = _=> FunctionHost.Instance.ErrorValue;
             throw new Exception(nameof(uExceptionObject));
         }
 
         [Function(Name = "uExceptionString")]
         public static string uExceptionString()
         {
-            Host.Instance.ExceptionToFunctionResult = _ => Host.Instance.ErrorValue;
+            FunctionHost.Instance.ExceptionToFunctionResult = _ => FunctionHost.Instance.ErrorValue;
             throw new Exception(nameof(uExceptionString));
         }
 
         [Function(Name = "uExceptionInt")]
         public static int uExceptionInt()
         {
-            Host.Instance.ExceptionToFunctionResult = _ => Host.Instance.ErrorValue;
+            FunctionHost.Instance.ExceptionToFunctionResult = _ => FunctionHost.Instance.ErrorValue;
             throw new Exception(nameof(uExceptionInt));
         }
 
         [Function(Name = "uExceptionMessage")]
         public static object uExceptionMessage()
         {
-            Host.Instance.ExceptionToFunctionResult = e => $"{e}";
+            FunctionHost.Instance.ExceptionToFunctionResult = e => $"{e}";
             throw new Exception(nameof(uExceptionInt));
         }
     }

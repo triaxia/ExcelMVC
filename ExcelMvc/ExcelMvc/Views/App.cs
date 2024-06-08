@@ -53,7 +53,6 @@ namespace ExcelMvc.Views
     /// </summary>
     public class App : View
     {
-
         private static readonly Dictionary<Workbook, Book> Books = new Dictionary<Workbook, Book>();
 
         static App()
@@ -167,11 +166,12 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Attach(object app)
         {
-            Host.Instance = new ExcelFunctionHost();
             void Do(object state)
             {
                 Try(() =>
                 {
+                    FunctionHost.Instance = new ExcelFunctionHost();
+
                     Detach();
                     Underlying = (state as Application) ?? DllImports.FindExcel();
                     if (Underlying == null)
@@ -180,9 +180,9 @@ namespace ExcelMvc.Views
                     AsyncActions.Initialise();
                     RaisePosted($"AsyncActions.Initialise() done");
 
-                    ObjectFactory<Function.Interfaces.IAddIn>.CreateAll(ObjectFactory<Function.Interfaces.IAddIn>.GetCreatableTypes
-                        , ObjectFactory<Function.Interfaces.IAddIn>.SelectAllAssembly);
-                    ObjectFactory<Function.Interfaces.IAddIn>.Instances.ForEach(x => x.AutoOpen());
+                    ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes
+                        , ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
+                    ObjectFactory<IFunctionAddIn>.Instances.ForEach(x => x.Open());
                     RaisePosted($"ObjectFactory<IExcelAddIn>.CreateAll done");
 
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
@@ -191,7 +191,7 @@ namespace ExcelMvc.Views
                     ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
                     RaisePosted($"ObjectFactory<IValueConverter>.CreateAll done");
 
-                    Try(() => FunctionDiscovery.RegisterFunctions());
+                    FunctionDiscovery.RegisterFunctions();
                     RaisePosted($"FunctionDiscovery.RegisterFunctions done");
 
                     Underlying.WorkbookOpen += OpenBook;
@@ -249,6 +249,7 @@ namespace ExcelMvc.Views
 
                 ObjectFactory<ISession>.DeleteAll(x => x.Dispose());
                 ObjectFactory<IValueConverter>.DeleteAll(x => { });
+                ObjectFactory<IFunctionAddIn>.DeleteAll(x => { });
             });
         }
 
@@ -367,6 +368,7 @@ namespace ExcelMvc.Views
             catch (Exception ex)
             {
                 OnBindingFailed(new BindingFailedEventArgs(this, ex));
+                RaiseFailed(ex);
             }
         }
     }

@@ -208,6 +208,6 @@ namespace ExcelMvc.Controls
         }
 
         private static void RaisePosted(string message)
-            => Host.Instance.RaisePosted(Host.Instance, new MessageEventArgs(message));
+            => FunctionHost.Instance.RaisePosted(FunctionHost.Instance, new MessageEventArgs(message));
     }
 }

@@ -49,7 +49,7 @@ namespace ExcelMvc.Functions
             for (int index = 0; index < items.Length; index++)
                 items[index].function.Callback = MakeCallback(items[index].method, items[index].function);
 
-            Host.Instance.RegisterFunctions(new FunctionDefinitions(items.Select(x => x.function).ToArray()));
+            FunctionHost.Instance.RegisterFunctions(new FunctionDefinitions(items.Select(x => x.function).ToArray()));
         }
 
         public static IEnumerable<(MethodInfo method, FunctionDefinition function)> DiscoverFunctions()
@@ -60,26 +60,26 @@ namespace ExcelMvc.Functions
                 .ToArray();
         }
 
-        private static IEnumerable<(MethodInfo method, FunctionAttribute function, ArgumentDefinition[] args)> Discover()
+        private static IEnumerable<(MethodInfo method, IFunctionAttribute function, ArgumentDefinition[] args)> Discover()
         {
             return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
-                .Select(x => (function: x.method.GetCustomAttribute(Host.Instance.FunctionAttributeType) as IFunctionAttribute, x.method))
-                .Select(x => (x.method, (FunctionAttribute)x.function, GetArguments(x.method)));
+                .Select(x => (function: x.method.GetCustomAttribute(FunctionHost.Instance.FunctionAttributeType) as IFunctionAttribute, x.method))
+                .Select(x => (x.method, (IFunctionAttribute)x.function, GetArguments(x.method)));
         }
 
         private static IEnumerable<string> GetTypes(Assembly asm)
         {
             return asm.GetExportedTypes().Select(t => (type: t, methods: t.GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .Where(m => m.HasCustomAttribute(Host.Instance.FunctionAttributeType))))
+                .Where(m => m.HasCustomAttribute(FunctionHost.Instance.FunctionAttributeType))))
                 .SelectMany(t => t.methods.Select(m => $"{t.type.AssemblyQualifiedName}|{m.Name}"));
         }
 
         private static ArgumentDefinition[] GetArguments(MethodInfo method)
         {
             return method.GetParameters()
-                .Select(x => (argument: x.GetCustomAttribute(Host.Instance.ArgumentAttributeType) as IArgumentAttribute, parameter: x))
+                .Select(x => (argument: x.GetCustomAttribute(FunctionHost.Instance.ArgumentAttributeType) as IArgumentAttribute, parameter: x))
                 .Select(x => new ArgumentDefinition(x.parameter, x.argument))
                 .ToArray();
         }

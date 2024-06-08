@@ -21,13 +21,13 @@ namespace Samples
         public int Start()
         {
             Timer = new Timer(TimerElapsed, null, 1000, 1000);
-            Host.Instance.RaisePosted(this, new MessageEventArgs("Started"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Started"));
             return 1;
         }
 
         public void Stop()
         {
-            Host.Instance.RaisePosted(this, new MessageEventArgs("Stopped"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Stopped"));
             Timer.Dispose();
             Topics.Clear();
         }
@@ -39,14 +39,14 @@ namespace Samples
 
         public object Connect(int topicId, string[] args)
         {
-            Host.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} connected"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} connected"));
             Topics[topicId] = new Topic { args = args, value = DateTime.Now };
             return Format(Topics[topicId]);
         }
 
         public void Disconnect(int topicId)
         {
-            Host.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} disconnected"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} disconnected"));
             Topics.TryRemove(topicId, out var _);
         }
 
@@ -64,7 +64,7 @@ namespace Samples
 
         private void TimerElapsed(object _)
         {
-            Host.Instance.RaisePosted(this, new MessageEventArgs("Ticked"));
+            FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Ticked"));
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
                 pair.Value.value = now;

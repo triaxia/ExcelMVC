@@ -13,7 +13,7 @@ namespace Samples
         [Function(Name = "uAsync", IsAsync = true)]
         public static void Async(double arg1, double arg2, IntPtr handle)
         {
-            Handle = Host.Instance.GetAsyncHandle(handle);
+            Handle = FunctionHost.Instance.GetAsyncHandle(handle);
             if (!OneWay.WaitOne(0)) return;
             Task.Run(()=>
             {
@@ -32,7 +32,7 @@ namespace Samples
         private static void Add(double arg1, double arg2) 
         {
             var sum = arg1 + arg2;
-            Host.Instance.SetAsyncResult(Handle, sum);
+            FunctionHost.Instance.SetAsyncResult(Handle, sum);
         }
     }
 }

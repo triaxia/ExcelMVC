@@ -10,7 +10,7 @@ namespace ExcelMvc.Tests
     {
         public FunctionDiscoveryTests()
         {
-            Host.Instance = new ExcelFunctionHost();
+            FunctionHost.Instance = new ExcelFunctionHost();
         }
 
         [Function(Name = "uAdd3",
