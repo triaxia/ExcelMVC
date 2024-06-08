@@ -1,7 +1,10 @@
 ﻿using Samples;
 using System;
-using MvcDnaInterOp;
-using FunctionHost = Function.Interfaces.FunctionHost;
+using Function.Interfaces;
+
+// Lose the following two lines to lose Excel-Dna
+using FunctionAttribute = MvcDnaInterOp.FunctionAttribute;
+using ArgumentAttribute = MvcDnaInterOp.ArgumentAttribute;
 
 namespace FunctionLibrary
 {
