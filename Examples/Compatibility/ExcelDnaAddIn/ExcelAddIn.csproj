@@ -11,7 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\FunctionLibrary\FunctionLibrary.csproj"/>
+	  <ProjectReference Include="..\FunctionLibrary\FunctionLibrary.csproj" />
 	</ItemGroup>
 
 </Project>
