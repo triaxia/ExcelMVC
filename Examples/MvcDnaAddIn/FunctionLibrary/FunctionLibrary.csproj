@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\ExcelDnaInterOp\MvcDnaInterOp.csproj" />
+	  <ProjectReference Include="..\MvcDnaInterOp\MvcDnaInterOp.csproj" />
 	</ItemGroup>
 
 </Project>
