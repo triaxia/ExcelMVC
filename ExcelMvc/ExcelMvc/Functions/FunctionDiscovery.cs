@@ -43,13 +43,15 @@ namespace ExcelMvc.Functions
 {
     public static class FunctionDiscovery
     {
-        public static void RegisterFunctions()
+        public static FunctionDefinitions RegisterFunctions()
         {
             var items = DiscoverFunctions().ToArray();
             for (int index = 0; index < items.Length; index++)
                 items[index].function.Callback = MakeCallback(items[index].method, items[index].function);
 
-            FunctionHost.Instance.RegisterFunctions(new FunctionDefinitions(items.Select(x => x.function).ToArray()));
+            var functions = new FunctionDefinitions(items.Select(x => x.function).ToArray());
+            FunctionHost.Instance.RegisterFunctions(functions);
+            return functions;
         }
 
         public static IEnumerable<(MethodInfo method, FunctionDefinition function)> DiscoverFunctions()

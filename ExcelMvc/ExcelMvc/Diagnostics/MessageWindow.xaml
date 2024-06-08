@@ -6,7 +6,8 @@
         mc:Ignorable="d"
         Title="ExcelMVC Exceptions &amp; Messages" Height="400" Width="800"
         xmlns:diag="clr-namespace:ExcelMvc.Diagnostics"
-        Icon="/ExcelMvc;component/Resources/ExcelMvc.ico">
+        Icon="/ExcelMvc;component/Resources/ExcelMvc.ico"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <diag:Messages x:Key="Model"></diag:Messages>
     </Window.Resources>

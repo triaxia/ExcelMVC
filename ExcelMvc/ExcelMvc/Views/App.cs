@@ -174,8 +174,7 @@ namespace ExcelMvc.Views
 
                     Detach();
                     Underlying = (state as Application) ?? DllImports.FindExcel();
-                    if (Underlying == null)
-                        throw new Exception(Resource.ErrorExcelAppFound);
+                    if (Underlying == null) throw new Exception(Resource.ErrorExcelAppFound);
 
                     AsyncActions.Initialise();
                     RaisePosted($"AsyncActions.Initialise() done");
@@ -183,16 +182,18 @@ namespace ExcelMvc.Views
                     ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes
                         , ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
                     ObjectFactory<IFunctionAddIn>.Instances.ForEach(x => x.Open());
-                    RaisePosted($"ObjectFactory<IExcelAddIn>.CreateAll done");
+                    RaisePosted($"ObjectFactory<IExcelAddIn>.CreateAll({ObjectFactory<IFunctionAddIn>.Instances.Count})");
 
-                    ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes, ObjectFactory<ISession>.SelectAllAssembly);
-                    RaisePosted($"ObjectFactory<ISession>.CreateAll done");
+                    ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes
+                        , ObjectFactory<ISession>.SelectAllAssembly);
+                    RaisePosted($"ObjectFactory<ISession>.CreateAll({ObjectFactory<ISession>.Instances.Count})");
 
-                    ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes, ObjectFactory<IValueConverter>.SelectAllAssembly);
-                    RaisePosted($"ObjectFactory<IValueConverter>.CreateAll done");
+                    ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes
+                        , ObjectFactory<IValueConverter>.SelectAllAssembly);
+                    RaisePosted($"ObjectFactory<IValueConverter>.CreateAll({ObjectFactory<IValueConverter>.Instances.Count})");
 
-                    FunctionDiscovery.RegisterFunctions();
-                    RaisePosted($"FunctionDiscovery.RegisterFunctions done");
+                    var functions = FunctionDiscovery.RegisterFunctions();
+                    RaisePosted($"FunctionDiscovery.RegisterFunctions({functions.FunctionCount})");
 
                     Underlying.WorkbookOpen += OpenBook;
                     Underlying.WorkbookBeforeClose += ClosingBook;
