@@ -323,5 +323,8 @@ namespace ExcelMvc.Functions
         {
             AsyncActions.Post(action, state, false);
         }
+
+        /// <inheritdoc/>
+        public string Version => $"{AsApp().Version}.{AsApp().Build}";
     }
 }

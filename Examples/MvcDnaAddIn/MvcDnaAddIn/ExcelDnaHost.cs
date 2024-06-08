@@ -4,6 +4,7 @@ using Function.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace ExcelAddIn
 {
@@ -12,7 +13,7 @@ namespace ExcelAddIn
     /// </summary>
     public class ExcelDnaHost : IFunctionHost
     {
-        private IFunctionHost DelegateHost { get;  }
+        private IFunctionHost DelegateHost { get; }
 
         public ExcelDnaHost()
         {
@@ -59,6 +60,8 @@ namespace ExcelAddIn
 
         public Type FunctionAttributeType { get; set; } = typeof(FunctionAttribute);
         public Type ArgumentAttributeType { get; set; } = typeof(ArgumentAttribute);
+
+        public string Version => DelegateHost.Version;
 
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
         public event EventHandler<MessageEventArgs> Posted;
@@ -172,7 +175,7 @@ namespace ExcelAddIn
 
         public void Post(Action<object> action, object state)
         {
-            // TODO
+            ExcelAsyncUtil.QueueAsMacro(x => action(x), state);
         }
     }
 }

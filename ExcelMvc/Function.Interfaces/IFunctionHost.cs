@@ -384,6 +384,11 @@ namespace Function.Interfaces
         /// <param name="action"></param>
         /// <param name="state"></param>
         void Post(Action<object> action, object state);
+
+        /// <summary>
+        /// Gets the version of the <see cref="Underlying"/> host.
+        /// </summary>
+        string Version { get; }
     }
 
     /// <summary>
