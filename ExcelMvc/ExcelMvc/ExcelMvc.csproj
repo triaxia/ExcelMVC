@@ -22,6 +22,8 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<ContinuousIntegrationBuild Condition=" '$(Configuration)' == 'Release' ">true</ContinuousIntegrationBuild>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>D:\Source\ExcelMVC\ExcelMvc\ExcelMvc.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -108,7 +110,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\ExcelMvc.Interfaces\Function.Interfaces.csproj" PrivateAssets="All" />
+	  <ProjectReference Include="..\ExcelMvc.Interfaces\Function.Interfaces.csproj" PrivateAssets="None" />
 	</ItemGroup>
 
 	<PropertyGroup>

@@ -2,12 +2,40 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net471;net6.0</TargetFrameworks>
-		<!--<ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>-->
 		<Version>2.1.5</Version>
+		<Description>Writing Excel applications in .NET using MVC pattern &amp; high performance user defined fuctions, including RTD and asynchronous functions. This package is referenced by ExcelMvc.Net.</Description>
+		<Copyright>Copyright © 2013 Peter Gu (Creator) &amp; Wolfgang Stamm (Contributor 2013)</Copyright>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageOutputPath>..\ExcelMvc\bin\NuGet</PackageOutputPath>
+		<PackageProjectUrl>https://github.com/triaxia/ExcelMVC</PackageProjectUrl>
+		<PackageIcon>ExcelMvcIcon64.png</PackageIcon>
+		<PackageTags>Excel;MVC;MVVM;UDFs;RTDs</PackageTags>
+		<PackageReleaseNotes>See the Releases folder under https://github.com/triaxia/ExcelMVC</PackageReleaseNotes>
+		<Authors>Peter Gu (Creator), Wolfgang Stamm (Contributor 2013)</Authors>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Company>Triaxia Pty Limited</Company>
+		<PackageId>Function.Interfaces</PackageId>
+		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<ContinuousIntegrationBuild Condition=" '$(Configuration)' == 'Release' ">true</ContinuousIntegrationBuild>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>D:\Source\ExcelMVC\ExcelMvc\ExcelMvc.snk</AssemblyOriginatorKeyFile>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<None Include="..\..\Docs\Label\Icon\ExcelMvcIcon64.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\LICENSE.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	
 </Project>
