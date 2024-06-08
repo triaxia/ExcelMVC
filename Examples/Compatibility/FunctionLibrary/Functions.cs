@@ -28,5 +28,12 @@ namespace FunctionLibrary
             return FunctionHost.Instance.IsInFunctionWizard() ? ""
                 : FunctionHost.Instance.Rtd<TimerServer>(() => new TimerServer(), "", name);
         }
+
+        [Function("Caller Address")]
+        public static object CallerAddress()
+        {
+            return FunctionHost.Instance.IsInFunctionWizard() ? ""
+                : FunctionHost.Instance.GetCallerReference().ToString();
+        }
     }
 }

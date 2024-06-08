@@ -12,7 +12,17 @@ namespace ExcelAddIn
     /// </summary>
     public class ExcelDnaHost : IFunctionHost
     {
-        public object Underlying => ExcelDnaUtil.Application;
+        private IFunctionHost DelegateHost { get;  }
+
+        public ExcelDnaHost()
+        {
+            DelegateHost = new ExcelMvc.Functions.ExcelFunctionHost
+            {
+                Underlying = ExcelDnaUtil.Application
+            };
+        }
+
+        public object Underlying { get; set; } = ExcelDnaUtil.Application;
 
         public object ValueMissing => ExcelDna.Integration.ExcelMissing.Value;
 
@@ -33,19 +43,19 @@ namespace ExcelAddIn
         public object ErrorData => ExcelDna.Integration.ExcelError.ExcelErrorGettingData;
 
         public int RtdThrottleIntervalMilliseconds
-        { 
-            get => DelegateHost.RtdThrottleIntervalMilliseconds; 
+        {
+            get => DelegateHost.RtdThrottleIntervalMilliseconds;
             set => DelegateHost.RtdThrottleIntervalMilliseconds = value;
         }
         public string StatusBarText
         {
             get => DelegateHost.StatusBarText;
-            set => DelegateHost.StatusBarText = value; 
+            set => DelegateHost.StatusBarText = value;
         }
         public bool ExecutingEventRaised { get; set; } = false;
 
         public Func<Exception, object> ExceptionToFunctionResult { get; set; }
-            =  e=> $"{e.Message}";
+            = e => $"{e.Message}";
 
         public Type FunctionAttributeType { get; set; } = typeof(FunctionAttribute);
         public Type ArgumentAttributeType { get; set; } = typeof(ArgumentAttribute);
@@ -55,8 +65,6 @@ namespace ExcelAddIn
         public event EventHandler<RegisteringEventArgs> Registering;
         public event EventHandler<ErrorEventArgs> Failed;
         public event EventHandler<ExecutingEventArgs> Executing;
-
-        private IFunctionHost DelegateHost = new ExcelFunctionHost();
 
         public static Dictionary<object, string> Mappings = new Dictionary<object, string>
         {

@@ -25,7 +25,7 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public object Underlying => App.Instance.Underlying;
+        public object Underlying { get; set; } = App.Instance.Underlying;
 
         /// <inheritdoc/>
         public object ValueMissing => ExcelMissing.Value;
@@ -57,21 +57,21 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public int RtdThrottleIntervalMilliseconds
         {
-            get => App.Instance.Underlying?.RTD.ThrottleInterval ?? 0;
+            get => ((Application) Underlying)?.RTD.ThrottleInterval ?? 0;
             set
             {
-                if (App.Instance.Underlying != null)
-                    App.Instance.Underlying.RTD.ThrottleInterval = value;
+                if (((Application) Underlying) != null)
+                    ((Application) Underlying).RTD.ThrottleInterval = value;
             }
         }
         /// <inheritdoc/>
         public string StatusBarText
         {
-            get { return ((string)App.Instance.Underlying?.StatusBar) ?? ""; }
+            get { return ((string)((Application) Underlying)?.StatusBar) ?? ""; }
             set
             {
-                if (App.Instance.Underlying != null)
-                    App.Instance.Underlying.StatusBar = value;
+                if (((Application) Underlying) != null)
+                    ((Application) Underlying).StatusBar = value;
             }
         }
 
@@ -143,7 +143,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetCallerReference()
         {
-            dynamic caller = App.Instance.Underlying?.Caller;
+            dynamic caller = ((Application) Underlying)?.Caller;
             return caller is Range range ? RangeToReference(range)
                 : RangeToReference(null);
         }
@@ -151,7 +151,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var range = GetRange(App.Instance.Underlying.ActiveWorkbook.Name, pageName
+            var range = GetRange(((Application) Underlying).ActiveWorkbook.Name, pageName
                 , rowFirst, rowLast, columnFirst, columnLast);
             return RangeToReference(range);
         }
@@ -159,8 +159,8 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var range = GetRange(App.Instance.Underlying.ActiveWorkbook.Name
-                , App.Instance.Underlying.ActiveSheet.Name
+            var range = GetRange(((Application) Underlying).ActiveWorkbook.Name
+                , ((Application) Underlying).ActiveSheet.Name
                 , rowFirst, rowLast, columnFirst, columnLast);
             return RangeToReference(range);
         }
@@ -282,19 +282,19 @@ namespace ExcelMvc.Functions
             AddIn.AutoFree(AddIn.AsyncReturn(handle, result));
         }
 
-        private static Range GetRange(RangeReference reference)
+        private Range GetRange(RangeReference reference)
         {
-            var sheet = App.Instance.Underlying.Workbooks[reference.BookName]
+            var sheet = ((Application) Underlying).Workbooks[reference.BookName]
                 .Worksheets[reference.PageName] as Worksheet;
             var start = sheet.Cells[reference.RowFirst, reference.ColumnFirst];
             var end = start.Cells[reference.RowLast, reference.ColumnLast];
             return sheet.Range[start, end] as Range;
         }
 
-        private static Range GetRange(string bookName, string sheetName
+        private Range GetRange(string bookName, string sheetName
             , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var sheet = App.Instance.Underlying.Workbooks[bookName]
+            var sheet = ((Application) Underlying).Workbooks[bookName]
                 .Worksheets[sheetName] as Worksheet;
             var start = sheet.Cells[rowFirst, columnFirst];
             var end = start.Cells[rowLast, columnLast];

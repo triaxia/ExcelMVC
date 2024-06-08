@@ -129,9 +129,9 @@ namespace Function.Interfaces
     public interface IFunctionHost
     {
         /// <summary>
-        /// Gets the underlying host object.
+        /// Gets/Sets the underlying host object.
         /// </summary>
-        object Underlying { get; }
+        object Underlying { get; set; }
 
         /// <summary>
         /// Gets the object that represents a missing value.
@@ -179,7 +179,7 @@ namespace Function.Interfaces
         object ErrorData { get; }
 
         /// <summary>
-        /// Converts error object to there string representation.
+        /// Converts error object to their string representations.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
