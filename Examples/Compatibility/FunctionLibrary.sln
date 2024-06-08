@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelAddIn", "ExcelDnaAddIn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionLibrary", "FunctionLibrary\FunctionLibrary.csproj", "{0A0273F1-DA1C-47C8-8BD2-016D88D3598F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelDnaInterOp", "ExcelDnaInterOp\ExcelDnaInterOp.csproj", "{41A82FCA-72CB-43B9-9309-E3C1686FFAC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcDnaInterOp", "ExcelDnaInterOp\MvcDnaInterOp.csproj", "{41A82FCA-72CB-43B9-9309-E3C1686FFAC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

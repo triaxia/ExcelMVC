@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace ExcelDnaInterOp
+namespace ExcelAddIn
 {
     /// <summary>
     /// Loses this class to lose ExcelDna!
@@ -32,11 +32,21 @@ namespace ExcelDnaInterOp
 
         public object ErrorData => ExcelDna.Integration.ExcelError.ExcelErrorGettingData;
 
-        public int RtdThrottleIntervalMilliseconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string StatusBarText { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int RtdThrottleIntervalMilliseconds
+        { 
+            get => DelegateHost.RtdThrottleIntervalMilliseconds; 
+            set => DelegateHost.RtdThrottleIntervalMilliseconds = value;
+        }
+        public string StatusBarText
+        {
+            get => DelegateHost.StatusBarText;
+            set => DelegateHost.StatusBarText = value; 
+        }
         public bool ExecutingEventRaised { get; set; } = false;
 
         public Func<Exception, object> ExceptionToFunctionResult { get; set; }
+            =  e=> $"{e.Message}";
+
         public Type FunctionAttributeType { get; set; } = typeof(FunctionAttribute);
         public Type ArgumentAttributeType { get; set; } = typeof(ArgumentAttribute);
 
@@ -45,6 +55,8 @@ namespace ExcelDnaInterOp
         public event EventHandler<RegisteringEventArgs> Registering;
         public event EventHandler<ErrorEventArgs> Failed;
         public event EventHandler<ExecutingEventArgs> Executing;
+
+        private IFunctionHost DelegateHost = new ExcelFunctionHost();
 
         public static Dictionary<object, string> Mappings = new Dictionary<object, string>
         {
@@ -67,36 +79,32 @@ namespace ExcelDnaInterOp
 
         public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            throw new NotImplementedException();
+            return DelegateHost.GetActiveBookReference(pageName, rowFirst, rowLast, columnFirst, columnLast);
         }
 
         public RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            throw new NotImplementedException();
+            return DelegateHost.GetActivePageReference(rowFirst, rowLast, columnFirst, columnLast);
         }
 
         public IntPtr GetAsyncHandle(IntPtr handle)
         {
-            throw new NotImplementedException();
+            return DelegateHost.GetAsyncHandle(handle);
         }
 
         public RangeReference GetCallerReference()
         {
-            /*
-            var reference = XlCall.Excel(XlCall.xlfCaller) as ExcelReference;
-            return new RangeReference(reference.)
-            */
-            return null;
+            return DelegateHost.GetCallerReference();
         }
 
         public object GetRangeValue(RangeReference range)
         {
-            throw new NotImplementedException();
+            return DelegateHost.GetRangeValue(range);
         }
 
         public RangeReference GetReference(string bookName, string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            throw new NotImplementedException();
+            return DelegateHost.GetReference(bookName, pageName, rowFirst, rowLast, columnFirst, columnLast);
         }
 
         public bool IsInFunctionWizard()
@@ -106,22 +114,27 @@ namespace ExcelDnaInterOp
 
         public void RaiseExecuting(object sender, ExecutingEventArgs args)
         {
+            Executing?.Invoke(sender, args);
         }
 
         public void RaiseFailed(object sender, ErrorEventArgs args)
         {
+            Failed?.Invoke(sender, args);
         }
 
         public void RaisePosted(object sender, MessageEventArgs args)
         {
+            Posted?.Invoke(sender, args);
         }
 
         public void RaiseRegistering(object sender, RegisteringEventArgs args)
         {
+            Registering?.Invoke(sender, args);
         }
 
         public void RaiseRtdUpdated(object sender, RtdServerUpdatedEventArgs args)
         {
+            RtdUpdated?.Invoke(sender, args);
         }
 
         public void RegisterFunctions(FunctionDefinitions functions)
@@ -141,10 +154,12 @@ namespace ExcelDnaInterOp
 
         public void SetAsyncResult(IntPtr handle, object result)
         {
+            DelegateHost.SetAsyncResult(handle, result);
         }
 
         public void SetRangeValue(RangeReference range, object value, bool async)
         {
+            DelegateHost.SetRangeValue(range, value, async);
         }
     }
 }

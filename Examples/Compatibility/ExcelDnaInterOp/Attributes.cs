@@ -1,7 +1,7 @@
 ﻿using Function.Interfaces;
 using System;
 
-namespace ExcelDnaInterOp
+namespace MvcDnaInterOp
 {
     /// <summary>
     /// Loses this class to lose ExcelDna!

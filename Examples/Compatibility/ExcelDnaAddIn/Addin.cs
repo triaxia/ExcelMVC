@@ -1,4 +1,5 @@
 ﻿using ExcelDna.Integration;
+using ExcelMvc.Functions;
 using Function.Interfaces;
 
 namespace ExcelAddIn
@@ -11,7 +12,7 @@ namespace ExcelAddIn
 
         public void AutoOpen()
         {
-            FunctionHost.Instance = new ExcelDnaInterOp.ExcelDnaHost();
+            FunctionHost.Instance = new ExcelDnaHost();
         }
 
         public void Close()
@@ -20,8 +21,9 @@ namespace ExcelAddIn
 
         public void Open()
         {
-            FunctionHost.Instance.FunctionAttributeType = typeof(ExcelDnaInterOp.FunctionAttribute);
-            FunctionHost.Instance.ArgumentAttributeType = typeof(ExcelDnaInterOp.ArgumentAttribute);
+            FunctionHost.Instance = new ExcelFunctionHost();
+            FunctionHost.Instance.FunctionAttributeType = typeof(MvcDnaInterOp.FunctionAttribute);
+            FunctionHost.Instance.ArgumentAttributeType = typeof(MvcDnaInterOp.ArgumentAttribute);
         }
     }
 }
