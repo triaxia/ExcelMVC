@@ -286,10 +286,9 @@ namespace ExcelMvc.Runtime
 
         private static string[] GetAssemblyFiles(string path)
         {
-            var config = Path.Combine(path, "ExcelMvc.reflection.txt");
-            var patterns = File.Exists(config) ?
-                File.ReadAllLines(config).Select(x => x.Trim()).Where(x => x != "" && !x.StartsWith("#")).ToArray()
-                : new[] { "*.dll" };
+            var patterns = Directory.GetFiles(path, "*.reflection.txt")
+                .SelectMany(x => File.ReadAllLines(x).Select(y => y.Trim()).Where(y => y != "" && !y.StartsWith("#")))
+                .Distinct();
             return patterns.SelectMany(x => Directory.GetFiles(path, x, SearchOption.TopDirectoryOnly))
                 .Distinct().ToArray();
         }

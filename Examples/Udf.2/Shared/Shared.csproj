@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
-		<!--<ImplicitUsings>enable</ImplicitUsings>
-	    <Nullable>enable</Nullable>-->
-	</PropertyGroup>
-</Project>
