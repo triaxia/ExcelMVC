@@ -389,6 +389,11 @@ namespace Function.Interfaces
         /// Gets the version of the <see cref="Underlying"/> host.
         /// </summary>
         string Version { get; }
+
+        /// <summary>
+        /// Gets the flag indicating if the host IDE is open.
+        /// </summary>
+        bool IsIdeOpen { get; }
     }
 
     /// <summary>

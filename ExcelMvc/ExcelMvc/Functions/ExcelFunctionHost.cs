@@ -326,5 +326,15 @@ namespace ExcelMvc.Functions
 
         /// <inheritdoc/>
         public string Version => $"{AsApp().Version}.{AsApp().Build}";
+
+        /// <inheritdoc/>
+        public bool IsIdeOpen
+        {
+            get
+            {
+                var window = AsApp().ActiveWorkbook.VBProject.VBE.ActiveWindow;
+                return window != null && window.WindowState != Microsoft.Vbe.Interop.vbext_WindowState.vbext_ws_Minimize;
+            }
+        }
     }
 }

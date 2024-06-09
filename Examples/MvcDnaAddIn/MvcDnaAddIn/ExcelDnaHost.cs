@@ -4,7 +4,6 @@ using Function.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 
 namespace ExcelAddIn
 {
@@ -62,6 +61,7 @@ namespace ExcelAddIn
         public Type ArgumentAttributeType { get; set; } = typeof(ArgumentAttribute);
 
         public string Version => DelegateHost.Version;
+        public bool IsIdeOpen => DelegateHost.IsIdeOpen;
 
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
         public event EventHandler<MessageEventArgs> Posted;
