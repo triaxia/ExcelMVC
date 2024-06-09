@@ -32,25 +32,68 @@ Boston, MA 02110-1301 USA.
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace Function.Interfaces
 {
+    /// <summary>
+    /// Provides data for an Rtd topic.
+    /// </summary>
+    public class RtdTopic
+    {
+        /// <summary>
+        /// The arguments of the topic.
+        /// </summary>
+        public string[] Args { get; }
+
+        /// <summary>
+        /// The value of the topic.
+        /// </summary>
+        public object Value { get; set; }
+
+        /// <summary>
+        /// Initialises a new instance of <see cref="RtdTopic"/>
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="value"></param>
+        public RtdTopic(string[] args, object value)
+        {
+            Args = args;
+            Value = value;
+        }
+
+        /// <inheritdoc cref="object.ToString"/>
+        public override string ToString()
+        {
+            return $"arguments={string.Join("|", Args)}, value={Value}";
+        }
+    }
+
     /// <summary>
     /// Provides data for Rtd updated events.
     /// </summary>
     public class RtdServerUpdatedEventArgs : EventArgs
     {
         /// <summary>
-        /// The message text.
+        /// The server that updates the topic
         /// </summary>
         public IRtdServerImpl Impl { get; }
+
+        /// <summary>
+        /// The topics updated
+        /// </summary>
+        public IEnumerable<RtdTopic> Topics { get; }
 
         /// <summary>
         /// Initialises a new instance of <see cref="RtdServerUpdatedEventArgs"/>.
         /// </summary>
         /// <param name="impl"></param>
-        public RtdServerUpdatedEventArgs(IRtdServerImpl impl)
-            => Impl = impl;
+        /// <param name="topics"></param>
+        public RtdServerUpdatedEventArgs(IRtdServerImpl impl, IEnumerable<RtdTopic> topics)
+        {
+            Impl = impl;
+            Topics = topics;
+        }
     }
 
     /// <summary>

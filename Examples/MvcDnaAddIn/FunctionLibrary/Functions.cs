@@ -1,5 +1,4 @@
-﻿using Samples;
-using System;
+﻿using System;
 using Function.Interfaces;
 
 // Lose the following two lines to lose Excel-Dna

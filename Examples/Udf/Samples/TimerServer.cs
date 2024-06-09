@@ -5,16 +5,11 @@ using Function.Interfaces;
 
 namespace Samples
 {
-    public class Topic
-    {
-        public string[] args;
-        public DateTime value;
-    }
     public class TimerServer : IRtdServerImpl
     {
         public event EventHandler<RtdServerUpdatedEventArgs> Updated;
-        public readonly ConcurrentDictionary<int, Topic> Topics
-            = new ConcurrentDictionary<int, Topic>();
+        public readonly ConcurrentDictionary<int, RtdTopic> Topics
+            = new ConcurrentDictionary<int, RtdTopic>();
 
         private Timer Timer { get; set; }
 
@@ -40,7 +35,7 @@ namespace Samples
         public object Connect(int topicId, string[] args)
         {
             FunctionHost.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} connected"));
-            Topics[topicId] = new Topic { args = args, value = DateTime.Now };
+            Topics[topicId] = new RtdTopic(args, DateTime.Now);
             return Format(Topics[topicId]);
         }
 
@@ -67,11 +62,10 @@ namespace Samples
             FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Ticked"));
             var now = DateTime.Now;
             foreach (var pair in Topics.ToArray())
-                pair.Value.value = now;
-            Updated?.Invoke(this, new RtdServerUpdatedEventArgs(this));
+                pair.Value.Value = now;
+            Updated?.Invoke(this, new RtdServerUpdatedEventArgs(this, Topics.Values));
         }
 
-        private static string Format(Topic topic)
-            => $"time:{topic.value:O} topic:{string.Join(",", topic.args)}";
+        private static string Format(RtdTopic topic)  => $"{topic}";
     }
 }

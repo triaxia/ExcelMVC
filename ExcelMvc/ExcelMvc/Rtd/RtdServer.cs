@@ -87,7 +87,7 @@ namespace ExcelMvc.Rtd
         {
             try
             {
-                FunctionHost.Instance.RaiseRtdUpdated(sender, new RtdServerUpdatedEventArgs(Impl));
+                FunctionHost.Instance.RaiseRtdUpdated(sender, args);
             }
             catch (Exception ex)
             {
