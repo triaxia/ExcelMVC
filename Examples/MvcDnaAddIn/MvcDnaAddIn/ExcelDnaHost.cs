@@ -2,7 +2,6 @@
 using ExcelMvc.Functions;
 using Function.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace ExcelAddIn
@@ -68,60 +67,27 @@ namespace ExcelAddIn
         public event EventHandler<RegisteringEventArgs> Registering;
         public event EventHandler<ErrorEventArgs> Failed;
         public event EventHandler<ExecutingEventArgs> Executing;
-
-        public static Dictionary<object, string> Mappings = new Dictionary<object, string>
-        {
-            { ExcelDna.Integration.ExcelError.ExcelErrorNull,"#NULL!" },
-            { ExcelDna.Integration.ExcelError.ExcelErrorDiv0,"#DIV0!" },
-            { ExcelDna.Integration.ExcelError.ExcelErrorValue,"#VALUE!" },
-            { ExcelDna.Integration.ExcelError.ExcelErrorRef,"#REF!" },
-            { ExcelDna.Integration.ExcelError.ExcelErrorName,"#NAME?" },
-            { ExcelDna.Integration.ExcelError.ExcelErrorNum,"#NUM!" },
-            { ExcelDna.Integration.ExcelError.ExcelErrorNA,"#N/A" },
-            { ExcelDna.Integration.ExcelError.ExcelErrorGettingData,"#Data!" },
-            { ExcelDna.Integration.ExcelMissing.Value, $"{ExcelDna.Integration.ExcelMissing.Value}" },
-            { ExcelDna.Integration.ExcelEmpty.Value, $"{ExcelDna.Integration.ExcelEmpty.Value}" }
-        };
-
-        public string ErrorToString(object value)
-        {
-            return Mappings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
-        }
+        public string ErrorToString(object value) => DelegateHost.ErrorToString(value);
 
         public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
-        {
-            return DelegateHost.GetActiveBookReference(pageName, rowFirst, rowLast, columnFirst, columnLast);
-        }
+            => DelegateHost.GetActiveBookReference(pageName, rowFirst, rowLast, columnFirst, columnLast);
 
         public RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
-        {
-            return DelegateHost.GetActivePageReference(rowFirst, rowLast, columnFirst, columnLast);
-        }
-
+            => DelegateHost.GetActivePageReference(rowFirst, rowLast, columnFirst, columnLast);
         public IntPtr GetAsyncHandle(IntPtr handle)
-        {
-            return DelegateHost.GetAsyncHandle(handle);
-        }
+            => DelegateHost.GetAsyncHandle(handle);
 
         public RangeReference GetCallerReference()
-        {
-            return DelegateHost.GetCallerReference();
-        }
+            => DelegateHost.GetCallerReference();
 
         public object GetRangeValue(RangeReference range)
-        {
-            return DelegateHost.GetRangeValue(range);
-        }
+            => DelegateHost.GetRangeValue(range);
 
         public RangeReference GetReference(string bookName, string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
-        {
-            return DelegateHost.GetReference(bookName, pageName, rowFirst, rowLast, columnFirst, columnLast);
-        }
+            => DelegateHost.GetReference(bookName, pageName, rowFirst, rowLast, columnFirst, columnLast);
 
         public bool IsInFunctionWizard()
-        {
-            return ExcelDnaUtil.IsInFunctionWizard();
-        }
+            => ExcelDnaUtil.IsInFunctionWizard();
 
         public void RaiseExecuting(object sender, ExecutingEventArgs args)
         {
@@ -164,14 +130,10 @@ namespace ExcelAddIn
         }
 
         public void SetAsyncResult(IntPtr handle, object result)
-        {
-            DelegateHost.SetAsyncResult(handle, result);
-        }
+            => DelegateHost.SetAsyncResult(handle, result);
 
         public void SetRangeValue(RangeReference range, object value, bool async)
-        {
-            DelegateHost.SetRangeValue(range, value, async);
-        }
+            => DelegateHost.SetRangeValue(range, value, async);
 
         public void Post(Action<object> action, object state)
         {
