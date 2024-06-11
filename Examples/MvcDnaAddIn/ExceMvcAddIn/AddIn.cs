@@ -1,20 +1,10 @@
-﻿using ExcelDna.Integration;
-using ExcelMvc.Functions;
+﻿using ExcelMvc.Functions;
 using Function.Interfaces;
 
 namespace ExcelAddIn
 {
-    public class AddIn : IExcelAddIn, IFunctionAddIn
+    public class AddIn : IFunctionAddIn
     {
-        public void AutoClose()
-        {
-        }
-
-        public void AutoOpen()
-        {
-            FunctionHost.Instance = new ExcelDnaHost();
-        }
-
         public void Close()
         {
         }

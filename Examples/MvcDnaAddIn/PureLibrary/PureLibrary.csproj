@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net471;net6.0</TargetFrameworks>
@@ -7,5 +7,5 @@
 	<ItemGroup>
 		<PackageReference Include="Function.Interfaces" Version="2.1.7" />
 	</ItemGroup>
-	
+
 </Project>

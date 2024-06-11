@@ -60,21 +60,4 @@ namespace ExcelMvc.Functions
         ExcelErrorNA = 42,
         ExcelErrorGettingData = 43
     }
-
-    public static class ExcelErrorMappings
-    {
-        public static Dictionary<object, string> Mappings = new Dictionary<object, string>
-        {
-            { ExcelError.ExcelErrorNull,"#NULL!" },
-            { ExcelError.ExcelErrorDiv0,"#DIV0!" },
-            { ExcelError.ExcelErrorValue,"#VALUE!" },
-            { ExcelError.ExcelErrorRef,"#REF!" },
-            { ExcelError.ExcelErrorName,"#NAME?" },
-            { ExcelError.ExcelErrorNum,"#NUM!" },
-            { ExcelError.ExcelErrorNA,"#N/A" },
-            { ExcelError.ExcelErrorGettingData,"#Data!" },
-            { ExcelMissing.Value, $"{ExcelMissing.Value}" },
-            { ExcelEmpty.Value, $"{ExcelEmpty.Value}" }
-        };
-    }
 }

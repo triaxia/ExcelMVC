@@ -1,13 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
-		<ExcelMvcAddInName>MyLib</ExcelMvcAddInName>
+		<ExcelMvcAddInName>QLib</ExcelMvcAddInName>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.1.5" />
-		<PackageReference Include="ExcelDna.AddIn" Version="1.8.0" />
+		<PackageReference Include="ExcelMvc.Net" Version="2.1.7" />
 	</ItemGroup>
 
 	<ItemGroup>

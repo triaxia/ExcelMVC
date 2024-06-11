@@ -1,11 +1,11 @@
 ﻿using ExcelMvc.Diagnostics;
 using ExcelMvc.Rtd;
 using ExcelMvc.Runtime;
-using ExcelMvc.Views;
 using ExcelMvc.Windows;
 using Function.Interfaces;
 using Microsoft.Office.Interop.Excel;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Range = Microsoft.Office.Interop.Excel.Range;
@@ -25,8 +25,8 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public object Underlying { get; set; } = App.Instance.Underlying;
-        private Application AsApp() => (Application)Underlying;
+        public object Application { get; set; } = Views.App.Instance.Underlying;
+        private Application App => (Application)Views.App.Instance.Underlying;
 
         /// <inheritdoc/>
         public object ValueMissing => ExcelMissing.Value;
@@ -58,22 +58,22 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public int RtdThrottleIntervalMilliseconds
         {
-            get => AsApp()?.RTD.ThrottleInterval ?? 0;
+            get => App?.RTD.ThrottleInterval ?? 0;
             set
             {
-                if (AsApp() != null)
-                    AsApp().RTD.ThrottleInterval = value;
+                if (App != null)
+                    App.RTD.ThrottleInterval = value;
             }
         }
 
         /// <inheritdoc/>
         public string StatusBarText
         {
-            get { return ((string)AsApp()?.StatusBar) ?? ""; }
+            get { return ((string)App?.StatusBar) ?? ""; }
             set
             {
-                if (AsApp() != null)
-                    AsApp().StatusBar = value;
+                if (App != null)
+                    App.StatusBar = value;
             }
         }
 
@@ -108,10 +108,24 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
 
+        public static Dictionary<object, string> Mappings = new Dictionary<object, string>
+            {
+                { ExcelError.ExcelErrorNull,"#NULL!" },
+                { ExcelError.ExcelErrorDiv0,"#DIV0!" },
+                { ExcelError.ExcelErrorValue,"#VALUE!" },
+                { ExcelError.ExcelErrorRef,"#REF!" },
+                { ExcelError.ExcelErrorName,"#NAME?" },
+                { ExcelError.ExcelErrorNum,"#NUM!" },
+                { ExcelError.ExcelErrorNA,"#N/A" },
+                { ExcelError.ExcelErrorGettingData,"#Data!" },
+                { ExcelMissing.Value, $"{ExcelMissing.Value}" },
+                { ExcelEmpty.Value, $"{ExcelEmpty.Value}" }
+            };
+
         /// <inheritdoc/>
         public string ErrorToString(object value)
         {
-            return ExcelErrorMappings.Mappings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
+            return Mappings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
         }
 
         /// <inheritdoc/>
@@ -145,7 +159,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetCallerReference()
         {
-            dynamic caller = AsApp()?.Caller;
+            dynamic caller = App?.Caller;
             return caller is Range range ? RangeToReference(range)
                 : RangeToReference(null);
         }
@@ -153,7 +167,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var range = GetRange(AsApp().ActiveWorkbook.Name, pageName
+            var range = GetRange(App.ActiveWorkbook.Name, pageName
                 , rowFirst, rowLast, columnFirst, columnLast);
             return RangeToReference(range);
         }
@@ -161,8 +175,8 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var range = GetRange(AsApp().ActiveWorkbook.Name
-                , AsApp().ActiveSheet.Name
+            var range = GetRange(App.ActiveWorkbook.Name
+                , App.ActiveSheet.Name
                 , rowFirst, rowLast, columnFirst, columnLast);
             return RangeToReference(range);
         }
@@ -286,7 +300,7 @@ namespace ExcelMvc.Functions
 
         private Range GetRange(RangeReference reference)
         {
-            var sheet = AsApp().Workbooks[reference.BookName]
+            var sheet = App.Workbooks[reference.BookName]
                 .Worksheets[reference.PageName] as Worksheet;
             var start = sheet.Cells[reference.RowFirst, reference.ColumnFirst];
             var end = start.Cells[reference.RowLast, reference.ColumnLast];
@@ -296,7 +310,7 @@ namespace ExcelMvc.Functions
         private Range GetRange(string bookName, string sheetName
             , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            var sheet = AsApp().Workbooks[bookName]
+            var sheet = App.Workbooks[bookName]
                 .Worksheets[sheetName] as Worksheet;
             var start = sheet.Cells[rowFirst, columnFirst];
             var end = start.Cells[rowLast, columnLast];
@@ -325,14 +339,14 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public string Version => $"{AsApp().Version}.{AsApp().Build}";
+        public string Version => $"{App.Version}.{App.Build}";
 
         /// <inheritdoc/>
         public bool IsIdeOpen
         {
             get
             {
-                var window = AsApp().ActiveWorkbook.VBProject.VBE.ActiveWindow;
+                var window = App.ActiveWorkbook.VBProject.VBE.ActiveWindow;
                 return window != null && window.WindowState != Microsoft.Vbe.Interop.vbext_WindowState.vbext_ws_Minimize;
             }
         }

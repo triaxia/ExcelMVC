@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading;
-using ExcelDna.Integration.Rtd;
 using Function.Interfaces;
 
 namespace FunctionLibrary
 {
-    public class TimerServer : IRtdServerImpl, IRtdServer // lose IRtdServer to lose ExcelDNA!
+    public class TimerServer : IRtdServerImpl
     {
-        private IRTDUpdateEvent CallbackObject;
-
         public event EventHandler<RtdServerUpdatedEventArgs> Updated;
         public readonly ConcurrentDictionary<int, RtdTopic> Topics
             = new ConcurrentDictionary<int, RtdTopic>();
@@ -68,37 +64,7 @@ namespace FunctionLibrary
             foreach (var pair in Topics.ToArray())
                 pair.Value.Value = now;
             Updated?.Invoke(this, new RtdServerUpdatedEventArgs(this, Topics.Values));
-            CallbackObject?.UpdateNotify();
         }
-
         private static string Format(RtdTopic topic) => $"{topic}";
-
-        public int ServerStart(IRTDUpdateEvent callbackObject)
-        {
-            CallbackObject = callbackObject;
-            return Start();
-        }
-
-        public object ConnectData(int topicId, ref Array strings, ref bool newValues)
-        {
-            return Connect(topicId, strings.Cast<object>().Select(x => $"{x}").ToArray());
-        }
-
-        public Array RefreshData(ref int topicCount)
-        {
-            var values = GetTopicValues();
-            topicCount = values.GetLength(1);
-            return values;
-        }
-
-        public void DisconnectData(int topicID)
-        {
-            Disconnect(topicID);
-        }
-
-        public void ServerTerminate()
-        {
-            Stop();
-        }
     }
 }

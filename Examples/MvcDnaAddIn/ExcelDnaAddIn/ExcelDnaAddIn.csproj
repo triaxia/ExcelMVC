@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ExcelDna.AddIn" Version="1.8.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\FunctionLibrary\FunctionLibrary.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Microsoft.Office.Interop.Excel">
+			<HintPath>..\..\..\Office\Microsoft.Office.Interop.Excel.dll</HintPath>
+			<EmbedInteropTypes>True</EmbedInteropTypes>
+		</Reference>
+		<Reference Include="Microsoft.Vbe.Interop">
+			<HintPath>..\..\..\Office\Microsoft.Vbe.Interop.dll</HintPath>
+			<EmbedInteropTypes>True</EmbedInteropTypes>
+		</Reference>
+		<Reference Include="office">
+			<HintPath>..\..\..\Office\Office.dll</HintPath>
+			<EmbedInteropTypes>True</EmbedInteropTypes>
+		</Reference>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	</ItemGroup>
+
+</Project>

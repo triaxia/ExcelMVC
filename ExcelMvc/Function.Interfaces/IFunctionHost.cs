@@ -129,9 +129,9 @@ namespace Function.Interfaces
     public interface IFunctionHost
     {
         /// <summary>
-        /// Gets/Sets the underlying host object.
+        /// Gets/Sets the host application object.
         /// </summary>
-        object Underlying { get; set; }
+        object Application { get; set; }
 
         /// <summary>
         /// Gets the object that represents a missing value.

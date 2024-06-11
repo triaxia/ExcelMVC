@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
+		<ExcelMvcAddInName>QLib</ExcelMvcAddInName>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ExcelMvc.Net" Version="2.1.7" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\PureLibrary\PureLibrary.csproj" />
+	</ItemGroup>
+
+</Project>
