@@ -11,4 +11,4 @@ asynchronous functions.
 
 Simply add ExcelMvc.Net NuGet to your solution to get your ExcelMvc development started.
 
-More documentation can be found within the sample solutions.
+More documentation can be found within the sample solutions. https://github.com/triaxia/ExcelMVC/tree/master/Examples.
