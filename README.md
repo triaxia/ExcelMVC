@@ -7,9 +7,9 @@ You define your application's views in Excel and implement their business models
 or any other .NET languages.
 
 ExcelMvc also lets you write your own high performance user defined functions (UDF), including RTD functions and 
-=================================================================================================================
+-----------------------------------------------------------------------------------------------------------------
 asynchronous functions.
-=======================
+-----------------------
 
 Simply add ExcelMvc.Net NuGet to your solution to get your ExcelMvc development started.
 
