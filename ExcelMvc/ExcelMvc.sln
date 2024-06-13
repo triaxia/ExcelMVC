@@ -14,8 +14,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelMvc.Tests", "ExcelMvc.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Function.Interfaces", "Function.Interfaces\Function.Interfaces.csproj", "{8093C919-69A3-4AE9-8772-5D632C55EFF3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{AC3C08EF-8F36-4DCE-8ABA-8028DEF159BB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,9 +75,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{8093C919-69A3-4AE9-8772-5D632C55EFF3} = {AC3C08EF-8F36-4DCE-8ABA-8028DEF159BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8EBF9520-E382-4BA0-A1B3-2C4CC8EF5B66}

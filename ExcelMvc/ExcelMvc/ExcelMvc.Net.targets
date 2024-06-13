@@ -10,17 +10,11 @@
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x64.xll"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName)64.xll">
 		</Copy>
-		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.reflection.txt"
-			  DestinationFiles ="$(TargetDir)ExcelMvc.reflection.txt">
-		</Copy>
-		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
+		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true' And !Exists('$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json')"
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
-		      DestinationFiles="$(TargetDir)ExcelMvc.runtimeconfig.json">
+		      DestinationFiles="$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json">
 		</Copy>
-		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true'"
-			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
-		      DestinationFiles="$(TargetDir)ExcelMvc.runtimeconfig.json">
-		</Copy>
-		<Exec Command="powershell -Execution Unrestricted -File &quot;$(MSBuildThisFileDirectory)ExcelMvc.reflection.ps1&quot; -TargetPath  &quot;$(TargetDir)\&quot;" />
+		<Exec Condition="!Exists('$(TargetDir)$(ExcelMvcAddInName).reflection.txt')"
+			  Command="powershell -Execution Unrestricted -File &quot;$(MSBuildThisFileDirectory)ExcelMvc.reflection.ps1&quot; -TargetPath  &quot;$(TargetDir)\&quot; -TargetName &quot;$(ExcelMvcAddInName).reflection.txt&quot;" />
 	</Target>
 </Project>

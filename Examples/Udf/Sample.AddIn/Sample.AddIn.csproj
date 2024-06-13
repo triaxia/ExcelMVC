@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.1.7" />
+		<PackageReference Include="ExcelMvc.Net" Version="2.1.8" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -16,6 +16,12 @@
 	<ItemGroup>
 		<None Update="FunctionTests.xlsx">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Sample.AddIn.reflection.txt">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Sample.AddIn.runtimeconfig.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 

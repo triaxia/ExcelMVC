@@ -289,6 +289,7 @@ namespace ExcelMvc.Runtime
             var patterns = Directory.GetFiles(path, "*.reflection.txt")
                 .SelectMany(x => File.ReadAllLines(x).Select(y => y.Trim()).Where(y => y != "" && !y.StartsWith("#")))
                 .Distinct();
+            if (!patterns.Any()) patterns = new[] { "*.dll" };
             return patterns.SelectMany(x => Directory.GetFiles(path, x, SearchOption.TopDirectoryOnly))
                 .Distinct().ToArray();
         }

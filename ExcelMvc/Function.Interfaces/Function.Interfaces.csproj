@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net471;net6.0</TargetFrameworks>
-		<Version>2.1.7</Version>
+		<Version>2.1.8</Version>
 		<Description>Writing Excel applications in .NET using MVC pattern &amp; high performance user defined fuctions, including RTD and asynchronous functions. This package is referenced by ExcelMvc.Net.</Description>
 		<Copyright>Copyright © 2013 Peter Gu (Creator) &amp; Wolfgang Stamm (Contributor 2013)</Copyright>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>

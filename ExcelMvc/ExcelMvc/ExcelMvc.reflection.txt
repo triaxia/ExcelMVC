@@ -1,6 +1,7 @@
 ﻿# This file lists the file name patterns to be used by ExcelMvc for discovering
 # assembly types at runtime. Each line specifies one pattern. Lines starting 
-# with # or blank lines are discarded. *.dll is used when this file is missing.
+# with # or blank lines are discarded.
 #
-# All files in $(TargetDir) ends with .reflection.txt will be used.
+# All files in $(TargetDir) that end with .reflection.txt will be used. *.dll
+# is used when no patterns are defined.
 
