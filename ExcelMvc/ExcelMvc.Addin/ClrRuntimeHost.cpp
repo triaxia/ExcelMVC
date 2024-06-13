@@ -82,5 +82,17 @@ string_t ClrRuntimeHost::GetModuleName()
 
 string_t ClrRuntimeHost::GetRuntimeConfigFile()
 {
-    return GetModulePath() + L"\\" + GetModuleName() + L".runtimeconfig.json";
+    auto name = GetModuleName();
+    
+    // remove extension
+    auto pos = name.find_last_of(L".");
+    if (pos != string_t::npos)
+        name = name.substr(0, pos);
+
+    // remove trailing 64
+    pos = name.find_last_of(L"64");
+    if (pos != string_t::npos && pos == name.size() - 1)
+        name = name.substr(0, pos - 1);
+
+    return GetModulePath() + L"\\" + name + L".runtimeconfig.json";
 }

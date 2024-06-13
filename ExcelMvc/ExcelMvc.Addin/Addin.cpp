@@ -174,8 +174,10 @@ BOOL __stdcall xlAutoOpen(void)
 
 BOOL __stdcall xlAutoClose(void)
 {
+	/*
 	UnregisterMvcFunctions();
 	UnregisterUserFunctions(false);
+	*/
 	return TRUE;
 }
 
