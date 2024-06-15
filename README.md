@@ -10,6 +10,8 @@ or any other .NET languages.
 
 Simply add ExcelMvc.Net NuGet to your solution to get your ExcelMvc development started.
 
+**https://github.com/triaxia/ExcelMVC/tree/master/Docs/Getting%20Started%20with%20ExcelMVC.docx**
+
 More documentation can be found within the sample solutions.
 
 MVC samples:
