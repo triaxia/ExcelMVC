@@ -14,7 +14,7 @@
     <PostBuildEvent />
   </PropertyGroup>
   <ItemGroup>
-	<PackageReference Include="ExcelMvc.Net" Version="2.0.3" />
+	<PackageReference Include="ExcelMvc.Net" Version="2.1.9" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Run.cmd">
