@@ -169,6 +169,11 @@ namespace Function.Interfaces
         object ErrorName { get; }
 
         /// <summary>
+        /// Gets the object that represents a num error.
+        /// </summary>
+        object ErrorNum { get; }
+
+        /// <summary>
         /// Gets the object that represents a N/A error.
         /// </summary>
         object ErrorNA { get; }

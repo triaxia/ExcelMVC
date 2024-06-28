@@ -164,11 +164,17 @@ void StopAddInClrHost()
 	if (pClrHost != nullptr) pClrHost->Stop();
 }
 
+bool opened = false;
+
 BOOL __stdcall xlAutoOpen(void)
 {
-	RegisterMvcFunctions();
-	RegisterUserFunctions();
-	StartAddInClrHost();
+	if (!opened)
+	{
+		opened = true;
+		RegisterMvcFunctions();
+		RegisterUserFunctions();
+		StartAddInClrHost();
+	}
 	return TRUE;
 }
 

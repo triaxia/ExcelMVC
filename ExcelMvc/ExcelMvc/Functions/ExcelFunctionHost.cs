@@ -50,6 +50,9 @@ namespace ExcelMvc.Functions
         public object ErrorName => ExcelError.ExcelErrorName;
 
         /// <inheritdoc/>
+        public object ErrorNum => ExcelError.ExcelErrorNum;
+
+        /// <inheritdoc/>
         public object ErrorNA => ExcelError.ExcelErrorNA;
 
         /// <inheritdoc/>
