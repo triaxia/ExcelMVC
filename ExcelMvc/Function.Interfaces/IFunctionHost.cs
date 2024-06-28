@@ -184,7 +184,7 @@ namespace Function.Interfaces
         object ErrorData { get; }
 
         /// <summary>
-        /// Converts error object to their string representations.
+        /// Converts error objects to their string representations.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
