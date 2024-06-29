@@ -258,6 +258,11 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public object Rtd(string progId, string server, params string[] args)
         {
+            // for some reasons, RTD crashes 32bit Excel when args.Length == 1 
+            // and args[0] == ""...
+            if (args.Length == 1 && string.IsNullOrEmpty(args[0]))
+                args[0] = " ";
+
             var arguments = new string[] { progId, server }
                 .Concat(args)
                 .Select((x, idx) => new FunctionArgument($"p{idx}", x))
