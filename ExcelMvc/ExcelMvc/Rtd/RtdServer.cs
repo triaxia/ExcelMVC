@@ -56,7 +56,7 @@ namespace ExcelMvc.Rtd
         public object ConnectData(int TopicID, ref Array Strings, ref bool GetNewValues)
         {
             GetNewValues = true;
-            var args = Strings.Cast<object>().Select(x => $"{x}".Trim()).ToArray();
+            var args = Strings.Cast<object>().Select(x => $"{x}").ToArray();
             return Impl.Connect(TopicID, args);
         }
 
