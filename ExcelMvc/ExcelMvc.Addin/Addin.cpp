@@ -62,14 +62,14 @@ void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
 	if ((pxFree->xltype & xlbitDLLFree) == xlbitDLLFree)
 		return;
 
-	// XLOPER12 returned to Excel are shared thread memory, no free
-	// memory should be done here!
+	// XLOPER12 returned to Excel are ALL shared thread memory, no
+	// free memory should be done here!
 }
 
 void __stdcall FreeCallStatus(LPCALLSTATUS pxFree)
 {
 	if (pxFree->Result != NULL)
-		Excel12v(xlFree, NULL, 1, &pxFree->Result);
+		Excel12f(xlFree, NULL, 1, pxFree->Result);
 	free(pxFree);
 }
 
