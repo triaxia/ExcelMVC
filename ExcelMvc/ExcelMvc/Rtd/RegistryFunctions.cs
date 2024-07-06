@@ -102,8 +102,15 @@ namespace ExcelMvc.Rtd
     */
     public static class RegistryFunctions
     {
+        private static DateTime LastPurgeTime = DateTime.MinValue;
         public static (string progId, Guid clsId) Register()
         {
+            if ((DateTime.UtcNow - LastPurgeTime).TotalSeconds >=60)
+            {
+                LastPurgeTime = DateTime.UtcNow;
+                PurgeProgIds();
+            }
+
             var clsId = Guid.NewGuid();
             var guid = clsId.ToString("B").ToUpperInvariant();
             var progId = $"ExcelMvc.{clsId.ToString("N")}";

@@ -79,9 +79,10 @@ namespace ExcelMvc.Functions
 
         public void Dispose()
         {
-            if (xltype == (uint)XlTypes.xltypeStr && str != null)
+            var type = PeelOfType((XlTypes)xltype);
+            if (type == XlTypes.xltypeStr && str != null)
                 Marshal.FreeCoTaskMem((IntPtr)str);
-            if (xltype == (uint)XlTypes.xltypeMulti && array.lparray != null)
+            if (type == XlTypes.xltypeMulti && array.lparray != null)
                 Marshal.FreeCoTaskMem((IntPtr)array.lparray);
         }
 
@@ -258,7 +259,7 @@ namespace ExcelMvc.Functions
 
         public object ToObject()
         {
-            var type = (XlTypes)xltype & ~XlTypes.xlbitDLLFree & ~XlTypes.xlbitXLFree;
+            var type = PeelOfType((XlTypes)xltype);
             switch (type)
             {
                 case XlTypes.xltypeInt: return w;
@@ -295,7 +296,7 @@ namespace ExcelMvc.Functions
 
         public object[] ToObjectArray()
         {
-            var type = (XlTypes)xltype & ~XlTypes.xlbitDLLFree & ~XlTypes.xlbitXLFree;
+            var type = PeelOfType((XlTypes)xltype);
             switch (type)
             {
                 case XlTypes.xltypeInt: return new object[] { w };
@@ -332,7 +333,7 @@ namespace ExcelMvc.Functions
 
         public object[,] ToObjectMatrix()
         {
-            var type = (XlTypes)xltype & ~XlTypes.xlbitDLLFree & ~XlTypes.xlbitXLFree;
+            var type = PeelOfType((XlTypes)xltype);
             switch (type)
             {
                 case XlTypes.xltypeInt: return new object[,] { { w } };
@@ -365,6 +366,10 @@ namespace ExcelMvc.Functions
                     return new object[,] { { (ExcelError)err } };
             }
             return new object[,] { };
+        }
+        private static XlTypes PeelOfType(XlTypes type)
+        {
+            return (XlTypes)type & ~XlTypes.xlbitDLLFree & ~XlTypes.xlbitXLFree;
         }
     }
 }
