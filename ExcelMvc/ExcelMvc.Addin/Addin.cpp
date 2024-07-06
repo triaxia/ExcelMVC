@@ -35,6 +35,7 @@ Boston, MA 02110-1301 USA.
 #include <XLCALL.H>
 #include "framewrk.h"
 #include "ClrRuntimeHostFactory.h"
+#include "CallStatus.h"
 
 extern "C" { extern WCHAR ModuleFileName[]; }
 
@@ -42,8 +43,8 @@ extern "C" const GUID __declspec(selectany) DIID__Workbook =
 { 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
 
 extern void __stdcall RegisterFunctions(void* handle); 
-extern LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result); 
-extern LPXLOPER12 __stdcall RtdCall(void* handle); 
+extern LPCALLSTATUS __stdcall SetAsyncValue(LPXLOPER12 handle, LPXLOPER12 value);
+extern LPCALLSTATUS __stdcall CallRtd(void* args);
 
 extern void RegisterMvcFunctions();
 extern void UnregisterMvcFunctions();
@@ -52,16 +53,23 @@ extern void UnregisterUserFunctions(bool freeXll);
 
 typedef HRESULT(__stdcall* PFN_DllGetClassObject)(CLSID clsid, IID iid, LPVOID* ppv);
 typedef void(__stdcall* PFN_RegisterFunctions)(void* handle);
-typedef LPXLOPER12(__stdcall* PFN_AsyncReturn)(LPXLOPER12 handle, LPXLOPER12 result);
-typedef LPXLOPER12(__stdcall* PFN_RtdCall)(void* handle);
-typedef void(__stdcall* PFN_AutoFree)(LPXLOPER12 handle);
+typedef LPCALLSTATUS(__stdcall* PFN_SetAsyncValue)(LPXLOPER12 handle, LPXLOPER12 result);
+typedef LPCALLSTATUS(__stdcall* PFN_CallRtd)(void* args);
+typedef void(__stdcall* PFN_FreeCallStatus)(LPCALLSTATUS result);
 
 void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
 {
-	if ((pxFree->xltype & xlbitDLLFree) != xlbitDLLFree)
+	if ((pxFree->xltype & xlbitDLLFree) == xlbitDLLFree)
 		return;
-	pxFree->xltype = pxFree->xltype & (~xlbitDLLFree);
-	FreeXLOper12T(pxFree);
+
+	// XLOPER12 returned to Excel are shared thread memory, no free
+	// memory should be done here!
+}
+
+void __stdcall FreeCallStatus(LPCALLSTATUS pxFree)
+{
+	if (pxFree->Result != NULL)
+		Excel12v(xlFree, NULL, 1, &pxFree->Result);
 	free(pxFree);
 }
 
@@ -70,9 +78,9 @@ struct AddInHead
 	LPWSTR ModuleFileName;
 	PFN_DllGetClassObject pDllGetClassObject;
 	PFN_RegisterFunctions pRegisterFunctions;
-	PFN_AsyncReturn pAsyncReturn;
-	PFN_RtdCall pRtdCall;
-	PFN_AutoFree pAutoFree;
+	PFN_SetAsyncValue pSetAsyncValue;
+	PFN_CallRtd pCallRtd;
+	PFN_FreeCallStatus pFreeCallStatus;
 };
 
 AddInHead* pAddInHead = NULL;
@@ -91,9 +99,9 @@ AddInHead* CreateAddInHead()
 	pAddInHead->ModuleFileName = new WCHAR[MAX_PATH];
 	memcpy(pAddInHead->ModuleFileName, ModuleFileName, sizeof(WCHAR) * MAX_PATH);
 	pAddInHead->pRegisterFunctions = RegisterFunctions;
-	pAddInHead->pAsyncReturn = AsyncReturn;
-	pAddInHead->pRtdCall = RtdCall;
-	pAddInHead->pAutoFree = xlAutoFree12;
+	pAddInHead->pSetAsyncValue = SetAsyncValue;
+	pAddInHead->pCallRtd = CallRtd;
+	pAddInHead->pFreeCallStatus = FreeCallStatus;
 	return pAddInHead;
 }
 

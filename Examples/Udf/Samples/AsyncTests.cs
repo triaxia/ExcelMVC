@@ -32,7 +32,7 @@ namespace Samples
         private static void Add(double arg1, double arg2) 
         {
             var sum = arg1 + arg2;
-            FunctionHost.Instance.SetAsyncResult(Handle, sum);
+            FunctionHost.Instance.SetAsyncValue(Handle, sum);
         }
     }
 }

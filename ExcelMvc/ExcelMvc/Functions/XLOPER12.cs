@@ -37,6 +37,13 @@ using System.Runtime.InteropServices;
 namespace ExcelMvc.Functions
 {
     [StructLayout(LayoutKind.Sequential)]
+    unsafe public struct CallStatus
+    {
+        public XLOPER12* result;
+        public int status;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     unsafe public struct XLBigData
     {
         public IntPtr data;
@@ -104,10 +111,10 @@ namespace ExcelMvc.Functions
             };
             xltype = (uint)XlTypes.xltypeNil;
             err = 0;
-            Init(value, false);
+            Init(value, false, false);
         }
 
-        public void Init(object value, bool dispose)
+        public void Init(object value, bool dispose, bool dllFree)
         {
             if (dispose) Dispose();
             num = 0;
@@ -171,11 +178,11 @@ namespace ExcelMvc.Functions
             }
             else if (value is long ln)
             {
-                Init(ln.ToString(), true);
+                Init(ln.ToString(), true, dllFree);
             }
             else if (value is ulong uln)
             {
-                Init(uln.ToString(), true);
+                Init(uln.ToString(), true, dllFree);
             }
             else if (value is string sr)
             {
@@ -195,7 +202,7 @@ namespace ExcelMvc.Functions
             {
                 if (sa.Length == 0)
                 {
-                    Init("", true);
+                    Init("", true, dllFree);
                 }
                 else
                 {
@@ -207,7 +214,7 @@ namespace ExcelMvc.Functions
                     for (var col = col0; col <= col1; col++)
                     {
                         var ele = array.lparray + col - col0;
-                        ele->Init(sa[col], false);
+                        ele->Init(sa[col], false, dllFree);
                     }
                     xltype = (uint)XlTypes.xltypeMulti;
                 }
@@ -216,7 +223,7 @@ namespace ExcelMvc.Functions
             {
                 if (da.Length == 0)
                 {
-                    Init("", true);
+                    Init("", true, dllFree);
                 }
                 else
                 {
@@ -231,7 +238,7 @@ namespace ExcelMvc.Functions
                         for (var col = col0; col <= col1; col++)
                         {
                             var ele = array.lparray + (row - row0) * array.columns + col - col0;
-                            ele->Init(da[row, col], false);
+                            ele->Init(da[row, col], false, dllFree);
                         }
                     xltype = (uint)XlTypes.xltypeMulti;
                 }
@@ -255,6 +262,9 @@ namespace ExcelMvc.Functions
                 bigdata.cbCount = 0;
                 xltype = (uint)XlTypes.xltypeBigData;
             }
+
+            if (dllFree)
+                xltype = (uint) ((XlTypes)xltype | XlTypes.xlbitDLLFree); 
         }
 
         public object ToObject()

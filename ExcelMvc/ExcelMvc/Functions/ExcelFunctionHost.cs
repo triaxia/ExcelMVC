@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Range = Microsoft.Office.Interop.Excel.Range;
 
 namespace ExcelMvc.Functions
@@ -142,20 +143,29 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public void SetAsyncResult(IntPtr handle, object result)
+        public void SetAsyncValue(IntPtr handle, object value)
         {
             var xlhandle = XLOPER12.FromObject(handle);
-            var xlresult = XLOPER12.FromObject(result);
+            var xlvalue = XLOPER12.FromObject(value);
             try
             {
                 using (var p1 = new StructIntPtr<XLOPER12>(ref xlhandle))
-                using (var p2 = new StructIntPtr<XLOPER12>(ref xlresult))
-                    AsyncReturn(p1.Ptr, p2.Ptr);
+                using (var p2 = new StructIntPtr<XLOPER12>(ref xlvalue))
+                {
+                    unsafe
+                    {
+                        var ptr = AddIn.SetAsyncValue(p1.Ptr, p2.Ptr);
+                        var status = (CallStatus*)ptr.ToPointer();
+                        AddIn.FreeCallStatus(ptr);
+                        if (status->status != 0) 
+                            throw new Exception($"SetAsyncValue failed. (status = {status->status})");
+                    }
+                }
             }
             finally
             {
-                xlresult.Dispose();
                 xlhandle.Dispose();
+                xlvalue.Dispose();
             }
         }
 
@@ -266,13 +276,15 @@ namespace ExcelMvc.Functions
             IntPtr ptr = IntPtr.Zero;
             using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
             {
-                ptr = AddIn.RtdCall(pArgs.Ptr);
+                ptr = AddIn.CallRtd(pArgs.Ptr);
             }
             unsafe
             {
-                var result = (XLOPER12*)ptr.ToPointer();
-                var obj = result == null ? null : result->ToObject();
-                AddIn.AutoFree(ptr);
+                var status = (CallStatus*)ptr.ToPointer();
+                var obj = status->result == null ? null : status->result->ToObject();
+                AddIn.FreeCallStatus(ptr);
+                if (status->status != 0)
+                    throw new Exception($"CallRtd failed. (status = {status->status})");
                 return obj;
             }
         }
@@ -294,11 +306,6 @@ namespace ExcelMvc.Functions
             {
                 AddIn.RegisterFunctions(pFunction.Ptr);
             }
-        }
-
-        private static void AsyncReturn(IntPtr handle, IntPtr result)
-        {
-            AddIn.AutoFree(AddIn.AsyncReturn(handle, result));
         }
 
         private Range GetRange(RangeReference reference)

@@ -273,6 +273,7 @@
     <ClCompile Include="UserFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CallStatus.h" />
     <ClInclude Include="ClrRuntimeHost.h" />
     <ClInclude Include="ClrRuntimeHostCore.h" />
     <ClInclude Include="ClrRuntimeHostFactory.h" />

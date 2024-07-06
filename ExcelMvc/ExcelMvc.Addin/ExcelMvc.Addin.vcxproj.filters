@@ -63,8 +63,12 @@
       <Filter>Runtime</Filter>
     </ClInclude>
     <ClInclude Include="Export.h" />
+    <ClInclude Include="CallStatus.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AddIn.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="Export64.asm" />
   </ItemGroup>
 </Project>

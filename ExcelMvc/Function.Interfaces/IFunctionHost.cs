@@ -249,8 +249,8 @@ namespace Function.Interfaces
         /// Sets the asynchronous result.
         /// </summary>
         /// <param name="handle"></param>
-        /// <param name="result"></param>
-        void SetAsyncResult(IntPtr handle, object result);
+        /// <param name="value"></param>
+        void SetAsyncValue(IntPtr handle, object value);
 
         /// <summary>
         /// Occurs whenever messages are posted.

@@ -34,6 +34,7 @@ Boston, MA 02110-1301 USA.
 #include <XLCALL.H>
 #include "framewrk.h"
 #include "ClrRuntimeHost.h"
+#include "CallStatus.h"
 
 extern "C" { extern PFN ExportTable[]; }
 
@@ -266,15 +267,18 @@ void __stdcall RegisterFunctions(void* handle)
 	}
 }
 
-LPXLOPER12 __stdcall AsyncReturn(LPXLOPER12 handle, LPXLOPER12 result)
+LPCALLSTATUS __stdcall SetAsyncValue(LPXLOPER12 handle, LPXLOPER12 value)
 {
-	auto status = new XLOPER12();
-	Excel12(xlAsyncReturn, status, 2, handle, result);
-	status->xltype = status->xltype | xlbitDLLFree;
-	return status;
+	auto result = new XLOPER12();
+	auto code = Excel12f(xlAsyncReturn, result, 2, handle, value);
+
+	auto cr = new CallStatus();
+	cr->Result = result;
+	cr->status = code;
+	return cr;
 }
 
-LPXLOPER12 __stdcall RtdCall(void* handle)
+LPCALLSTATUS __stdcall CallRtd(void* handle)
 {
 	auto args = (FunctionArguments*)handle;
 	auto parameters = new LPXLOPER12[args->ArgumentCount];
@@ -284,10 +288,13 @@ LPXLOPER12 __stdcall RtdCall(void* handle)
 
 	auto result = new XLOPER12();
 	memset(result, 0, sizeof(XLOPER12));
-	Excel12v(xlfRtd, result, args->ArgumentCount, parameters);
-	result->xltype = result->xltype | xlbitDLLFree;
+	auto code = Excel12v(xlfRtd, result, args->ArgumentCount, parameters);
 
 	FreeAllTempMemory();
 	delete[] parameters;
-	return result;
+
+	auto cr = new CallStatus();
+	cr->Result = result;
+	cr->status = code;
+	return cr;
 }

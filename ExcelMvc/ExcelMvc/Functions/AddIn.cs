@@ -48,12 +48,12 @@ namespace ExcelMvc.Functions
 
         public delegate void RegisterFunctionsDelegate(IntPtr functions);
         public static RegisterFunctionsDelegate RegisterFunctions { get; private set; }
-        public delegate IntPtr AsyncReturnDelegate(IntPtr handle, IntPtr result);
-        public static AsyncReturnDelegate AsyncReturn { get; private set; }
-        public delegate IntPtr RtdCallDelegate(IntPtr args);
-        public static RtdCallDelegate RtdCall { get; private set; }
-        public delegate IntPtr AutoFreeDelegate(IntPtr args);
-        public static AutoFreeDelegate AutoFree { get; private set; }
+        public delegate IntPtr SetAsyncValueDelegate(IntPtr handle, IntPtr result);
+        public static SetAsyncValueDelegate SetAsyncValue { get; private set; }
+        public delegate IntPtr CallRtdDelegate(IntPtr args);
+        public static CallRtdDelegate CallRtd { get; private set; }
+        public delegate IntPtr FreeCallStatusDelegate(IntPtr args);
+        public static FreeCallStatusDelegate FreeCallStatus { get; private set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct AddInHead
@@ -61,9 +61,9 @@ namespace ExcelMvc.Functions
             public IntPtr ModuleFileName;
             public IntPtr pDllGetClassObject;
             public IntPtr pRegisterFunctions;
-            public IntPtr pAsyncResult;
-            public IntPtr pRtdCall;
-            public IntPtr pAutoFree;
+            public IntPtr pSetAsyncValue;
+            public IntPtr pCallRtd;
+            public IntPtr pFreeCallStatus;
         }
 
         public static readonly ConcurrentBag<GCHandle> NoGarbageCollectableHandles
@@ -79,9 +79,9 @@ namespace ExcelMvc.Functions
                 NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnDllGetClassObject));
                 pAddInHead->pDllGetClassObject = Marshal.GetFunctionPointerForDelegate(fnDllGetClassObject);
                 RegisterFunctions = Marshal.GetDelegateForFunctionPointer<RegisterFunctionsDelegate>(pAddInHead->pRegisterFunctions);
-                AsyncReturn = Marshal.GetDelegateForFunctionPointer<AsyncReturnDelegate>(pAddInHead->pAsyncResult);
-                RtdCall = Marshal.GetDelegateForFunctionPointer<RtdCallDelegate>(pAddInHead->pRtdCall);
-                AutoFree = Marshal.GetDelegateForFunctionPointer<AutoFreeDelegate>(pAddInHead->pAutoFree);
+                SetAsyncValue = Marshal.GetDelegateForFunctionPointer<SetAsyncValueDelegate>(pAddInHead->pSetAsyncValue);
+                CallRtd = Marshal.GetDelegateForFunctionPointer<CallRtdDelegate>(pAddInHead->pCallRtd);
+                FreeCallStatus = Marshal.GetDelegateForFunctionPointer<FreeCallStatusDelegate>(pAddInHead->pFreeCallStatus);
             }
         }
     }
