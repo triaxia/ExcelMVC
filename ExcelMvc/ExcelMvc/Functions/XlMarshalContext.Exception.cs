@@ -66,7 +66,7 @@ namespace ExcelMvc.Functions
         public IntPtr ObjectToIntPtrOnException(object value)
         {
             XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
-            p->Init(value, true, true);
+            p->Init(value, true);
             return ObjectValue;
         }
 
