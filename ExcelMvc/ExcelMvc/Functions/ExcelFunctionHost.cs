@@ -156,9 +156,10 @@ namespace ExcelMvc.Functions
                     {
                         var ptr = AddIn.SetAsyncValue(p1.Ptr, p2.Ptr);
                         var status = (CallStatus*)ptr.ToPointer();
+                        var code = status->status;
                         AddIn.FreeCallStatus(ptr);
-                        if (status->status != 0) 
-                            throw new Exception($"SetAsyncValue failed. (status = {status->status})");
+                        if (code != 0) 
+                            throw new Exception($"SetAsyncValue failed. (status = {code})");
                     }
                 }
             }
@@ -281,10 +282,11 @@ namespace ExcelMvc.Functions
             unsafe
             {
                 var status = (CallStatus*)ptr.ToPointer();
+                var code = status->status;
                 var obj = status->result == null ? null : status->result->ToObject();
                 AddIn.FreeCallStatus(ptr);
-                if (status->status != 0)
-                    throw new Exception($"CallRtd failed. (status = {status->status})");
+                if (code != 0)
+                    throw new Exception($"CallRtd failed. (status = {code})");
                 return obj;
             }
         }

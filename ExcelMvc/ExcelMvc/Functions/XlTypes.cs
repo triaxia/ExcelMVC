@@ -36,7 +36,7 @@ using System;
 namespace ExcelMvc.Functions
 {
     [Flags]
-    public enum XlTypes
+    public enum XlTypes : uint
     {
         xltypeNum = 0x0001,
         xltypeStr = 0x0002,

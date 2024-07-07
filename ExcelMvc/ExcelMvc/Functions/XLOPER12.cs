@@ -31,6 +31,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Runtime.InteropServices;
 
@@ -88,9 +89,16 @@ namespace ExcelMvc.Functions
         {
             var type = PeelOfType((XlTypes)xltype);
             if (type == XlTypes.xltypeStr && str != null)
+            {
+                str = null;
                 Marshal.FreeCoTaskMem((IntPtr)str);
+            }
             if (type == XlTypes.xltypeMulti && array.lparray != null)
+            {
+                array.lparray = null;
                 Marshal.FreeCoTaskMem((IntPtr)array.lparray);
+            }
+            xltype = (uint) XlTypes.xltypeNil;
         }
 
         public XLOPER12(object value)
