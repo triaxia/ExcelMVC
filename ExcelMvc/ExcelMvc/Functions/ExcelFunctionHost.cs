@@ -259,9 +259,12 @@ namespace ExcelMvc.Functions
         public object Rtd<TRtdServerImpl>(Func<IRtdServerImpl> implFactory, string server, params string[] args)
             where TRtdServerImpl : IRtdServerImpl
         {
-            using (var reg = new RtdRegistry(typeof(IRtdServerImpl), implFactory))
+            using (new SingleThreaded())
             {
-                return Rtd(reg.ProgId, server, args);
+                using (var reg = new RtdRegistry(typeof(IRtdServerImpl), implFactory))
+                {
+                    return Rtd(reg.ProgId, server, args);
+                }
             }
         }
 
