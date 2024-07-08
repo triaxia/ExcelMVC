@@ -89,13 +89,13 @@ namespace ExcelMvc.Functions
             var type = PeelOfType((XlTypes)xltype);
             if (type == XlTypes.xltypeStr && str != null)
             {
-                str = null;
                 Marshal.FreeCoTaskMem((IntPtr)str);
+                str = null;
             }
             if (type == XlTypes.xltypeMulti && array.lparray != null)
             {
-                array.lparray = null;
                 Marshal.FreeCoTaskMem((IntPtr)array.lparray);
+                array.lparray = null;
             }
             xltype = (uint) XlTypes.xltypeNil;
         }
