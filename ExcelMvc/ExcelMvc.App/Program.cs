@@ -6,6 +6,7 @@ namespace ExcelMvc.App
     {
         static void Main(string[] args)
         {
+            RunMarshalMemory();
         }
 
         public static void RunMarshalMemory()

@@ -94,6 +94,12 @@ namespace ExcelMvc.Functions
             }
             if (type == XlTypes.xltypeMulti && array.lparray != null)
             {
+                for (var row = 0; row < array.rows; row++)
+                    for (var col = 0; col < array.columns; col++)
+                    {
+                        var ele = array.lparray + row * array.columns + col;
+                        ele->Dispose();
+                    }
                 Marshal.FreeCoTaskMem((IntPtr)array.lparray);
                 array.lparray = null;
             }

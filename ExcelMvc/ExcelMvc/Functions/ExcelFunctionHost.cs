@@ -144,12 +144,12 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public void SetAsyncValue(IntPtr handle, object value)
         {
-            var xlhandle = XLOPER12.FromObject(handle);
-            var xlvalue = XLOPER12.FromObject(value);
+            var xlHandle = XLOPER12.FromObject(handle);
+            var xlValue = XLOPER12.FromObject(value);
             try
             {
-                using (var p1 = new StructIntPtr<XLOPER12>(ref xlhandle))
-                using (var p2 = new StructIntPtr<XLOPER12>(ref xlvalue))
+                using (var p1 = new StructIntPtr<XLOPER12>(ref xlHandle))
+                using (var p2 = new StructIntPtr<XLOPER12>(ref xlValue))
                 {
                     unsafe
                     {
@@ -164,8 +164,8 @@ namespace ExcelMvc.Functions
             }
             finally
             {
-                xlhandle.Dispose();
-                xlvalue.Dispose();
+                xlHandle.Dispose();
+                xlValue.Dispose();
             }
         }
 
