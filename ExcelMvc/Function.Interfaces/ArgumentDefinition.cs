@@ -12,19 +12,19 @@ namespace Function.Interfaces
         /// <summary>
         /// The name of the argument.
         /// </summary>
-        [MarshalAs(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.BStr)]
         public string Name;
 
         /// <summary>
         /// The description of the argument.
         /// </summary>
-        [MarshalAs(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.BStr)]
         public string Description;
 
         /// <summary>
         /// The type of the argument
         /// </summary>
-        [MarshalAs(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.BStr)]
         public string Type;
 
         /// <summary>

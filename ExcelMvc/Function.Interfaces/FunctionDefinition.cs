@@ -42,7 +42,7 @@ namespace Function.Interfaces
     public struct FunctionDefinition
     {
         public const ushort MaxArguments = 64;
-        [MarshalAs(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.BStr)]
         public string ReturnType;
         public IntPtr Callback;
         [MarshalAs(UnmanagedType.U1)]
@@ -57,13 +57,13 @@ namespace Function.Interfaces
         public bool IsThreadSafe;
         [MarshalAs(UnmanagedType.U1)]
         public bool IsClusterSafe;
-        [MarshalAs(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.BStr)]
         public string Category;
-        [MarshalAs(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.BStr)]
         public string Name;
-        [MarshalAs(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.BStr)]
         public string Description;
-        [MarshalAs(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.BStr)]
         public string HelpTopic;
         [MarshalAs(UnmanagedType.U1)]
         public byte ArgumentCount;
