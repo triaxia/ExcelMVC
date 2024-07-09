@@ -6,13 +6,13 @@ namespace ExcelMvc.App
     {
         static void Main(string[] args)
         {
-            RunMarshalMemory();
+            RunFunctionArgsMemory();
         }
 
         public static void RunMarshalMemory()
         {
             var context = new XlMarshalContext();
-            for (int i = 0; i < 10000000; i++)
+            for (int i = 0; i < 100000000; i++)
             {
                 var arguments = new string[] { "ExcelMvc.Test", $"arg-{i}", $"arg-{i}{i}" };
                 var text = string.Join(Environment.NewLine, arguments);
