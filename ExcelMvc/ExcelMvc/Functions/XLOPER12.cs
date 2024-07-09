@@ -203,7 +203,6 @@ namespace ExcelMvc.Functions
                 str[0] = (char)sr.Length;
                 for (var idx = 1; idx <= sr.Length; idx++)
                     str[idx] = sr[idx - 1];
-                str[sr.Length + 1] = (char)0;
                 xltype = (uint)XlTypes.xltypeStr;
             }
             else if (value is DateTime dt)
