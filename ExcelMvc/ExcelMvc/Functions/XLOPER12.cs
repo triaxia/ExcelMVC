@@ -193,9 +193,10 @@ namespace ExcelMvc.Functions
             }
             else if (value is string sr)
             {
-                str = (char*)Marshal.AllocCoTaskMem((sr.Length + 1) * sizeof(char));
-                str[0] = (char)sr.Length;
-                for (var idx = 1; idx <= sr.Length; idx++)
+                var len = Math.Min(sr.Length, 32767);
+                str = (char*)Marshal.AllocCoTaskMem((len + 1) * sizeof(char));
+                str[0] = (char)len;
+                for (var idx = 1; idx <= len; idx++)
                     str[idx] = sr[idx - 1];
                 xltype = (uint)XlTypes.xltypeStr;
             }
