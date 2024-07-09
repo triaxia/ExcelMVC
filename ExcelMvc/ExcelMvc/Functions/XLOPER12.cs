@@ -133,12 +133,6 @@ namespace ExcelMvc.Functions
             num = 0;
             w = 0;
             str = null;
-            array = new XLArray
-            {
-                rows = 0,
-                columns = 0,
-                lparray = null
-            };
             xltype = (uint)XlTypes.xltypeNil;
             err = 0;
             if (value == null)
