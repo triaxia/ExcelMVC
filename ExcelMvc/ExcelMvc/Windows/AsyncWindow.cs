@@ -46,7 +46,6 @@ namespace ExcelMvc.Windows
         private static readonly uint AsyncActionMessage;
         private static readonly uint AsyncMacroMessage;
         private static readonly uint WindowsTimerMessage;
-        private static readonly uint WindowsDestroyMessage = 0x0002;
         private static int TimerId;
 
         static AsyncWindow()
@@ -62,6 +61,8 @@ namespace ExcelMvc.Windows
         /// </summary>
         public AsyncWindow()
         {
+            var cp = new CreateParams { Parent = new IntPtr(App.Instance.Underlying.Application.Hwnd) };
+            CreateHandle(cp);
         }
 
         /// <summary>
@@ -110,11 +111,11 @@ namespace ExcelMvc.Windows
             if (pumpMilliseconds > 0)
             {
                 TimerId = TimerId == int.MaxValue ? 0 : TimerId + 1;
-                DllImports.SetTimer(EnsureHandle().ToInt32(), TimerId, pumpMilliseconds, IntPtr.Zero);
+                DllImports.SetTimer(Handle, TimerId, pumpMilliseconds, IntPtr.Zero);
             }
             else
             {
-                DllImports.PostMessage(EnsureHandle(), (int)message, 0, 0);
+                DllImports.PostMessage(Handle, (int)message, 0, 0);
             }
         }
 
@@ -140,23 +141,7 @@ namespace ExcelMvc.Windows
                 PostAsyncMacroMessage();
                 return;
             }
-            if (m.Msg == WindowsDestroyMessage)
-            {
-                // see comments below
-            }
             base.WndProc(ref m);
-        }
-
-        private IntPtr EnsureHandle()
-        {
-            // for some reasons, the window sometimes may be destroyed... so we ensure it is
-            // created.
-            if (Handle == IntPtr.Zero)
-            {
-                var cp = new CreateParams { Parent = new IntPtr(App.Instance.Underlying.Application.Hwnd) };
-                CreateHandle(cp);
-            }
-            return Handle;
         }
     }
 }

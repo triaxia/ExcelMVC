@@ -25,7 +25,7 @@ namespace ExcelMvc.Windows
         internal static extern uint RegisterWindowMessage(string lpProcName);
 
         [DllImport("user32")]
-        internal static extern int SetTimer(int hwnd, int nIDEvent, int uElapse, IntPtr lpTimerFunc);
+        internal static extern int SetTimer(IntPtr hwnd, int nIDEvent, int uElapse, IntPtr lpTimerFunc);
 
         [DllImport("user32")]
         internal static extern int KillTimer(IntPtr hwnd, int nIDEvent);
