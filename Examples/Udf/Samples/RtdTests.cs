@@ -9,9 +9,9 @@ namespace Samples
             FunctionHost.Instance.RtdThrottleIntervalMilliseconds = 1000;
         }
         [Function(Name = "uTimer")]
-        public static object uTimer(string name)
+        public static double uTimer(string name)
         {
-            return FunctionHost.Instance.Rtd<TimerServer>(() => new TimerServer(), "", name);
+            return (double) FunctionHost.Instance.Rtd<TimerServer>(() => new TimerServer(), "", name);
         }
     }
 }

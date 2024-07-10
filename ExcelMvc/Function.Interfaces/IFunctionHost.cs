@@ -30,7 +30,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
-using ExcelMvc.Functions;
 using System;
 using System.IO;
 using System.Linq;

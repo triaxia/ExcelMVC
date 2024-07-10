@@ -35,7 +35,7 @@ namespace Samples
         public object Connect(int topicId, string[] args)
         {
             FunctionHost.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} connected"));
-            Topics[topicId] = new RtdTopic(args, DateTime.Now);
+            Topics[topicId] = new RtdTopic(args, DateTime.Now.ToOADate());
             return Format(Topics[topicId]);
         }
 
@@ -66,6 +66,6 @@ namespace Samples
             Updated?.Invoke(this, new RtdServerUpdatedEventArgs(this, Topics.Values));
         }
 
-        private static string Format(RtdTopic topic)  => $"{topic}";
+        private static object Format(RtdTopic topic) => topic.Value;// $"{topic}";
     }
 }

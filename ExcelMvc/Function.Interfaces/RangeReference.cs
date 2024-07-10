@@ -1,4 +1,4 @@
-﻿namespace ExcelMvc.Functions
+﻿namespace Function.Interfaces
 {
     /// <summary>
     /// Represents a range on the host.
