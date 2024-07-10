@@ -69,7 +69,10 @@ void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
 void __stdcall FreeCallStatus(LPCALLSTATUS pxFree)
 {
 	if (pxFree->Result != NULL)
+	{
 		Excel12f(xlFree, NULL, 1, pxFree->Result);
+		delete pxFree->Result;
+	}
 	free(pxFree);
 }
 

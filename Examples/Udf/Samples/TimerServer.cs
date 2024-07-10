@@ -66,6 +66,6 @@ namespace Samples
             Updated?.Invoke(this, new RtdServerUpdatedEventArgs(this, Topics.Values));
         }
 
-        private static object Format(RtdTopic topic) => topic.Value;// $"{topic}";
+        private static object Format(RtdTopic topic) => $"{topic}";
     }
 }

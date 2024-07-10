@@ -1,5 +1,4 @@
-﻿using ExcelMvc.Functions;
-using Function.Interfaces;
+﻿using Function.Interfaces;
 using System;
 
 namespace Samples
