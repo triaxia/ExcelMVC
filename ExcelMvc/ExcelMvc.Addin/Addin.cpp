@@ -36,6 +36,7 @@ Boston, MA 02110-1301 USA.
 #include "framewrk.h"
 #include "ClrRuntimeHostFactory.h"
 #include "CallStatus.h"
+#include <new>
 
 extern "C" { extern WCHAR ModuleFileName[]; }
 
