@@ -38,9 +38,9 @@ namespace ExcelMvc.Functions
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct FunctionArgument
     {
-        [MarshalAs(UnmanagedType.BStr)]
+        [MarshalAs(UnmanagedType.LPWStr)]
         public string Name;
-        [MarshalAs(UnmanagedType.BStr)]
+        [MarshalAs(UnmanagedType.LPWStr)]
         public string Value;
 
         public FunctionArgument(string name, string value)

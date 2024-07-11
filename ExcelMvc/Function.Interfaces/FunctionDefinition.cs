@@ -57,13 +57,13 @@ namespace Function.Interfaces
         public bool IsThreadSafe;
         [MarshalAs(UnmanagedType.U1)]
         public bool IsClusterSafe;
-        [MarshalAs(UnmanagedType.BStr)]
+        [MarshalAs(UnmanagedType.LPWStr)]
         public string Category;
-        [MarshalAs(UnmanagedType.BStr)]
+        [MarshalAs(UnmanagedType.LPWStr)]
         public string Name;
-        [MarshalAs(UnmanagedType.BStr)]
+        [MarshalAs(UnmanagedType.LPWStr)]
         public string Description;
-        [MarshalAs(UnmanagedType.BStr)]
+        [MarshalAs(UnmanagedType.LPWStr)]
         public string HelpTopic;
         [MarshalAs(UnmanagedType.U1)]
         public byte ArgumentCount;
