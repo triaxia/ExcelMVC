@@ -73,7 +73,7 @@ void __stdcall FreeCallStatus(LPCALLSTATUS pxFree)
 		Excel12f(xlFree, NULL, 1, pxFree->Result);
 		delete pxFree->Result;
 	}
-	free(pxFree);
+	delete pxFree;
 }
 
 struct AddInHead
