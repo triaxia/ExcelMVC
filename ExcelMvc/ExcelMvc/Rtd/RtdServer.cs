@@ -33,7 +33,6 @@ Boston, MA 02110-1301 USA.
 using System;
 using System.IO;
 using System.Linq;
-using ExcelMvc.Functions;
 using Function.Interfaces;
 using Microsoft.Office.Interop.Excel;
 
@@ -48,58 +47,40 @@ namespace ExcelMvc.Rtd
 
         public int ServerStart(IRTDUpdateEvent callbackObject)
         {
-            using (new SingleThreaded())
-            {
-                CallbackObject = callbackObject;
-                Impl.Updated -= OnUpdated;
-                Impl.Updated += OnUpdated;
-                return Impl.Start();
-            }
+            CallbackObject = callbackObject;
+            Impl.Updated -= OnUpdated;
+            Impl.Updated += OnUpdated;
+            return Impl.Start();
         }
 
         public object ConnectData(int TopicID, ref Array Strings, ref bool GetNewValues)
         {
-            using (new SingleThreaded())
-            {
-                GetNewValues = true;
-                var args = Strings.Cast<object>().Select(x => $"{x}").ToArray();
-                return Impl.Connect(TopicID, args);
-            }
+            GetNewValues = true;
+            var args = Strings.Cast<object>().Select(x => $"{x}").ToArray();
+            return Impl.Connect(TopicID, args);
         }
 
         public Array RefreshData(ref int TopicCount)
         {
-            using (new SingleThreaded())
-            {
-                var values = Impl.GetTopicValues();
-                TopicCount = values.GetLength(1);
-                return values;
-            }
+            var values = Impl.GetTopicValues();
+            TopicCount = values.GetLength(1);
+            return values;
         }
 
         public void DisconnectData(int TopicID)
         {
-            using (new SingleThreaded())
-            {
-                Impl.Disconnect(TopicID);
-            }
+            Impl.Disconnect(TopicID);
         }
 
         public int Heartbeat()
         {
-            using (new SingleThreaded())
-            {
-                return Impl.Heartbeat();
-            }
+            return Impl.Heartbeat();
         }
 
         public void ServerTerminate()
         {
-            using (new SingleThreaded())
-            {
-                Impl.Stop();
-                RtdRegistry.OnTerminated(this);
-            }
+            Impl.Stop();
+            RtdRegistry.OnTerminated(this);
         }
 
         private void OnUpdated(object sender, RtdServerUpdatedEventArgs args)
@@ -117,10 +98,7 @@ namespace ExcelMvc.Rtd
             {
                 try
                 {
-                    using (new SingleThreaded())
-                    {
-                        CallbackObject.UpdateNotify();
-                    }
+                    CallbackObject.UpdateNotify();
                 }
                 catch (Exception ex)
                 {

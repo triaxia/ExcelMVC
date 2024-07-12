@@ -52,17 +52,20 @@ namespace ExcelMvc.Rtd
 
         public RtdRegistry(Type type, Func<IRtdServerImpl> factory)
         {
-            var key = type.FullName;
-            var pair = Servers.GetOrAdd(key, _ =>
+            lock (Servers)
             {
-                Registered = true;
-                var (progId, guid) = RegistryFunctions.Register();
-                var impl = factory?.Invoke() ?? (IRtdServerImpl)Activator.CreateInstance(type);
-                var server = new RtdServer(impl);
-                Factories[guid] = new RtdComClassFactory(server);
-                return (server, progId);
-            });
-            ProgId = pair.progId;
+                var key = type.FullName;
+                var pair = Servers.GetOrAdd(key, _ =>
+                {
+                    Registered = true;
+                    var (progId, guid) = RegistryFunctions.Register();
+                    var impl = factory?.Invoke() ?? (IRtdServerImpl)Activator.CreateInstance(type);
+                    var server = new RtdServer(impl);
+                    Factories[guid] = new RtdComClassFactory(server);
+                    return (server, progId);
+                });
+                ProgId = pair.progId;
+            }
         }
 
         public void Dispose()
@@ -73,15 +76,21 @@ namespace ExcelMvc.Rtd
 
         public static RtdComClassFactory FindFactory(Guid guid)
         {
-            return Factories.ToArray().SingleOrDefault(x => x.Key == guid).Value;
+            lock (Servers)
+            {
+                return Factories.ToArray().SingleOrDefault(x => x.Key == guid).Value;
+            }
         }
 
         public static void OnTerminated(RtdServer server)
         {
-            var key = Servers.ToArray().SingleOrDefault(x => x.Value.server == server).Key;
-            Servers.TryRemove(key, out var _);
-            var guid = Factories.ToArray().SingleOrDefault(x => x.Value.RtdServer == server).Key;
-            Factories.TryRemove(guid, out var _);
+            lock (Servers)
+            {
+                var key = Servers.ToArray().SingleOrDefault(x => x.Value.server == server).Key;
+                Servers.TryRemove(key, out var _);
+                var guid = Factories.ToArray().SingleOrDefault(x => x.Value.RtdServer == server).Key;
+                Factories.TryRemove(guid, out var _);
+            }
         }
     }
 }
