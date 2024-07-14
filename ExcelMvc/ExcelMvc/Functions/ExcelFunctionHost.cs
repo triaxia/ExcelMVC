@@ -111,24 +111,23 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
 
-        public static Dictionary<object, string> Mappings = new Dictionary<object, string>
-            {
-                { ExcelError.ExcelErrorNull,"#NULL!" },
-                { ExcelError.ExcelErrorDiv0,"#DIV0!" },
-                { ExcelError.ExcelErrorValue,"#VALUE!" },
-                { ExcelError.ExcelErrorRef,"#REF!" },
-                { ExcelError.ExcelErrorName,"#NAME?" },
-                { ExcelError.ExcelErrorNum,"#NUM!" },
-                { ExcelError.ExcelErrorNA,"#N/A" },
-                { ExcelError.ExcelErrorGettingData,"#Data!" },
-                { ExcelMissing.Value, $"{ExcelMissing.Value}" },
-                { ExcelEmpty.Value, $"{ExcelEmpty.Value}" }
-            };
+        public IDictionary<object, string> ErrorMappings { get; }
+            = new Dictionary<object, string>
+        {
+            { ExcelError.ExcelErrorNull,"#NULL!" },
+            { ExcelError.ExcelErrorDiv0,"#DIV0!" },
+            { ExcelError.ExcelErrorValue,"#VALUE!" },
+            { ExcelError.ExcelErrorRef,"#REF!" },
+            { ExcelError.ExcelErrorName,"#NAME?" },
+            { ExcelError.ExcelErrorNum,"#NUM!" },
+            { ExcelError.ExcelErrorNA,"#N/A" },
+            { ExcelError.ExcelErrorGettingData,"#Data!" }
+        };
 
         /// <inheritdoc/>
         public string ErrorToString(object value)
         {
-            return Mappings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
+            return ErrorMappings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
         }
 
         /// <inheritdoc/>

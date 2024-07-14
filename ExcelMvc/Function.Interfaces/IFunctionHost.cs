@@ -31,6 +31,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -181,6 +182,11 @@ namespace Function.Interfaces
         /// Gets the object that represents a data error.
         /// </summary>
         object ErrorData { get; }
+
+        /// <summary>
+        /// <see cref="ErrorValue"/>, <see cref="ErrorNull"/>... etc to their string representations./>
+        /// </summary>
+        IDictionary<object, string> ErrorMappings { get; }
 
         /// <summary>
         /// Converts error objects to their string representations.
