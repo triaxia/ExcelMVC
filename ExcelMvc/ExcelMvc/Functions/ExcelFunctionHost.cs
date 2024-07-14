@@ -111,6 +111,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
 
+        /// <inheritdoc/>
         public IDictionary<object, string> ErrorMappings { get; }
             = new Dictionary<object, string>
         {
@@ -185,7 +186,7 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
+        public RangeReference GetActiveSheetReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
             var range = GetRange(App.ActiveWorkbook.Name
                 , App.ActiveSheet.Name

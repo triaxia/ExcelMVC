@@ -15,7 +15,7 @@ namespace Samples
 
         public int Start()
         {
-            Timer = new Timer(TimerElapsed, null, 10000, 10000);
+            Timer = new Timer(TimerElapsed, null, 1000, 1000);
             FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Started"));
             return 1;
         }

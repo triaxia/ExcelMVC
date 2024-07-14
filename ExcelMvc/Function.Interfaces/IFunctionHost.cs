@@ -348,14 +348,14 @@ namespace Function.Interfaces
             , int rowFirst, int rowLast, int columnFirst, int columnLast);
 
         /// <summary>
-        /// Gets a reference on the active page.
+        /// Gets a reference on the active sheet.
         /// </summary>
         /// <param name="rowFirst"></param>
         /// <param name="rowLast"></param>
         /// <param name="columnFirst"></param>
         /// <param name="columnLast"></param>
         /// <returns></returns>
-        RangeReference GetActivePageReference(int rowFirst, int rowLast, int columnFirst, int columnLast);
+        RangeReference GetActiveSheetReference(int rowFirst, int rowLast, int columnFirst, int columnLast);
 
         /// <summary>
         /// Gets the value of the specified range.
