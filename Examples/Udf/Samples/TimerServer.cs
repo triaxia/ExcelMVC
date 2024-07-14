@@ -15,7 +15,7 @@ namespace Samples
 
         public int Start()
         {
-            Timer = new Timer(TimerElapsed, null, 1000, 1000);
+            Timer = new Timer(TimerElapsed, null, 10000, 10000);
             FunctionHost.Instance.RaisePosted(this, new MessageEventArgs("Started"));
             return 1;
         }
@@ -35,7 +35,7 @@ namespace Samples
         public object Connect(int topicId, string[] args)
         {
             FunctionHost.Instance.RaisePosted(this, new MessageEventArgs($"{topicId} connected"));
-            Topics[topicId] = new RtdTopic(args, DateTime.Now.ToOADate());
+            Topics[topicId] = new RtdTopic(args, DateTime.Now);
             return Format(Topics[topicId]);
         }
 
