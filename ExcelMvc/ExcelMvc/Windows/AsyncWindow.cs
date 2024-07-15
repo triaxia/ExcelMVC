@@ -35,6 +35,9 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Windows
 {
     using System;
+    using System.Diagnostics;
+    using System.Runtime.InteropServices;
+    using System.Threading;
     using System.Windows.Forms;
     using Views;
 
@@ -115,7 +118,15 @@ namespace ExcelMvc.Windows
             }
             else
             {
-                DllImports.PostMessage(Handle, (int)message, 0, 0);
+                var watch = Stopwatch.StartNew();
+                while (watch.Elapsed.TotalSeconds < 2)
+                {
+                    var status = DllImports.PostMessage(Handle, (int)message, 0, 0);
+                    if (status != 0) break;
+                    var ex = new Exception($"AsyncWindow.PostAsyncMessage failed {Marshal.GetLastWin32Error()}");
+                    Function.Interfaces.FunctionHost.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(ex));
+                    Thread.Sleep(100);
+                }
             }
         }
 

@@ -39,6 +39,7 @@ namespace ExcelMvc.Runtime
     using ExcelMvc.Diagnostics;
     using ExcelMvc.Windows;
     using Extensions;
+    using Function.Interfaces;
     using Views;
 
     /// <summary>
@@ -131,9 +132,17 @@ namespace ExcelMvc.Runtime
         {
             void Do(ConcurrentQueue<Item> queue)
             {
-                //while (queue.TryDequeue(out var item))
-                if (queue.TryDequeue(out var item))
-                    item.Action(item.State);
+                while (queue.TryDequeue(out var item))
+                {
+                    try
+                    {
+                        item.Action(item.State);
+                    }
+                    catch(Exception ex)
+                    {
+                        FunctionHost.Instance.RaiseFailed(item, new System.IO.ErrorEventArgs(ex));
+                    }
+                }
             }
             if (executeMacro)
                 Do(Macros);
