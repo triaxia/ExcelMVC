@@ -33,6 +33,7 @@ Boston, MA 02110-1301 USA.
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Function.Interfaces;
 using Microsoft.Office.Interop.Excel;
 
@@ -93,19 +94,28 @@ namespace ExcelMvc.Rtd
             {
                 FunctionHost.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
             }
+            RunUpdateNotify();
+        }
+
+        private int UpdateOnce = 0;
+        private void RunUpdateNotify()
+        {
+            if (Interlocked.CompareExchange(ref UpdateOnce, 1, 0) == 1)
+                return;
 
             FunctionHost.Instance.Post(state =>
             {
                 try
                 {
-                    CallbackObject.UpdateNotify();
+                    Interlocked.Exchange(ref UpdateOnce, 0);
+                    ((IRTDUpdateEvent) state).UpdateNotify();
                 }
                 catch (Exception ex)
                 {
                     FunctionHost.Instance.RaiseFailed(this, new ErrorEventArgs(ex));
-                    OnUpdated(sender, args);
-                }
-            }, Impl);
+                    RunUpdateNotify();
+                };
+            }, CallbackObject);
         }
     }
 }

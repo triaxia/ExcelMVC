@@ -180,6 +180,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
+            if (App == null) return null;
             var range = GetRange(App.ActiveWorkbook.Name, pageName
                 , rowFirst, rowLast, columnFirst, columnLast);
             return RangeToReference(range);
@@ -188,6 +189,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetActiveSheetReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
+            if (App == null) return null;
             var range = GetRange(App.ActiveWorkbook.Name
                 , App.ActiveSheet.Name
                 , rowFirst, rowLast, columnFirst, columnLast);
@@ -311,6 +313,7 @@ namespace ExcelMvc.Functions
 
         private Range GetRange(RangeReference reference)
         {
+            if (App == null) return null;
             var sheet = App.Workbooks[reference.BookName]
                 .Worksheets[reference.PageName] as Worksheet;
             var start = sheet.Cells[reference.RowFirst, reference.ColumnFirst];
@@ -321,6 +324,7 @@ namespace ExcelMvc.Functions
         private Range GetRange(string bookName, string sheetName
             , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
+            if (App == null) return null;
             var sheet = App.Workbooks[bookName]
                 .Worksheets[sheetName] as Worksheet;
             var start = sheet.Cells[rowFirst, columnFirst];
@@ -357,7 +361,7 @@ namespace ExcelMvc.Functions
         {
             get
             {
-                var window = App.ActiveWorkbook.VBProject.VBE.ActiveWindow;
+                var window = App?.ActiveWorkbook.VBProject.VBE.ActiveWindow;
                 return window != null && window.WindowState != Microsoft.Vbe.Interop.vbext_WindowState.vbext_ws_Minimize;
             }
         }
