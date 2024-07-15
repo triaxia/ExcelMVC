@@ -146,7 +146,7 @@ namespace Samples
         [Function(Name = "uActiveSheetRangeValue")]
         public static object ActiveSheetRangeValue(int row, int column, int rowCount, int columnCount, object value)
         {
-            var reference = FunctionHost.Instance.GetActivePageReference(row, column, rowCount, columnCount);
+            var reference = FunctionHost.Instance.GetActiveSheetReference(row, column, rowCount, columnCount);
             FunctionHost.Instance.SetRangeValue(reference, value, true);
             return FunctionHost.Instance.GetRangeValue(reference);
         }
