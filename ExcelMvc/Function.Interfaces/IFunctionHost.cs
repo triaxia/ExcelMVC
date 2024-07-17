@@ -404,6 +404,11 @@ namespace Function.Interfaces
         /// Gets the flag indicating if the host IDE is open.
         /// </summary>
         bool IsIdeOpen { get; }
+
+        /// <summary>
+        /// Gets the full file name of the moduel that runs the host.
+        /// </summary>
+        string GetModuleFileName { get; }
     }
 
     /// <summary>

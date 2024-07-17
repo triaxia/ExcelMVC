@@ -365,5 +365,8 @@ namespace ExcelMvc.Functions
                 return window != null && window.WindowState != Microsoft.Vbe.Interop.vbext_WindowState.vbext_ws_Minimize;
             }
         }
+
+        /// <inheritdoc/>
+        public string GetModuleFileName => AddIn.ModuleFileName;
     }
 }
