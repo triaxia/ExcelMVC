@@ -406,9 +406,10 @@ namespace Function.Interfaces
         bool IsIdeOpen { get; }
 
         /// <summary>
-        /// Gets the full file name of the moduel that runs the host.
+        /// Gets the full file name of the moduel that runs the host. This is the AddIn
+        /// name when the host is Excel.
         /// </summary>
-        string GetModuleFileName { get; }
+        string ModuleFileName { get; }
     }
 
     /// <summary>

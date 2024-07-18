@@ -14,10 +14,9 @@ Simply add ExcelMvc.Net NuGet to your solution to get your ExcelMvc development 
 
 More documentation can be found within the sample solutions.
 
+UDF samples:
+- **https://github.com/triaxia/ExcelMVC/tree/master/Examples/Udf**
+
 MVC samples:
 - **https://github.com/triaxia/ExcelMVC/tree/master/Examples/Forbes**
 - **https://github.com/triaxia/ExcelMVC/tree/master/Examples/Trading**
-
-
-UDF samples:
-- **https://github.com/triaxia/ExcelMVC/tree/master/Examples/Udf**

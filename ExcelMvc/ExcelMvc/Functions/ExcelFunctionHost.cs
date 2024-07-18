@@ -367,6 +367,6 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public string GetModuleFileName => AddIn.ModuleFileName;
+        public string ModuleFileName => AddIn.ModuleFileName;
     }
 }
