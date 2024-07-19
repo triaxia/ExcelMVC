@@ -7,8 +7,16 @@
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).xll">
 		</Copy>
+		<Copy Condition ="Exists('$(TargetDir)$(ExcelMvcAddInName).dll.config')"
+			  SourceFiles="$(TargetDir)$(ExcelMvcAddInName).dll.config"
+			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).xll.config">
+		</Copy>
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x64.xll"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName)64.xll">
+		</Copy>
+		<Copy Condition ="Exists('$(TargetDir)$(ExcelMvcAddInName).dll.config')"
+			  SourceFiles="$(TargetDir)$(ExcelMvcAddInName).dll.config"
+			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName)64.xll.config">
 		</Copy>
 		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true' And !Exists('$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json')"
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
