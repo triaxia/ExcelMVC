@@ -11,9 +11,9 @@
         public string BookName { get; }
 
         /// <summary>
-        /// The page name.
+        /// The sheet name.
         /// </summary>
-        public string PageName { get; }
+        public string SheetName { get; }
 
         /// <summary>
         /// The first row index.
@@ -44,17 +44,17 @@
         /// Initialises a new instance of <see cref="RangeReference"/>
         /// </summary>
         /// <param name="bookName"></param>
-        /// <param name="pageName"></param>
+        /// <param name="sheetName"></param>
         /// <param name="rowFirst"></param>
         /// <param name="rowLast"></param>
         /// <param name="columnFirst"></param>
         /// <param name="columnLast"></param>
         /// <param name="address"></param>
-        public RangeReference(string bookName, string pageName, int rowFirst, int rowLast
+        public RangeReference(string bookName, string sheetName, int rowFirst, int rowLast
             , int columnFirst, int columnLast, string address)
         {
             BookName = bookName;
-            PageName = pageName;
+            SheetName = sheetName;
             RowFirst = rowFirst;
             RowLast = rowLast;
             ColumnFirst = columnFirst;
@@ -70,8 +70,8 @@
         {
             var bn = string.IsNullOrWhiteSpace(BookName)
                 ? string.Empty : $"[{BookName}]";
-            var sn = string.IsNullOrWhiteSpace(PageName)
-                ? string.Empty : $"{PageName}!";
+            var sn = string.IsNullOrWhiteSpace(SheetName)
+                ? string.Empty : $"{SheetName}!";
             return $"{bn}{sn}{Address}";
         }
     }

@@ -62,6 +62,7 @@ namespace ExcelMvc.Runtime
         /// <returns>error string, null if success</returns>
         public static string Attach(IntPtr head)
         {
+            Environment.SetEnvironmentVariable("ExcelHostName", "ExcelMvc");
             if (head != IntPtr.Zero) AddIn.OnAttach(head);
             var status = ActionExtensions.Try(() => App.Instance.Attach(null));
             return TestStatus(status);

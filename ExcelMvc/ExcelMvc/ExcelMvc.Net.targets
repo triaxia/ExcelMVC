@@ -7,6 +7,10 @@
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).xll">
 		</Copy>
+		<Copy Condition ="Exists('$(TargetDir)$(AssemblyName).dll.config')"
+			  SourceFiles="$(TargetDir)$(AssemblyName).dll.config"
+			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).xll.config">
+		</Copy>
 		<Copy Condition ="Exists('$(TargetDir)$(ExcelMvcAddInName).dll.config')"
 			  SourceFiles="$(TargetDir)$(ExcelMvcAddInName).dll.config"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).xll.config">
@@ -14,17 +18,26 @@
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x64.xll"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName)64.xll">
 		</Copy>
+		<Copy Condition ="Exists('$(TargetDir)$(AssemblyName).dll.config')"
+			  SourceFiles="$(TargetDir)$(AssemblyName).dll.config"
+			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName)64.xll.config">
+		</Copy>
 		<Copy Condition ="Exists('$(TargetDir)$(ExcelMvcAddInName).dll.config')"
 			  SourceFiles="$(TargetDir)$(ExcelMvcAddInName).dll.config"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName)64.xll.config">
+		</Copy>
+		<Copy Condition ="Exists('$(TargetDir)$(AssemblyName).runtimeconfig.json')"
+			  SourceFiles="$(TargetDir)$(AssemblyName).runtimeconfig.json"
+			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json">
+		</Copy>
+		<Copy Condition ="Exists('$(TargetDir)$(AssemblyName).reflection.txt')"
+			  SourceFiles="$(TargetDir)$(AssemblyName).reflection.txt"
+			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).reflection.txt">
 		</Copy>
 		<Copy Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'true' And !Exists('$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json')"
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
 		      DestinationFiles="$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json">
 		</Copy>
-		<Delete Condition="'$(TargetFramework.EndsWith(`-windows`))' == 'false'"
-				Files="$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json">
-		</Delete>
 		<Exec Condition="!Exists('$(TargetDir)$(ExcelMvcAddInName).reflection.txt')"
 			  Command="powershell -Execution Unrestricted -File &quot;$(MSBuildThisFileDirectory)ExcelMvc.reflection.ps1&quot; -TargetPath  &quot;$(TargetDir)\&quot; -TargetName &quot;$(ExcelMvcAddInName).reflection.txt&quot;" />
 	</Target>

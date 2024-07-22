@@ -315,7 +315,7 @@ namespace ExcelMvc.Functions
         {
             if (App == null) return null;
             var sheet = App.Workbooks[reference.BookName]
-                .Worksheets[reference.PageName] as Worksheet;
+                .Worksheets[reference.SheetName] as Worksheet;
             var start = sheet.Cells[reference.RowFirst, reference.ColumnFirst];
             var end = start.Cells[reference.RowLast, reference.ColumnLast];
             return sheet.Range[start, end] as Range;
