@@ -346,6 +346,7 @@ namespace ExcelMvc.Functions
                 var start = sheet.Cells[rowFirst, columnFirst];
                 var end = start.Cells[rowLast, columnLast];
                 return sheet.Range[start, end] as Range;
+            }
             catch
             {
                 return null;
