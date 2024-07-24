@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using Range = Microsoft.Office.Interop.Excel.Range;
 
 namespace ExcelMvc.Functions
@@ -157,7 +158,7 @@ namespace ExcelMvc.Functions
                         var status = (CallStatus*)ptr.ToPointer();
                         var code = status->status;
                         AddIn.FreeCallStatus(ptr);
-                        if (code != 0) 
+                        if (code != 0)
                             throw new Exception($"SetAsyncValue failed. (status = {code})");
                     }
                 }
@@ -172,9 +173,15 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public RangeReference GetCallerReference()
         {
-            dynamic caller = App?.Caller;
-            return caller is Range range ? RangeToReference(range)
-                : RangeToReference(null);
+            try
+            {
+                dynamic caller = App?.Caller;
+                return caller is Range range ? RangeToReference(range) : null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <inheritdoc/>
@@ -183,7 +190,7 @@ namespace ExcelMvc.Functions
             if (App == null) return null;
             var range = GetRange(App.ActiveWorkbook.Name, pageName
                 , rowFirst, rowLast, columnFirst, columnLast);
-            return RangeToReference(range);
+            return range == null ? null : RangeToReference(range);
         }
 
         /// <inheritdoc/>
@@ -193,7 +200,7 @@ namespace ExcelMvc.Functions
             var range = GetRange(App.ActiveWorkbook.Name
                 , App.ActiveSheet.Name
                 , rowFirst, rowLast, columnFirst, columnLast);
-            return RangeToReference(range);
+            return range == null ? null : RangeToReference(range);
         }
 
         /// <inheritdoc/>
@@ -313,23 +320,36 @@ namespace ExcelMvc.Functions
 
         private Range GetRange(RangeReference reference)
         {
-            if (App == null) return null;
-            var sheet = App.Workbooks[reference.BookName]
-                .Worksheets[reference.SheetName] as Worksheet;
-            var start = sheet.Cells[reference.RowFirst, reference.ColumnFirst];
-            var end = start.Cells[reference.RowLast, reference.ColumnLast];
-            return sheet.Range[start, end] as Range;
+            try
+            {
+                if (App == null) return null;
+                var sheet = App.Workbooks[reference.BookName]
+                    .Worksheets[reference.SheetName] as Worksheet;
+                var start = sheet.Cells[reference.RowFirst, reference.ColumnFirst];
+                var end = start.Cells[reference.RowLast, reference.ColumnLast];
+                return sheet.Range[start, end] as Range;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private Range GetRange(string bookName, string sheetName
             , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            if (App == null) return null;
-            var sheet = App.Workbooks[bookName]
-                .Worksheets[sheetName] as Worksheet;
-            var start = sheet.Cells[rowFirst, columnFirst];
-            var end = start.Cells[rowLast, columnLast];
-            return sheet.Range[start, end] as Range;
+            try
+            {
+                if (App == null) return null;
+                var sheet = App.Workbooks[bookName]
+                    .Worksheets[sheetName] as Worksheet;
+                var start = sheet.Cells[rowFirst, columnFirst];
+                var end = start.Cells[rowLast, columnLast];
+                return sheet.Range[start, end] as Range;
+            catch
+            {
+                return null;
+            }
         }
 
         private static RangeReference RangeToReference(Range range)
@@ -361,8 +381,15 @@ namespace ExcelMvc.Functions
         {
             get
             {
-                var window = App?.ActiveWorkbook.VBProject.VBE.ActiveWindow;
-                return window != null && window.WindowState != Microsoft.Vbe.Interop.vbext_WindowState.vbext_ws_Minimize;
+                try
+                {
+                    var window = App?.ActiveWorkbook.VBProject.VBE.ActiveWindow;
+                    return window != null && window.WindowState != Microsoft.Vbe.Interop.vbext_WindowState.vbext_ws_Minimize;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 
