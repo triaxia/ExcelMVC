@@ -184,7 +184,7 @@ namespace Function.Interfaces
         object ErrorData { get; }
 
         /// <summary>
-        /// <see cref="ErrorValue"/>, <see cref="ErrorNull"/>... etc to their string representations./>
+        /// <see cref="ErrorValue"/>, <see cref="ErrorNull"/>... etc to their string representations.
         /// </summary>
         IDictionary<object, string> ErrorMappings { get; }
 
@@ -410,16 +410,6 @@ namespace Function.Interfaces
         /// name when the host is Excel.
         /// </summary>
         string ModuleFileName { get; }
-    }
-
-    /// <summary>
-    /// </summary>
-    public static class FunctionHost
-    {
-        /// <summary>
-        /// Gets/Sets the implementation of <see cref="IFunctionHost"/>.
-        /// </summary>
-        public static IFunctionHost Instance { get; set; }
     }
 }
 

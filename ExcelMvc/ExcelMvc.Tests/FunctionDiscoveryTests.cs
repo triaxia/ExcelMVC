@@ -8,11 +8,6 @@ namespace ExcelMvc.Tests
     [TestClass]
     public class FunctionDiscoveryTests
     {
-        public FunctionDiscoveryTests()
-        {
-            FunctionHost.Instance = new ExcelFunctionHost();
-        }
-
         [Function(Name = "uAdd3",
             Description = nameof(uAdd3),
             HelpTopic ="https://microsoft.com",
