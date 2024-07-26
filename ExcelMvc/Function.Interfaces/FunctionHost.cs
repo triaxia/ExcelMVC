@@ -258,6 +258,6 @@ namespace Function.Interfaces
         /// <summary>
         /// Gets/Sets the implementation of <see cref="IFunctionHost"/>.
         /// </summary>
-        public static IFunctionHost Instance { get; set; } = new DefaultFunctionHost();
+        public static IFunctionHost Instance { get; set; } = new SimpleFunctionHost();
     }
 }
