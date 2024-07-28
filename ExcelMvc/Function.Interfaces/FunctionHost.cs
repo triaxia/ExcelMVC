@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Function.Interfaces
 {
@@ -20,7 +21,7 @@ namespace Function.Interfaces
 
     public enum ErrorType : short
     {
-        // happen to be Excel error numbers
+        // happen to be Excel error numbers!
         Null = 0,
         Div0 = 7,
         Value = 15,
@@ -31,9 +32,9 @@ namespace Function.Interfaces
         Data = 43
     }
 
-    public class SimpleFunctionHost : IFunctionHost
+    public class NullFunctionHost : IFunctionHost
     {
-        public SimpleFunctionHost()
+        public NullFunctionHost()
         {
             FunctionAttributeType = typeof(FunctionAttribute);
             ArgumentAttributeType = typeof(ArgumentAttribute);
@@ -128,50 +129,48 @@ namespace Function.Interfaces
         /// <inheritdoc/>
         public IntPtr GetAsyncHandle(IntPtr handle)
         {
-            throw new NotImplementedException();
+            return handle;
         }
 
         /// <inheritdoc/>
         public void SetAsyncValue(IntPtr handle, object value)
         {
-            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
         public RangeReference GetCallerReference()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         /// <inheritdoc/>
         public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         /// <inheritdoc/>
         public RangeReference GetActiveSheetReference(int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         /// <inheritdoc/>
         public object GetRangeValue(RangeReference range)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         /// <inheritdoc/>
         public void SetRangeValue(RangeReference range, object value, bool async)
         {
-            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
         public RangeReference GetReference(string bookName, string pageName
             , int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         /// <inheritdoc/>
@@ -205,28 +204,18 @@ namespace Function.Interfaces
         public object Rtd<TRtdServerImpl>(Func<IRtdServerImpl> implFactory, string server, params string[] args)
             where TRtdServerImpl : IRtdServerImpl
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         /// <inheritdoc/>
         public object Rtd(string progId, string server, params string[] args)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         /// <inheritdoc/>
         public void RegisterFunctions(FunctionDefinitions functions)
         {
-            if (Registering != null)
-            {
-                for (var idx = 0; idx < functions.Items.Length; idx++)
-                {
-                    var args = new RegisteringEventArgs(functions.Items[idx]);
-                    RaiseRegistering(this, args);
-                    functions.Items[idx] = args.Function;
-                }
-            }
-            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
@@ -238,7 +227,7 @@ namespace Function.Interfaces
         /// <inheritdoc/>
         public void Post(Action<object> action, object state)
         {
-            throw new NotImplementedException();
+            Task.Factory.StartNew(action, state);
         }
 
         /// <inheritdoc/>
@@ -258,6 +247,6 @@ namespace Function.Interfaces
         /// <summary>
         /// Gets/Sets the implementation of <see cref="IFunctionHost"/>.
         /// </summary>
-        public static IFunctionHost Instance { get; set; } = new SimpleFunctionHost();
+        public static IFunctionHost Instance { get; set; } = new NullFunctionHost();
     }
 }
