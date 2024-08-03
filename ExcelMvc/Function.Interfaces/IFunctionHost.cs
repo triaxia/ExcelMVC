@@ -220,8 +220,8 @@ namespace Function.Interfaces
         /// <param name="server"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        object Rtd<TRtdServerImpl>(Func<IRtdServerImpl> implFactory
-            , string server, params string[] args) where TRtdServerImpl : IRtdServerImpl;
+        object Rtd<TRtdServerImpl>(Func<TRtdServerImpl> implFactory
+            , string server, params string[] args) where TRtdServerImpl : class, IRtdServerImpl;
 
         /// <summary>
         /// Calls the specified server.

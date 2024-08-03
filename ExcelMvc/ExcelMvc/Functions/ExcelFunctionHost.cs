@@ -264,10 +264,10 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public object Rtd<TRtdServerImpl>(Func<IRtdServerImpl> implFactory, string server, params string[] args)
-            where TRtdServerImpl : IRtdServerImpl
+        public object Rtd<TRtdServerImpl>(Func<TRtdServerImpl> implFactory, string server, params string[] args)
+            where TRtdServerImpl : class, IRtdServerImpl
         {
-            using (var reg = new RtdRegistry(typeof(IRtdServerImpl), implFactory))
+            using (var reg = new RtdRegistry(typeof(TRtdServerImpl), () => implFactory?.Invoke()))
             {
                 return Rtd(reg.ProgId, server, args);
             }
@@ -303,7 +303,7 @@ namespace ExcelMvc.Functions
         {
             if (Registering != null)
             {
-                for (var idx = 0; idx < functions.Items.Length; idx++)
+                for (var idx = 0; idx < functions.FunctionCount; idx++)
                 {
                     var args = new RegisteringEventArgs(functions.Items[idx]);
                     RaiseRegistering(this, args);

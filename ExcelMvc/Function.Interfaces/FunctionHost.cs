@@ -201,8 +201,8 @@ namespace Function.Interfaces
         }
 
         /// <inheritdoc/>
-        public object Rtd<TRtdServerImpl>(Func<IRtdServerImpl> implFactory, string server, params string[] args)
-            where TRtdServerImpl : IRtdServerImpl
+        public object Rtd<TRtdServerImpl>(Func<TRtdServerImpl> implFactory, string server, params string[] args)
+            where TRtdServerImpl : class, IRtdServerImpl
         {
             return null;
         }
