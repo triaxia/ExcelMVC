@@ -224,7 +224,7 @@ namespace Function.Interfaces
             , string server, params string[] args) where TRtdServerImpl : class, IRtdServerImpl;
 
         /// <summary>
-        /// Calls the specified server.
+        /// Calls the specified RTD server.
         /// </summary>
         /// <param name="progId"></param>
         /// <param name="server"></param>
@@ -410,6 +410,14 @@ namespace Function.Interfaces
         /// name when the host is Excel.
         /// </summary>
         string ModuleFileName { get; }
+
+        /// <summary>
+        /// Runs a host function .
+        /// </summary>
+        /// <param name="function"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        object Run(int function, params object[] args);
     }
 }
 

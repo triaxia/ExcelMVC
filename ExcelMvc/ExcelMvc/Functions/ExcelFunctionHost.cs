@@ -144,8 +144,8 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public void SetAsyncValue(IntPtr handle, object value)
         {
-            var xlHandle = XLOPER12.FromObject(handle);
-            var xlValue = XLOPER12.FromObject(value);
+            var xlHandle = new XLOPER12(handle);
+            var xlValue = new XLOPER12(value);
             try
             {
                 using (var p1 = new StructIntPtr<XLOPER12>(ref xlHandle))
@@ -280,9 +280,10 @@ namespace ExcelMvc.Functions
                 .Concat(args)
                 .Select((x, idx) => new FunctionArgument($"p{idx}", x))
                 .ToArray();
+
+            IntPtr ptr = IntPtr.Zero;
             const int xlfRtd = 379;
             var fArgs = new FunctionArguments(xlfRtd, arguments);
-            IntPtr ptr = IntPtr.Zero;
             using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
             {
                 ptr = AddIn.CallRtd(pArgs.Ptr);
@@ -294,8 +295,44 @@ namespace ExcelMvc.Functions
                 var obj = status->result == null ? null : status->result->ToObject();
                 AddIn.FreeCallStatus(ptr);
                 if (code != 0)
-                    throw new Exception($"CallRtd failed. (status = {code})");
+                    throw new Exception($"Rtd failed. (status = {code})");
                 return obj;
+            }
+        }
+
+        /// <inheritdoc/>
+        public object Run(int function, params object[] args)
+        {
+            var xlArgs = args.Select(x =>
+            {
+                var xlop= new XLOPER12(x);
+                return new StructIntPtr<XLOPER12>(ref xlop);
+            });
+
+            try
+            {
+                var arguments = xlArgs.Select((x, idx) => new FunctionArgument($"p{idx}", x.Ptr)).ToArray();
+                IntPtr ptr = IntPtr.Zero;
+                var fArgs = new FunctionArguments(function, arguments);
+                using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
+                {
+                    ptr = AddIn.CallAny(pArgs.Ptr);
+                }
+                unsafe
+                {
+                    var status = (CallStatus*)ptr.ToPointer();
+                    var code = status->status;
+                    var obj = status->result == null ? null : status->result->ToObject();
+                    AddIn.FreeCallStatus(ptr);
+                    if (code != 0)
+                        throw new Exception($"Run failed. (status = {code})");
+                    return obj;
+                }
+            }
+            finally
+            {
+                foreach (var x in xlArgs)
+                    x.Dispose();
             }
         }
 

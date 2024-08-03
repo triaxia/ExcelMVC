@@ -230,6 +230,11 @@ namespace Function.Interfaces
             Task.Factory.StartNew(action, state);
         }
 
+        public object Run(int function, params object[] args)
+        {
+            return null;
+        }
+
         /// <inheritdoc/>
         public string Version => "";
 

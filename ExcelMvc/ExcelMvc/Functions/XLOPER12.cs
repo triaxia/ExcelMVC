@@ -69,21 +69,6 @@ namespace ExcelMvc.Functions
         [FieldOffset(0)] public XLArray array;
         [FieldOffset(24)] public uint xltype;
 
-        public static XLOPER12 FromObject(object value)
-        {
-            return new XLOPER12(value);
-        }
-
-        public static object ToObject(XLOPER12 value)
-        {
-            return value.ToObject();
-        }
-
-        public static void ToIntPtr(XLOPER12 value, ref IntPtr result)
-        {
-            Marshal.StructureToPtr(value, result, false);
-        }
-
         public void Dispose()
         {
             var type = PeelOfType((XlTypes)xltype);
