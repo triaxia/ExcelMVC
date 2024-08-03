@@ -204,5 +204,17 @@ namespace Samples
         {
             return new object[,] { };
         }
+
+        [Function(Name = "uConcatStrings")]
+        public static string uConcatStrings(string x, int y, double z, DateTime d)
+        {
+            return $"{x}{y}{z}{d}";
+        }
+
+        [Function(Name = "uRunConcatStrings")]
+        public static object uRunConcatStrings()
+        {
+            return FunctionHost.Instance.Run(255, "uConcatStrings", "abc", 123, 456.789, DateTime.Today);
+        }
     }
 }

@@ -182,7 +182,7 @@ namespace ExcelMvc.Views
                     ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes
                         , ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
                     ObjectFactory<IFunctionAddIn>.Instances.ForEach(x => x.Open());
-                    RaisePosted($"ObjectFactory<IExcelAddIn>.CreateAll({ObjectFactory<IFunctionAddIn>.Instances.Count})");
+                    RaisePosted($"ObjectFactory<IFunctionAddIn>.CreateAll({ObjectFactory<IFunctionAddIn>.Instances.Count})");
 
                     ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes
                         , ObjectFactory<ISession>.SelectAllAssembly);
