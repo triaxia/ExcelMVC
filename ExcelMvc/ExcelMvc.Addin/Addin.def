@@ -9,7 +9,8 @@ xlAutoFree12            PRIVATE
 FreeCallStatus          PRIVATE
 RegisterFunctions       PRIVATE
 SetAsyncValue           PRIVATE
-CallRtd                 PRIVATE 
+CallRtd                 PRIVATE
+CallAny                 PRIVATE
 ExcelMvcAttach          PRIVATE
 ExcelMvcDetach          PRIVATE
 ExcelMvcShow            PRIVATE

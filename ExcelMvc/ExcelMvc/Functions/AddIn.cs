@@ -52,6 +52,8 @@ namespace ExcelMvc.Functions
         public static SetAsyncValueDelegate SetAsyncValue { get; private set; }
         public delegate IntPtr CallRtdDelegate(IntPtr args);
         public static CallRtdDelegate CallRtd { get; private set; }
+        public delegate IntPtr CallAnyDelegate(IntPtr args);
+        public static CallAnyDelegate CallAny { get; private set; }
         public delegate IntPtr FreeCallStatusDelegate(IntPtr args);
         public static FreeCallStatusDelegate FreeCallStatus { get; private set; }
 
@@ -63,6 +65,7 @@ namespace ExcelMvc.Functions
             public IntPtr pRegisterFunctions;
             public IntPtr pSetAsyncValue;
             public IntPtr pCallRtd;
+            public IntPtr pCallAny;
             public IntPtr pFreeCallStatus;
         }
 
@@ -81,6 +84,7 @@ namespace ExcelMvc.Functions
                 RegisterFunctions = Marshal.GetDelegateForFunctionPointer<RegisterFunctionsDelegate>(pAddInHead->pRegisterFunctions);
                 SetAsyncValue = Marshal.GetDelegateForFunctionPointer<SetAsyncValueDelegate>(pAddInHead->pSetAsyncValue);
                 CallRtd = Marshal.GetDelegateForFunctionPointer<CallRtdDelegate>(pAddInHead->pCallRtd);
+                CallAny = Marshal.GetDelegateForFunctionPointer<CallAnyDelegate>(pAddInHead->pCallAny);
                 FreeCallStatus = Marshal.GetDelegateForFunctionPointer<FreeCallStatusDelegate>(pAddInHead->pFreeCallStatus);
             }
         }

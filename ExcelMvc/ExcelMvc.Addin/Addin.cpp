@@ -46,6 +46,7 @@ extern "C" const GUID __declspec(selectany) DIID__Workbook =
 extern void __stdcall RegisterFunctions(void* handle); 
 extern LPCALLSTATUS __stdcall SetAsyncValue(LPXLOPER12 handle, LPXLOPER12 value);
 extern LPCALLSTATUS __stdcall CallRtd(void* args);
+extern LPCALLSTATUS __stdcall CallAny(void* args);
 
 extern void RegisterMvcFunctions();
 extern void UnregisterMvcFunctions();
@@ -57,6 +58,7 @@ typedef void(__stdcall* PFN_RegisterFunctions)(void* handle);
 typedef LPCALLSTATUS(__stdcall* PFN_SetAsyncValue)(LPXLOPER12 handle, LPXLOPER12 result);
 typedef LPCALLSTATUS(__stdcall* PFN_CallRtd)(void* args);
 typedef void(__stdcall* PFN_FreeCallStatus)(LPCALLSTATUS result);
+typedef LPCALLSTATUS(__stdcall* PFN_CallAny)(void* args);
 
 void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
 {
@@ -84,6 +86,7 @@ struct AddInHead
 	PFN_RegisterFunctions pRegisterFunctions;
 	PFN_SetAsyncValue pSetAsyncValue;
 	PFN_CallRtd pCallRtd;
+	PFN_CallAny pCallAny;
 	PFN_FreeCallStatus pFreeCallStatus;
 };
 
@@ -105,6 +108,7 @@ AddInHead* CreateAddInHead()
 	pAddInHead->pRegisterFunctions = RegisterFunctions;
 	pAddInHead->pSetAsyncValue = SetAsyncValue;
 	pAddInHead->pCallRtd = CallRtd;
+	pAddInHead->pCallAny = CallAny;
 	pAddInHead->pFreeCallStatus = FreeCallStatus;
 	return pAddInHead;
 }

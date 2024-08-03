@@ -280,7 +280,8 @@ namespace ExcelMvc.Functions
                 .Concat(args)
                 .Select((x, idx) => new FunctionArgument($"p{idx}", x))
                 .ToArray();
-            var fArgs = new FunctionArguments(arguments);
+            const int xlfRtd = 379;
+            var fArgs = new FunctionArguments(xlfRtd, arguments);
             IntPtr ptr = IntPtr.Zero;
             using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
             {

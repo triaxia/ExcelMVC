@@ -39,7 +39,6 @@ namespace ExcelMvc.Windows
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Windows.Forms;
-    using Views;
 
     /// <summary>
     /// Subclasses a window

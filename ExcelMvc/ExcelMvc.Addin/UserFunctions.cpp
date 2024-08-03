@@ -75,10 +75,12 @@ struct FunctionArgument
 {
 	LPCWSTR Name;
 	LPCWSTR Value;
+	void* Any;
 };
 
 struct FunctionArguments
 {
+	int Function;
 	byte ArgumentCount;
 	FunctionArgument Arguments[];
 };
@@ -282,13 +284,32 @@ LPCALLSTATUS __stdcall CallRtd(void* handle)
 {
 	auto args = (FunctionArguments*)handle;
 	auto parameters = new LPXLOPER12[args->ArgumentCount];
-	auto count = 0;
 	for (auto idx = 0; idx < args->ArgumentCount; idx++)
 		parameters[idx] = TempStr12(args->Arguments[idx].Value);
 
 	auto result = new XLOPER12();
 	memset(result, 0, sizeof(XLOPER12));
 	auto code = Excel12v(xlfRtd, result, args->ArgumentCount, parameters);
+
+	FreeAllTempMemory();
+	delete[] parameters;
+
+	auto cr = new CallStatus();
+	cr->Result = result;
+	cr->status = code;
+	return cr;
+}
+
+LPCALLSTATUS __stdcall CallAny(void* handle)
+{
+	auto args = (FunctionArguments*)handle;
+	auto parameters = new LPXLOPER12[args->ArgumentCount];
+	for (auto idx = 0; idx < args->ArgumentCount; idx++)
+		parameters[idx] = (LPXLOPER12) args->Arguments[idx].Any;
+
+	auto result = new XLOPER12();
+	memset(result, 0, sizeof(XLOPER12));
+	auto code = Excel12v(args->Function, result, args->ArgumentCount, parameters);
 
 	FreeAllTempMemory();
 	delete[] parameters;

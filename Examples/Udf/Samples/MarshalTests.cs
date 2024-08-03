@@ -198,5 +198,11 @@ namespace Samples
             FunctionHost.Instance.ExceptionToFunctionResult = e => $"{e}";
             throw new Exception(nameof(uExceptionInt));
         }
+
+        [Function(Name = "uEmptyArray")]
+        public static object[,] uEmptyArray()
+        {
+            return new object[,] { };
+        }
     }
 }

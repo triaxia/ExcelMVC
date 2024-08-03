@@ -30,6 +30,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -42,11 +43,20 @@ namespace ExcelMvc.Functions
         public string Name;
         [MarshalAs(UnmanagedType.LPWStr)]
         public string Value;
+        public IntPtr Any;
 
         public FunctionArgument(string name, string value)
         {
             Name = name;
             Value = value;
+            Any = IntPtr.Zero;
+        }
+
+        public FunctionArgument(string name, IntPtr value)
+        {
+            Name = name;
+            Value = string.Empty;
+            Any = value;
         }
     }
 
@@ -54,13 +64,16 @@ namespace ExcelMvc.Functions
     public struct FunctionArguments
     {
         public const ushort MaxArguments = 64;
+        [MarshalAs(UnmanagedType.I4)]
+        public int Function;
         [MarshalAs(UnmanagedType.U1)]
         public byte ArgumentCount;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxArguments)]
         public FunctionArgument[] Arguments;
 
-        public FunctionArguments(FunctionArgument[] arguments)
+        public FunctionArguments(int function, FunctionArgument[] arguments)
         {
+            Function = function;
             ArgumentCount = (byte)arguments.Length;
             Arguments = Pad(arguments);
         }
