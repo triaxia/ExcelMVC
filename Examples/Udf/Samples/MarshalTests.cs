@@ -214,7 +214,7 @@ namespace Samples
         [Function(Name = "uRunConcatStrings")]
         public static object uRunConcatStrings()
         {
-            return FunctionHost.Instance.Run(255, "uConcatStrings", "abc", 123, 456.789, DateTime.Today);
+            return FunctionHost.Instance.Run(255, "'FunctionTests.xlsm'!TestMacro", "10", "20");
         }
     }
 }

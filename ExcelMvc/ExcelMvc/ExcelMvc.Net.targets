@@ -3,7 +3,7 @@
 		<!-- required for ExcelMvc.dll to be copied to the bin folder for a non-exe project targeting net6.0-windows-->
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
-	<Target Name="ExcelMvcCopy" AfterTargets="Build" Condition="'$(ExcelMvcAddInName)' != ''" >
+	<Target Name="ExcelMvcCopy" BeforeTargets="PostBuild" AfterTargets="Build" Condition="'$(ExcelMvcAddInName)' != ''" >
 		<Copy SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.Addin.x86.xll"
 			  DestinationFiles ="$(TargetDir)$(ExcelMvcAddInName).xll">
 		</Copy>

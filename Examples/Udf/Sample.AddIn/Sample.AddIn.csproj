@@ -14,6 +14,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="FunctionTests.xlsm">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="FunctionTests.xlsx">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -24,5 +27,9 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="del  &quot;$(TargetDir)Sample.AddIn.dll.config&quot;&#xD;&#xA;" />
+	</Target>
 
 </Project>
