@@ -212,9 +212,9 @@ namespace Samples
         }
 
         [Function(Name = "uRunConcatStrings")]
-        public static object uRunConcatStrings()
+        public static object uRunConcatStrings(object a, object b)
         {
-            return FunctionHost.Instance.Run(255, "'FunctionTests.xlsm'!TestMacro", "10", "20");
+            return FunctionHost.Instance.Run(255, "'FunctionTests.xlsm'!TestMacro", a, b);
         }
     }
 }
