@@ -5,4 +5,5 @@
 # *.dll is used when this file is missing or no patterns are defined
 # in this file.
 
-Samples.Dll
+Samples.dll
+Sample.AddIn.dll

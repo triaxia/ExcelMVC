@@ -44,6 +44,30 @@ namespace ExcelMvc.Runtime
     using Extensions;
     using Function.Interfaces;
 
+    internal static class AssemblyResolver
+    {
+        private static readonly HashSet<string> BasePaths = new HashSet<string>();
+        static AssemblyResolver()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+        }
+
+        public static void AddPath(string path) 
+        {
+            BasePaths.Add(path);
+        }
+
+        private static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var name = $"{new AssemblyName(args.Name).Name}.dll";
+            var match = BasePaths.Select(x => Path.Combine(x, name))
+                .Select(x => File.Exists(x) ? x : null)
+                .Where(x => x != null)
+                .SingleOrDefault();
+            return match == null ? null : Assembly.LoadFrom(match);
+        }
+    }
+
     /// <summary>
     /// Generic object factory.
     /// </summary>
@@ -54,22 +78,6 @@ namespace ExcelMvc.Runtime
             => StringComparer.InvariantCultureIgnoreCase.Equals(lhs, rhs);
         private static bool StartsWithIgnoreCase(string lhs, string rhs)
             => lhs.StartsWith(rhs, StringComparison.InvariantCultureIgnoreCase);
-
-        private static readonly HashSet<string> BasePaths = new HashSet<string>();
-        static ObjectFactory()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
-        }
-
-        private static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            var name = $"{new AssemblyName(args.Name).Name}.dll";
-            var match = BasePaths.Select(x => Path.Combine(x, name))
-                .Select(x => File.Exists(x) ? x : null)
-                .Where(x => x != null)
-                .SingleOrDefault();
-            return match == null  ? null : Assembly.LoadFrom(match);
-        }
 
         /// <summary>
         /// Instances created.
@@ -173,11 +181,11 @@ namespace ExcelMvc.Runtime
 
                 if (files.Any())
                 {
-                    BasePaths.Add(path);
+                    AssemblyResolver.AddPath(path);
                     var dllTypes = files.SelectMany(x => DiscoverTypes(x, getTypes));
                     types.AddRange(dllTypes);
                 }
-            };
+            }
             return types.Distinct().ToList();
         }
 
