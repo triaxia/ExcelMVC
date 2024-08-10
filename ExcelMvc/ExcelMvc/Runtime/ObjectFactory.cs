@@ -43,25 +43,43 @@ namespace ExcelMvc.Runtime
     using System.Runtime.CompilerServices;
     using Extensions;
     using Function.Interfaces;
-#if NET6_0_OR_GREATER
-    using System.Runtime.Loader;
-#endif
+
     /// <summary>
-    /// Generic object factory
+    /// Generic object factory.
     /// </summary>
     /// <typeparam name="T">Type of object</typeparam>
     public static class ObjectFactory<T>
     {
-        public static List<T> Instances { get; } = new List<T>();
         private static bool EqualsIgnoreCase(string lhs, string rhs)
             => StringComparer.InvariantCultureIgnoreCase.Equals(lhs, rhs);
         private static bool StartsWithIgnoreCase(string lhs, string rhs)
             => lhs.StartsWith(rhs, StringComparison.InvariantCultureIgnoreCase);
 
+        private static readonly HashSet<string> BasePaths = new HashSet<string>();
+        static ObjectFactory()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+        }
+
+        private static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var name = $"{new AssemblyName(args.Name).Name}.dll";
+            var match = BasePaths.Select(x => Path.Combine(x, name))
+                .Select(x => File.Exists(x) ? x : null)
+                .Where(x => x != null)
+                .SingleOrDefault();
+            return match == null  ? null : Assembly.LoadFrom(match);
+        }
+
         /// <summary>
-        /// The function that selects all assemblies.
+        /// Instances created.
         /// </summary>
-        public static Func<string, bool, bool> SelectAllAssembly
+        public static List<T> Instances { get; } = new List<T>();
+
+        /// <summary>
+        /// Gets and sets the function that selects all assemblies.
+        /// </summary>
+        public static Func<string, bool, bool> SelectAllAssembly { get; set; }
             = (name, loaded) => !StartsWithIgnoreCase(name, "Microsoft")
                              && !StartsWithIgnoreCase(name, "System");
 
@@ -69,14 +87,15 @@ namespace ExcelMvc.Runtime
         /// Create instances of type T in the current AppDomain.
         /// </summary>
         /// <param name="getTypes"></param>
-        /// <param name="selectAssembly">The function that takes arguments (assembly name or file name, loaded or not) 
-        /// and returns true or false to indicate if an assembly should be included in the discover process</param>
+        /// <param name="selectAssembly">The function that takes arguments (assembly 
+        /// name or file name, loaded or not) and returns true or false to indicate
+        /// if an assembly should be included in the discover process</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public static void CreateAll(Func<Assembly, IEnumerable<string>> getTypes
-            , Func<string, bool, bool> selectAssembly)
+        public static void CreateAll(Func<Assembly, IEnumerable<string>> getTypes,
+            Func<string, bool, bool> selectAssembly)
         {
-            var types = GetTypes(getTypes, selectAssembly);
             Instances.Clear();
+            var types = GetTypes(getTypes, selectAssembly);
             foreach (var type in types)
             {
                 ActionExtensions.Try(() =>
@@ -88,21 +107,7 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Discovers types of type T in the current AppDomain.
-        /// </summary>
-        /// <param name="selectAssembly">A function (assembly name or file name, loaded or npt) that
-        /// returns true or false to indicate if an assembly should be included in the discover process</param>
-        /// <returns></returns>
-        public static List<string> GetTypes(Func<Assembly, IEnumerable<string>> getTypes,
-            Func<string, bool, bool> selectAssembly)
-        {
-            var types = GetTypes(out var context, getTypes, selectAssembly);
-            FreeReference(context);
-            return types;
-        }
-
-        /// <summary>
-        /// Deletes instance created
+        /// Deletes instance created.
         /// </summary>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void DeleteAll(Action<T> disposer)
@@ -116,7 +121,7 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Finds the instance matching the full type name specified
+        /// Finds the instance matching the full type name specified.
         /// </summary>
         /// <param name="fullTypeName"></param>
         /// <returns></returns>
@@ -130,7 +135,8 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Gets the creatable types with default constructors from the specified assembly. 
+        /// Gets the creatable types with default constructors from the 
+        /// specified assembly.
         /// </summary>
         /// <param name="asm"></param>
         /// <returns></returns>
@@ -143,52 +149,45 @@ namespace ExcelMvc.Runtime
                 .Select(x => x.AssemblyQualifiedName);
         }
 
-        private static List<string> GetTypes(out WeakReference context
-            , Func<Assembly, IEnumerable<string>> getTypes
+        /// <summary>
+        /// Discovers types of type T in the current AppDomain.
+        /// </summary>
+        /// <param name="selectAssembly">A function (assembly name or file name,
+        /// loaded or npt) that returns true or false to indicate if an assembly 
+        /// should be included in the discover process</param>
+        /// <returns></returns>
+        public static List<string> GetTypes(Func<Assembly, IEnumerable<string>> getTypes
             , Func<string, bool, bool> selectAssembly)
         {
-            List<string> types = new List<string>();
-            try
+            var types = new List<string>();
+            var asms = AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic);
+            asms = asms.Where(x => selectAssembly(x.GetName().Name, true));
+            types.AddRange(asms.SelectMany(x => getTypes(x)));
+            var location = typeof(ObjectFactory<T>).Assembly.Location;
+            if (!string.IsNullOrWhiteSpace(location))
             {
-                LoadContext();
-                var asms = AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(x => !x.IsDynamic);
-                asms = asms.Where(x => selectAssembly(x.GetName().Name, true));
-#if NET6_0_OR_GREATER
-                var me = AssemblyLoadContext.GetLoadContext(typeof(ObjectFactory<T>).Assembly);
-                asms = asms.Where(x => !x.IsCollectible && AssemblyLoadContext.GetLoadContext(x) == me);
-#endif
-                types.AddRange(asms.SelectMany(x => getTypes(x)));
-                var location = typeof(ObjectFactory<T>).Assembly.Location;
-                if (!string.IsNullOrWhiteSpace(location))
+                var path = Path.GetDirectoryName(location);
+                var files = GetAssemblyFiles(path).Where(x => asms.All(y => !EqualsIgnoreCase(y.Location, x)));
+                if (selectAssembly != null)
+                    files = files.Where(x => selectAssembly(Path.GetFileNameWithoutExtension(x), true));
+
+                if (files.Any())
                 {
-                    var path = Path.GetDirectoryName(location);
-                    var files = GetAssemblyFiles(path).Where(x => asms.All(y => !EqualsIgnoreCase(y.Location, x)));
-                    if (selectAssembly != null)
-                        files = files.Where(x => selectAssembly(Path.GetFileNameWithoutExtension(x), true));
+                    BasePaths.Add(path);
                     var dllTypes = files.SelectMany(x => DiscoverTypes(x, getTypes));
                     types.AddRange(dllTypes);
                 }
-            }
-            finally
-            {
-                UnloadContext();
-            }
-#if NET6_0_OR_GREATER
-            context = new WeakReference(AssemblyContext);
-#else
-            context = null;
-#endif
+            };
             return types.Distinct().ToList();
         }
 
         private static IEnumerable<string> DiscoverTypes(string assemblyPath,
-             Func<Assembly, IEnumerable<string>> getTypes)
+            Func<Assembly, IEnumerable<string>> getTypes)
         {
             var types = Enumerable.Empty<string>();
             ActionExtensions.Try(() =>
             {
-                var asm = LoadFrom(assemblyPath);
+                var asm = Assembly.LoadFrom(assemblyPath);
                 if (asm != null)
                     types = types.Concat(getTypes(asm));
             }, ex => RaiseFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
@@ -202,86 +201,6 @@ namespace ExcelMvc.Runtime
             return IsEqual(type, baseType)
                 || IsEqual(type.BaseType, baseType)
                 || type.GetInterfaces().Any(x => IsEqual(x, baseType) || IsDerivedFrom(x, baseType));
-        }
-
-#if NET6_0_OR_GREATER
-        private static AssemblyLoadContext AssemblyContext { get; set; }
-#endif
-        private static void LoadContext()
-        {
-#if NET6_0_OR_GREATER
-            UnloadContext();
-            AssemblyContext = new AssemblyLoadContext($"ObjectFactory<{typeof(T)}>", true);
-            AssemblyContext.Resolving += (sender, args) =>
-            {
-                var basePath = Path.GetDirectoryName(typeof(ObjectFactory<object>).Assembly.Location);
-                var folders = sender.Assemblies
-                    .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
-                    .Select(x => Path.GetDirectoryName(x.Location))
-                    .Concat(new[] { basePath })
-                    .Distinct();
-
-                var file = folders.Select(x => Path.Combine(x!, $"{args.Name}.dll"))
-                    .Where(File.Exists)
-                    .OrderByDescending(File.GetLastWriteTimeUtc)
-                    .FirstOrDefault();
-                return file == null ? null : sender.LoadFromAssemblyPath(file);
-            };
-#else
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += (_, args) =>
-            {
-                var name = $"{new AssemblyName(args.Name).Name}.dll";
-                var file = AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
-                    .Select(x => Path.GetDirectoryName(x.Location))
-                    .Distinct()
-                    .Select(x => Path.Combine(x, name))
-                    .Where(File.Exists)
-                    .OrderByDescending(File.GetLastWriteTimeUtc)
-                    .FirstOrDefault();
-                return file == null ? Assembly.ReflectionOnlyLoad(args.Name) : Assembly.ReflectionOnlyLoadFrom(file);
-            };
-#endif
-        }
-        private static void UnloadContext()
-        {
-#if NET6_0_OR_GREATER
-            AssemblyContext?.Unload();
-            AssemblyContext = null;
-#endif
-        }
-        private static Assembly LoadFrom(string assemblyPath)
-        {
-            try
-            {
-#if NET6_0_OR_GREATER
-                var loaded = AssemblyContext.Assemblies
-                    .SingleOrDefault(a => !a.IsDynamic && EqualsIgnoreCase(a.Location, assemblyPath));
-                return loaded ?? AssemblyContext.LoadFromAssemblyPath(assemblyPath);
-#else
-                return Assembly.ReflectionOnlyLoadFrom(assemblyPath);
-#endif
-            }
-            catch (BadImageFormatException)
-            {
-                // ignore 
-                return null;
-            }
-        }
-
-        private static void FreeReference(WeakReference reference)
-        {
-            if (reference == null) return;
-
-            var timeout = TimeSpan.FromSeconds(10);
-            var start = DateTime.UtcNow;
-            while (reference.IsAlive && (DateTime.UtcNow - start) < timeout)
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
-            if (reference.IsAlive)
-                throw new TimeoutException($"ObjectFactory<{typeof(T)}>.CreateAll timed out {timeout}");
         }
 
         private static string[] GetAssemblyFiles(string path)
