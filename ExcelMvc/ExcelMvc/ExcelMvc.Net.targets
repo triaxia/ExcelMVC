@@ -38,6 +38,9 @@
 			  SourceFiles="$(MSBuildThisFileDirectory)ExcelMvc.runtimeconfig.json"
 		      DestinationFiles="$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json">
 		</Copy>
+		<Delete Condition="'$(TargetFramework.EndsWith(`-windows`))' != 'true' And Exists('$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json')"
+		      Files="$(TargetDir)$(ExcelMvcAddInName).runtimeconfig.json">
+		</Delete>
 		<Exec Condition="!Exists('$(TargetDir)$(ExcelMvcAddInName).reflection.txt')"
 			  Command="powershell -Execution Unrestricted -File &quot;$(MSBuildThisFileDirectory)ExcelMvc.reflection.ps1&quot; -TargetPath  &quot;$(TargetDir)\&quot; -TargetName &quot;$(ExcelMvcAddInName).reflection.txt&quot;" />
 	</Target>
