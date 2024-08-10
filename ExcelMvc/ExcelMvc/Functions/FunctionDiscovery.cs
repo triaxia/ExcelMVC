@@ -67,7 +67,7 @@ namespace ExcelMvc.Functions
             return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
                 .Select(x => (x.type, method: x.type.GetMethod(x.method)))
-                .Select(x => (function: x.method.GetCustomAttribute(FunctionHost.Instance.FunctionAttributeType) as IFunctionAttribute, x.method))
+                .Select(x => (function: GetFunctionAttribute(x.method), x.method))
                 .Select(x => (x.method, (IFunctionAttribute)x.function, GetArguments(x.method)));
         }
 
@@ -81,7 +81,7 @@ namespace ExcelMvc.Functions
         private static ArgumentDefinition[] GetArguments(MethodInfo method)
         {
             return method.GetParameters()
-                .Select(x => (argument: x.GetCustomAttribute(FunctionHost.Instance.ArgumentAttributeType) as IArgumentAttribute, parameter: x))
+                .Select(x => (argument: GetArgumentAttribute(x), parameter: x))
                 .Select(x => new ArgumentDefinition(x.parameter, x.argument))
                 .ToArray();
         }
@@ -92,7 +92,13 @@ namespace ExcelMvc.Functions
             return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
         }
 
-        public static IntPtr MakeCallback(MethodInfo method, FunctionDefinition function)
+        private static IFunctionAttribute GetFunctionAttribute(MethodInfo method)
+            => method.GetCustomAttribute(FunctionHost.Instance.FunctionAttributeType) as IFunctionAttribute;
+
+        private static IArgumentAttribute GetArgumentAttribute(ParameterInfo parameter)
+            => parameter.GetCustomAttribute(FunctionHost.Instance.ArgumentAttributeType) as IArgumentAttribute;
+
+        private static IntPtr MakeCallback(MethodInfo method, FunctionDefinition function)
         {
             var e = DelegateFactory.MakeOuterDelegate(method, function);
             AddIn.NoGarbageCollectableHandles.Add(GCHandle.Alloc(e));

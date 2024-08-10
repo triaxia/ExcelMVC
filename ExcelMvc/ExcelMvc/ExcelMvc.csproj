@@ -5,7 +5,7 @@
 		<!--<Nullable>enable</Nullable>-->
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>2.3.3</Version>
+		<Version>2.3.5</Version>
 		<Description>Writing Excel applications in .NET using MVC pattern &amp; high performance user defined fuctions, including RTD and asynchronous functions. This package supercedes ExcelMvc.</Description>
 		<Copyright>Copyright © 2013 Peter Gu (Creator) &amp; Wolfgang Stamm (Contributor 2013)</Copyright>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
