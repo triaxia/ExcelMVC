@@ -379,6 +379,16 @@ namespace Function.Interfaces
         void RegisterFunctions(FunctionDefinitions functions);
 
         /// <summary>
+        /// Gets/Sets the type of <see cref="FunctionAttribute"/>
+        /// </summary>
+        Type FunctionAttributeType { get; set; }
+
+        /// <summary>
+        /// Gets/Sets the type of <see cref="ArgumentAttribute"/>
+        /// </summary>
+        Type ArgumentAttributeType { get; set; }
+
+        /// <summary>
         /// Posts an async action to the main thread of the <see cref="Underlying"/> host.
         /// </summary>
         /// <param name="action"></param>

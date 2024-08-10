@@ -20,6 +20,8 @@ namespace ExcelMvc.Functions
                     (sender, e) => RaiseFailed(sender, e);
             DelegateFactory.Executing +=
                     (sender, e) => RaiseExecuting(sender, e);
+            FunctionAttributeType = typeof(FunctionAttribute);
+            ArgumentAttributeType = typeof(ArgumentAttribute);
         }
 
         /// <inheritdoc/>
@@ -87,6 +89,12 @@ namespace ExcelMvc.Functions
             get { return XlMarshalExceptionHandler.ExceptionToFunctionResult; }
             set { XlMarshalExceptionHandler.ExceptionToFunctionResult = value; }
         }
+
+        /// <inheritdoc/>
+        public Type FunctionAttributeType { get; set; }
+
+        /// <inheritdoc/>
+        public Type ArgumentAttributeType { get; set; }
 
         /// <inheritdoc/>
         public event EventHandler<MessageEventArgs> Posted;
