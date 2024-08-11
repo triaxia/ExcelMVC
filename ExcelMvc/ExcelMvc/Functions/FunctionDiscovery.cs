@@ -74,7 +74,7 @@ namespace ExcelMvc.Functions
         private static IEnumerable<string> GetTypes(Assembly asm)
         {
             return asm.GetExportedTypes().Select(t => (type: t, methods: t.GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .Where(m => m.HasCustomAttribute(FunctionHost.Instance.FunctionAttributeType))))
+                .Where(m => HasFunctionAttribute(m))))
                 .SelectMany(t => t.methods.Select(m => $"{t.type.AssemblyQualifiedName}|{m.Name}"));
         }
 
@@ -86,17 +86,19 @@ namespace ExcelMvc.Functions
                 .ToArray();
         }
 
-        private static bool HasCustomAttribute(this MethodInfo method, Type attributeType)
+        private static bool HasFunctionAttribute(MethodInfo method)
         {
-            var name = attributeType.AssemblyQualifiedName;
+            // DON'T use GetFunctionAttribute(method) as it will return null because the method is
+            // NOT a fully reflectable one yet...
+            var name = FunctionHost.Instance.FunctionAttributeType.AssemblyQualifiedName;
             return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
         }
 
         private static IFunctionAttribute GetFunctionAttribute(MethodInfo method)
-            => method.GetCustomAttribute(FunctionHost.Instance.FunctionAttributeType) as IFunctionAttribute;
+            => method.GetCustomAttributes().SingleOrDefault(x=> x is IFunctionAttribute) as IFunctionAttribute;
 
         private static IArgumentAttribute GetArgumentAttribute(ParameterInfo parameter)
-            => parameter.GetCustomAttribute(FunctionHost.Instance.ArgumentAttributeType) as IArgumentAttribute;
+            => parameter.GetCustomAttributes().SingleOrDefault(x => x is IArgumentAttribute) as IArgumentAttribute;
 
         private static IntPtr MakeCallback(MethodInfo method, FunctionDefinition function)
         {
