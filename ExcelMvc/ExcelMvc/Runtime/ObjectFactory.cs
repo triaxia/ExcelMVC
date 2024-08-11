@@ -52,9 +52,25 @@ namespace ExcelMvc.Runtime
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
         }
 
-        public static void AddPath(string path) 
+        public static void AddPath(string path)
         {
             BasePaths.Add(path);
+        }
+
+        public static Assembly LoadAssembly(string assemblyPath)
+        {
+            try
+            {
+                var name = AssemblyName.GetAssemblyName(assemblyPath).FullName;
+                var match = AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(x => !x.IsDynamic && x.GetName().FullName == name)
+                    .SingleOrDefault();
+                return match ?? Assembly.LoadFrom(assemblyPath);
+            }
+            catch (BadImageFormatException)
+            {
+                return null;
+            }
         }
 
         private static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
@@ -64,7 +80,7 @@ namespace ExcelMvc.Runtime
                 .Select(x => File.Exists(x) ? x : null)
                 .Where(x => x != null)
                 .SingleOrDefault();
-            return match == null ? null : Assembly.LoadFrom(match);
+            return match == null ? null : LoadAssembly(match);
         }
     }
 
@@ -195,9 +211,8 @@ namespace ExcelMvc.Runtime
             var types = Enumerable.Empty<string>();
             ActionExtensions.Try(() =>
             {
-                var asm = Assembly.LoadFrom(assemblyPath);
-                if (asm != null)
-                    types = types.Concat(getTypes(asm));
+                var asm = AssemblyResolver.LoadAssembly(assemblyPath);
+                if (asm != null) types = types.Concat(getTypes(asm));
             }, ex => RaiseFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
             return types;
         }
