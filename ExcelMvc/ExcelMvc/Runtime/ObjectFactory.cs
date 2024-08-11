@@ -32,58 +32,17 @@ You should have received a copy of the GNU General Public License along with thi
 if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301 USA.
 */
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using ExcelMvc.Extensions;
+using Function.Interfaces;
 
 namespace ExcelMvc.Runtime
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using Extensions;
-    using Function.Interfaces;
-
-    internal static class AssemblyResolver
-    {
-        private static readonly HashSet<string> BasePaths = new HashSet<string>();
-        static AssemblyResolver()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
-        }
-
-        public static void AddPath(string path)
-        {
-            BasePaths.Add(path);
-        }
-
-        public static Assembly LoadAssembly(string assemblyPath)
-        {
-            try
-            {
-                var name = AssemblyName.GetAssemblyName(assemblyPath).FullName;
-                var match = AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(x => !x.IsDynamic && x.GetName().FullName == name)
-                    .SingleOrDefault();
-                return match ?? Assembly.LoadFrom(assemblyPath);
-            }
-            catch (BadImageFormatException)
-            {
-                return null;
-            }
-        }
-
-        private static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            var name = $"{new AssemblyName(args.Name).Name}.dll";
-            var match = BasePaths.Select(x => Path.Combine(x, name))
-                .Select(x => File.Exists(x) ? x : null)
-                .Where(x => x != null)
-                .SingleOrDefault();
-            return match == null ? null : LoadAssembly(match);
-        }
-    }
-
     /// <summary>
     /// Generic object factory.
     /// </summary>
@@ -184,7 +143,12 @@ namespace ExcelMvc.Runtime
             , Func<string, bool, bool> selectAssembly)
         {
             var types = new List<string>();
+#if NET6_0_OR_GREATER
+            var asms = System.Runtime.Loader.AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly()).Assemblies
+                .Where(x=>!x.IsDynamic);
+#else
             var asms = AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic);
+#endif
             asms = asms.Where(x => selectAssembly(x.GetName().Name, true));
             types.AddRange(asms.SelectMany(x => getTypes(x)));
             var location = typeof(ObjectFactory<T>).Assembly.Location;
@@ -197,7 +161,6 @@ namespace ExcelMvc.Runtime
 
                 if (files.Any())
                 {
-                    AssemblyResolver.AddPath(path);
                     var dllTypes = files.SelectMany(x => DiscoverTypes(x, getTypes));
                     types.AddRange(dllTypes);
                 }
@@ -211,8 +174,11 @@ namespace ExcelMvc.Runtime
             var types = Enumerable.Empty<string>();
             ActionExtensions.Try(() =>
             {
-                var asm = AssemblyResolver.LoadAssembly(assemblyPath);
-                if (asm != null) types = types.Concat(getTypes(asm));
+                using (var resolver = new AssemblyResolver(new[] { Path.GetDirectoryName(assemblyPath) }))
+                {
+                    var asm = resolver.LoadAssembly(assemblyPath);
+                    if (asm != null) types = types.Concat(getTypes(asm));
+                }
             }, ex => RaiseFailed(new FileLoadException(ex.Message, assemblyPath, ex)));
             return types;
         }
