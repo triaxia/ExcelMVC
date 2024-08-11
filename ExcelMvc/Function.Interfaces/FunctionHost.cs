@@ -34,12 +34,6 @@ namespace Function.Interfaces
 
     public class NullFunctionHost : IFunctionHost
     {
-        public NullFunctionHost()
-        {
-            FunctionAttributeType = typeof(FunctionAttribute);
-            ArgumentAttributeType = typeof(ArgumentAttribute);
-        }
-
         /// <inheritdoc/>
         public object Application { get; set; }
 

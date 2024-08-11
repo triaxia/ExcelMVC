@@ -90,12 +90,14 @@ namespace ExcelMvc.Functions
         {
             // DON'T use GetFunctionAttribute(method) as it will return null because the method is
             // NOT a fully reflectable one yet...
-            var name = FunctionHost.Instance.FunctionAttributeType.AssemblyQualifiedName;
-            return method.GetCustomAttributesData().Where(x => x.AttributeType.AssemblyQualifiedName == name).Any();
+            var name = typeof(IFunctionAttribute).FullName;
+            return method.GetCustomAttributesData()
+                .Where(x => x.AttributeType.GetInterfaces().Any(y => y.FullName == name))
+                .Any();
         }
 
         private static IFunctionAttribute GetFunctionAttribute(MethodInfo method)
-            => method.GetCustomAttributes().SingleOrDefault(x=> x is IFunctionAttribute) as IFunctionAttribute;
+            => method.GetCustomAttributes().SingleOrDefault(x => x is IFunctionAttribute) as IFunctionAttribute;
 
         private static IArgumentAttribute GetArgumentAttribute(ParameterInfo parameter)
             => parameter.GetCustomAttributes().SingleOrDefault(x => x is IArgumentAttribute) as IArgumentAttribute;
