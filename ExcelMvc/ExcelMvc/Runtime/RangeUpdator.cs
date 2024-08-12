@@ -175,9 +175,9 @@ namespace ExcelMvc.Runtime
             return offset;
         }
 
-        private static void Enqueue(Item item, int pumpMilliseconds = 0)
+        private static void Enqueue(Item item, int pumpMilliseconds = 10)
         {
-            AsyncActions.Post(UpdateAsync, item, true, pumpMilliseconds);
+            AsyncActions.PostMacro(UpdateAsync, item, pumpMilliseconds);
         }
 
         private static void UpdateAsync(object state)

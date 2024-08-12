@@ -219,9 +219,13 @@ namespace Function.Interfaces
         }
 
         /// <inheritdoc/>
-        public void Post(Action<object> action, object state)
+        public void PostAction(Action<object> action, object state)
         {
-            Task.Factory.StartNew(action, state);
+        }
+
+        /// <inheritdoc/>
+        public void PostMacro(Action<object> action, object state)
+        {
         }
 
         public object Run(int function, params object[] args)

@@ -43,7 +43,7 @@ namespace ExcelMvc.Runtime
     using Views;
 
     /// <summary>
-    /// Posts and handles asynchronous actions
+    /// Posts and handles asynchronous actions.
     /// </summary>
     internal static class AsyncActions
     {
@@ -106,29 +106,32 @@ namespace ExcelMvc.Runtime
         /// </summary>
         /// <param name="action">Action to be executed</param>
         /// <param name="state">State object</param>
-        /// <param name="asMacro">Execute as a macro</param>
-        /// <param name="pumpMilliseconds">Pumping message</param>
-        public static void Post(Action<object> action, object state
-            , bool asMacro, int pumpMilliseconds = 0)
+        public static void PostAction(Action<object> action, object state)
         {
             var item = new Item { Action = action, State = state };
-            if (asMacro)
-            {
-                Macros.Enqueue(item);
-                Context.PostAsyncMacroMessage(pumpMilliseconds);
-            }
-            else
-            {
-                Actions.Enqueue(item);
-                Context.PostAsyncActionMessage();
-            }
+            Actions.Enqueue(item);
+            Context.PostAsyncActionMessage();
+        }
+
+        /// <summary>
+        /// Posts an Async macro
+        /// </summary>
+        /// <param name="action">Action to be executed</param>
+        /// <param name="state">State object</param>
+        /// <param name="elapseMilliseconds">Pumping message</param>
+        public static void PostMacro(Action<object> action, object state,
+            int elapseMilliseconds = 100)
+        {
+            var item = new Item { Action = action, State = state };
+            Macros.Enqueue(item);
+            Context.PostAsyncMacroMessage(elapseMilliseconds);
         }
 
         /// <summary>
         /// Executes the next action in the queue
         /// </summary>
-        /// <param name="executeMacro">Execute the next macro</param>
-        public static void Execute(bool executeMacro)
+        /// <param name="asMacro">Execute the next macro</param>
+        internal static void Execute(bool asMacro)
         {
             void Do(ConcurrentQueue<Item> queue)
             {
@@ -144,7 +147,7 @@ namespace ExcelMvc.Runtime
                     }
                 }
             }
-            if (executeMacro)
+            if (asMacro)
                 Do(Macros);
             else
                 Do(Actions);

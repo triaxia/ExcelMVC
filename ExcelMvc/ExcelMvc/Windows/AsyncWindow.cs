@@ -96,37 +96,25 @@ namespace ExcelMvc.Windows
         /// </summary>
         public void PostAsyncActionMessage()
         {
-            PostAsyncMessage(AsyncActionMessage, 0);
+            var watch = Stopwatch.StartNew();
+            while (watch.Elapsed.TotalSeconds < 2)
+            {
+                var status = DllImports.PostMessage(Handle, (int)AsyncActionMessage, 0, 0);
+                if (status != 0) break;
+                var ex = new Exception($"AsyncWindow.PostAsyncMessage failed {Marshal.GetLastWin32Error()}");
+                Function.Interfaces.FunctionHost.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(ex));
+                Thread.Sleep(100);
+            }
         }
 
         /// <summary>
         /// Posts an async macro message
         /// </summary>
-        /// <param name="pumpMilliseconds">Pumping messages</param>
-        public void PostAsyncMacroMessage(int pumpMilliseconds = 0)
+        /// <param name="elapseMilliseconds">Pumping messages</param>
+        public void PostAsyncMacroMessage(int elapseMilliseconds = 100)
         {
-            PostAsyncMessage(AsyncMacroMessage, pumpMilliseconds);
-        }
-
-        public void PostAsyncMessage(uint message, int pumpMilliseconds)
-        {
-            if (pumpMilliseconds > 0)
-            {
-                TimerId = TimerId == int.MaxValue ? 0 : TimerId + 1;
-                DllImports.SetTimer(Handle, TimerId, pumpMilliseconds, IntPtr.Zero);
-            }
-            else
-            {
-                var watch = Stopwatch.StartNew();
-                while (watch.Elapsed.TotalSeconds < 2)
-                {
-                    var status = DllImports.PostMessage(Handle, (int)message, 0, 0);
-                    if (status != 0) break;
-                    var ex = new Exception($"AsyncWindow.PostAsyncMessage failed {Marshal.GetLastWin32Error()}");
-                    Function.Interfaces.FunctionHost.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(ex));
-                    Thread.Sleep(100);
-                }
-            }
+            TimerId = TimerId == int.MaxValue ? 0 : TimerId + 1;
+            DllImports.SetTimer(Handle, TimerId, elapseMilliseconds, IntPtr.Zero);
         }
 
         /// <summary>

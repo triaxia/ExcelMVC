@@ -103,12 +103,12 @@ namespace ExcelMvc.Diagnostics
 
         private void RaiseChanged()
         {
-            AsyncActions.Post(_ =>
+            AsyncActions.PostAction(_ =>
             {
                 UpdateOutstanding.Reset();
                 PropertyChanged(this, new PropertyChangedEventArgs("Info"));
                 PropertyChanged(this, new PropertyChangedEventArgs("Error"));
-            }, null, false);
+            }, null);
         }
     }
 }

@@ -383,7 +383,14 @@ namespace Function.Interfaces
         /// </summary>
         /// <param name="action"></param>
         /// <param name="state"></param>
-        void Post(Action<object> action, object state);
+        void PostAction(Action<object> action, object state);
+
+        /// <summary>
+        /// Posts a macro action to the main thread of the <see cref="Underlying"/> host.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="state"></param>
+        void PostMacro(Action<object> action, object state);
 
         /// <summary>
         /// Gets the version of the <see cref="Underlying"/> host.

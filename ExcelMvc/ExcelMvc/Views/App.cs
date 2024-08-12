@@ -221,7 +221,7 @@ namespace ExcelMvc.Views
             if (Underlying == null)
                 Do(app);
             else
-                AsyncActions.Post(a => Do(a), app, true);
+                AsyncActions.PostMacro(a => Do(a), app);
         }
 
         /// <summary>
