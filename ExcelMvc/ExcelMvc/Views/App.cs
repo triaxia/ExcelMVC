@@ -166,62 +166,62 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Attach(object app)
         {
-            void Do(object state)
-            {
-                Try(() =>
-                {
-                    FunctionHost.Instance = new ExcelFunctionHost();
-
-                    Detach();
-                    Underlying = (state as Application) ?? DllImports.FindExcel();
-                    if (Underlying == null) throw new Exception(Resource.ErrorExcelAppFound);
-
-                    AsyncActions.Initialise();
-                    RaisePosted($"AsyncActions.Initialise() done");
-
-                    ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes
-                        , ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
-                    ObjectFactory<IFunctionAddIn>.Instances.ForEach(x => x.Open());
-                    RaisePosted($"ObjectFactory<IFunctionAddIn>.CreateAll({ObjectFactory<IFunctionAddIn>.Instances.Count})");
-
-                    ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes
-                        , ObjectFactory<ISession>.SelectAllAssembly);
-                    RaisePosted($"ObjectFactory<ISession>.CreateAll({ObjectFactory<ISession>.Instances.Count})");
-
-                    ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes
-                        , ObjectFactory<IValueConverter>.SelectAllAssembly);
-                    RaisePosted($"ObjectFactory<IValueConverter>.CreateAll({ObjectFactory<IValueConverter>.Instances.Count})");
-
-                    var functions = FunctionDiscovery.RegisterFunctions();
-                    RaisePosted($"FunctionDiscovery.RegisterFunctions({functions.FunctionCount})");
-
-                    Underlying.WorkbookOpen += OpenBook;
-                    Underlying.WorkbookBeforeClose += ClosingBook;
-                    Underlying.WorkbookActivate += Activate;
-                    Underlying.WorkbookDeactivate += Deactivate;
-
-                    MainWindow = new Root(Underlying.Hwnd);
-                    MainWindow.Destroyed += MainWindow_Destroyed;
-
-                    foreach (Workbook item in Underlying.Workbooks)
-                    {
-                        var view = new Book(this, item);
-                        var args = new ViewEventArgs(view);
-                        OnOpening(args);
-                        if (args.IsAccepted)
-                        {
-                            view.Initialise();
-                            Books[item] = view;
-                            ExecuteBinding(() => OnOpened(new ViewEventArgs(view)));
-                        }
-                    }
-                });
-            }
-
             if (Underlying == null)
-                Do(app);
+                DoAttach(app);
             else
-                AsyncActions.PostMacro(a => Do(a), app);
+                AsyncActions.PostMacro(a => DoAttach(a), app);
+        }
+
+        void DoAttach(object state)
+        {
+            Try(() =>
+            {
+                FunctionHost.Instance = new ExcelFunctionHost();
+
+                Detach();
+                Underlying = (state as Application) ?? DllImports.FindExcel();
+                if (Underlying == null) throw new Exception(Resource.ErrorExcelAppFound);
+
+                AsyncActions.Initialise();
+                RaisePosted($"AsyncActions.Initialise() done");
+
+                ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes
+                    , ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
+                ObjectFactory<IFunctionAddIn>.Instances.ForEach(x => x.Open());
+                RaisePosted($"ObjectFactory<IFunctionAddIn>.CreateAll({ObjectFactory<IFunctionAddIn>.Instances.Count})");
+
+                ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes
+                    , ObjectFactory<ISession>.SelectAllAssembly);
+                RaisePosted($"ObjectFactory<ISession>.CreateAll({ObjectFactory<ISession>.Instances.Count})");
+
+                ObjectFactory<IValueConverter>.CreateAll(ObjectFactory<IValueConverter>.GetCreatableTypes
+                    , ObjectFactory<IValueConverter>.SelectAllAssembly);
+                RaisePosted($"ObjectFactory<IValueConverter>.CreateAll({ObjectFactory<IValueConverter>.Instances.Count})");
+
+                var functions = FunctionDiscovery.RegisterFunctions();
+                RaisePosted($"FunctionDiscovery.RegisterFunctions({functions.FunctionCount})");
+
+                Underlying.WorkbookOpen += OpenBook;
+                Underlying.WorkbookBeforeClose += ClosingBook;
+                Underlying.WorkbookActivate += Activate;
+                Underlying.WorkbookDeactivate += Deactivate;
+
+                MainWindow = new Root(Underlying.Hwnd);
+                MainWindow.Destroyed += MainWindow_Destroyed;
+
+                foreach (Workbook item in Underlying.Workbooks)
+                {
+                    var view = new Book(this, item);
+                    var args = new ViewEventArgs(view);
+                    OnOpening(args);
+                    if (args.IsAccepted)
+                    {
+                        view.Initialise();
+                        Books[item] = view;
+                        ExecuteBinding(() => OnOpened(new ViewEventArgs(view)));
+                    }
+                }
+            });
         }
 
         /// <summary>
