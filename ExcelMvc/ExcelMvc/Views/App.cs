@@ -187,9 +187,6 @@ namespace ExcelMvc.Views
 
                 ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes
                     , ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
-                ObjectFactory<IFunctionAddIn>.Instances
-                    .OrderByDescending(x => x.Ranking).ToList().ForEach(x => x.Open());
-
                 RaisePosted($"ObjectFactory<IFunctionAddIn>.CreateAll({ObjectFactory<IFunctionAddIn>.Instances.Count})");
 
                 ObjectFactory<ISession>.CreateAll(ObjectFactory<ISession>.GetCreatableTypes

@@ -33,8 +33,11 @@ Boston, MA 02110-1301 USA.
 
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Runtime.InteropServices;
 using ExcelMvc.Rtd;
+using ExcelMvc.Runtime;
+using Function.Interfaces;
 namespace ExcelMvc.Functions
 {
     using HRESULT = Int32;
@@ -44,8 +47,6 @@ namespace ExcelMvc.Functions
     public static class AddIn
     {
         public static string ModuleFileName { get; private set; }
-        public delegate HRESULT FuncDllGetClassObject(CLSID rclsid, IID riid, out IntPtr ppunk);
-
         public delegate void RegisterFunctionsDelegate(IntPtr functions);
         public static RegisterFunctionsDelegate RegisterFunctions { get; private set; }
         public delegate IntPtr SetAsyncValueDelegate(IntPtr handle, IntPtr result);
@@ -57,16 +58,22 @@ namespace ExcelMvc.Functions
         public delegate IntPtr FreeCallStatusDelegate(IntPtr args);
         public static FreeCallStatusDelegate FreeCallStatus { get; private set; }
 
+        private delegate HRESULT FuncDllGetClassObject(CLSID rclsid, IID riid, out IntPtr ppunk);
+        private delegate void AutoOpenDelegate();
+        private delegate void AutoCloseDelegate();
+
         [StructLayout(LayoutKind.Sequential)]
         public struct AddInHead
         {
             public IntPtr ModuleFileName;
-            public IntPtr pDllGetClassObject;
             public IntPtr pRegisterFunctions;
             public IntPtr pSetAsyncValue;
             public IntPtr pCallRtd;
             public IntPtr pCallAny;
             public IntPtr pFreeCallStatus;
+            public IntPtr pDllGetClassObject;
+            public IntPtr pAutoOpen;
+            public IntPtr pAutoClose;
         }
 
         public static readonly ConcurrentBag<GCHandle> NoGarbageCollectableHandles
@@ -78,15 +85,46 @@ namespace ExcelMvc.Functions
             {
                 AddInHead* pAddInHead = (AddInHead*)head;
                 ModuleFileName = Marshal.PtrToStringAuto(pAddInHead->ModuleFileName);
-                FuncDllGetClassObject fnDllGetClassObject = RtdServerFactory.DllGetClassObject;
-                NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnDllGetClassObject));
-                pAddInHead->pDllGetClassObject = Marshal.GetFunctionPointerForDelegate(fnDllGetClassObject);
                 RegisterFunctions = Marshal.GetDelegateForFunctionPointer<RegisterFunctionsDelegate>(pAddInHead->pRegisterFunctions);
                 SetAsyncValue = Marshal.GetDelegateForFunctionPointer<SetAsyncValueDelegate>(pAddInHead->pSetAsyncValue);
                 CallRtd = Marshal.GetDelegateForFunctionPointer<CallRtdDelegate>(pAddInHead->pCallRtd);
                 CallAny = Marshal.GetDelegateForFunctionPointer<CallAnyDelegate>(pAddInHead->pCallAny);
                 FreeCallStatus = Marshal.GetDelegateForFunctionPointer<FreeCallStatusDelegate>(pAddInHead->pFreeCallStatus);
+
+                FuncDllGetClassObject fnDllGetClassObject = RtdServerFactory.DllGetClassObject;
+                NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnDllGetClassObject));
+                pAddInHead->pDllGetClassObject = Marshal.GetFunctionPointerForDelegate(fnDllGetClassObject);
+
+                AutoOpenDelegate fnAutoOpen = AutoOpen;
+                NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnAutoOpen));
+                pAddInHead->pAutoOpen = Marshal.GetFunctionPointerForDelegate(fnAutoOpen);
+
+                AutoCloseDelegate fnAutoClose = AutoClose;
+                NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnAutoClose));
+                pAddInHead->pAutoClose = Marshal.GetFunctionPointerForDelegate(fnAutoClose);
             }
         }
+
+        private static void AutoOpen()
+        {
+            ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes,
+                ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
+            ObjectFactory<IFunctionAddIn>.Instances
+                .OrderByDescending(x => x.Ranking).ToList().ForEach(x => x.Open());
+            RaisePosted($"IFunctionAddIn.Open({ObjectFactory<IFunctionAddIn>.Instances.Count})");
+
+            var functions = FunctionDiscovery.RegisterFunctions();
+            RaisePosted($"FunctionDiscovery.RegisterFunctions({functions.FunctionCount})");
+        }
+
+        private static void AutoClose()
+        {
+            ObjectFactory<IFunctionAddIn>.Instances
+                .OrderBy(x => x.Ranking).ToList().ForEach(x => x.Close());
+            RaisePosted($"IFunctionAddIn.Close({ObjectFactory<IFunctionAddIn>.Instances.Count})");
+        }
+
+        private static void RaisePosted(string message) =>
+            FunctionHost.Instance.RaisePosted(FunctionHost.Instance, new MessageEventArgs(message));
     }
 }
