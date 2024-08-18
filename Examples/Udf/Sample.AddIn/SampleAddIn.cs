@@ -4,6 +4,7 @@ namespace Sample.AddIn
 {
     public class SampleAddIn : IFunctionAddIn
     {
+        public int Ranking { get; } = int.MaxValue;
         public void Close()
         {
         }
