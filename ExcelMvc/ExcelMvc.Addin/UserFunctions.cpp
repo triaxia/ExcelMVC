@@ -86,22 +86,15 @@ struct FunctionArguments
 };
 
 static std::map<int, LPXLOPER12> FunctionRegIds;
-static XLOPER12 xDll;
-
-void RegisterUserFunctions()
-{
-	Excel12f(xlGetName, &xDll, 0);
-}
-
-void UnregisterUserFunctions(bool freeXll)
+void UnregisterFunctions()
 {
 	for (auto it = FunctionRegIds.begin(); it != FunctionRegIds.end(); it++)
 	{
 		Excel12f(xlfUnregister, 0, 1, it->second);
-		FreeXLOper12T(it->second);
+		Excel12f(xlFree, 0, 1, it->second);
+		delete it->second;
 	}
-	if (freeXll)
-		Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
+	FunctionRegIds.clear();
 }
 
 LPCWSTR NullCoalesce(LPCWSTR value)
@@ -188,7 +181,7 @@ void NormaliseHelpTopic(ExcelFunction* pFunction, std::wstring& topic)
 
 extern "C" extern ClrRuntimeHost * pClrHost;
 
-void RegisterFunction(ExcelFunction* pFunction, int index)
+void RegisterFunction(ExcelFunction* pFunction, int index, LPXLOPER12 xll)
 {
 	auto regId = new XLOPER12();
 	FunctionRegIds[index] = regId;
@@ -229,7 +222,7 @@ void RegisterFunction(ExcelFunction* pFunction, int index)
 	auto count = 10 + pFunction->ArgumentCount;
 	auto parameters = new LPXLOPER12[count];
 
-	parameters[0] = &xDll;
+	parameters[0] = xll;
 	parameters[1] = TempStr12(pxProcedure);
 	parameters[2] = TempStr12(pxTypeText.c_str());
 	parameters[3] = TempStr12(pxFunctionText);
@@ -260,13 +253,18 @@ void RegisterFunction(ExcelFunction* pFunction, int index)
 
 void __stdcall RegisterFunctions(void* handle)
 {
+	UnregisterFunctions();
+
+	static XLOPER12 xDll;
+	Excel12f(xlGetName, &xDll, 0);
+
 	auto pFunctions = (ExcelFunctions*)handle;
-	UnregisterUserFunctions(false);
 	for (auto index = 0; index < pFunctions->FunctionCount; index++)
 	{
 		auto x = pFunctions->Functions[index];
-		RegisterFunction(&x, index);
+		RegisterFunction(&x, index, &xDll);
 	}
+	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
 }
 
 LPCALLSTATUS __stdcall SetAsyncValue(LPXLOPER12 handle, LPXLOPER12 value)

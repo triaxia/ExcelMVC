@@ -43,15 +43,14 @@ extern "C" { extern WCHAR ModuleFileName[]; }
 extern "C" const GUID __declspec(selectany) DIID__Workbook =
 { 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
 
-extern void __stdcall RegisterFunctions(void* handle); 
+extern void RegisterMvcFunctions();
+extern void UnregisterMvcFunctions();
+extern void __stdcall RegisterFunctions(void* handle);
+extern void UnregisterFunctions();
+
 extern LPCALLSTATUS __stdcall SetAsyncValue(LPXLOPER12 handle, LPXLOPER12 value);
 extern LPCALLSTATUS __stdcall CallRtd(void* args);
 extern LPCALLSTATUS __stdcall CallAny(void* args);
-
-extern void RegisterMvcFunctions();
-extern void UnregisterMvcFunctions();
-extern void RegisterUserFunctions();
-extern void UnregisterUserFunctions(bool freeXll);
 
 typedef HRESULT(__stdcall* PFN_DllGetClassObject)(CLSID clsid, IID iid, LPVOID* ppv);
 typedef void(__stdcall* PFN_RegisterFunctions)(void* handle);
@@ -151,9 +150,19 @@ extern "C"
 	ClrRuntimeHost* pClrHost = nullptr;
 }
 
+void StopAddInClrHost()
+{
+	if (pClrHost == nullptr)
+		return;
+
+	pClrHost->Stop();
+	delete pClrHost;
+	pClrHost = nullptr;
+}
+
 BOOL StartAddInClrHost()
 {
-	delete pClrHost;
+	StopAddInClrHost();
 	pClrHost = ClrRuntimeHostFactory::Create();
 	pClrHost->Start(L"ExcelMvc", L"ExcelMvc.Runtime.Interface");
 	BOOL result = pClrHost->TestAndDisplayError();
@@ -175,31 +184,23 @@ BOOL StartAddInClrHost()
 	return result;
 }
 
-void StopAddInClrHost()
-{
-	if (pClrHost != nullptr) pClrHost->Stop();
-}
-
-bool opened = false;
-
 BOOL __stdcall xlAutoOpen(void)
 {
-	if (!opened)
-	{
-		opened = true;
-		RegisterMvcFunctions();
-		RegisterUserFunctions();
-		StartAddInClrHost();
-	}
+	RegisterMvcFunctions();
+	StartAddInClrHost();
 	return TRUE;
 }
 
 BOOL __stdcall xlAutoClose(void)
 {
-	/*
+	return TRUE;
+}
+
+BOOL __stdcall xlAutoRemove(void)
+{
 	UnregisterMvcFunctions();
-	UnregisterUserFunctions(false);
-	*/
+	UnregisterFunctions();
+	StopAddInClrHost();
 	return TRUE;
 }
 

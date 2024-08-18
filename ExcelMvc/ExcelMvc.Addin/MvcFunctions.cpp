@@ -114,6 +114,7 @@ void UnregisterMvcFunctions()
 	for (unsigned int idx = 0; idx < count; idx++)
 	{
 		Excel12f(xlfUnregister, 0, 1, &RegIds[idx]);
+		Excel12f(xlFree, 0, 1, &RegIds[idx]);
 	}
 }
 

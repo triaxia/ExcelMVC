@@ -5,6 +5,7 @@ DllGetClassObject		PRIVATE
 DllCanUnloadNow			PRIVATE
 xlAutoOpen              PRIVATE
 xlAutoClose             PRIVATE 
+xlAutoRemove            PRIVATE 
 xlAutoFree12            PRIVATE
 FreeCallStatus          PRIVATE
 RegisterFunctions       PRIVATE
