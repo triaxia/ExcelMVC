@@ -197,9 +197,6 @@ namespace ExcelMvc.Views
                     , ObjectFactory<IValueConverter>.SelectAllAssembly);
                 RaisePosted($"ObjectFactory<IValueConverter>.CreateAll({ObjectFactory<IValueConverter>.Instances.Count})");
 
-                var functions = FunctionDiscovery.RegisterFunctions();
-                RaisePosted($"FunctionDiscovery.RegisterFunctions({functions.FunctionCount})");
-
                 Underlying.WorkbookOpen += OpenBook;
                 Underlying.WorkbookBeforeClose += ClosingBook;
                 Underlying.WorkbookActivate += Activate;
