@@ -288,7 +288,7 @@ namespace ExcelMvc.Functions
                 objValue = parameter.DefaultValue == DBNull.Value ? default : parameter.DefaultValue;
 
             if (typeof(TValue).IsValueType)
-                result = objValue == null ? default : (TValue)Convert.ChangeType(objValue, typeof(TValue));
+                result = objValue == null ? default : ChangeType<TValue>(objValue);
             else
                 result = (TValue) objValue;
 
@@ -317,6 +317,18 @@ namespace ExcelMvc.Functions
                 for (var col = 0; col < cols; col++)
                     result[row, col] = DateTime.FromOADate(cells[row, col]);
             return result;
+        }
+
+        private static T ChangeType<T>(object value)
+        {
+            var t = typeof(T);
+
+            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                if (value == null) return default;
+                t = Nullable.GetUnderlyingType(t);
+            }
+            return (T)Convert.ChangeType(value, t);
         }
 
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters
