@@ -15,29 +15,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\ExcelMvc\ExcelMvc.csproj" />
-	  <ProjectReference Include="..\Function.Interfaces\Function.Interfaces.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Update="My.reflection.txt">
 	    <PackagePath>Build</PackagePath>
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 
-	<!--
 	<ItemGroup>
-		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\x86\ExcelMvc.Addin.x86.xll">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\ExcelMvc.Addin\bin\$(Configuration)\x64\ExcelMvc.Addin.x64.xll">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\ExcelMvc\ExcelMvc.runtimeconfig.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
+		<PackageReference Include="ExcelMvc.Net" Version="2.4.1" />
 	</ItemGroup>
-	-->
 
 </Project>
