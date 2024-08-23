@@ -6,7 +6,7 @@ using System.Linq;
 namespace ExcelMvc.Tests
 {
     [TestClass]
-    public class FunctionDiscoveryTests
+    public class FunctionTests
     {
         [Function(Name = "uAdd3",
             Description = nameof(uAdd3),
