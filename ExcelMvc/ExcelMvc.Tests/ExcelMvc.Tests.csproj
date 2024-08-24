@@ -15,6 +15,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="ExcelMvc.Net" Version="2.4.1" />
+		<!--<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />-->
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Update="My.reflection.txt">
 	    <PackagePath>Build</PackagePath>
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -22,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.4.1" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 	</ItemGroup>
 
 </Project>
