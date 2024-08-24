@@ -91,8 +91,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr UInt32ToIntPtr(uint value)
         {
-            *((int*)IntValue.ToPointer()) =(int) value;
-            return IntValue;
+            return DoubleToIntPtr(value);
         }
 
         public IntPtr Int16ToIntPtr(short value)
@@ -103,7 +102,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr UInt16ToIntPtr(ushort value)
         {
-            return UInt32ToIntPtr(value);
+            return Int32ToIntPtr(value);
         }
 
         public IntPtr ByteToIntPtr(byte value)

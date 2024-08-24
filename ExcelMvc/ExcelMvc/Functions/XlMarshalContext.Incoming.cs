@@ -119,14 +119,14 @@ namespace ExcelMvc.Functions
         {
             if (TryGetOptionalValue<uint>(value, parameter, isOptional, out var output))
                 return output;
-            return value == IntPtr.Zero ? 0 : (uint)*(int*)value.ToPointer();
+            return value == IntPtr.Zero ? 0 : (uint)*(double*)value.ToPointer();
         }
 
         public static uint? IntPtrToUInt32Nullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
             if (TryGetOptionalValue<uint?>(value, parameter, isOptional, out var output))
                 return output;
-            return value == IntPtr.Zero ? default(uint?) : (uint)*(int*)value.ToPointer();
+            return value == IntPtr.Zero ? default(uint?) : (uint)*(double*)value.ToPointer();
         }
 
         public static short IntPtrToInt16(IntPtr value, ParameterInfo parameter, bool isOptional)
