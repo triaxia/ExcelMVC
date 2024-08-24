@@ -17,10 +17,11 @@ namespace ExcelMvc.Integration.Tests
         {
             using (var excel = new ExcelLoader())
             {
-                var result = (byte)excel.Application.Run("uByte", 123);
-                Assert.AreEqual(123, result);
-                result = (byte)excel.Application.Run("uByte", 123, 123);
-                Assert.AreEqual(246, result);
+                var result = (byte)excel.Application.Run("uByte", byte.MaxValue);
+                Assert.AreEqual(byte.MaxValue, result);
+                var half = byte.MaxValue / 2;
+                result = (byte)excel.Application.Run("uByte", half, half);
+                Assert.AreEqual(half * 2, result);
             }
         }
 
@@ -35,10 +36,11 @@ namespace ExcelMvc.Integration.Tests
         {
             using (var excel = new ExcelLoader())
             {
-                var result = (sbyte)excel.Application.Run("uSByte", 123);
-                Assert.AreEqual(123, result);
-                result = (sbyte)excel.Application.Run("uSByte", 120, 123);
-                Assert.AreEqual(-3, result);
+                var result = (sbyte)excel.Application.Run("uSByte", sbyte.MaxValue);
+                Assert.AreEqual(sbyte.MaxValue, result);
+                var half = byte.MaxValue / 2;
+                result = (sbyte)excel.Application.Run("uSByte", half - 1, half);
+                Assert.AreEqual(-1, result);
             }
         }
     }

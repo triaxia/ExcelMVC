@@ -147,14 +147,14 @@ namespace ExcelMvc.Functions
         {
             if (TryGetOptionalValue<ushort>(value, parameter, isOptional, out var output))
                 return output;
-            return value == IntPtr.Zero ? (ushort)0 : (ushort)*(short*)value.ToPointer();
+            return value == IntPtr.Zero ? (ushort)0 : (ushort)*(int*)value.ToPointer();
         }
 
         public static ushort? IntPtrToUInt16Nullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
             if (TryGetOptionalValue<ushort?>(value, parameter, isOptional, out var output))
                 return output;
-            return value == IntPtr.Zero ? default(ushort?) : (ushort)*(short*)value.ToPointer();
+            return value == IntPtr.Zero ? default(ushort?) : (ushort)*(int*)value.ToPointer();
         }
 
         public static byte IntPtrToByte(IntPtr value, ParameterInfo parameter, bool isOptional)
