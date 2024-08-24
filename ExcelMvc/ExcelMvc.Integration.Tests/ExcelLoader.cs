@@ -8,7 +8,7 @@ namespace ExcelMvc.Integration.Tests
     public class ExcelLoader : IDisposable
     {
         private static string AddInName
-            => Path.Combine(Path.GetDirectoryName(typeof(FunctionTests).Assembly.Location),
+            => Path.Combine(Path.GetDirectoryName(typeof(BoolTests).Assembly.Location),
                  "ExcelMvc.Tests64.xll");
 
         public Application Application { get; private set; }

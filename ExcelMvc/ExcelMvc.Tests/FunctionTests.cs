@@ -23,7 +23,7 @@ namespace ExcelMvc.Tests
         }
 
         [Function(Name = "uAdd2",
-            Description = nameof(uAdd3),
+            Description = nameof(uAdd2),
             HelpTopic = "https://microsoft.com",
             IsAsync = false,
             IsThreadSafe = false,
@@ -34,6 +34,11 @@ namespace ExcelMvc.Tests
         public static double uAdd2(double v1, double v2)
         {
             return v1 + v2;
+        }
+
+        public static double uAdd2()
+        {
+            return 0;
         }
 
         [TestMethod]

@@ -66,9 +66,17 @@ namespace ExcelMvc.Functions
         {
             return ObjectFactory<object>.GetTypes(x => GetTypes(x), ObjectFactory<object>.SelectAllAssembly)
                 .Select(x => x.Split('|')).Select(x => (type: Type.GetType(x[0]), method: x[1]))
-                .Select(x => (x.type, method: x.type.GetMethod(x.method)))
-                .Select(x => (function: GetFunctionAttribute(x.method), x.method))
-                .Select(x => (x.method, (IFunctionAttribute)x.function, GetArguments(x.method)));
+                .Select(x => (MatchFirst(x.type, x.method)))
+                .Select(x => (x.method, x.function, GetArguments(x.method)));
+        }
+
+        private static (IFunctionAttribute function, MethodInfo method)
+            MatchFirst(Type type, string name)
+        {
+            // discard duplicate functions...
+            return type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.Name == name)
+                .Select(x => (function: GetFunctionAttribute(x), method: x))
+                .Where(x => x.function != null).FirstOrDefault();
         }
 
         private static IEnumerable<string> GetTypes(Assembly asm)
