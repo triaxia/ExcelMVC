@@ -132,12 +132,6 @@ namespace ExcelMvc.Functions
         };
 
         /// <inheritdoc/>
-        public string ErrorToString(object value)
-        {
-            return ErrorStrings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
-        }
-
-        /// <inheritdoc/>
         public IntPtr GetAsyncHandle(IntPtr handle)
         {
             unsafe

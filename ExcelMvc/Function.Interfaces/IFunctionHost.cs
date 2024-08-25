@@ -194,13 +194,6 @@ namespace Function.Interfaces
         IDictionary<object, int> ErrorNumbers { get; }
 
         /// <summary>
-        /// Converts error objects to their string representations.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        string ErrorToString(object value);
-
-        /// <summary>
         /// Occurs whenever Rtd servers are updated.
         /// </summary>
         event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;

@@ -20,7 +20,7 @@ namespace ExcelMvc.Integration.Tests
             {
                 var result = (bool)excel.Application.Run("uValueMissing");
                 Assert.AreEqual(true, result);
-                 result = (bool)excel.Application.Run("uValueMissing", 123);
+                result = (bool)excel.Application.Run("uValueMissing", 123);
                 Assert.AreEqual(false, result);
             }
         }
@@ -42,15 +42,13 @@ namespace ExcelMvc.Integration.Tests
         }
 
         [Function()]
-        public static object uGetErrorNA()
-        {
-            return FunctionHost.Instance.ErrorNA;
-        }
+        public static object uGetErrorNA() => FunctionHost.Instance.ErrorNA;
 
         [Function()]
         public static bool uSetErrorNA([Argument(Name = "[v1]")] object v1)
         {
-            return v1.Equals(FunctionHost.Instance.ErrorNA) || ((int)(double) v1) == -2146826246;
+            return v1.Equals(FunctionHost.Instance.ErrorNA) // from Excel
+                || (FunctionHost.Instance.ErrorNumbers.TryGetValue(FunctionHost.Instance.ErrorNA, out var num) && ((int)(double)v1) == num); // from C#
         }
 
         [TestMethod]
