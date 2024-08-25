@@ -186,7 +186,7 @@ namespace Function.Interfaces
         /// <summary>
         /// <see cref="ErrorValue"/>, <see cref="ErrorNull"/>... etc to their string representations.
         /// </summary>
-        IDictionary<object, string> ErrorMappings { get; }
+        IDictionary<object, string> ErrorStrings { get; }
 
         /// <summary>
         /// <see cref="ErrorValue"/>, <see cref="ErrorNull"/>... etc to their number representations.

@@ -100,7 +100,7 @@ namespace Function.Interfaces
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
 
         /// <inheritdoc/>
-        public IDictionary<object, string> ErrorMappings { get; }
+        public IDictionary<object, string> ErrorStrings { get; }
             = new Dictionary<object, string>
         {
             { ErrorType.Null,"#NULL!" },
@@ -130,7 +130,7 @@ namespace Function.Interfaces
         /// <inheritdoc/>
         public string ErrorToString(object value)
         {
-            return ErrorMappings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
+            return ErrorStrings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
         }
 
         /// <inheritdoc/>
