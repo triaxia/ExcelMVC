@@ -25,10 +25,16 @@ namespace ExcelMvc.Integration.Tests
 
         public void Dispose()
         {
-            AddIn.Installed = false;
-            Application.Quit();
-            foreach (var excel in Process.GetProcessesByName("Excel"))
-                excel.Kill();
+            try
+            {
+                AddIn.Installed = false;
+                Application.Quit();
+            }
+            catch
+            {
+                foreach (var excel in Process.GetProcessesByName("Excel"))
+                    excel.Kill();
+            }
         }
     }
 }

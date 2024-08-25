@@ -50,7 +50,6 @@ namespace ExcelMvc.Integration.Tests
         [Function()]
         public static bool uSetErrorNA([Argument(Name = "[v1]")] object v1)
         {
-            //Debugger.Launch();
             return v1.Equals(FunctionHost.Instance.ErrorNA) || ((int)(double) v1) == -2146826246;
         }
 
