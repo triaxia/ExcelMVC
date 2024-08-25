@@ -118,6 +118,20 @@ namespace ExcelMvc.Functions
         };
 
         /// <inheritdoc/>
+        public IDictionary<object, int> ErrorNumbers { get; }
+            = new Dictionary<object, int>
+        {
+            { ExcelError.ExcelErrorNull, -2146826288 },
+            { ExcelError.ExcelErrorDiv0, -2146826281 },
+            { ExcelError.ExcelErrorValue, -2146826273 },
+            { ExcelError.ExcelErrorRef, -2146826265 },
+            { ExcelError.ExcelErrorName, -2146826259 },
+            { ExcelError.ExcelErrorNum, -2146826252 },
+            { ExcelError.ExcelErrorNA, -2146826246 },
+            { ExcelError.ExcelErrorGettingData, -2146826245 }
+        };
+
+        /// <inheritdoc/>
         public string ErrorToString(object value)
         {
             return ErrorMappings.TryGetValue(value, out var mapped) ? mapped : $"{value}";

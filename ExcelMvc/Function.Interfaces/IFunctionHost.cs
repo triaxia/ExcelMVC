@@ -189,6 +189,11 @@ namespace Function.Interfaces
         IDictionary<object, string> ErrorMappings { get; }
 
         /// <summary>
+        /// <see cref="ErrorValue"/>, <see cref="ErrorNull"/>... etc to their number representations.
+        /// </summary>
+        IDictionary<object, int> ErrorNumbers { get; }
+
+        /// <summary>
         /// Converts error objects to their string representations.
         /// </summary>
         /// <param name="value"></param>

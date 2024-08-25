@@ -114,6 +114,20 @@ namespace Function.Interfaces
         };
 
         /// <inheritdoc/>
+        public IDictionary<object, int> ErrorNumbers { get; }
+            = new Dictionary<object, int>
+        {
+            { ErrorType.Null, -2146826288 },
+            { ErrorType.Div0, -2146826281 },
+            { ErrorType.Value, -2146826273 },
+            { ErrorType.Ref, -2146826265 },
+            { ErrorType.Name, -2146826259 },
+            { ErrorType.Num, -2146826252 },
+            { ErrorType.NA, -2146826246 },
+            { ErrorType.Data, -2146826245 }
+        };
+
+        /// <inheritdoc/>
         public string ErrorToString(object value)
         {
             return ErrorMappings.TryGetValue(value, out var mapped) ? mapped : $"{value}";
