@@ -110,11 +110,19 @@ namespace ExcelMvc.Windows
         /// <summary>
         /// Posts an async macro message
         /// </summary>
-        /// <param name="elapseMilliseconds">Pumping messages</param>
+        /// <param name="elapseMilliseconds"></param>
         public void PostAsyncMacroMessage(int elapseMilliseconds = 100)
         {
             TimerId = TimerId == int.MaxValue ? 0 : TimerId + 1;
-            DllImports.SetTimer(Handle, TimerId, elapseMilliseconds, IntPtr.Zero);
+            var watch = Stopwatch.StartNew();
+            while (watch.Elapsed.TotalSeconds < 2)
+            {
+                var status = DllImports.SetTimer(Handle, TimerId, elapseMilliseconds, IntPtr.Zero);
+                if (status != 0) break;
+                var ex = new Exception($"AsyncWindow.PostAsyncMacroMessage failed {Marshal.GetLastWin32Error()}");
+                Function.Interfaces.FunctionHost.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(ex));
+                Thread.Sleep(100);
+            }
         }
 
         /// <summary>
@@ -136,7 +144,7 @@ namespace ExcelMvc.Windows
             if (m.Msg == WindowsTimerMessage)
             {
                 DllImports.KillTimer(Handle, (int)m.WParam);
-                PostAsyncMacroMessage();
+                AsyncMacroReceived(this, EventArgs.Empty);
                 return;
             }
             base.WndProc(ref m);
