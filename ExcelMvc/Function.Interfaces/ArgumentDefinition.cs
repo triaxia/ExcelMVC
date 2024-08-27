@@ -46,7 +46,7 @@ namespace Function.Interfaces
             }
             Type = parameter.ParameterType.FullName;
 
-            if (parameter.HasDefaultValue && Name.StartsWith("[") || !Name.EndsWith("]"))
+            if (parameter.HasDefaultValue && !(Name.StartsWith("[") && Name.EndsWith("]")))
                 Name = $"[{Name}]";
         }
         /// <summary>
