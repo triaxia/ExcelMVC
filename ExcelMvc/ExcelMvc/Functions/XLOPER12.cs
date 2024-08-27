@@ -194,7 +194,7 @@ namespace ExcelMvc.Functions
             {
                 if (sa.Length == 0)
                 {
-                    Init("", true);
+                    Init(ExcelError.ExcelErrorValue, true);
                 }
                 else
                 {
@@ -215,7 +215,7 @@ namespace ExcelMvc.Functions
             {
                 if (da.Length == 0)
                 {
-                    Init("", true);
+                    Init(ExcelError.ExcelErrorValue, true);
                 }
                 else
                 {

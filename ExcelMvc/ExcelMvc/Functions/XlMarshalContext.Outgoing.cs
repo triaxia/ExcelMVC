@@ -54,6 +54,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr ObjectToIntPtr(object value)
         {
+            if (value == null) return IntPtr.Zero;
             XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
             p->Init(value, true);
             return ObjectValue;
@@ -237,6 +238,9 @@ namespace ExcelMvc.Functions
 
         public IntPtr ObjectArrayToIntPtr(object[] value)
         {
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
             var x = (XLOPER12 *) ObjectValue.ToPointer();
             x->Init(value, true);
             return ObjectValue;
@@ -244,6 +248,9 @@ namespace ExcelMvc.Functions
 
         public IntPtr ObjectMatrixToIntPtr(object[,] value)
         {
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
             var x = (XLOPER12*)ObjectValue.ToPointer();
             x->Init(value, true);
             return ObjectValue;
@@ -251,6 +258,9 @@ namespace ExcelMvc.Functions
 
         public IntPtr StringArrayToIntPtr(string[] value)
         {
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
             var x = (XLOPER12*)ObjectValue.ToPointer();
             x->Init(value, true);
             return ObjectValue;
@@ -258,6 +268,9 @@ namespace ExcelMvc.Functions
 
         public IntPtr StringMatrixToIntPtr(string[,] value)
         {
+            if ((value?.Length ?? 0) == 0)
+                return IntPtr.Zero;
+
             var x = (XLOPER12*)ObjectValue.ToPointer();
             x->Init(value, true);
             return ObjectValue;
