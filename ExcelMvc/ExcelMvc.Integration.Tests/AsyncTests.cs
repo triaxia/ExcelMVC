@@ -80,5 +80,43 @@ namespace ExcelMvc.Integration.Tests
                 Assert.AreEqual(value, result);
             }
         }
+
+        public static RangeReference uGetTopLeftReference()
+            => FunctionHost.Instance.GetActiveSheetReference(1, 1, 1, 1);
+
+        [Function()]
+        public static object uGetTopLeftValue()
+            => FunctionHost.Instance.GetRangeValue(uGetTopLeftReference());
+
+        [Function()]
+        public static object uMacro([Argument(Name = "[v1]")] object v1 = null)
+        {
+            v1 = v1 ?? $"{Guid.NewGuid()}";
+            FunctionHost.Instance.SetRangeValue(uGetTopLeftReference(), v1, false);
+            return uGetTopLeftValue();
+        }
+
+        [Function()]
+        public static object uCallMacro(string name = "uMacro", string value = "test")
+        {
+            FunctionHost.Instance.PostMacro(state =>
+            {
+                FunctionHost.Instance.Run(255, (object[])state);
+            }, new object[] { name, value });
+            return value;
+        }
+
+        [TestMethod]
+        public void uCallMacro()
+        {
+            using (var excel = new ExcelLoader())
+            {
+                var value = $"{Guid.NewGuid()}";
+                excel.Application.Run("uCallMacro", "uMacro", value);
+                Thread.Sleep(200);
+                var result = excel.Application.Run("uGetTopLeftValue");
+                Assert.AreEqual(value, result);
+            }
+        }
     }
 }
