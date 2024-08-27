@@ -97,7 +97,7 @@ namespace ExcelMvc.Integration.Tests
         }
 
         [Function()]
-        public static object uCallMacro([Argument(Name = "[v1]")] string name = "uMacro", [Argument(Name = "[v2]")] string value = "test")
+        public static object uCallMacro(string name = "uMacro", string value = "test")
         {
             FunctionHost.Instance.PostMacro(state =>
             {

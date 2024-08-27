@@ -45,6 +45,9 @@ namespace Function.Interfaces
                 Description = argument.Description ?? "";
             }
             Type = parameter.ParameterType.FullName;
+
+            if (parameter.HasDefaultValue && Name.StartsWith("[") || !Name.EndsWith("]"))
+                Name = $"[{Name}]";
         }
         /// <summary>
         /// Indicates if an argument is optional.
