@@ -54,7 +54,8 @@ namespace ExcelMvc.Functions
 
         public IntPtr ObjectToIntPtr(object value)
         {
-            if (value == null) return IntPtr.Zero;
+            if (value == null)
+                return IntPtr.Zero;
             XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
             p->Init(value, true);
             return ObjectValue;
