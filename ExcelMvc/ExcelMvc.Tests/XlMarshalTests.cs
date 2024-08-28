@@ -177,7 +177,7 @@ namespace ExcelMvc.Tests
 
             var inner = func((IntPtr)incoming.Invoke(p1, new object[] { value }));
             var outgoing = typeof(XlMarshalContext).GetMethod($"IntPtrTo{name}");
-            var outer = outgoing.Invoke(null, new object[] { inner, null, false });
+            var outer = outgoing.Invoke(null, new object[] { inner, null});
             if (isCollection)
                 CollectionAssert.AreEqual((ICollection)value, (ICollection)outer);
             else
