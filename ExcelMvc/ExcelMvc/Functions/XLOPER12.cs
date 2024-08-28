@@ -324,7 +324,7 @@ namespace ExcelMvc.Functions
                 case XlTypes.xltypeNil:
                     return new object[] { ExcelEmpty.Value };
                 case XlTypes.xltypeMissing:
-                    return new object[] { ExcelMissing.Value };
+                    return new object[] { };
                 case XlTypes.xltypeErr:
                     return new object[] { (ExcelError)err };
             }
@@ -361,7 +361,7 @@ namespace ExcelMvc.Functions
                 case XlTypes.xltypeNil:
                     return new object[,] { { ExcelEmpty.Value } };
                 case XlTypes.xltypeMissing:
-                    return new object[,] { { ExcelMissing.Value } };
+                    return new object[,] { };
                 case XlTypes.xltypeErr:
                     return new object[,] { { (ExcelError)err } };
             }

@@ -7,7 +7,7 @@ namespace ExcelMvc.Integration.Tests
     public class IntTests
     {
         [Function()]
-        public static uint uUInt(uint v1, [Argument(Name = "[v2]")] uint? v2 = 0)
+        public static uint uUInt(uint v1, [Argument(Name = "[v2]")] uint? v2 = 1)
         {
             return (uint)(v1 + v2.Value);
         }
@@ -17,7 +17,7 @@ namespace ExcelMvc.Integration.Tests
         {
             using (var excel = new ExcelLoader())
             {
-                var result = (uint)excel.Application.Run("uUInt", uint.MaxValue);
+                var result = (uint)excel.Application.Run("uUInt", uint.MaxValue - 1);
                 Assert.AreEqual(uint.MaxValue, result);
                 var half = uint.MaxValue / 2;
                 result = (uint)excel.Application.Run("uUInt", half, half);
@@ -26,7 +26,7 @@ namespace ExcelMvc.Integration.Tests
         }
 
         [Function()]
-        public static int uInt(int v1, [Argument(Name = "[v2]")] int? v2 = 0)
+        public static int uInt(int v1, [Argument(Name = "[v2]")] int? v2 = 1)
         {
             return (int)(v1 - v2.Value);
         }
@@ -37,7 +37,7 @@ namespace ExcelMvc.Integration.Tests
             using (var excel = new ExcelLoader())
             {
                 var result = (int)excel.Application.Run("uInt", int.MaxValue);
-                Assert.AreEqual(int.MaxValue, result);
+                Assert.AreEqual(int.MaxValue - 1, result);
                 var half = int.MaxValue / 2;
                 result = (int)excel.Application.Run("uInt", half - 1, half);
                 Assert.AreEqual(-1, result);

@@ -33,8 +33,11 @@ Boston, MA 02110-1301 USA.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Markup;
 
 namespace ExcelMvc.Functions
 {
@@ -301,6 +304,11 @@ namespace ExcelMvc.Functions
 
         public static object IntPtrToObject(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
+            /* DON'T call as TryGetOptionalValue call this method
+            if (TryGetOptionalValue<object>(value, parameter, isOptional, out var output))
+                return output;
+            */
+
             if (value == IntPtr.Zero)
                 return null;
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -309,6 +317,9 @@ namespace ExcelMvc.Functions
 
         public static object[] IntPtrToObjectArray(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
+            if (TryGetOptionalValue<object[]>(value, parameter, isOptional, out var output))
+                return output;
+
             if (value == IntPtr.Zero)
                 return new object[] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -317,6 +328,9 @@ namespace ExcelMvc.Functions
 
         public static object[,] IntPtrToObjectMatrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
+            if (TryGetOptionalValue<object[,]>(value, parameter, isOptional, out var output))
+                return output;
+
             if (value == IntPtr.Zero)
                 return new object[,] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -325,6 +339,9 @@ namespace ExcelMvc.Functions
 
         public static string[] IntPtrToStringArray(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
+            if (TryGetOptionalValue<string[]>(value, parameter, isOptional, out var output))
+                return output;
+
             if (value == IntPtr.Zero)
                 return new string[] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -333,6 +350,8 @@ namespace ExcelMvc.Functions
 
         public static string[,] IntPtrToStringMatrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
+            if (TryGetOptionalValue<string[,]>(value, parameter, isOptional, out var output))
+                return output;
             if (value == IntPtr.Zero)
                 return new string[,] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -351,17 +370,19 @@ namespace ExcelMvc.Functions
         public static bool TryGetOptionalValue<TValue>(IntPtr value, ParameterInfo parameter, bool isOptional, out TValue result)
         {
             result = default;
-            if (!isOptional) return false;
+            if (parameter == null || !parameter.HasDefaultValue)
+                return false;
 
             var objValue = IntPtrToObject(value, parameter, isOptional);
             if (objValue is ExcelMissing)
                 objValue = parameter.DefaultValue == DBNull.Value ? default : parameter.DefaultValue;
 
             if (typeof(TValue).IsValueType)
-                result = objValue == null ? default : ChangeType<TValue>(objValue);
+                result = objValue == null ? default : ChangeType<TValue>(objValue, parameter);
+            else if (objValue is Array oa && typeof(TValue).BaseType == typeof(Array))
+                result = (TValue)(object)ChangeType(oa, typeof(TValue).GetElementType(), typeof(TValue).GetArrayRank(), parameter);
             else
                 result = (TValue)objValue;
-
             return true;
         }
 
@@ -389,16 +410,61 @@ namespace ExcelMvc.Functions
             return result;
         }
 
-        private static T ChangeType<T>(object value)
-        {
-            var t = typeof(T);
+        private static T ChangeType<T>(object value, ParameterInfo info)
+            => (T)ChangeType(value, typeof(T), info);
 
-            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+        private static object ChangeType(object value, Type target, ParameterInfo info)
+        {
+            target = Nullable.GetUnderlyingType(target) ?? target;
+            if (value == null) 
+                return Activator.CreateInstance(target);
+
+            var ptype = Nullable.GetUnderlyingType(info.ParameterType) ?? info.ParameterType;
+            ptype = ptype.GetElementType() ?? ptype;
+            if (ptype == typeof(DateTime) && value is string)
             {
-                if (value == null) return default;
-                t = Nullable.GetUnderlyingType(t);
+                if (target == typeof(double))
+                    value = DateTime.Parse($"{value}").ToOADate();
             }
-            return (T)Convert.ChangeType(value, t);
+            return Convert.ChangeType(value, target);
+        }
+
+        private static Array ChangeType(Array value, Type type, int rank, ParameterInfo info)
+        {
+            switch (value.Rank)
+            {
+                case 1:
+                    {
+                        var result = Array.CreateInstance(type, value.Length);
+                        var rows = value.GetLength(0);
+                        for (var i = 0; i < rows; i++)
+                            result.SetValue(ChangeType(value.GetValue(i), type, info), i);
+                        return result;
+                    }
+                case 2:
+                    {
+                        var rows = value.GetLength(0);
+                        var cols = value.GetLength(1);
+                        if (rank == 1)
+                        {
+                            var result = Array.CreateInstance(type, rows * cols);
+                            for (var i = 0; i < rows; i++)
+                                for (var j = 0; j < cols; j++)
+                                    result.SetValue(ChangeType(value.GetValue(i, j), type, info), i * cols + j);
+                            return result;
+                        }
+                        else
+                        {
+                            var result = Array.CreateInstance(type, rows, cols);
+                            for (var i = 0; i < value.GetLength(0); i++)
+                                for (var j = 0; j < value.GetLength(1); j++)
+                                    result.SetValue(ChangeType(value.GetValue(i, j), type, info), i, j);
+                            return result;
+                        }
+                    }
+                 default:
+                    throw new NotSupportedException($"Incoming arrays with more than 2 dimensions are not supported");
+            }
         }
 
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters
