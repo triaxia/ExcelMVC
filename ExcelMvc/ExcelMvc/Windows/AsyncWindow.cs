@@ -45,17 +45,11 @@ namespace ExcelMvc.Windows
     /// </summary>
     internal sealed class AsyncWindow : NativeWindow
     {
-        private static readonly uint AsyncActionMessage;
-        private static readonly uint AsyncMacroMessage;
-        private static readonly uint WindowsTimerMessage;
-        private static int TimerId;
+        private static readonly uint AsyncMessage;
 
         static AsyncWindow()
         {
-            AsyncActionMessage = DllImports.RegisterWindowMessage("__ExcelMvcAsyncAction__");
-            AsyncMacroMessage = DllImports.RegisterWindowMessage("__ExcelMvcAsyncMacro__");
-            WindowsTimerMessage = 0x113;
-            TimerId = 0;
+            AsyncMessage = DllImports.RegisterWindowMessage("__ExcelMvcAsyncAction__");
         }
 
         /// <summary>
@@ -72,24 +66,12 @@ namespace ExcelMvc.Windows
         /// </summary>
         /// <param name="sender">Event sender</param>
         /// <param name="args">EventArgs</param>
-        public delegate void AsyncActionReceivedHandler(object sender, EventArgs args);
+        public delegate void AsyncMessageReceivedHandler(object sender, EventArgs args);
 
         /// <summary>
-        /// Handler for a AsyncAction
+        /// Occurs when an async action message is received.
         /// </summary>
-        /// <param name="sender">Event sender</param>
-        /// <param name="args">EventArgs</param>
-        public delegate void AsyncMacroReceivedHandler(object sender, EventArgs args);
-
-        /// <summary>
-        /// Occurs when an async action message is received
-        /// </summary>
-        public event AsyncActionReceivedHandler AsyncActionReceived = delegate { };
-
-        /// <summary>
-        /// Occurs when an async macro message is received
-        /// </summary>
-        public event AsyncMacroReceivedHandler AsyncMacroReceived = delegate { };
+        public event AsyncMessageReceivedHandler AsyncMessageReceived = delegate { };
 
         /// <summary>
         /// Posts an async action message
@@ -99,27 +81,9 @@ namespace ExcelMvc.Windows
             var watch = Stopwatch.StartNew();
             while (watch.Elapsed.TotalSeconds < 2)
             {
-                var status = DllImports.PostMessage(Handle, (int)AsyncActionMessage, 0, 0);
+                var status = DllImports.PostMessage(Handle, (int)AsyncMessage, 0, 0);
                 if (status != 0) break;
                 var ex = new Exception($"AsyncWindow.PostAsyncMessage failed {Marshal.GetLastWin32Error()}");
-                Function.Interfaces.FunctionHost.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(ex));
-                Thread.Sleep(100);
-            }
-        }
-
-        /// <summary>
-        /// Posts an async macro message
-        /// </summary>
-        /// <param name="elapseMilliseconds"></param>
-        public void PostAsyncMacroMessage(int elapseMilliseconds = 100)
-        {
-            TimerId = TimerId == int.MaxValue ? 0 : TimerId + 1;
-            var watch = Stopwatch.StartNew();
-            while (watch.Elapsed.TotalSeconds < 2)
-            {
-                var status = DllImports.SetTimer(Handle, TimerId, elapseMilliseconds, IntPtr.Zero);
-                if (status != 0) break;
-                var ex = new Exception($"AsyncWindow.PostAsyncMacroMessage failed {Marshal.GetLastWin32Error()}");
                 Function.Interfaces.FunctionHost.Instance.RaiseFailed(this, new System.IO.ErrorEventArgs(ex));
                 Thread.Sleep(100);
             }
@@ -131,20 +95,9 @@ namespace ExcelMvc.Windows
         /// <param name="m">Message instance</param>
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == AsyncActionMessage)
+            if (m.Msg == AsyncMessage)
             {
-                AsyncActionReceived(this, EventArgs.Empty);
-                return;
-            }
-            if (m.Msg == AsyncMacroMessage)
-            {
-                AsyncMacroReceived(this, EventArgs.Empty);
-                return;
-            }
-            if (m.Msg == WindowsTimerMessage)
-            {
-                DllImports.KillTimer(Handle, (int)m.WParam);
-                AsyncMacroReceived(this, EventArgs.Empty);
+                AsyncMessageReceived(this, EventArgs.Empty);
                 return;
             }
             base.WndProc(ref m);

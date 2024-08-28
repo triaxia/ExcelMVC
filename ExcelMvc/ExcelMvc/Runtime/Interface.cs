@@ -131,7 +131,7 @@ namespace ExcelMvc.Runtime
         /// <returns>error string, null if success</returns>
         public static string Run()
         {
-            AsyncActions.Execute(true);
+            AsyncActions.Execute();
             return null;
         }
     }

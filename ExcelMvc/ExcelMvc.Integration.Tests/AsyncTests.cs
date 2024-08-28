@@ -13,7 +13,7 @@ namespace ExcelMvc.Integration.Tests
         [Function()]
         public static object uPostAction([Argument(Name = "[v1]")] object v1)
         {
-            FunctionHost.Instance.PostAction(state =>
+            FunctionHost.Instance.Post(state =>
             {
                 PostActionValue = state;
             }, v1);
@@ -30,31 +30,6 @@ namespace ExcelMvc.Integration.Tests
                 excel.Application.Run("uPostAction", value);
                 Thread.Sleep(1000);
                 var result = (string)excel.Application.Run("uPostAction");
-                Assert.AreEqual(value, result);
-            }
-        }
-
-        private static object PostMacroValue = null;
-        [Function()]
-        public static object uPostMacro([Argument(Name = "[v1]")] object v1)
-        {
-            FunctionHost.Instance.PostMacro(state =>
-            {
-                PostMacroValue = state;
-            }, v1);
-
-            return PostMacroValue;
-        }
-
-        [TestMethod]
-        public void uPostMacro()
-        {
-            using (var excel = new ExcelLoader())
-            {
-                var value = Guid.NewGuid().ToString();
-                excel.Application.Run("uPostMacro", value);
-                Thread.Sleep(1000);
-                var result = (string)excel.Application.Run("uPostMacro");
                 Assert.AreEqual(value, result);
             }
         }
@@ -99,7 +74,7 @@ namespace ExcelMvc.Integration.Tests
         [Function()]
         public static object uCallMacro(string name = "uMacro", string value = "test")
         {
-            FunctionHost.Instance.PostMacro(state =>
+            FunctionHost.Instance.Post(state =>
             {
                 FunctionHost.Instance.Run(255, (object[])state);
             }, new object[] { name, value });

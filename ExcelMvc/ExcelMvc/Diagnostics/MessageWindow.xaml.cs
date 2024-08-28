@@ -59,7 +59,7 @@ namespace ExcelMvc.Diagnostics
         /// </summary>
         public static void ShowInstance()
         {
-            AsyncActions.PostAction(_ =>
+            AsyncActions.Post(_ =>
             {
                 CreateInstance();
                 Instance.Show();
@@ -71,7 +71,7 @@ namespace ExcelMvc.Diagnostics
         /// </summary>
         public static void HideInstance()
         {
-            AsyncActions.PostAction(_ => { Instance?.Hide(); }, null);
+            AsyncActions.Post(_ => { Instance?.Hide(); }, null);
         }
 
         public static void CreateInstance()

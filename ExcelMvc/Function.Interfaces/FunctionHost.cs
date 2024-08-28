@@ -130,7 +130,7 @@ namespace Function.Interfaces
         /// <inheritdoc/>
         public IntPtr GetAsyncHandle(IntPtr handle)
         {
-            return handle;
+            return IntPtr.Zero;
         }
 
         /// <inheritdoc/>
@@ -145,7 +145,7 @@ namespace Function.Interfaces
         }
 
         /// <inheritdoc/>
-        public RangeReference GetActiveBookReference(string pageName, int rowFirst, int rowLast, int columnFirst, int columnLast)
+        public RangeReference GetActiveBookReference(string sheetName, int rowFirst, int rowLast, int columnFirst, int columnLast)
         {
             return null;
         }
@@ -226,12 +226,7 @@ namespace Function.Interfaces
         }
 
         /// <inheritdoc/>
-        public void PostAction(Action<object> action, object state)
-        {
-        }
-
-        /// <inheritdoc/>
-        public void PostMacro(Action<object> action, object state)
+        public void Post(Action<object> action, object state)
         {
         }
 

@@ -103,7 +103,7 @@ namespace ExcelMvc.Rtd
             if (Interlocked.CompareExchange(ref UpdateOnce, 1, 0) == 1)
                 return;
 
-            FunctionHost.Instance.PostAction(state =>
+            FunctionHost.Instance.Post(state =>
             {
                 try
                 {

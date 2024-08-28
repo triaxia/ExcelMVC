@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net471;net6.0-windows</TargetFrameworks>
@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.4.5" />
+		<PackageReference Include="ExcelMvc.Net" Version="2.4.7" />
 	</ItemGroup>
 
 	<ItemGroup>

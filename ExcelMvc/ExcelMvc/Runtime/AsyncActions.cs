@@ -54,23 +54,15 @@ namespace ExcelMvc.Runtime
         }
         private static AsyncWindow Context { get; set; }
         private static ConcurrentQueue<Item> Actions { get; set; }
-        private static ConcurrentQueue<Item> Macros { get; set; }
 
         static AsyncActions()
         {
             Context = new AsyncWindow();
             Actions = new ConcurrentQueue<Item>();
-            Macros = new ConcurrentQueue<Item>();
-            Context.AsyncActionReceived += MainWindow_AsyncActionReceived;
-            Context.AsyncMacroReceived += MainWindow_AsyncMacroReceived;
+            Context.AsyncMessageReceived += MainWindow_AsyncMessageReceived;
         }
 
-        static void MainWindow_AsyncActionReceived(object sender, EventArgs args)
-        {
-            ActionExtensions.Try(() => Execute(false));
-        }
-
-        static void MainWindow_AsyncMacroReceived(object sender, EventArgs args)
+        static void MainWindow_AsyncMessageReceived(object sender, EventArgs args)
         {
             ActionExtensions.Try(() => App.Instance.Underlying.Run("ExcelMvcRun"));
         }
@@ -85,15 +77,6 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Gets the number of outstanding macros
-        /// </summary>
-        /// <returns>Number of items</returns>
-        public static int GetMacroDepth()
-        {
-            return Macros.Count;
-        }
-
-        /// <summary>
         /// Initialise class static states
         /// </summary>
         public static void Initialise()
@@ -102,11 +85,11 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Posts an Async action
+        /// Posts an Async macro
         /// </summary>
         /// <param name="action">Action to be executed</param>
         /// <param name="state">State object</param>
-        public static void PostAction(Action<object> action, object state)
+        public static void Post(Action<object> action, object state)
         {
             var item = new Item { Action = action, State = state };
             Actions.Enqueue(item);
@@ -114,43 +97,21 @@ namespace ExcelMvc.Runtime
         }
 
         /// <summary>
-        /// Posts an Async macro
-        /// </summary>
-        /// <param name="action">Action to be executed</param>
-        /// <param name="state">State object</param>
-        /// <param name="elapseMilliseconds">Pumping message</param>
-        public static void PostMacro(Action<object> action, object state,
-            int elapseMilliseconds = 100)
-        {
-            var item = new Item { Action = action, State = state };
-            Macros.Enqueue(item);
-            Context.PostAsyncMacroMessage(elapseMilliseconds);
-        }
-
-        /// <summary>
         /// Executes the next action in the queue
         /// </summary>
-        /// <param name="asMacro">Execute the next macro</param>
-        internal static void Execute(bool asMacro)
+        internal static void Execute()
         {
-            void Do(ConcurrentQueue<Item> queue)
+            while (Actions.TryDequeue(out var item))
             {
-                while (queue.TryDequeue(out var item))
+                try
                 {
-                    try
-                    {
-                        item.Action(item.State);
-                    }
-                    catch(Exception ex)
-                    {
-                        FunctionHost.Instance.RaiseFailed(item, new System.IO.ErrorEventArgs(ex));
-                    }
+                    item.Action(item.State);
+                }
+                catch(Exception ex)
+                {
+                    FunctionHost.Instance.RaiseFailed(item, new System.IO.ErrorEventArgs(ex));
                 }
             }
-            if (asMacro)
-                Do(Macros);
-            else
-                Do(Actions);
         }
     }
 }

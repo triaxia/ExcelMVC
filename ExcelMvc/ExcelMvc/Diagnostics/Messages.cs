@@ -103,7 +103,7 @@ namespace ExcelMvc.Diagnostics
 
         private void RaiseChanged()
         {
-            AsyncActions.PostAction(_ =>
+            AsyncActions.Post(_ =>
             {
                 UpdateOutstanding.Reset();
                 PropertyChanged(this, new PropertyChangedEventArgs("Info"));

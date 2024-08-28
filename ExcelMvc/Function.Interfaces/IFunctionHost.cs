@@ -324,25 +324,25 @@ namespace Function.Interfaces
         /// Gets a reference on the book and page specified.
         /// </summary>
         /// <param name="bookName"></param>
-        /// <param name="pageName"></param>
+        /// <param name="sheetName"></param>
         /// <param name="rowFirst"></param>
         /// <param name="rowLast"></param>
         /// <param name="columnFirst"></param>
         /// <param name="columnLast"></param>
         /// <returns></returns>
-        RangeReference GetReference(string bookName, string pageName
+        RangeReference GetReference(string bookName, string sheetName
             , int rowFirst, int rowLast, int columnFirst, int columnLast);
 
         /// <summary>
         /// Gets a reference on the active book.
         /// </summary>
-        /// <param name="pageName"></param>
+        /// <param name="sheetName"></param>
         /// <param name="rowFirst"></param>
         /// <param name="rowLast"></param>
         /// <param name="columnFirst"></param>
         /// <param name="columnLast"></param>
         /// <returns></returns>
-        RangeReference GetActiveBookReference(string pageName
+        RangeReference GetActiveBookReference(string sheetName
             , int rowFirst, int rowLast, int columnFirst, int columnLast);
 
         /// <summary>
@@ -381,14 +381,7 @@ namespace Function.Interfaces
         /// </summary>
         /// <param name="action"></param>
         /// <param name="state"></param>
-        void PostAction(Action<object> action, object state);
-
-        /// <summary>
-        /// Posts a macro action to the main thread of the <see cref="Underlying"/> host.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="state"></param>
-        void PostMacro(Action<object> action, object state);
+        void Post(Action<object> action, object state);
 
         /// <summary>
         /// Gets the version of the <see cref="Underlying"/> host.

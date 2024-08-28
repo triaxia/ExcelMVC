@@ -175,9 +175,9 @@ namespace ExcelMvc.Runtime
             return offset;
         }
 
-        private static void Enqueue(Item item, int pumpMilliseconds = 10)
+        private static void Enqueue(Item item)
         {
-            AsyncActions.PostMacro(UpdateAsync, item, pumpMilliseconds);
+            AsyncActions.Post(UpdateAsync, item);
         }
 
         private static void UpdateAsync(object state)
@@ -200,7 +200,7 @@ namespace ExcelMvc.Runtime
                     if (item.AgeMilliseconds > 10000)
                         FunctionHost.Instance.RaiseFailed(FunctionHost.Instance, new ErrorEventArgs(ex));
                     else
-                        Enqueue(item, 100);
+                        Enqueue(item);
                 }
                 else
                 {

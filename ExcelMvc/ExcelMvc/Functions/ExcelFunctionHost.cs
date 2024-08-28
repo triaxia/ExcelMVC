@@ -214,7 +214,7 @@ namespace ExcelMvc.Functions
             var x = GetRange(range);
             if (async)
             {
-                AsyncActions.PostAction(_ => { x.Value = value; }, null);
+                AsyncActions.Post(_ => { x.Value = value; }, null);
             }
             else
             {
@@ -403,15 +403,9 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public void PostAction(Action<object> action, object state)
+        public void Post(Action<object> action, object state)
         {
-            AsyncActions.PostAction(action, state);
-        }
-
-        /// <inheritdoc/>
-        public void PostMacro(Action<object> action, object state)
-        {
-            AsyncActions.PostMacro(action, state);
+            AsyncActions.Post(action, state);
         }
 
         /// <inheritdoc/>

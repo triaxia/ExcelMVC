@@ -169,7 +169,7 @@ namespace ExcelMvc.Views
             if (Underlying == null)
                 DoAttach(app);
             else
-                AsyncActions.PostMacro(a => DoAttach(a), app);
+                AsyncActions.Post(a => DoAttach(a), app);
         }
 
         void DoAttach(object state)
