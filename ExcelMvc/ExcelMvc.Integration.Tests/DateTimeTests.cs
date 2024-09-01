@@ -44,5 +44,26 @@ namespace ExcelMvc.Integration.Tests
                 Assert.AreEqual(today.AddDays(2), result);
             }
         }
+
+        [Function()]
+        public static double uDateTimeDiffDefault(DateTime v1 = default, DateTime v2 = default)
+        {
+            return  (v1 - v2).TotalDays;
+        }
+
+        [TestMethod]
+        public void uDateTimeDiffDefault()
+        {
+            using (var excel = new ExcelLoader())
+            {
+                var today = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Unspecified);
+                var result = excel.Application.Run("uDateTimeDiffDefault", today);
+                Assert.AreEqual(today.ToOADate(), result);
+
+                result = excel.Application.Run("uDateTimeDiffDefault", today, today.AddDays(13));
+                Assert.AreEqual(-13, result);
+            }
+        }
+
     }
 }
