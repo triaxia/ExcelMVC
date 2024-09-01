@@ -370,12 +370,15 @@ namespace ExcelMvc.Functions
         public static bool TryGetOptionalValue<TValue>(IntPtr value, ParameterInfo parameter, out TValue result)
         {
             result = default;
-            if (parameter == null || !parameter.HasDefaultValue)
+            if (parameter == null || !parameter.IsOptional)
                 return false;
 
             var objValue = IntPtrToObject(value, parameter);
             if (objValue is ExcelMissing)
-                objValue = parameter.DefaultValue == DBNull.Value ? default : parameter.DefaultValue;
+            {
+                var defaultValue = parameter.ParameterType == typeof(DateTime) ? default : parameter.DefaultValue;
+                objValue = defaultValue == DBNull.Value ? default : defaultValue;
+            }
 
             if (typeof(TValue).IsValueType)
                 result = objValue == null ? default : ChangeType<TValue>(objValue, parameter);

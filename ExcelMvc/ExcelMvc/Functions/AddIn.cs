@@ -107,14 +107,21 @@ namespace ExcelMvc.Functions
 
         private static void AutoOpen()
         {
-            ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes,
-                ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
-            ObjectFactory<IFunctionAddIn>.Instances
-                .OrderByDescending(x => x.Ranking).ToList().ForEach(x => x.Open());
-            RaisePosted($"IFunctionAddIn.Open({ObjectFactory<IFunctionAddIn>.Instances.Count})");
+            try
+            {
+                ObjectFactory<IFunctionAddIn>.CreateAll(ObjectFactory<IFunctionAddIn>.GetCreatableTypes,
+                    ObjectFactory<IFunctionAddIn>.SelectAllAssembly);
+                ObjectFactory<IFunctionAddIn>.Instances
+                    .OrderByDescending(x => x.Ranking).ToList().ForEach(x => x.Open());
+                RaisePosted($"IFunctionAddIn.Open({ObjectFactory<IFunctionAddIn>.Instances.Count})");
 
-            var functions = FunctionDiscovery.RegisterFunctions();
-            RaisePosted($"FunctionDiscovery.RegisterFunctions({functions.FunctionCount})");
+                var functions = FunctionDiscovery.RegisterFunctions();
+                RaisePosted($"FunctionDiscovery.RegisterFunctions({functions.FunctionCount})");
+            }
+            catch (Exception ex) 
+            {
+                RaiseFailed(ex);
+            }
         }
 
         private static void AutoClose()
@@ -126,5 +133,7 @@ namespace ExcelMvc.Functions
 
         private static void RaisePosted(string message) =>
             FunctionHost.Instance.RaisePosted(FunctionHost.Instance, new MessageEventArgs(message));
+        private static void RaiseFailed(Exception ex) =>
+            FunctionHost.Instance.RaiseFailed(FunctionHost.Instance, new System.IO.ErrorEventArgs(ex));
     }
 }
