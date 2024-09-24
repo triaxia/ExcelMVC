@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.4.8" />
+		<PackageReference Include="ExcelMvc.Net" Version="2.4.9" />
 	</ItemGroup>
 
 	<ItemGroup>

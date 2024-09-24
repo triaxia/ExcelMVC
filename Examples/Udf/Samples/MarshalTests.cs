@@ -66,7 +66,7 @@ namespace Samples
         }
 
         [Function(Name = "uString")]
-        public static string String(string value)
+        public static string String([Argument(Name="[a]")]string value)
         {
             return value;
         }

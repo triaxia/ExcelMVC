@@ -78,7 +78,8 @@ namespace ExcelMvc.Functions
                 outerParameters[index] = Expression.Parameter(typeof(IntPtr), parameters[index].Name);
                 var innerParameter = Expression.Call(XlMarshalContext.IncomingConverter(parameters[index].ParameterType)
                     , outerParameters[index]
-                    , Expression.Constant(parameters[index]));
+                    , Expression.Constant(parameters[index])
+                    , Expression.Constant(function.Arguments != null && function.Arguments[index].IsOptionalArg));
                 var variable = Expression.Variable(parameters[index].ParameterType, $"_{parameters[index].Name}_");
                 variables[index] = variable;
                 varLines[index] = Expression.Assign(variable, innerParameter);
