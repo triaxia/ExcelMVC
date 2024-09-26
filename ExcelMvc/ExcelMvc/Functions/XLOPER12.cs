@@ -275,7 +275,7 @@ namespace ExcelMvc.Functions
                     return new string(d);
                 case XlTypes.xltypeMulti:
                     if (array.rows == 0 || array.columns == 0)
-                        return new object[] { };
+                        return new object[,] { };
                     var result = new object[array.rows, array.columns];
                     for (var row = 0; row < array.rows; row++)
                         for (var col = 0; col < array.columns; col++)

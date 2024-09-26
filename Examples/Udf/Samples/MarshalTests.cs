@@ -120,7 +120,7 @@ namespace Samples
         }
 
         [Function(Name = "uObjectArray")]
-        public static object[] ObjectArray(object[] value)
+        public static object[] ObjectArray([Argument(Name ="[value]")]object[] value = null)
         {
             return value;
         }

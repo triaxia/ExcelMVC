@@ -33,6 +33,7 @@ Boston, MA 02110-1301 USA.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Reflection;
 
@@ -376,10 +377,25 @@ namespace ExcelMvc.Functions
                 objValue = defaultValue == DBNull.Value ? default : defaultValue;
             }
 
+            if (objValue is ExcelEmpty)
+            {
+                objValue = default;
+            }
+
             if (typeof(TValue).IsValueType)
                 result = objValue == null ? default : ChangeType<TValue>(objValue, parameter);
-            else if (objValue is Array oa && typeof(TValue).BaseType == typeof(Array))
-                result = (TValue)(object)ChangeType(oa, typeof(TValue).GetElementType(), typeof(TValue).GetArrayRank(), parameter);
+            else if (typeof(TValue).BaseType == typeof(Array))
+            {
+                var etype = typeof(TValue).GetElementType();
+                if (objValue is Array oa)
+                    result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
+                else
+                {
+                    oa = Array.CreateInstance(objValue == null ? typeof(object) : objValue.GetType(), 1, 1);
+                    oa.SetValue(objValue, 0, 0);
+                    result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
+                }
+            }
             else
                 result = (TValue)objValue;
             return true;
@@ -428,42 +444,28 @@ namespace ExcelMvc.Functions
             return Convert.ChangeType(value, target);
         }
 
-        private static Array ChangeType(Array value, Type type, int rank, ParameterInfo info)
+        private static Array ChangeType(Array value, Type toType, int toRank, ParameterInfo info)
         {
-            switch (value.Rank)
+            // value is always 2D from the caller...
+            var rows = value.GetLength(0);
+            var cols = value.GetLength(1);
+            if (toRank == 1)
             {
-                case 1:
-                    {
-                        var result = Array.CreateInstance(type, value.Length);
-                        var rows = value.GetLength(0);
-                        for (var i = 0; i < rows; i++)
-                            result.SetValue(ChangeType(value.GetValue(i), type, info), i);
-                        return result;
-                    }
-                case 2:
-                    {
-                        var rows = value.GetLength(0);
-                        var cols = value.GetLength(1);
-                        if (rank == 1)
-                        {
-                            var result = Array.CreateInstance(type, rows * cols);
-                            for (var i = 0; i < rows; i++)
-                                for (var j = 0; j < cols; j++)
-                                    result.SetValue(ChangeType(value.GetValue(i, j), type, info), i * cols + j);
-                            return result;
-                        }
-                        else
-                        {
-                            var result = Array.CreateInstance(type, rows, cols);
-                            for (var i = 0; i < value.GetLength(0); i++)
-                                for (var j = 0; j < value.GetLength(1); j++)
-                                    result.SetValue(ChangeType(value.GetValue(i, j), type, info), i, j);
-                            return result;
-                        }
-                    }
-                 default:
-                    throw new NotSupportedException($"Incoming arrays with more than 2 dimensions are not supported");
+                var result = Array.CreateInstance(toType, rows * cols);
+                for (var i = 0; i < rows; i++)
+                    for (var j = 0; j < cols; j++)
+                        result.SetValue(ChangeType(value.GetValue(i, j), toType, info), i * cols + j);
+                return result;
             }
+            else if (toRank == 2)
+            {
+                var result = Array.CreateInstance(toType, rows, cols);
+                for (var i = 0; i < rows; i++)
+                    for (var j = 0; j < cols; j++)
+                        result.SetValue(ChangeType(value.GetValue(i, j), toType, info), i, j);
+                return result;
+            }
+            throw new NotSupportedException($"Target arrays with more than 2 dimensions are not supported");
         }
 
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters

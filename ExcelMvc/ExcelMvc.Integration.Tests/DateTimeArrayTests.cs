@@ -1,7 +1,6 @@
 ﻿using Function.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using System.Linq;
 
 namespace ExcelMvc.Integration.Tests

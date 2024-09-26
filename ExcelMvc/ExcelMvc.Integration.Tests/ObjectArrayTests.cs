@@ -1,7 +1,6 @@
 ﻿using Function.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using System.Linq;
 
 namespace ExcelMvc.Integration.Tests
@@ -12,7 +11,7 @@ namespace ExcelMvc.Integration.Tests
         [Function()]
         public static object[] uObjectArray(object[] v1, object[] v2 = null)
         {
-            return v2 == null ? v1: v1.Concat(v2).ToArray();
+            return v2 == null ? v1 : v1.Concat(v2).ToArray();
         }
 
         [TestMethod]
@@ -60,7 +59,7 @@ namespace ExcelMvc.Integration.Tests
                 var result = new object[jagged.GetLength(0), jagged.GetLength(1)];
                 Array.Copy(jagged, result, result.Length);
                 Assert.AreEqual(today, DateTime.Parse((string)result[0, 0]));
-                Assert.AreEqual(int.MaxValue,(double)result[0, 1]);
+                Assert.AreEqual(int.MaxValue, (double)result[0, 1]);
                 Assert.AreEqual(double.MaxValue, (double)result[0, 2]);
                 Assert.AreEqual(string.Empty, (string)result[1, 0]);
                 Assert.AreEqual(short.MaxValue, (double)result[1, 1]);
@@ -147,6 +146,26 @@ namespace ExcelMvc.Integration.Tests
                 Assert.AreEqual(4, result[3, 0]);
                 Assert.AreEqual(5, result[3, 1]);
                 Assert.AreEqual(6, result[3, 2]);
+            }
+        }
+
+        [Function()]
+        public static object[] uObjectArraySingleValue([Argument(Name = "[v1]")] object[] v1 = null)
+        {
+            return v1;
+        }
+
+
+        [TestMethod]
+        public void uObjectArraySingleValue()
+        {
+            using (var excel = new ExcelLoader())
+            {
+                var value = Guid.NewGuid().ToString();
+                var jagged = (Array)(object)excel.Application.Run("uObjectArraySingleValue", value);
+                var result = new object[jagged.Length];
+                Array.Copy(jagged, result, result.Length);
+                Assert.AreEqual(value, (string)result[0]);
             }
         }
     }
