@@ -33,6 +33,7 @@ Boston, MA 02110-1301 USA.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Reflection;
@@ -382,14 +383,14 @@ namespace ExcelMvc.Functions
                 objValue = default;
             }
 
-            if (typeof(TValue).IsValueType)
+            if (typeof(TValue).IsValueType || typeof(TValue) == typeof(string))
                 result = objValue == null ? default : ChangeType<TValue>(objValue, parameter);
             else if (typeof(TValue).BaseType == typeof(Array))
             {
                 var etype = typeof(TValue).GetElementType();
                 if (objValue is Array oa)
                     result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
-                else
+                else if (objValue != null)
                 {
                     oa = Array.CreateInstance(objValue == null ? typeof(object) : objValue.GetType(), 1, 1);
                     oa.SetValue(objValue, 0, 0);
@@ -397,6 +398,7 @@ namespace ExcelMvc.Functions
                 }
             }
             else
+                // last resort...
                 result = (TValue)objValue;
             return true;
         }

@@ -1,4 +1,5 @@
-﻿using Function.Interfaces;
+﻿using ExcelMvc.Functions;
+using Function.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -166,6 +167,24 @@ namespace ExcelMvc.Integration.Tests
                 var result = new object[jagged.Length];
                 Array.Copy(jagged, result, result.Length);
                 Assert.AreEqual(value, (string)result[0]);
+            }
+        }
+
+        [Function()]
+        public static object[] uObjectArrayOptionalDefault([Argument(Name = "[v1]")] object[] v1 = null)
+        {
+            return v1;
+        }
+
+
+        [TestMethod]
+        public void uObjectArrayOptionalDefault()
+        {
+            using (var excel = new ExcelLoader())
+            {
+                var jagged = (object)excel.Application.Run("uObjectArrayOptionalDefault");
+                //Assert.IsTrue(jagged.Equals((int)ExcelError.ExcelErrorNum));
+                Assert.AreEqual(-2146826252, jagged);
             }
         }
     }

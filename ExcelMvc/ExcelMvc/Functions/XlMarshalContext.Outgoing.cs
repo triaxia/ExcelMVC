@@ -121,6 +121,8 @@ namespace ExcelMvc.Functions
 
         public IntPtr StringToIntPtr(string value)
         {
+            if (value == null)
+                return IntPtr.Zero;
             const int SmallSize = 32768;
             var len = value?.Length ?? 0;
             if (len + 1 <= SmallSize)

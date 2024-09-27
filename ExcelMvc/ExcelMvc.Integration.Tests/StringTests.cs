@@ -1,5 +1,6 @@
 ﻿using Function.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace ExcelMvc.Integration.Tests
 {
@@ -19,8 +20,11 @@ namespace ExcelMvc.Integration.Tests
             {
                 var result = (object)excel.Application.Run("uStringOptionalWithNoDefault");
                 Assert.AreEqual("", result);
+                
+                var value = Guid.NewGuid().ToString();  
+                result = (string) (object)excel.Application.Run("uStringOptionalWithNoDefault", value);
+                Assert.AreEqual(value, result);
             }
         }
-
     }
 }
