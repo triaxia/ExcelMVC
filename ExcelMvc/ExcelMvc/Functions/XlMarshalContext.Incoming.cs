@@ -368,39 +368,47 @@ namespace ExcelMvc.Functions
 
         public static bool TryGetOptionalValue<TValue>(IntPtr value, ParameterInfo parameter, bool isOptional, out TValue result)
         {
-            result = default;
-            if (!isOptional) return false;
-
-            var objValue = IntPtrToObject(value, parameter, false);
-            if (objValue is ExcelMissing)
+            try
             {
-                var defaultValue = parameter.ParameterType == typeof(DateTime) ? default : parameter.DefaultValue;
-                objValue = defaultValue == DBNull.Value ? default : defaultValue;
-            }
 
-            if (objValue is ExcelEmpty)
-            {
-                objValue = default;
-            }
+                result = default;
+                if (!isOptional) return false;
 
-            if (typeof(TValue).IsValueType || typeof(TValue) == typeof(string))
-                result = objValue == null ? default : ChangeType<TValue>(objValue, parameter);
-            else if (typeof(TValue).BaseType == typeof(Array))
-            {
-                var etype = typeof(TValue).GetElementType();
-                if (objValue is Array oa)
-                    result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
-                else if (objValue != null)
+                var objValue = IntPtrToObject(value, parameter, false);
+                if (objValue is ExcelMissing)
                 {
-                    oa = Array.CreateInstance(objValue == null ? typeof(object) : objValue.GetType(), 1, 1);
-                    oa.SetValue(objValue, 0, 0);
-                    result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
+                    var defaultValue = parameter.ParameterType == typeof(DateTime) ? default : parameter.DefaultValue;
+                    objValue = defaultValue == DBNull.Value ? default : defaultValue;
                 }
+
+                if (objValue is ExcelEmpty)
+                {
+                    objValue = default;
+                }
+
+                if (typeof(TValue).IsValueType || typeof(TValue) == typeof(string))
+                    result = objValue == null ? default : ChangeType<TValue>(objValue, parameter);
+                else if (typeof(TValue).BaseType == typeof(Array))
+                {
+                    var etype = typeof(TValue).GetElementType();
+                    if (objValue is Array oa)
+                        result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
+                    else if (objValue != null)
+                    {
+                        oa = Array.CreateInstance(objValue == null ? typeof(object) : objValue.GetType(), 1, 1);
+                        oa.SetValue(objValue, 0, 0);
+                        result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
+                    }
+                }
+                else
+                    // last resort...
+                    result = (TValue)objValue;
+                return true;
             }
-            else
-                // last resort...
-                result = (TValue)objValue;
-            return true;
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}[{parameter.Name}]", ex);
+            }
         }
 
         public static DateTime[] ToDateTime(double[] cells)
