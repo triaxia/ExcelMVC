@@ -143,8 +143,10 @@ namespace ExcelMvc.Functions
 
         public IntPtr DoubleArrayToIntPtr(double[] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
+            if (value.Length == 0)
+                return ObjectToIntPtr(ExcelError.ExcelErrorValue);
 
             Marshal.FreeCoTaskMem(DoubleArrayValue);
             var len = value.Length;
@@ -162,8 +164,10 @@ namespace ExcelMvc.Functions
 
         public IntPtr DoubleMatrixToIntPtr(double[,] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
+            if (value.Length == 0)
+                return ObjectToIntPtr(ExcelError.ExcelErrorValue);
 
             Marshal.FreeCoTaskMem(DoubleArrayValue);
             var rows = value.GetLength(0);
@@ -184,8 +188,10 @@ namespace ExcelMvc.Functions
 
         public IntPtr DateTimeArrayToIntPtr(DateTime[] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
+            if (value.Length == 0)
+                return ObjectToIntPtr(ExcelError.ExcelErrorValue);
 
             var cols = value.Length;
             var cells = new double[cols];
@@ -197,8 +203,10 @@ namespace ExcelMvc.Functions
 
         public IntPtr DateTimeMatrixToIntPtr(DateTime[,] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
+            if (value.Length == 0)
+                return ObjectToIntPtr(ExcelError.ExcelErrorValue);
 
             var rows = value.GetLength(0);
             var cols = value.GetLength(1);
@@ -213,8 +221,10 @@ namespace ExcelMvc.Functions
 
         public IntPtr Int32ArrayToIntPtr(int[] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
+            if (value.Length == 0)
+                return ObjectToIntPtr(ExcelError.ExcelErrorValue);
 
             var cols = value.Length;
             var cells = new double[cols];
@@ -226,8 +236,11 @@ namespace ExcelMvc.Functions
 
         public IntPtr Int32MatrixToIntPtr(int[,] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
+            if (value.Length == 0)
+                return ObjectToIntPtr(ExcelError.ExcelErrorValue);
+
             var rows = value.GetLength(0);
             var cols = value.GetLength(1);
             var cells = new double[rows, cols];
@@ -241,7 +254,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr ObjectArrayToIntPtr(object[] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
 
             var x = (XLOPER12 *) ObjectValue.ToPointer();
@@ -251,7 +264,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr ObjectMatrixToIntPtr(object[,] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
 
             var x = (XLOPER12*)ObjectValue.ToPointer();
@@ -261,7 +274,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr StringArrayToIntPtr(string[] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
 
             var x = (XLOPER12*)ObjectValue.ToPointer();
@@ -271,7 +284,7 @@ namespace ExcelMvc.Functions
 
         public IntPtr StringMatrixToIntPtr(string[,] value)
         {
-            if ((value?.Length ?? 0) == 0)
+            if (value == null)
                 return IntPtr.Zero;
 
             var x = (XLOPER12*)ObjectValue.ToPointer();
