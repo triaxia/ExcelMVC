@@ -198,7 +198,7 @@ namespace ExcelMvc.Functions
                 }
                 else
                 {
-                    array.rows = sa.Length > 0 ? 1 : 0;
+                    array.rows = 1;
                     array.columns = sa.Length;
                     array.lparray = (XLOPER12*)Marshal.AllocCoTaskMem(sa.Length * sizeof(XLOPER12));
                     var col0 = sa.GetLowerBound(0);

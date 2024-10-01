@@ -65,9 +65,7 @@ namespace ExcelMvc.Functions
     {
         public IntPtr ObjectToIntPtrOnException(object value)
         {
-            XLOPER12* p = (XLOPER12*)ObjectValue.ToPointer();
-            p->Init(value, true);
-            return ObjectValue;
+            return ObjectToIntPtr(value);
         }
 
         public IntPtr IntToIntPtrOnException(object value)
@@ -110,6 +108,8 @@ namespace ExcelMvc.Functions
                 { typeof(string), typeof(XlMarshalContext).GetMethod(nameof(StringToIntPtrOnException)) },
                 { typeof(int), typeof(XlMarshalContext).GetMethod(nameof(IntToIntPtrOnException)) },
                 { typeof(object), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtrOnException)) },
+                { typeof(object[]), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtrOnException)) },
+                { typeof(object[,]), typeof(XlMarshalContext).GetMethod(nameof(ObjectToIntPtrOnException)) },
             };
 
         public static MethodInfo ExceptionConverter(Type returnType) =>

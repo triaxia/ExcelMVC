@@ -195,8 +195,22 @@ namespace Samples
         [Function(Name = "uExceptionMessage")]
         public static object uExceptionMessage()
         {
+            FunctionHost.Instance.ExceptionToFunctionResult = e => $"{e}"; 
+            throw new Exception(nameof(uExceptionMessage));
+        }
+
+        [Function(Name = "uExceptionMessageMatrix")]
+        public static object[,] uExceptionMessageMatrix()
+        {
+            FunctionHost.Instance.ExceptionToFunctionResult = e => $"{e}"; ;
+            throw new Exception(nameof(uExceptionMessageMatrix));
+        }
+
+        [Function(Name = "uExceptionMessageArray")]
+        public static object[] uExceptionMessageArray()
+        {
             FunctionHost.Instance.ExceptionToFunctionResult = e => $"{e}";
-            throw new Exception(nameof(uExceptionInt));
+            throw new Exception(nameof(uExceptionMessageArray));
         }
 
         [Function(Name = "uEmptyArray")]
