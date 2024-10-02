@@ -18,7 +18,7 @@ namespace ExcelMvc.Integration.Tests
             using (var excel = new ExcelLoader())
             {
                 var result = (object)excel.Application.Run("uEmptyArray");
-                Assert.AreEqual(FunctionHost.Instance.ErrorNumbers[FunctionHost.Instance.ErrorNum], result);
+                Assert.AreEqual(FunctionHost.Instance.ErrorNumbers[FunctionHost.Instance.ErrorValue], result);
             }
         }
 

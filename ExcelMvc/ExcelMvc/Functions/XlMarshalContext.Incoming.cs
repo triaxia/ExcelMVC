@@ -370,7 +370,6 @@ namespace ExcelMvc.Functions
         {
             try
             {
-
                 result = default;
                 if (!isOptional) return false;
 
@@ -381,28 +380,42 @@ namespace ExcelMvc.Functions
                     objValue = defaultValue == DBNull.Value ? default : defaultValue;
                 }
 
-                if (objValue is ExcelEmpty)
+                if (typeof(TValue).BaseType == typeof(Array))
                 {
-                    objValue = default;
-                }
-
-                if (typeof(TValue).IsValueType || typeof(TValue) == typeof(string))
-                    result = objValue == null ? default : ChangeType<TValue>(objValue, parameter);
-                else if (typeof(TValue).BaseType == typeof(Array))
-                {
-                    var etype = typeof(TValue).GetElementType();
+                    var toType = typeof(TValue).GetElementType();
+                    var toRank = typeof(TValue).GetArrayRank();
                     if (objValue is Array oa)
-                        result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
+                    {
+                        objValue = ChangeType(oa, toType, toRank, parameter);
+                    }
                     else if (objValue != null)
                     {
-                        oa = Array.CreateInstance(objValue == null ? typeof(object) : objValue.GetType(), 1, 1);
-                        oa.SetValue(objValue, 0, 0);
-                        result = (TValue)(object)ChangeType(oa, etype, typeof(TValue).GetArrayRank(), parameter);
+                        if (toRank == 1)
+                        {
+                            oa = Array.CreateInstance(toType, 1);
+                            oa.SetValue(ChangeType(objValue, toType, parameter), 0);
+                            objValue = oa;
+                        }
+                        else
+                        {
+                            oa = Array.CreateInstance(toType, 1, 1);
+                            oa.SetValue(ChangeType(objValue, toType, parameter), 0, 0);
+                            objValue = oa;
+                        }
                     }
                 }
                 else
-                    // last resort...
-                    result = (TValue)objValue;
+                {
+                    if (objValue is Array oa)
+                    {
+                        var etype = typeof(TValue);
+                        objValue = oa.Length == 0 ? default : ChangeType(oa.Rank == 1 ? oa.GetValue(0) : oa.GetValue(0, 0), etype, parameter);
+                    }
+                    else if (objValue != null)
+                        objValue = ChangeType<TValue>(objValue, parameter);
+                }
+
+                result = (TValue)objValue;
                 return true;
             }
             catch (Exception ex)
@@ -451,31 +464,59 @@ namespace ExcelMvc.Functions
                 if (target == typeof(double))
                     value = DateTime.Parse($"{value}").ToOADate();
             }
+
+            if (target == typeof(object))
+                return value;
+            if (target == typeof(string))
+                return $"{value}";
+
             return Convert.ChangeType(value, target);
         }
 
         private static Array ChangeType(Array value, Type toType, int toRank, ParameterInfo info)
         {
-            // value is always 2D from the caller...
-            var rows = value.GetLength(0);
-            var cols = value.GetLength(1);
             if (toRank == 1)
             {
-                var result = Array.CreateInstance(toType, rows * cols);
-                for (var i = 0; i < rows; i++)
+                if (value.Rank == 1)
+                {
+                    var cols = value.Length;
+                    var result = Array.CreateInstance(toType, cols);
                     for (var j = 0; j < cols; j++)
-                        result.SetValue(ChangeType(value.GetValue(i, j), toType, info), i * cols + j);
-                return result;
+                        result.SetValue(ChangeType(value.GetValue(j), toType, info), j);
+                    return result;
+                }
+                else
+                {
+                    var rows = value.GetLength(0);
+                    var cols = value.GetLength(1);
+                    var result = Array.CreateInstance(toType, rows * cols);
+                    for (var i = 0; i < rows; i++)
+                        for (var j = 0; j < cols; j++)
+                            result.SetValue(ChangeType(value.GetValue(i, j), toType, info), i * cols + j);
+                    return result;
+                }
             }
-            else if (toRank == 2)
+            else
             {
-                var result = Array.CreateInstance(toType, rows, cols);
-                for (var i = 0; i < rows; i++)
+                if (value.Rank == 1)
+                {
+                    var cols = value.Length;
+                    var result = Array.CreateInstance(toType, 1, cols);
                     for (var j = 0; j < cols; j++)
-                        result.SetValue(ChangeType(value.GetValue(i, j), toType, info), i, j);
-                return result;
+                        result.SetValue(ChangeType(value.GetValue(j), toType, info), 0, j);
+                    return result;
+                }
+                else
+                {
+                    var rows = value.GetLength(0);
+                    var cols = value.GetLength(1);
+                    var result = Array.CreateInstance(toType, rows, cols);
+                    for (var i = 0; i < rows; i++)
+                        for (var j = 0; j < cols; j++)
+                            result.SetValue(ChangeType(value.GetValue(i, j), toType, info), i, j);
+                    return result;
+                }
             }
-            throw new NotSupportedException($"Target arrays with more than 2 dimensions are not supported");
         }
 
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters

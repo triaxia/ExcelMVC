@@ -97,17 +97,12 @@ namespace ExcelMvc.Rtd
             RunUpdateNotify();
         }
 
-        private int UpdateOnce = 0;
         private void RunUpdateNotify()
         {
-            if (Interlocked.CompareExchange(ref UpdateOnce, 1, 0) == 1)
-                return;
-
             FunctionHost.Instance.Post(state =>
             {
                 try
                 {
-                    Interlocked.Exchange(ref UpdateOnce, 0);
                     ((IRTDUpdateEvent) state).UpdateNotify();
                 }
                 catch (Exception ex)
