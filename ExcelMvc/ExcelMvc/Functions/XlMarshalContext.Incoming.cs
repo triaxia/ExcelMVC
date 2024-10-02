@@ -376,7 +376,7 @@ namespace ExcelMvc.Functions
                 var objValue = IntPtrToObject(value, parameter, false);
                 if (objValue is ExcelMissing)
                 {
-                    var defaultValue = parameter.ParameterType == typeof(DateTime) ? default : parameter.DefaultValue;
+                    var defaultValue = parameter.ParameterType == typeof(DateTime) ? 0 : parameter.DefaultValue;
                     objValue = defaultValue == DBNull.Value ? default : defaultValue;
                 }
 
