@@ -6,7 +6,7 @@ namespace Samples
     public static class MarshalTests
     {
         [Function(Name = "uDouble")]
-        public static double Double(double value)
+        public static double Double([Argument(Name ="[x]")]double value=123)
         {
             return value;
         }
@@ -18,7 +18,7 @@ namespace Samples
         }
 
         [Function(Name = "uDateTime")]
-        public static double DatTime(double value)
+        public static DateTime DatTime([Argument(Name = "[x]")]DateTime value = default)
         {
             return value;
         }

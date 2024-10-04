@@ -370,14 +370,14 @@ namespace ExcelMvc.Functions
         {
             try
             {
-                result = default;
+                result = default(TValue);
                 if (!isOptional) return false;
 
                 var objValue = IntPtrToObject(value, parameter, false);
                 if (objValue is ExcelMissing)
                 {
                     var defaultValue = parameter.ParameterType == typeof(DateTime) ? 0 : parameter.DefaultValue;
-                    objValue = defaultValue == DBNull.Value ? default : defaultValue;
+                    objValue = defaultValue == DBNull.Value ? default(TValue) : defaultValue;
                 }
 
                 if (typeof(TValue).BaseType == typeof(Array))
