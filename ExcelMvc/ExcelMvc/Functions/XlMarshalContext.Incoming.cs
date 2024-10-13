@@ -378,8 +378,7 @@ namespace ExcelMvc.Functions
                 {
                     var defaultValue = parameter.ParameterType == typeof(DateTime) ? 0 : parameter.DefaultValue;
                     objValue = defaultValue == DBNull.Value ? default(TValue) : defaultValue;
-                    if (objValue == null) objValue = ExcelMissing.Value;
-                } 
+                }
 
                 if (typeof(TValue).BaseType == typeof(Array))
                 {
@@ -389,7 +388,7 @@ namespace ExcelMvc.Functions
                     {
                         objValue = ChangeType(oa, toType, toRank, parameter);
                     }
-                    else
+                    else if (objValue != null)
                     {
                         if (toRank == 1)
                         {
@@ -456,7 +455,7 @@ namespace ExcelMvc.Functions
         {
             target = Nullable.GetUnderlyingType(target) ?? target;
             if (value == null) 
-                return target.IsValueType ? Activator.CreateInstance(target) : null;
+                return Activator.CreateInstance(target);
 
             var ptype = Nullable.GetUnderlyingType(info.ParameterType) ?? info.ParameterType;
             ptype = ptype.GetElementType() ?? ptype;
@@ -470,8 +469,7 @@ namespace ExcelMvc.Functions
                 return value;
             if (target == typeof(string))
                 return $"{value}";
-            if (value is ExcelEmpty || value is ExcelMissing)
-                value = "0";
+
             return Convert.ChangeType(value, target);
         }
 
