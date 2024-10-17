@@ -118,9 +118,11 @@ LPXLOPER12 TempStr12SpacesPadded(LPCWSTR value, int spaces)
 
 std::wstring MakeTypeString(LPCWSTR type, LPCWSTR argName)
 {
+	/*
 	// optional parameter to use Q, so we can set default values!
 	if (argName[0] == L'[' && argName[lstrlenW(argName) - 1] == L']')
 		return L"Q";
+	*/
 
 	if (wcscmp(type, L"System.Double") == 0
 		|| wcscmp(type, L"System.Float") == 0
