@@ -273,27 +273,35 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public object Rtd(string progId, string server, params string[] args)
         {
-            var arguments = new string[] { progId, server }
-                .Concat(args)
-                .Select((x, idx) => new FunctionArgument($"p{idx}", x))
-                .ToArray();
+            try
+            {
+                var arguments = new string[] { progId, server }
+                    .Concat(args)
+                    .Select((x, idx) => new FunctionArgument($"p{idx}", x))
+                    .ToArray();
 
-            IntPtr ptr = IntPtr.Zero;
-            const int xlfRtd = 379;
-            var fArgs = new FunctionArguments(xlfRtd, arguments);
-            using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
-            {
-                ptr = AddIn.CallRtd(pArgs.Ptr);
+                IntPtr ptr = IntPtr.Zero;
+                const int xlfRtd = 379;
+                var fArgs = new FunctionArguments(xlfRtd, arguments);
+                using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
+                {
+                    ptr = AddIn.CallRtd(pArgs.Ptr);
+                }
+                unsafe
+                {
+                    var status = (CallStatus*)ptr.ToPointer();
+                    var code = status->status;
+                    var obj = status->result == null ? null : status->result->ToObject();
+                    AddIn.FreeCallStatus(ptr);
+                    if (code != 0)
+                        throw new Exception($"Rtd failed. (status = {code})");
+                    return obj;
+                }
             }
-            unsafe
+            catch (Exception ex)
             {
-                var status = (CallStatus*)ptr.ToPointer();
-                var code = status->status;
-                var obj = status->result == null ? null : status->result->ToObject();
-                AddIn.FreeCallStatus(ptr);
-                if (code != 0)
-                    throw new Exception($"Rtd failed. (status = {code})");
-                return obj;
+                RaiseFailed(this, new ErrorEventArgs(ex));
+                return ErrorValue;
             }
         }
 
@@ -325,6 +333,11 @@ namespace ExcelMvc.Functions
                         throw new Exception($"Run failed. (status = {code})");
                     return obj;
                 }
+            }
+            catch(Exception ex)
+            {
+                RaiseFailed(this, new ErrorEventArgs(ex));
+                return ErrorValue;
             }
             finally
             {

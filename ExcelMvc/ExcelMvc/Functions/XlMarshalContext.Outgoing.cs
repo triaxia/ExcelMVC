@@ -31,6 +31,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -328,6 +329,7 @@ namespace ExcelMvc.Functions
             };
 
         public static MethodInfo OutgoingConverter(Type returnType) =>
-            OutgoingConverters.TryGetValue(returnType, out var value) ? value : OutgoingConverters[(typeof(object))];
+            OutgoingConverters.TryGetValue(returnType, out var value) ? value 
+            : throw new NotSupportedException($"Outgoing {returnType.Name} not supported.");
     }
 }

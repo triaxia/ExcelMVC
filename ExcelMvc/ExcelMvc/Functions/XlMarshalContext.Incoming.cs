@@ -49,149 +49,106 @@ namespace ExcelMvc.Functions
 
         public static bool IntPtrToBoolean(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<bool>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? false : *(short*)value.ToPointer() != 0;
         }
 
         public static bool? IntPtrToBooleanNullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<bool?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(bool?) : *(short*)value.ToPointer() != 0;
         }
 
         public static double IntPtrToDouble(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<double>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? 0 : *(double*)value.ToPointer();
         }
 
         public static double? IntPtrToDoubleNullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<double?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(double?) : *(double*)value.ToPointer();
         }
 
         public static DateTime IntPtrToDateTime(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<double>(value, parameter, isOptional, out var output))
-                return DateTime.FromOADate(output);
             return value == IntPtr.Zero ? DateTime.FromOADate(0) : DateTime.FromOADate(*(double*)value.ToPointer());
         }
 
         public static DateTime? IntPtrToDateTimeNullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<double?>(value, parameter, isOptional, out var output))
-                return output.HasValue ? DateTime.FromOADate(output.Value) : default(DateTime?);
             return value == IntPtr.Zero ? default(DateTime?) : DateTime.FromOADate(*(double*)value.ToPointer());
         }
 
         public static float IntPtrToSingle(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<float>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? 0 : (float)*(double*)value.ToPointer();
         }
 
         public static float? IntPtrToSingleNullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<float?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(float?) : (float)*(double*)value.ToPointer();
         }
 
         public static int IntPtrToInt32(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<int>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? 0 : *(int*)value.ToPointer();
         }
 
         public static int? IntPtrToInt32Nullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<int?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(int?) : *(int*)value.ToPointer();
         }
 
         public static uint IntPtrToUInt32(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<uint>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? 0 : (uint)*(double*)value.ToPointer();
         }
 
         public static uint? IntPtrToUInt32Nullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<uint?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(uint?) : (uint)*(double*)value.ToPointer();
         }
 
         public static short IntPtrToInt16(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<short>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? (short)0 : *(short*)value.ToPointer();
         }
 
         public static short? IntPtrToInt16Nullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<short?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(short?) : *(short*)value.ToPointer();
         }
 
         public static ushort IntPtrToUInt16(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<ushort>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? (ushort)0 : (ushort)*(int*)value.ToPointer();
         }
 
         public static ushort? IntPtrToUInt16Nullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<ushort?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(ushort?) : (ushort)*(int*)value.ToPointer();
         }
 
         public static byte IntPtrToByte(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<byte>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? (byte)0 : (byte)*(short*)value.ToPointer();
         }
 
         public static byte? IntPtrToByteNullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<byte?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(byte?) : (byte)*(short*)value.ToPointer();
         }
 
         public static sbyte IntPtrToSByte(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<sbyte>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? (sbyte)0 : (sbyte)*(short*)value.ToPointer();
         }
 
         public static sbyte? IntPtrToSByteNullable(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<sbyte?>(value, parameter, isOptional, out var output))
-                return output;
             return value == IntPtr.Zero ? default(sbyte?) : (sbyte)*(short*)value.ToPointer();
         }
 
         public static string IntPtrToString(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<string>(value, parameter, isOptional, out var output))
-                return output;
-
             if (value == IntPtr.Zero)
                 return string.Empty;
 
@@ -201,9 +158,6 @@ namespace ExcelMvc.Functions
 
         public static double[] IntPtrToDoubleArray(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<double[]>(value, parameter, isOptional, out var output))
-                return output;
-
             if (value == IntPtr.Zero)
                 return new double[] { };
 
@@ -222,9 +176,6 @@ namespace ExcelMvc.Functions
 
         public static double[,] IntPtrToDoubleMatrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<double[,]>(value, parameter, isOptional, out var output))
-                return output;
-
             if (value == IntPtr.Zero)
                 return new double[,] { };
 
@@ -244,9 +195,6 @@ namespace ExcelMvc.Functions
 
         public static DateTime[] IntPtrToDateTimeArray(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<double[]>(value, parameter, isOptional, out var output))
-                return ToDateTime(output);
-
             if (value == IntPtr.Zero)
                 return new DateTime[] { };
 
@@ -255,9 +203,6 @@ namespace ExcelMvc.Functions
 
         public static DateTime[,] IntPtrToDateTimeMatrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<double[,]>(value, parameter, isOptional, out var output))
-                return ToDateTime(output);
-
             if (value == IntPtr.Zero)
                 return new DateTime[,] { };
             return ToDateTime(IntPtrToDoubleMatrix(value, parameter, isOptional));
@@ -265,9 +210,6 @@ namespace ExcelMvc.Functions
 
         public static int[] IntPtrToInt32Array(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<int[]>(value, parameter, isOptional, out var output))
-                return output;
-
             if (value == IntPtr.Zero)
                 return new int[] { };
 
@@ -283,9 +225,6 @@ namespace ExcelMvc.Functions
 
         public static int[,] IntPtrToInt32Matrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<int[,]>(value, parameter, isOptional, out var output))
-                return output;
-
             if (value == IntPtr.Zero)
                 return new int[,] { };
 
@@ -303,11 +242,6 @@ namespace ExcelMvc.Functions
 
         public static object IntPtrToObject(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            /* DON'T call as TryGetOptionalValue call this method
-            if (TryGetOptionalValue<object>(value, parameter, out var output))
-                return output;
-            */
-
             if (value == IntPtr.Zero)
                 return null;
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -316,9 +250,6 @@ namespace ExcelMvc.Functions
 
         public static object[] IntPtrToObjectArray(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<object[]>(value, parameter, isOptional, out var output))
-                return output;
-
             if (value == IntPtr.Zero)
                 return new object[] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -327,9 +258,6 @@ namespace ExcelMvc.Functions
 
         public static object[,] IntPtrToObjectMatrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<object[,]>(value, parameter, isOptional, out var output))
-                return output;
-
             if (value == IntPtr.Zero)
                 return new object[,] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -338,9 +266,6 @@ namespace ExcelMvc.Functions
 
         public static string[] IntPtrToStringArray(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<string[]>(value, parameter, isOptional, out var output))
-                return output;
-
             if (value == IntPtr.Zero)
                 return new string[] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -349,8 +274,6 @@ namespace ExcelMvc.Functions
 
         public static string[,] IntPtrToStringMatrix(IntPtr value, ParameterInfo parameter, bool isOptional)
         {
-            if (TryGetOptionalValue<string[,]>(value, parameter, isOptional, out var output))
-                return output;
             if (value == IntPtr.Zero)
                 return new string[,] { };
             XLOPER12* p = (XLOPER12*)value.ToPointer();
@@ -364,64 +287,6 @@ namespace ExcelMvc.Functions
                 for (var col = 0; col < cols; col++)
                     result[row, col] = $"{cells[row, col]}";
             return result;
-        }
-
-        public static bool TryGetOptionalValue<TValue>(IntPtr value, ParameterInfo parameter, bool isOptional, out TValue result)
-        {
-            try
-            {
-                result = default(TValue);
-                if (!isOptional) return false;
-
-                var objValue = IntPtrToObject(value, parameter, false);
-                if (objValue is ExcelMissing)
-                {
-                    var defaultValue = parameter.ParameterType == typeof(DateTime) ? 0 : parameter.DefaultValue;
-                    objValue = defaultValue == DBNull.Value ? default(TValue) : defaultValue;
-                }
-
-                if (typeof(TValue).BaseType == typeof(Array))
-                {
-                    var toType = typeof(TValue).GetElementType();
-                    var toRank = typeof(TValue).GetArrayRank();
-                    if (objValue is Array oa)
-                    {
-                        objValue = ChangeType(oa, toType, toRank, parameter);
-                    }
-                    else if (objValue != null)
-                    {
-                        if (toRank == 1)
-                        {
-                            oa = Array.CreateInstance(toType, 1);
-                            oa.SetValue(ChangeType(objValue, toType, parameter), 0);
-                            objValue = oa;
-                        }
-                        else
-                        {
-                            oa = Array.CreateInstance(toType, 1, 1);
-                            oa.SetValue(ChangeType(objValue, toType, parameter), 0, 0);
-                            objValue = oa;
-                        }
-                    }
-                }
-                else
-                {
-                    if (objValue is Array oa)
-                    {
-                        var etype = typeof(TValue);
-                        objValue = oa.Length == 0 ? default : ChangeType(oa.Rank == 1 ? oa.GetValue(0) : oa.GetValue(0, 0), etype, parameter);
-                    }
-                    else if (objValue != null)
-                        objValue = ChangeType<TValue>(objValue, parameter);
-                }
-
-                result = (TValue)objValue;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"{ex.Message}[{parameter.Name}]", ex);
-            }
         }
 
         public static DateTime[] ToDateTime(double[] cells)
@@ -446,77 +311,6 @@ namespace ExcelMvc.Functions
                 for (var col = 0; col < cols; col++)
                     result[row, col] = DateTime.FromOADate(cells[row, col]);
             return result;
-        }
-
-        private static T ChangeType<T>(object value, ParameterInfo info)
-            => (T)ChangeType(value, typeof(T), info);
-
-        private static object ChangeType(object value, Type target, ParameterInfo info)
-        {
-            target = Nullable.GetUnderlyingType(target) ?? target;
-            if (value == null) 
-                return Activator.CreateInstance(target);
-
-            var ptype = Nullable.GetUnderlyingType(info.ParameterType) ?? info.ParameterType;
-            ptype = ptype.GetElementType() ?? ptype;
-            if (ptype == typeof(DateTime) && value is string)
-            {
-                if (target == typeof(double))
-                    value = DateTime.Parse($"{value}").ToOADate();
-            }
-
-            if (target == typeof(object))
-                return value;
-            if (target == typeof(string))
-                return $"{value}";
-
-            return Convert.ChangeType(value, target);
-        }
-
-        private static Array ChangeType(Array value, Type toType, int toRank, ParameterInfo info)
-        {
-            if (toRank == 1)
-            {
-                if (value.Rank == 1)
-                {
-                    var cols = value.Length;
-                    var result = Array.CreateInstance(toType, cols);
-                    for (var j = 0; j < cols; j++)
-                        result.SetValue(ChangeType(value.GetValue(j), toType, info), j);
-                    return result;
-                }
-                else
-                {
-                    var rows = value.GetLength(0);
-                    var cols = value.GetLength(1);
-                    var result = Array.CreateInstance(toType, rows * cols);
-                    for (var i = 0; i < rows; i++)
-                        for (var j = 0; j < cols; j++)
-                            result.SetValue(ChangeType(value.GetValue(i, j), toType, info), i * cols + j);
-                    return result;
-                }
-            }
-            else
-            {
-                if (value.Rank == 1)
-                {
-                    var cols = value.Length;
-                    var result = Array.CreateInstance(toType, 1, cols);
-                    for (var j = 0; j < cols; j++)
-                        result.SetValue(ChangeType(value.GetValue(j), toType, info), 0, j);
-                    return result;
-                }
-                else
-                {
-                    var rows = value.GetLength(0);
-                    var cols = value.GetLength(1);
-                    var result = Array.CreateInstance(toType, rows, cols);
-                    for (var i = 0; i < rows; i++)
-                        for (var j = 0; j < cols; j++)
-                            result.SetValue(ChangeType(value.GetValue(i, j), toType, info), i, j);
-                    return result;
-                }
-            }
         }
 
         private static readonly Dictionary<Type, MethodInfo> IncomingConverters
@@ -558,6 +352,7 @@ namespace ExcelMvc.Functions
             };
 
         public static MethodInfo IncomingConverter(Type parameterType) =>
-            IncomingConverters.TryGetValue(parameterType, out var value) ? value : IncomingConverters[(typeof(object))];
+            IncomingConverters.TryGetValue(parameterType, out var value) ? value 
+            : throw new NotSupportedException($"Incoming {parameterType.Name} not supported.");
     }
 }
