@@ -33,7 +33,6 @@ Boston, MA 02110-1301 USA.
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Function.Interfaces;
 using Microsoft.Office.Interop.Excel;
 

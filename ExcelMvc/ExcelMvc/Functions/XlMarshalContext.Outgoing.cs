@@ -31,7 +31,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
-using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

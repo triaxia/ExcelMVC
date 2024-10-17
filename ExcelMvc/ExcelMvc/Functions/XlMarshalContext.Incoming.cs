@@ -33,8 +33,6 @@ Boston, MA 02110-1301 USA.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Reflection;
 
