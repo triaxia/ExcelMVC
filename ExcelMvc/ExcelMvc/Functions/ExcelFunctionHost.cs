@@ -14,6 +14,8 @@ namespace ExcelMvc.Functions
 {
     public class ExcelFunctionHost : IFunctionHost
     {
+        private object ExclusiveGate = new object();
+
         public ExcelFunctionHost()
         {
             XlMarshalExceptionHandler.Failed +=
@@ -23,7 +25,7 @@ namespace ExcelMvc.Functions
         }
 
         /// <inheritdoc/>
-        public object Application { get; set; } = Views.App.Instance.Underlying;
+        public object Application { get { return Views.App.Instance.Underlying; } set { } }
         private Application App => (Application)Views.App.Instance.Underlying;
 
         /// <inheritdoc/>
@@ -144,28 +146,32 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public void SetAsyncValue(IntPtr handle, object value)
         {
-            var xlHandle = new XLOPER12(handle);
-            var xlValue = new XLOPER12(value);
-            try
+            lock (ExclusiveGate)
             {
-                using (var p1 = new StructIntPtr<XLOPER12>(ref xlHandle))
-                using (var p2 = new StructIntPtr<XLOPER12>(ref xlValue))
+
+                var xlHandle = new XLOPER12(handle);
+                var xlValue = new XLOPER12(value);
+                try
                 {
-                    unsafe
+                    using (var p1 = new StructIntPtr<XLOPER12>(ref xlHandle))
+                    using (var p2 = new StructIntPtr<XLOPER12>(ref xlValue))
                     {
-                        var ptr = AddIn.SetAsyncValue(p1.Ptr, p2.Ptr);
-                        var status = (CallStatus*)ptr.ToPointer();
-                        var code = status->status;
-                        AddIn.FreeCallStatus(ptr);
-                        if (code != 0)
-                            throw new Exception($"SetAsyncValue failed. (status = {code})");
+                        unsafe
+                        {
+                            var ptr = AddIn.SetAsyncValue(p1.Ptr, p2.Ptr);
+                            var status = (CallStatus*)ptr.ToPointer();
+                            var code = status->status;
+                            AddIn.FreeCallStatus(ptr);
+                            if (code != 0)
+                                throw new Exception($"SetAsyncValue failed. (status = {code})");
+                        }
                     }
                 }
-            }
-            finally
-            {
-                xlHandle.Dispose();
-                xlValue.Dispose();
+                finally
+                {
+                    xlHandle.Dispose();
+                    xlValue.Dispose();
+                }
             }
         }
 
@@ -273,76 +279,84 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public object Rtd(string progId, string server, params string[] args)
         {
-            try
+            lock (ExclusiveGate)
             {
-                var arguments = new string[] { progId, server }
-                    .Concat(args)
-                    .Select((x, idx) => new FunctionArgument($"p{idx}", x))
-                    .ToArray();
 
-                IntPtr ptr = IntPtr.Zero;
-                const int xlfRtd = 379;
-                var fArgs = new FunctionArguments(xlfRtd, arguments);
-                using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
+                try
                 {
-                    ptr = AddIn.CallRtd(pArgs.Ptr);
+                    var arguments = new string[] { progId, server }
+                        .Concat(args)
+                        .Select((x, idx) => new FunctionArgument($"p{idx}", x))
+                        .ToArray();
+
+                    IntPtr ptr = IntPtr.Zero;
+                    const int xlfRtd = 379;
+                    var fArgs = new FunctionArguments(xlfRtd, arguments);
+                    using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
+                    {
+                        ptr = AddIn.CallRtd(pArgs.Ptr);
+                    }
+                    unsafe
+                    {
+                        var status = (CallStatus*)ptr.ToPointer();
+                        var code = status->status;
+                        var obj = status->result == null ? null : status->result->ToObject();
+                        AddIn.FreeCallStatus(ptr);
+                        if (code != 0)
+                            throw new Exception($"Rtd failed. (status = {code})");
+                        return obj;
+                    }
                 }
-                unsafe
+                catch (Exception ex)
                 {
-                    var status = (CallStatus*)ptr.ToPointer();
-                    var code = status->status;
-                    var obj = status->result == null ? null : status->result->ToObject();
-                    AddIn.FreeCallStatus(ptr);
-                    if (code != 0)
-                        throw new Exception($"Rtd failed. (status = {code})");
-                    return obj;
+                    RaiseFailed(this, new ErrorEventArgs(ex));
+                    return ErrorValue;
                 }
-            }
-            catch (Exception ex)
-            {
-                RaiseFailed(this, new ErrorEventArgs(ex));
-                return ErrorValue;
             }
         }
 
         /// <inheritdoc/>
         public object Run(int function, params object[] args)
         {
-            var xlArgs = args.Select(x =>
+            lock (ExclusiveGate)
             {
-                var xlop= new XLOPER12(x);
+
+                var xlArgs = args.Select(x =>
+            {
+                var xlop = new XLOPER12(x);
                 return new StructIntPtr<XLOPER12>(ref xlop);
             });
 
-            try
-            {
-                var arguments = xlArgs.Select((x, idx) => new FunctionArgument($"p{idx}", x.Ptr)).ToArray();
-                IntPtr ptr = IntPtr.Zero;
-                var fArgs = new FunctionArguments(function, arguments);
-                using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
+                try
                 {
-                    ptr = AddIn.CallAny(pArgs.Ptr);
+                    var arguments = xlArgs.Select((x, idx) => new FunctionArgument($"p{idx}", x.Ptr)).ToArray();
+                    IntPtr ptr = IntPtr.Zero;
+                    var fArgs = new FunctionArguments(function, arguments);
+                    using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
+                    {
+                        ptr = AddIn.CallAny(pArgs.Ptr);
+                    }
+                    unsafe
+                    {
+                        var status = (CallStatus*)ptr.ToPointer();
+                        var code = status->status;
+                        var obj = status->result == null ? null : status->result->ToObject();
+                        AddIn.FreeCallStatus(ptr);
+                        if (code != 0)
+                            throw new Exception($"Run failed. (status = {code})");
+                        return obj;
+                    }
                 }
-                unsafe
+                catch (Exception ex)
                 {
-                    var status = (CallStatus*)ptr.ToPointer();
-                    var code = status->status;
-                    var obj = status->result == null ? null : status->result->ToObject();
-                    AddIn.FreeCallStatus(ptr);
-                    if (code != 0)
-                        throw new Exception($"Run failed. (status = {code})");
-                    return obj;
+                    RaiseFailed(this, new ErrorEventArgs(ex));
+                    return ErrorValue;
                 }
-            }
-            catch(Exception ex)
-            {
-                RaiseFailed(this, new ErrorEventArgs(ex));
-                return ErrorValue;
-            }
-            finally
-            {
-                foreach (var x in xlArgs)
-                    x.Dispose();
+                finally
+                {
+                    foreach (var x in xlArgs)
+                        x.Dispose();
+                }
             }
         }
 

@@ -54,6 +54,7 @@ namespace ExcelMvc.Rtd
         {
             lock (Servers)
             {
+                RegistryFunctions.PurgeProgIds();
                 var key = type.FullName;
                 var pair = Servers.GetOrAdd(key, _ =>
                 {
@@ -70,8 +71,10 @@ namespace ExcelMvc.Rtd
 
         public void Dispose()
         {
+            /*
             if (Registered)
                 RegistryFunctions.Unregister(ProgId);
+            */
         }
 
         public static RtdComClassFactory FindFactory(Guid guid)

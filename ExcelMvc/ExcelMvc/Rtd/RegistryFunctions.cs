@@ -105,7 +105,7 @@ namespace ExcelMvc.Rtd
         private static DateTime LastPurgeTime = DateTime.MinValue;
         public static (string progId, Guid clsId) Register()
         {
-            if ((DateTime.UtcNow - LastPurgeTime).TotalSeconds >=60)
+            if ((DateTime.UtcNow - LastPurgeTime).TotalSeconds >=120)
             {
                 LastPurgeTime = DateTime.UtcNow;
                 PurgeProgIds();
@@ -156,7 +156,7 @@ namespace ExcelMvc.Rtd
             DeleteProgId(progId);
         }
 
-        public const string ProgIdPattern = "ExcelMvc.(.)+";
+        public const string ProgIdPattern = "ExcelMvc\\.(.)+";
         public static void PurgeProgIds()
         {
             var pattern = new Regex(ProgIdPattern);
@@ -171,7 +171,7 @@ namespace ExcelMvc.Rtd
                         {
                             var time = $"{timeKey.GetValue(null)}";
                             if (string.IsNullOrWhiteSpace(time) || !DateTime.TryParse(time, out var x) ||
-                                (DateTime.Now - x).TotalSeconds > 60)
+                                (DateTime.Now - x).TotalSeconds > 120)
                                 DeleteProgId(progId);
                         }
                     }
