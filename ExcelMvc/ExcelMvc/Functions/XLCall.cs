@@ -13,7 +13,7 @@ namespace ExcelMvc.Functions
         public const int xlCommand = 0x8000;
 
         public const int xlfRtd = 379;
-        public const int xlCaller = 89;
+        public const int xlfCaller = 89;
         public const int xlSheetNm = 5 | xlSpecial;
         public const int xlfAddress = 219;
         public const int xlAsyncReturn = 16 | xlSpecial;
@@ -52,14 +52,14 @@ namespace ExcelMvc.Functions
         {
             lock (ExclusiveGate)
             {
-                var pParameters = (XLOPER12**) IntPtr.Zero;
+                var pParameters = (XLOPER12**)IntPtr.Zero;
 
                 var xlOps = new List<XLOPER12>();
                 var xlArgs = new List<StructIntPtr<XLOPER12>>();
                 parameters = parameters ?? new object[] { };
                 try
                 {
-                    xlArgs = parameters.Select(x=>
+                    xlArgs = parameters.Select(x =>
                     {
                         var xlOp = new XLOPER12(x);
                         xlOps.Add(xlOp);
@@ -69,7 +69,7 @@ namespace ExcelMvc.Functions
                     pParameters = (XLOPER12**)Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(XLOPER12*)) * parameters.Length);
                     for (int i = 0; i < parameters.Length; i++)
                     {
-                        pParameters[i] = (XLOPER12 *)xlArgs[i].Ptr;
+                        pParameters[i] = (XLOPER12*)xlArgs[i].Ptr;
                     }
 
                     var result = new XLOPER12();
@@ -86,12 +86,18 @@ namespace ExcelMvc.Functions
                 {
                     foreach (var x in xlArgs)
                         x.Dispose();
-                    foreach(var x in xlOps)
+                    foreach (var x in xlOps)
                         x.Dispose();
                     if ((IntPtr)pParameters != IntPtr.Zero)
                         Marshal.FreeCoTaskMem((IntPtr)pParameters);
                 }
             }
+        }
+
+        public static void EnsureSuccessStatusCode(int status, Func<string> getError)
+        {
+            if (status == 0) return;
+            throw new Exception(getError());
         }
     }
 }
