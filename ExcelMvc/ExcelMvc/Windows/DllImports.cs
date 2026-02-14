@@ -2,9 +2,12 @@
 using Microsoft.Office.Interop.Excel;
 using System;
 using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Windows.Media.Animation;
 
 namespace ExcelMvc.Windows
 {
@@ -41,9 +44,38 @@ namespace ExcelMvc.Windows
 
         [DllImport("Kernel32")]
         internal static extern uint GetCurrentThreadId();
+        
+        [DllImport("Oleacc.dll")]
+        internal static extern int AccessibleObjectFromWindow(IntPtr hwnd, uint dwObjectID, byte[] riid, ref IntPtr ptr /*ppUnk*/ );
+
+        private const uint OBJID_NATIVEEOM = 0xFFFFFFF0;
+        private static readonly byte[] IID_IDispatchBytes = new Guid("{00020400-0000-0000-C000-000000000046}").ToByteArray();
+        private static readonly CultureInfo EnUsCulture = new CultureInfo(1033);
 
         internal static uint MainNativeThreadId { get; set; }
+
         internal static Application FindExcel()
+        {
+            return FindExcelFromWindows() ?? FindExcelFromRunningObjectTable();
+        }
+
+        internal static Application FindExcelFromWindows()
+        {
+            MainNativeThreadId = GetCurrentThreadId();
+            Application app = null;
+            EnumThreadWindows(MainNativeThreadId, delegate (IntPtr hWndEnum, IntPtr param)
+            {
+                if (IsXlMainWindow(hWndEnum))
+                {
+                    app = GetApplicationFromWindow(hWndEnum);
+                    return app == null;
+                }
+                return true;
+            }, IntPtr.Zero);
+            return app;
+        }
+
+        internal static Application FindExcelFromRunningObjectTable()
         {
             MainNativeThreadId = GetCurrentThreadId();
             var pid = Process.GetCurrentProcess().Id;
@@ -127,6 +159,100 @@ namespace ExcelMvc.Windows
             }, IntPtr.Zero);
 
             return editBoxCount == 5 && scrollbarCount == 1;
+        }
+
+        internal static bool IsXlMainWindow(IntPtr hWnd)
+        {
+            var buffer = new StringBuilder(256);
+            GetClassNameW(hWnd, buffer, buffer.Capacity);
+            return buffer.ToString() == "XLMAIN";
+        }
+
+        private static Application GetApplicationFromWindow(IntPtr hWndMain)
+        {
+            Application app = null;
+            var clsName = new StringBuilder(256);
+            EnumChildWindows(hWndMain, delegate (IntPtr hWndEnum, IntPtr para)
+            {
+                GetClassNameW(hWndEnum, clsName, clsName.Capacity);
+                if (clsName.ToString() != "EXCEL7")
+                    // not a workbook, continue
+                    return true;
+                IntPtr pUnk = IntPtr.Zero;
+                int hr = AccessibleObjectFromWindow(hWndEnum, OBJID_NATIVEEOM, IID_IDispatchBytes, ref pUnk);
+                if (hr != 0) 
+                    return true;
+                object obj = Marshal.GetObjectForIUnknown(pUnk);
+                Marshal.Release(pUnk);
+                if (HasProperty(obj, "Application"))
+                {
+                    app = (Application)obj.GetType().InvokeMember("Application", BindingFlags.GetProperty, null, obj, null, EnUsCulture);
+                }
+                /*
+                else if (HasProperty(obj,"Workbook"))
+                {
+                    var workbook = obj.GetType().InvokeMember("Workbook", BindingFlags.GetProperty, null, obj, null, EnUsCulture);
+                    app = (Application)workbook.GetType().InvokeMember("Application", BindingFlags.GetProperty, null, workbook, null, EnUsCulture);
+
+                }*/
+                return app == null;
+            }, IntPtr.Zero);
+            return app;
+        }
+
+        [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("00020400-0000-0000-C000-000000000046")]
+        interface IDispatch
+        {
+            [PreserveSig]
+            int GetTypeInfoCount(out int count);
+
+            [PreserveSig]
+            int GetTypeInfo
+            (
+                [MarshalAs(UnmanagedType.U4)] int iTInfo,
+                [MarshalAs(UnmanagedType.U4)] int lcid,
+                out System.Runtime.InteropServices.ComTypes.ITypeInfo typeInfo
+            );
+
+            [PreserveSig]
+            int GetIDsOfNames
+            (
+                ref Guid riid,
+                [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]
+                      string[] rgsNames,
+                uint cNames,
+                int lcid,
+                [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.I4, SizeParamIndex = 2)] int[] reDispId
+            );
+
+            [PreserveSig]
+            int Invoke
+            (
+                int dispIdMember,
+                ref Guid riid,
+                uint lcid,
+                ushort wFlags,
+                ref System.Runtime.InteropServices.ComTypes.DISPPARAMS pDispParams,
+                out object pVarResult,
+                ref System.Runtime.InteropServices.ComTypes.EXCEPINFO pExcepInfo,
+                out UInt32 pArgErr
+
+            );
+        }
+
+        public static bool HasProperty(object dispatchObject, string name)
+        {
+            const int LcidUsEnglish = 0x0409;
+            string[] names = new string[1];
+            int[] ids = new int[1];
+            const int S_OK = 0;
+
+            var dispObj = dispatchObject as IDispatch;
+            if ( dispObj == null)
+                return false; 
+            names[0] = name;
+            int hr = dispObj.GetIDsOfNames(Guid.Empty, names, 1, LcidUsEnglish, ids);
+            return hr == S_OK;
         }
     }
 }
