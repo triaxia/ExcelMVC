@@ -35,12 +35,10 @@ Boston, MA 02110-1301 USA.
 namespace ExcelMvc.Runtime
 {
     using System;
-    using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using ExcelMvc.Diagnostics;
     using ExcelMvc.Windows;
-    using Extensions;
     using Function.Interfaces;
-    using Views;
 
     /// <summary>
     /// Posts and handles asynchronous actions.
@@ -53,27 +51,18 @@ namespace ExcelMvc.Runtime
             public object State { get; set; }
         }
         private static AsyncWindow Context { get; set; }
-        private static ConcurrentQueue<Item> Actions { get; set; }
+        private static Queue<Item> Actions { get; set; }
 
         static AsyncActions()
         {
             Context = new AsyncWindow();
-            Actions = new ConcurrentQueue<Item>();
+            Actions = new Queue<Item>();
             Context.AsyncMessageReceived += MainWindow_AsyncMessageReceived;
         }
 
         static void MainWindow_AsyncMessageReceived(object sender, EventArgs args)
         {
-            ActionExtensions.Try(() => App.Instance.Underlying.Run("ExcelMvcRun"));
-        }
-
-        /// <summary>
-        /// Gets the number of outstanding actions
-        /// </summary>
-        /// <returns>Number of items</returns>
-        public static int GetActionDepth()
-        {
-            return Actions.Count;
+            Execute();
         }
 
         /// <summary>
@@ -91,9 +80,13 @@ namespace ExcelMvc.Runtime
         /// <param name="state">State object</param>
         public static void Post(Action<object> action, object state)
         {
-            var item = new Item { Action = action, State = state };
-            Actions.Enqueue(item);
-            Context.PostAsyncActionMessage();
+            lock (Actions)
+            {
+                var wasEmpty = Actions.Count == 0;
+                var item = new Item { Action = action, State = state };
+                Actions.Enqueue(item);
+                if (wasEmpty) Context.PostAsyncActionMessage();
+            }
         }
 
         /// <summary>
@@ -101,15 +94,19 @@ namespace ExcelMvc.Runtime
         /// </summary>
         internal static void Execute()
         {
-            while (Actions.TryDequeue(out var item))
+            lock (Actions)
             {
-                try
+                while (Actions.Count > 0)
                 {
-                    item.Action(item.State);
-                }
-                catch(Exception ex)
-                {
-                    FunctionHost.Instance.RaiseFailed(item, new System.IO.ErrorEventArgs(ex));
+                    Item item = Actions.Dequeue();
+                    try
+                    {
+                        item.Action(item.State);
+                    }
+                    catch (Exception ex)
+                    {
+                        FunctionHost.Instance.RaiseFailed(item, new System.IO.ErrorEventArgs(ex));
+                    }
                 }
             }
         }
