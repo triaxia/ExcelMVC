@@ -102,14 +102,20 @@ namespace Function.Interfaces
         public (string Name, object Value)[] Args { get; }
 
         /// <summary>
+        /// The elapsed time of the function execution.
+        /// </summary>
+        public TimeSpan Elapsed { get; }
+
+        /// <summary>
         /// Initialises a new instance of <see cref="ExecutingEventArgs"/>.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="method"></param>
         /// <param name="args"></param>
-        public ExecutingEventArgs(string name, MethodInfo method, object[] args)
+        public ExecutingEventArgs(string name, MethodInfo method, TimeSpan elapsed, object[] args)
         {
             Name = name;
+            Elapsed = elapsed;
             Args = method.GetParameters()
                 .Select((p, i) => (name: p.Name, value: args[i]))
                 .ToArray();
@@ -119,7 +125,7 @@ namespace Function.Interfaces
         public override string ToString()
         {
             var args = string.Join(",", Args.Select(x => $"{x.Name}={x.Value}"));
-            return $"{Name}[{args}]";
+            return $"{Name}[{args}] Elapsed:{Elapsed}";
         }
     }
 

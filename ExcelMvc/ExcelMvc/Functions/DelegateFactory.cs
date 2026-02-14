@@ -32,6 +32,7 @@ Boston, MA 02110-1301 USA.
 */
 using Function.Interfaces;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -85,20 +86,38 @@ namespace ExcelMvc.Functions
                 varLines[index] = Expression.Assign(variable, innerParameter);
             }
 
-            var innerCall = (Expression)Expression.Call(method, variables);
-            if (FunctionHost.Instance.ExecutingEventRaised)
+            var methodCall = (Expression)Expression.Call(method, variables);
+
+            var instanceProperty = Expression.Property(null, typeof(FunctionHost), nameof(FunctionHost.Instance));
+            var executingEventRaised = Expression.Property(instanceProperty, nameof(IFunctionHost.ExecutingEventRaised));
+
+            var args = variables.Select(x=> Expression.Convert(x, typeof(object))).ToArray();
+            var stopwatch = Expression.Variable(typeof(Stopwatch), "stopwatch");
+            var startNew = Expression.Call(typeof(Stopwatch), nameof(Stopwatch.StartNew), null);
+            var assignStopWatch = Expression.Assign(stopwatch, startNew);
+            var elapsedProperty = Expression.Property(stopwatch, nameof(Stopwatch.Elapsed));
+            var logging = Expression.Call(LoggingMethod(args.Length)
+                , new Expression[] { Expression.Constant(function.Name), Expression.Constant(method), elapsedProperty }.Concat(args));
+
+            Expression innerCall;
+            if (method.ReturnType == typeof(void))
             {
-                var args = variables.Select(x => Expression.Convert(x, typeof(object))).ToArray();
-                var logging = Expression.Call(LoggingMethod(args.Length)
-                    , new[] { (Expression)Expression.Constant(function.Name), Expression.Constant(method), }.Concat(args));
-                innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { logging, innerCall }));
+                var loggingPath = Expression.Block(typeof(void), new[] { stopwatch },
+                    assignStopWatch, methodCall, logging);
+                var conditional = Expression.Condition(executingEventRaised, loggingPath, methodCall);
+                innerCall = Expression.Block(method.ReturnType, variables, varLines.Cast<Expression>().Concat(new[] {conditional}));
             }
             else
             {
-                innerCall = Expression.Block(method.ReturnType, variables, varLines.Concat(new[] { innerCall }));
+                var result = Expression.Variable(method.ReturnType, "result");
+                var assignResult = Expression.Assign(result, methodCall);
+                var loggingPath = Expression.Block(method.ReturnType, new[] {stopwatch, result},
+                    assignStopWatch, assignResult, logging, result);
+                var conditional = Expression.Condition(executingEventRaised, loggingPath, methodCall);
+                innerCall = Expression.Block(method.ReturnType, variables, varLines.Cast<Expression>().Concat(new[] { conditional }));
             }
-            var ex = Expression.Variable(typeof(Exception), "ex");
 
+            var ex = Expression.Variable(typeof(Exception), "ex");
             if (method.ReturnType == typeof(void))
             {
                 var handler = Expression.Block(Expression.Call(XlMarshalExceptionHandler.HandlerMethod, ex)
