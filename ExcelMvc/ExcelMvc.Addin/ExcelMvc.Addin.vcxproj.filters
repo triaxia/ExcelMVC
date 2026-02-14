@@ -42,7 +42,6 @@
       <Filter>Runtime</Filter>
     </ClInclude>
     <ClInclude Include="Export.h" />
-    <ClInclude Include="CallStatus.h" />
     <ClInclude Include="Sdk\Include\XLCALL.H" />
   </ItemGroup>
   <ItemGroup>

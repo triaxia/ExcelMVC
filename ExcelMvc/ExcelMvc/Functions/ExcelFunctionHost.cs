@@ -14,8 +14,6 @@ namespace ExcelMvc.Functions
 {
     public class ExcelFunctionHost : IFunctionHost
     {
-        private object ExclusiveGate = new object();
-
         public ExcelFunctionHost()
         {
             XlMarshalExceptionHandler.Failed +=
@@ -146,33 +144,7 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public void SetAsyncValue(IntPtr handle, object value)
         {
-            lock (ExclusiveGate)
-            {
-
-                var xlHandle = new XLOPER12(handle);
-                var xlValue = new XLOPER12(value);
-                try
-                {
-                    using (var p1 = new StructIntPtr<XLOPER12>(ref xlHandle))
-                    using (var p2 = new StructIntPtr<XLOPER12>(ref xlValue))
-                    {
-                        unsafe
-                        {
-                            var ptr = AddIn.SetAsyncValue(p1.Ptr, p2.Ptr);
-                            var status = (CallStatus*)ptr.ToPointer();
-                            var code = status->status;
-                            AddIn.FreeCallStatus(ptr);
-                            if (code != 0)
-                                throw new Exception($"SetAsyncValue failed. (status = {code})");
-                        }
-                    }
-                }
-                finally
-                {
-                    xlHandle.Dispose();
-                    xlValue.Dispose();
-                }
-            }
+            Run(nameof(XLFunctions.xlAsyncReturn), XLFunctions.xlAsyncReturn, handle, value);
         }
 
         /// <inheritdoc/>
@@ -180,11 +152,29 @@ namespace ExcelMvc.Functions
         {
             try
             {
-                dynamic caller = App?.Caller;
-                return caller is Range range ? RangeToReference(range) : null;
+                var reference = Run(nameof(XLFunctions.xlfCaller), XLFunctions.xlfCaller) as SheetReference;
+                if (reference?.Range == null)
+                {
+                    // last resort!?...
+                    dynamic caller = App?.Caller;
+                    var result = caller is Range range ? RangeToReference(range) : null;
+                    return result;
+                }
+
+                var cell = reference.Range;
+                var name = reference.SheetID == IntPtr.Zero ?
+                    Run(nameof(XLFunctions.xlSheetNm), XLFunctions.xlSheetNm, cell) as string
+                    : Run(nameof(XLFunctions.xlSheetNm), XLFunctions.xlSheetNm, reference) as string;
+                var address = Run(nameof(XLFunctions.xlfAddress), XLFunctions.xlfAddress
+                    , new object[] {cell.RowFirst + 1, cell.ColumnFirst + 1}) as string;
+
+                return new RangeReference("", name, cell.RowFirst, cell.RowLast
+                    , cell.ColumnFirst, cell.ColumnLast, address);
+
             }
-            catch
+            catch (Exception ex)
             {
+                RaiseFailed(this, new ErrorEventArgs(ex));
                 return null;
             }
         }
@@ -279,84 +269,33 @@ namespace ExcelMvc.Functions
         /// <inheritdoc/>
         public object Rtd(string progId, string server, params string[] args)
         {
-            lock (ExclusiveGate)
-            {
-
-                try
-                {
-                    var arguments = new string[] { progId, server }
-                        .Concat(args)
-                        .Select((x, idx) => new FunctionArgument($"p{idx}", x))
-                        .ToArray();
-
-                    IntPtr ptr = IntPtr.Zero;
-                    const int xlfRtd = 379;
-                    var fArgs = new FunctionArguments(xlfRtd, arguments);
-                    using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
-                    {
-                        ptr = AddIn.CallRtd(pArgs.Ptr);
-                    }
-                    unsafe
-                    {
-                        var status = (CallStatus*)ptr.ToPointer();
-                        var code = status->status;
-                        var obj = status->result == null ? null : status->result->ToObject();
-                        AddIn.FreeCallStatus(ptr);
-                        if (code != 0)
-                            throw new Exception($"Rtd failed. (status = {code})");
-                        return obj;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    RaiseFailed(this, new ErrorEventArgs(ex));
-                    return ErrorValue;
-                }
-            }
+            args = new string[] { progId, server }.Concat(args).ToArray();
+            return Run(nameof(XLFunctions.xlfRtd), XLFunctions.xlfRtd, args);
         }
 
         /// <inheritdoc/>
         public object Run(int function, params object[] args)
         {
-            lock (ExclusiveGate)
-            {
+            return Run($"{function}", function, args);
+        }
 
-                var xlArgs = args.Select(x =>
+        private object Run(string name, int function, params object[] args)
+        {
+            try
             {
-                var xlop = new XLOPER12(x);
-                return new StructIntPtr<XLOPER12>(ref xlop);
-            });
+                (var status, var result) = XLCall.Call(function, args);
+                if (status != 0)
+                {
+                    var ex = new ErrorEventArgs(new Exception($"{name} failed (code = {status})."));
+                    RaiseFailed(this, ex);
+                }
+                return result;
 
-                try
-                {
-                    var arguments = xlArgs.Select((x, idx) => new FunctionArgument($"p{idx}", x.Ptr)).ToArray();
-                    IntPtr ptr = IntPtr.Zero;
-                    var fArgs = new FunctionArguments(function, arguments);
-                    using (var pArgs = new StructIntPtr<FunctionArguments>(ref fArgs))
-                    {
-                        ptr = AddIn.CallAny(pArgs.Ptr);
-                    }
-                    unsafe
-                    {
-                        var status = (CallStatus*)ptr.ToPointer();
-                        var code = status->status;
-                        var obj = status->result == null ? null : status->result->ToObject();
-                        AddIn.FreeCallStatus(ptr);
-                        if (code != 0)
-                            throw new Exception($"Run failed. (status = {code})");
-                        return obj;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    RaiseFailed(this, new ErrorEventArgs(ex));
-                    return ErrorValue;
-                }
-                finally
-                {
-                    foreach (var x in xlArgs)
-                        x.Dispose();
-                }
+            }
+            catch(Exception ex)
+            {
+                RaiseFailed(this, new ErrorEventArgs(ex));
+                return ex.Message;
             }
         }
 
@@ -373,6 +312,7 @@ namespace ExcelMvc.Functions
                 }
             }
 
+            XLRegistration.Register(functions);
             using (var pFunction = new StructIntPtr<FunctionDefinitions>(ref functions))
             {
                 AddIn.RegisterFunctions(pFunction.Ptr);

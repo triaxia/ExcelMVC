@@ -49,14 +49,6 @@ namespace ExcelMvc.Functions
         public static string ModuleFileName { get; private set; }
         public delegate void RegisterFunctionsDelegate(IntPtr functions);
         public static RegisterFunctionsDelegate RegisterFunctions { get; private set; }
-        public delegate IntPtr SetAsyncValueDelegate(IntPtr handle, IntPtr result);
-        public static SetAsyncValueDelegate SetAsyncValue { get; private set; }
-        public delegate IntPtr CallRtdDelegate(IntPtr args);
-        public static CallRtdDelegate CallRtd { get; private set; }
-        public delegate IntPtr CallAnyDelegate(IntPtr args);
-        public static CallAnyDelegate CallAny { get; private set; }
-        public delegate IntPtr FreeCallStatusDelegate(IntPtr args);
-        public static FreeCallStatusDelegate FreeCallStatus { get; private set; }
 
         private delegate HRESULT FuncDllGetClassObject(CLSID rclsid, IID riid, out IntPtr ppunk);
         private delegate void AutoOpenDelegate();
@@ -67,10 +59,6 @@ namespace ExcelMvc.Functions
         {
             public IntPtr ModuleFileName;
             public IntPtr pRegisterFunctions;
-            public IntPtr pSetAsyncValue;
-            public IntPtr pCallRtd;
-            public IntPtr pCallAny;
-            public IntPtr pFreeCallStatus;
             public IntPtr pDllGetClassObject;
             public IntPtr pAutoOpen;
             public IntPtr pAutoClose;
@@ -86,10 +74,6 @@ namespace ExcelMvc.Functions
                 AddInHead* pAddInHead = (AddInHead*)head;
                 ModuleFileName = Marshal.PtrToStringAuto(pAddInHead->ModuleFileName);
                 RegisterFunctions = Marshal.GetDelegateForFunctionPointer<RegisterFunctionsDelegate>(pAddInHead->pRegisterFunctions);
-                SetAsyncValue = Marshal.GetDelegateForFunctionPointer<SetAsyncValueDelegate>(pAddInHead->pSetAsyncValue);
-                CallRtd = Marshal.GetDelegateForFunctionPointer<CallRtdDelegate>(pAddInHead->pCallRtd);
-                CallAny = Marshal.GetDelegateForFunctionPointer<CallAnyDelegate>(pAddInHead->pCallAny);
-                FreeCallStatus = Marshal.GetDelegateForFunctionPointer<FreeCallStatusDelegate>(pAddInHead->pFreeCallStatus);
 
                 FuncDllGetClassObject fnDllGetClassObject = RtdServerFactory.DllGetClassObject;
                 NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnDllGetClassObject));
@@ -126,6 +110,8 @@ namespace ExcelMvc.Functions
 
         private static void AutoClose()
         {
+            XLRegistration.UnregisterAll();
+
             ObjectFactory<IFunctionAddIn>.Instances
                 .OrderBy(x => x.Ranking).ToList().ForEach(x => x.Close());
             RaisePosted($"IFunctionAddIn.Close({ObjectFactory<IFunctionAddIn>.Instances.Count})");
