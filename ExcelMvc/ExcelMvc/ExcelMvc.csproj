@@ -109,14 +109,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Function.Interfaces\Function.Interfaces.csproj" PrivateAssets="None"/>
+	  <ProjectReference Include="..\Function.Interfaces\Function.Interfaces.csproj" PrivateAssets="None" />
 	</ItemGroup>
 
 	<PropertyGroup>
 		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyReferencedProjectAssetsToPackage</TargetsForTfmSpecificBuildOutput>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>D:\Source\ExcelMVC\ExcelMvc\ExcelMvc.snk</AssemblyOriginatorKeyFile>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<Target Name="CopyReferencedProjectAssetsToPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">

@@ -31,8 +31,11 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 
+using Function.Interfaces;
 using System;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace ExcelMvc.Functions
 {
@@ -58,6 +61,29 @@ namespace ExcelMvc.Functions
         public int columns;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    unsafe public struct XLRange
+    {
+        public int rowFirst;
+        public int rowLast;
+        public int colFirst;
+        public int colLast; 
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    unsafe public struct XLRangeRef
+    {
+        public short count;
+        public XLRange range; // when count >1, use &range[0]
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    unsafe public struct XLMultiRef
+    {
+        public XLRangeRef* pref;
+        public IntPtr sheetid;
+    }
+
     [StructLayout(LayoutKind.Explicit)]
     unsafe public struct XLOPER12 : IDisposable
     {
@@ -67,6 +93,8 @@ namespace ExcelMvc.Functions
         [FieldOffset(0)] public char* str;
         [FieldOffset(0)] public XLBigData bigdata;
         [FieldOffset(0)] public XLArray array;
+        [FieldOffset(0)] public XLRangeRef range;
+        [FieldOffset(0)] public XLMultiRef mref;
         [FieldOffset(24)] public uint xltype;
 
         public void Dispose()
@@ -109,6 +137,13 @@ namespace ExcelMvc.Functions
             };
             xltype = (uint)XlTypes.xltypeNil;
             err = 0;
+            range.count = 0;
+            range.range.rowFirst = 0;
+            range.range.rowLast = 0;
+            range.range.colFirst = 0;
+            range.range.colLast = 0;
+            mref.pref = null;
+            mref.sheetid = IntPtr.Zero;
             Init(value, false);
         }
 
@@ -254,7 +289,29 @@ namespace ExcelMvc.Functions
                 bigdata.cbCount = 0;
                 xltype = (uint)XlTypes.xltypeBigData;
             }
-            xltype = (uint) ((XlTypes)xltype | XlTypes.xlbitDLLFree); 
+            else if (value is RangeReference r)
+            {
+                range.count = 1;
+                range.range.rowFirst = r.RowFirst;
+                range.range.rowLast = r.RowLast;
+                range.range.colFirst = r.ColumnFirst;
+                range.range.colLast = r.ColumnLast;
+                xltype = (int)XlTypes.xltypeSRef;
+            }
+            else if (value is SheetReference s)
+            {
+                mref.sheetid = s.SheetID;
+                /*
+                mref.pref->count = 1;
+                var mx = (&mref.pref->range)[0];
+                mx.rowFirst = s.Range.RowFirst;
+                mx.rowLast = s.Range.RowLast;
+                mx.colFirst = s.Range.ColumnFirst;
+                mx.colLast = s.Range.ColumnLast;
+                */
+                xltype = (int) XlTypes.xltypeRef;
+            }
+            xltype = (uint)((XlTypes)xltype | XlTypes.xlbitDLLFree); 
         }
 
         public object ToObject()
@@ -290,6 +347,19 @@ namespace ExcelMvc.Functions
                     return ExcelMissing.Value;
                 case XlTypes.xltypeErr:
                     return (ExcelError)err;
+                case XlTypes.xltypeSRef:
+                {
+                    var rn = new RangeReference("", "", range.range.rowFirst, range.range.rowLast,
+                        range.range.colFirst, range.range.colLast, "");
+                    return new SheetReference(rn, IntPtr.Zero);
+                }
+                case XlTypes.xltypeRef:
+                {
+                    var mx = (&mref.pref->range)[0];
+                    var rn = new RangeReference("", "", mx.rowFirst, mx.rowLast,
+                        mx.colFirst, mx.colLast, "");
+                    return new SheetReference(rn, mref.sheetid);
+                }
             }
             return null;
         }
