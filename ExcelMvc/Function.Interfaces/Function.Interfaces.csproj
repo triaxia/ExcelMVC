@@ -11,7 +11,7 @@
 		<PackageIcon>ExcelMvcIcon64.png</PackageIcon>
 		<PackageTags>Excel;MVC;MVVM;UDFs;RTDs</PackageTags>
 		<PackageReleaseNotes>See the Releases folder under https://github.com/triaxia/ExcelMVC</PackageReleaseNotes>
-		<Authors>Peter Gu (Creator), Wolfgang Stamm (Contributor 2013)</Authors>
+		<Authors>Peter Gu (Creator),Wolfgang Stamm (Contributor 2013)</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Company>Triaxia Pty Limited</Company>
 		<PackageId>Function.Interfaces</PackageId>

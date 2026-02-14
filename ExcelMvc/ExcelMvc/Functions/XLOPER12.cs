@@ -34,8 +34,6 @@ Boston, MA 02110-1301 USA.
 using Function.Interfaces;
 using System;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Windows.Forms;
 
 namespace ExcelMvc.Functions
 {

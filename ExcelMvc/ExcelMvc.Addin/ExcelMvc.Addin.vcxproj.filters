@@ -4,9 +4,6 @@
     <Filter Include="Runtime">
       <UniqueIdentifier>{05cdb28a-2204-4474-8373-f51f786c5ccf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="XlCall">
-      <UniqueIdentifier>{ad34e3a5-dcb8-4297-865d-c8fd531b1d9d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClrRuntimeHost.cpp">
@@ -17,15 +14,6 @@
     </ClCompile>
     <ClCompile Include="ClrRuntimeHostFactory.cpp">
       <Filter>Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="Framewrk.cpp">
-      <Filter>XlCall</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryManager.cpp">
-      <Filter>XlCall</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryPool.cpp">
-      <Filter>XlCall</Filter>
     </ClCompile>
     <ClCompile Include="AddIn.cpp" />
     <ClCompile Include="dllmain.cpp" />
@@ -48,15 +36,6 @@
     <ClInclude Include="ClrRuntimeHostFactory.h">
       <Filter>Runtime</Filter>
     </ClInclude>
-    <ClInclude Include="Framewrk.h">
-      <Filter>XlCall</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryManager.h">
-      <Filter>XlCall</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryPool.h">
-      <Filter>XlCall</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ClrRuntimeHostV4.h">
@@ -64,6 +43,7 @@
     </ClInclude>
     <ClInclude Include="Export.h" />
     <ClInclude Include="CallStatus.h" />
+    <ClInclude Include="Sdk\Include\XLCALL.H" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AddIn.def" />

@@ -32,62 +32,23 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 #include "pch.h"
-#include <XLCALL.H>
-#include "framewrk.h"
 #include "ClrRuntimeHostFactory.h"
-#include "CallStatus.h"
 #include <new>
 
 extern "C" { extern WCHAR ModuleFileName[]; }
 
-extern "C" const GUID __declspec(selectany) DIID__Workbook =
-{ 0x000208da, 0x0000, 0x0000, { 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 } };
-
-extern void RegisterMvcFunctions();
-extern void UnregisterMvcFunctions();
 extern void __stdcall RegisterFunctions(void* handle);
-extern void UnregisterFunctions();
-
-extern LPCALLSTATUS __stdcall SetAsyncValue(LPXLOPER12 handle, LPXLOPER12 value);
-extern LPCALLSTATUS __stdcall CallRtd(void* args);
-extern LPCALLSTATUS __stdcall CallAny(void* args);
 
 typedef HRESULT(__stdcall* PFN_DllGetClassObject)(CLSID clsid, IID iid, LPVOID* ppv);
 typedef void(__stdcall* PFN_RegisterFunctions)(void* handle);
-typedef LPCALLSTATUS(__stdcall* PFN_SetAsyncValue)(LPXLOPER12 handle, LPXLOPER12 result);
-typedef LPCALLSTATUS(__stdcall* PFN_CallRtd)(void* args);
-typedef void(__stdcall* PFN_FreeCallStatus)(LPCALLSTATUS result);
-typedef LPCALLSTATUS(__stdcall* PFN_CallAny)(void* args);
 typedef void(__stdcall* PFN_AutoOpen)();
 typedef void(__stdcall* PFN_AutoClose)();
 
-void __stdcall xlAutoFree12(LPXLOPER12 pxFree)
-{
-	if ((pxFree->xltype & xlbitDLLFree) == xlbitDLLFree)
-		return;
-
-	// XLOPER12 returned to Excel are ALL shared thread memory, no
-	// free memory should be done here!
-}
-
-void __stdcall FreeCallStatus(LPCALLSTATUS pxFree)
-{
-	if (pxFree->Result != NULL)
-	{
-		Excel12f(xlFree, NULL, 1, pxFree->Result);
-		delete pxFree->Result;
-	}
-	delete pxFree;
-}
 
 struct AddInHead
 {
 	LPWSTR ModuleFileName;
 	PFN_RegisterFunctions pRegisterFunctions;
-	PFN_SetAsyncValue pSetAsyncValue;
-	PFN_CallRtd pCallRtd;
-	PFN_CallAny pCallAny;
-	PFN_FreeCallStatus pFreeCallStatus;
 	PFN_DllGetClassObject pDllGetClassObject;
 	PFN_AutoOpen pAutoOpen;
 	PFN_AutoClose pAutoClose;
@@ -108,10 +69,6 @@ AddInHead* CreateAddInHead()
 	pAddInHead->ModuleFileName = new WCHAR[MAX_PATH];
 	memcpy(pAddInHead->ModuleFileName, ModuleFileName, sizeof(WCHAR) * MAX_PATH);
 	pAddInHead->pRegisterFunctions = RegisterFunctions;
-	pAddInHead->pSetAsyncValue = SetAsyncValue;
-	pAddInHead->pCallRtd = CallRtd;
-	pAddInHead->pCallAny = CallAny;
-	pAddInHead->pFreeCallStatus = FreeCallStatus;
 	pAddInHead->pDllGetClassObject = NULL;
 	pAddInHead->pAutoOpen = NULL;
 	pAddInHead->pAutoClose = NULL;
@@ -141,27 +98,17 @@ BOOL StartAddInClrHost()
 	BOOL result = pClrHost->TestAndDisplayError();
 	if (result)
 	{
-		// insert a book to get Excel registered with the ROT
-		Excel12f(xlcEcho, 0, 1, (LPXLOPER12)TempBool12(false));
-		Excel12f(xlcNew, 0, 1, (LPXLOPER12)TempInt12(5));
-		Excel12f(xlcWorkbookInsert, 0, 1, (LPXLOPER12)TempInt12(6));
-
 		// attach to ExcelMVC
 		pClrHost->Attach(CreateAddInHead());
 		result = pClrHost->TestAndDisplayError();
-
-		// close the book
-		Excel12f(xlcFileClose, 0, 1, (LPXLOPER12)TempBool12(false));
-		Excel12f(xlcEcho, 0, 1, (LPXLOPER12)TempBool12(true));
 	}
 	return result;
 }
 
 BOOL __stdcall xlAutoOpen(void)
 {
-	RegisterMvcFunctions();
-	StartAddInClrHost();
-	pAddInHead->pAutoOpen();
+	if (StartAddInClrHost())
+		pAddInHead->pAutoOpen();
 	return TRUE;
 }
 
@@ -173,8 +120,6 @@ BOOL __stdcall xlAutoClose(void)
 BOOL __stdcall xlAutoRemove(void)
 {
 	pAddInHead->pAutoClose();
-	UnregisterMvcFunctions();
-	UnregisterFunctions();
 	StopAddInClrHost();
 	return TRUE;
 }
@@ -199,37 +144,4 @@ HRESULT __stdcall DllGetClassObject(REFCLSID clsid, REFIID iid, void** ppv)
 HRESULT __stdcall DllCanUnloadNow()
 {
 	return S_FALSE;
-}
-
-BOOL IsExcelThere()
-{
-	IRunningObjectTable* pRot = NULL;
-	::GetRunningObjectTable(0, &pRot);
-
-	IEnumMoniker* pEnum = NULL;
-	pRot->EnumRunning(&pEnum);
-	IMoniker* pMon[1] = { NULL };
-	ULONG fetched = 0;
-	BOOL found = FALSE;
-	while (pEnum->Next(1, pMon, &fetched) == 0)
-	{
-		IUnknown* pUnknown;
-		pRot->GetObject(pMon[0], &pUnknown);
-		IUnknown* pWorkbook;
-		if (SUCCEEDED(pUnknown->QueryInterface(DIID__Workbook, (void**)&pWorkbook)))
-		{
-			found = TRUE;
-			pWorkbook->Release();
-			break;
-		}
-		pUnknown->Release();
-	}
-
-	if (pRot != NULL)
-		pRot->Release();
-
-	if (pEnum != NULL)
-		pEnum->Release();
-
-	return found;
 }

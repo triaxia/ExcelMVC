@@ -32,90 +32,11 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 Boston, MA 02110-1301 USA.
 */
 #include "pch.h"
-#include <XLCALL.H>
-#include "framewrk.h"
 #include "ClrRuntimeHost.h"
-
-/*
-
-https://docs.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
-LPXLOPER12 pxProcedure
-LPXLOPER12 pxTypeText
-LPXLOPER12 pxFunctionText
-LPXLOPER12 pxArgumentText
-LPXLOPER12 pxMacroType,
-LPXLOPER12 pxCategory
-LPXLOPER12 pxShortcutText
-LPXLOPER12 pxHelpTopic
-LPXLOPER12 pxFunctionHelp
-LPXLOPER12 pxArgumentHelp1
-LPXLOPER12 pxArgumentHelp2
-.
-LPXLOPER12 pxArgumentHelp255
-*/
 
 extern "C"
 {
 	extern ClrRuntimeHost* pClrHost;
-}
-
-const int NumberOfParameters = 11;
-static LPCWSTR MvcFunctions[][NumberOfParameters] =
-{
-	{ L"ExcelMvcAttach", L"I", L"ExcelMvcAttach", L"", L"1", L"ExcelMvc", L"", L"", L"Attach Excel to ExcelMvc", L"", L"" },
-	{ L"ExcelMvcDetach", L"I", L"ExcelMvcDetach", L"", L"1", L"ExcelMvc", L"", L"", L"Detach Excel from ExcelMvc", L"", L"" },
-	{ L"ExcelMvcShow", L"I", L"ExcelMvcShow", L"", L"1", L"ExcelMvc", L"", L"", L"Shows the ExcelMvc window", L"", L"" },
-	{ L"ExcelMvcHide", L"I", L"ExcelMvcHide", L"", L"1", L"ExcelMvc", L"", L"", L"Hides the ExcelMvc window", L"", L"" },
-	{ L"ExcelMvcClick", L"I", L"ExcelMvcRunCommandAction", L"", L"2", L"ExcelMvc", L"", L"", L"Called by a command", L"", L"" },
-	{ L"ExcelMvcRun", L"I", L"ExcelMvcRun", L"", L"2", L"ExcelMvc", L"", L"", L"Runs the next action in the async queue", L"", L"" }
-};
-
-static XLOPER12 RegIds[]
-{
-	XLOPER12(),
-	XLOPER12(),
-	XLOPER12(),
-	XLOPER12(),
-	XLOPER12(),
-	XLOPER12()
-};
-
-void RegisterMvcFunctions()
-{
-	static XLOPER12 xDll;
-	Excel12f(xlGetName, &xDll, 0);
-
-	auto count = sizeof(MvcFunctions) / (sizeof(MvcFunctions[0][0]) * NumberOfParameters);
-	for (unsigned int idx = 0; idx < count; idx++)
-	{
-		Excel12f
-		(
-			xlfRegister, &RegIds[idx], NumberOfParameters + 1,
-			(LPXLOPER12)&xDll,
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][0]),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][1]),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][2]),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][3]),
-			(LPXLOPER12)TempInt12(_wtoi(MvcFunctions[idx][4])),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][5]),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][6]),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][7]),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][8]),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][9]),
-			(LPXLOPER12)TempStr12(MvcFunctions[idx][10])
-		);
-	}
-	Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDll);
-}
-
-void UnregisterMvcFunctions()
-{
-	auto count = sizeof(RegIds) / sizeof(XLOPER12);
-	for (unsigned int idx = 0; idx < count; idx++)
-	{
-		Excel12f(xlfUnregister, 0, 1, &RegIds[idx]);
-		Excel12f(xlFree, 0, 1, &RegIds[idx]);
-	}
 }
 
 extern "C" __declspec(dllexport)
