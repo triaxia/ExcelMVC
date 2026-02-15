@@ -7,9 +7,9 @@ namespace ExcelMvc.Integration.Tests
     public class ByteTests
     {
         [Function()]
-        public static byte uByte(byte v1, [Argument(Name = "[v2]")] byte? v2 = 0)
+        public static byte uByte(byte v1, [Argument(Name = "[v2]")] byte v2 = 0)
         {
-            return (byte)(v1 + v2.Value);
+            return (byte)(v1 + v2);
         }
 
         [TestMethod]
@@ -26,9 +26,9 @@ namespace ExcelMvc.Integration.Tests
         }
 
         [Function()]
-        public static sbyte uSByte(sbyte v1, [Argument(Name = "[v2]")] sbyte? v2 = 0)
+        public static sbyte uSByte(sbyte v1, [Argument(Name = "[v2]")] sbyte v2 = 0)
         {
-            return (sbyte)(v1 - v2.Value);
+            return (sbyte)(v1 - v2);
         }
 
         [TestMethod]

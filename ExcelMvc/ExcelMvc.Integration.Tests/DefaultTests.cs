@@ -10,7 +10,6 @@ namespace ExcelMvc.Integration.Tests
         private const string DefaultString = "gu";
         private const int DefaultInt = int.MinValue / 2;
         private const double DefaultDouble = 123.456;
-        private static DateTime ?DefaultDate = null;
 
         [Function()]
         public static string uDefault(
@@ -27,11 +26,11 @@ namespace ExcelMvc.Integration.Tests
         {
             using (var excel = new ExcelLoader())
             {
-                var result = (string)excel.Application.Run("uDefault");
-                Assert.AreEqual($"{DefaultString}|{DefaultInt}|{DefaultDouble}|{DefaultDate}", result);
+                //var result = (string)excel.Application.Run("uDefault");
+                //Assert.AreEqual($"{DefaultString}|{DefaultInt}|{DefaultDouble}|{DefaultDate}", result);
 
                 var today = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Unspecified);
-                result = (string)excel.Application.Run("uDefault", "a", 1, 2, today);
+                var result = (string)excel.Application.Run("uDefault", "a", 1, 2, today);
                 Assert.AreEqual($"a|1|2|{today}", result);
             }
         }

@@ -7,9 +7,9 @@ namespace ExcelMvc.Integration.Tests
     public class BoolTests
     {
         [Function()]
-        public static bool uBool(bool v1, [Argument(Name = "[v2]")] bool? v2 = false)
+        public static bool uBool(bool v1, [Argument(Name = "[v2]")] bool v2 = false)
         {
-            return v1 && v2.Value;
+            return v1 && v2;
         }
 
         [TestMethod]
