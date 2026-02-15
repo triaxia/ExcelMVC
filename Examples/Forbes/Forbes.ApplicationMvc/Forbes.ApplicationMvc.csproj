@@ -18,7 +18,7 @@
 		<DefineConstants />
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="ExcelMvc.Net" Version="2.4.7" />
+		<PackageReference Include="ExcelMvc.Net" Version="4.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\Forbes.Views\Forbes2000.xlsx" Link="Forbes2000.xlsx">
