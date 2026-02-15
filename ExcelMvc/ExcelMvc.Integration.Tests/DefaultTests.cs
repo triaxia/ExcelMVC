@@ -14,9 +14,9 @@ namespace ExcelMvc.Integration.Tests
         [Function()]
         public static string uDefault(
             [Argument(Name = "[v1]")] string v1 = DefaultString,
-            [Argument(Name = "[v2]")] int? v2 = DefaultInt,
-            [Argument(Name = "[v3]")] double? v3 = DefaultDouble,
-            [Argument(Name = "[v4]")] DateTime? v4 = null)
+            [Argument(Name = "[v2]")] int v2 = DefaultInt,
+            [Argument(Name = "[v3]")] double v3 = DefaultDouble,
+            [Argument(Name = "[v4]")] DateTime v4 = default)
         {
             return $"{v1}|{v2}|{v3}|{v4}";
         }
