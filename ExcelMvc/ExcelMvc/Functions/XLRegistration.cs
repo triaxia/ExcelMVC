@@ -7,17 +7,17 @@ namespace ExcelMvc.Functions
     public static class XLRegistration
     {
         private static readonly object[] ExcelMvcAttach =
-            { "ExcelMvcAttach", "I", "ExcelMvcAttach", "", 1, "ExcelMvc", "", "", "Attach Excel to ExcelMvc", "", "" };
+            { "ExcelMvcAttach", "I", "ExcelMvcAttach", "", 1, "ExcelMvc", "", "", "Attach Excel to ExcelMvc", "" };
         private static readonly object[] ExcelMvcDetach =
-            { "ExcelMvcDetach", "I", "ExcelMvcDetach", "", 1, "ExcelMvc", "", "", "Detach Excel from ExcelMvc", "", "" };
+            { "ExcelMvcDetach", "I", "ExcelMvcDetach", "", 1, "ExcelMvc", "", "", "Detach Excel from ExcelMvc", "" };
         private static readonly object[] ExcelMvcShow =
-            { "ExcelMvcShow", "I", "ExcelMvcShow", "", 1, "ExcelMvc", "", "", "Shows the ExcelMvc window", "", "" };
+            { "ExcelMvcShow", "I", "ExcelMvcShow", "", 1, "ExcelMvc", "", "", "Shows the ExcelMvc window", "" };
         private static readonly object[] ExcelMvcHide =
-            { "ExcelMvcHide", "I", "ExcelMvcHide", "", 1, "ExcelMvc", "", "", "Hides the ExcelMvc window", "", "" };
+            { "ExcelMvcHide", "I", "ExcelMvcHide", "", 1, "ExcelMvc", "", "", "Hides the ExcelMvc window", "" };
         private static readonly object[] ExcelMvcClick =
-            { "ExcelMvcClick", "I", "ExcelMvcRunCommandAction", "", 2, "ExcelMvc", "", "", "Called by a command", "", "" };
+            { "ExcelMvcClick", "I", "ExcelMvcRunCommandAction", "", 2, "ExcelMvc", "", "", "Called by a command", "" };
         private static readonly object[] ExcelMvcRun =
-            { "ExcelMvcRun", "I", "ExcelMvcRun", "", 2, "ExcelMvc", "", "", "Runs the next action in the async queue", "", "" };
+            { "ExcelMvcRun", "I", "ExcelMvcRun", "", 2, "ExcelMvc", "", "", "Runs the next action in the async queue", "" };
 
         private static readonly List<object> FunctionIds = new List<object>();
 
@@ -47,7 +47,7 @@ namespace ExcelMvc.Functions
                 Register(functions.Items[i], i, xll);
         }
 
-        public static object Register(string name, object parameters)
+        public static object Register(string name, object[] parameters)
         {
             (var status, var result) = XLCall.Call(XLFunctions.xlfRegister, parameters);
             XLCall.EnsureSuccessStatusCode(status, () => $"Registering \"{name}\" failed with status {status}.");
@@ -110,7 +110,7 @@ namespace ExcelMvc.Functions
         {
             var types = function.IsAsync ? ">" : MakeTypeString(function.ReturnType, function.Name);
             var names = "";
-            for (var idx = 0 ; idx < function.ArgumentCount; idx++)
+            for (var idx = 0; idx < function.ArgumentCount; idx++)
             {
                 if (idx > 0) names += ",";
                 names += function.Arguments[idx].Name ?? "";
@@ -121,7 +121,7 @@ namespace ExcelMvc.Functions
             if (function.IsClusterSafe && !function.IsAsync) types += "&";
             if (function.IsMacroType) types += "#";
 
-            return (names, types);  
+            return (names, types);
         }
 
         private static string MakeTypeString(string type, string argName)
