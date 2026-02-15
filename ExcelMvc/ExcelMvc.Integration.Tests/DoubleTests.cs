@@ -7,9 +7,9 @@ namespace ExcelMvc.Integration.Tests
     public class DoubleTests
     {
         [Function()]
-        public static double uDouble(double v1, [Argument(Name = "[v2]")] double? v2 = 0)
+        public static double uDouble(double v1, [Argument(Name = "[v2]")] double v2 = 0)
         {
-            return (double)(v1 - v2.Value);
+            return (double)(v1 - v2);
         }
 
         [TestMethod]

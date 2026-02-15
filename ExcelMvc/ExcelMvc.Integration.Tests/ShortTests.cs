@@ -7,9 +7,9 @@ namespace ExcelMvc.Integration.Tests
     public class ShortTests
     {
         [Function()]
-        public static ushort uUShort(ushort v1, [Argument(Name = "[v2]")] ushort? v2 = 0)
+        public static ushort uUShort(ushort v1, [Argument(Name = "[v2]")] ushort v2 = 0)
         {
-            return (ushort)(v1 + v2.Value);
+            return (ushort)(v1 + v2);
         }
 
         [TestMethod]
@@ -26,9 +26,9 @@ namespace ExcelMvc.Integration.Tests
         }
 
         [Function()]
-        public static short uShort(short v1, [Argument(Name = "[v2]")] short? v2 = 0)
+        public static short uShort(short v1, [Argument(Name = "[v2]")] short v2 = 0)
         {
-            return (short)(v1 - v2.Value);
+            return (short)(v1 - v2);
         }
 
         [TestMethod]

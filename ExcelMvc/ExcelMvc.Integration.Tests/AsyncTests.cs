@@ -74,10 +74,13 @@ namespace ExcelMvc.Integration.Tests
         [Function()]
         public static object uCallMacro(string name = "uMacro", string value = "test")
         {
+            /*
             FunctionHost.Instance.Post(state =>
             {
                 FunctionHost.Instance.Run(255, (object[])state);
             }, new object[] { name, value });
+            */
+            FunctionHost.Instance.Run(255, new object[] { name, value });
             return value;
         }
 

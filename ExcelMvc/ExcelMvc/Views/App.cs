@@ -166,10 +166,13 @@ namespace ExcelMvc.Views
         /// </summary>
         internal void Attach(object app)
         {
-            if (Underlying == null)
-                DoAttach(app);
-            else
-                AsyncActions.Post(a => DoAttach(a), app);
+            RunAroundXLCalls(() =>
+            {
+                if (Underlying == null)
+                    DoAttach(app);
+                else
+                    AsyncActions.Post(a => DoAttach(a), app);
+            });
         }
 
         void DoAttach(object state)
@@ -367,6 +370,16 @@ namespace ExcelMvc.Views
                 OnBindingFailed(new BindingFailedEventArgs(this, ex));
                 RaiseFailed(ex);
             }
+        }
+
+        private static void RunAroundXLCalls(System.Action action)
+        {
+            XLCall.Call(XLFunctions.xlcEcho, new object[] { false });
+            XLCall.Call(XLFunctions.xlcNew, new object[] { 5 });
+            XLCall.Call(XLFunctions.xlcWorkbookInsert, new object[] { 6 });
+            action();
+            XLCall.Call(XLFunctions.xlcFileClose, new object[] { false });
+            XLCall.Call(XLFunctions.xlcEcho, new object[] { true });
         }
     }
 }

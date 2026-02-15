@@ -19,7 +19,7 @@ namespace ExcelMvc.Integration.Tests
             using (var excel = new ExcelLoader())
             {
                 var result = (object)excel.Application.Run("uStringOptionalWithNoDefault");
-                Assert.AreEqual(-2146826252, result);
+                Assert.AreEqual("", result);
                 
                 var value = Guid.NewGuid().ToString();  
                 result = (string) (object)excel.Application.Run("uStringOptionalWithNoDefault", value);
