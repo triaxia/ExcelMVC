@@ -46,7 +46,7 @@ namespace ExcelMvc.Bindings
     {
 
         /// <summary>
-        /// Initialises an instance of ExcelMvc.Binding
+        /// Initializes an instance of ExcelMvc.Binding
         /// </summary>
         public Binding()
         {

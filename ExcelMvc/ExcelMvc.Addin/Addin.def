@@ -13,3 +13,5 @@ ExcelMvcShow            PRIVATE
 ExcelMvcHide            PRIVATE
 ExcelMvcClick           PRIVATE   
 ExcelMvcRun             PRIVATE
+CalculationCancelled    PRIVATE
+CalculationEnded        PRIVATE

@@ -28,7 +28,7 @@ namespace Function.Interfaces
         public string Type;
 
         /// <summary>
-        /// Initialises a new instance of <see cref="ArgumentDefinition"/>
+        /// Initializes a new instance of <see cref="ArgumentDefinition"/>
         /// </summary>
         /// <param name="parameter"></param>
         /// <param name="argument"></param>

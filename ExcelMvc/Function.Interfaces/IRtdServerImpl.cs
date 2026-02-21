@@ -52,7 +52,7 @@ namespace Function.Interfaces
         public object Value { get; set; }
 
         /// <summary>
-        /// Initialises a new instance of <see cref="RtdTopic"/>
+        /// Initializes a new instance of <see cref="RtdTopic"/>
         /// </summary>
         /// <param name="args"></param>
         /// <param name="value"></param>
@@ -85,7 +85,7 @@ namespace Function.Interfaces
         public IEnumerable<RtdTopic> Topics { get; }
 
         /// <summary>
-        /// Initialises a new instance of <see cref="RtdServerUpdatedEventArgs"/>.
+        /// Initializes a new instance of <see cref="RtdServerUpdatedEventArgs"/>.
         /// </summary>
         /// <param name="impl"></param>
         /// <param name="topics"></param>

@@ -44,7 +44,7 @@ namespace ExcelMvc.Bindings
     {
 
         /// <summary>
-        /// Initialises an instance of BindingFailedEventArgs
+        /// Initializes an instance of BindingFailedEventArgs
         /// </summary>
         /// <param name="view">View</param>
         /// <param name="exception">Exception</param>

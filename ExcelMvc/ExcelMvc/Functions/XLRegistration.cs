@@ -34,6 +34,8 @@ namespace ExcelMvc.Functions
 
         public static void Register(FunctionDefinitions functions)
         {
+            RegisterEvents();
+
             (var status, var xll) = XLCall.Call(XLFunctions.xlGetName, System.Array.Empty<object>());
             XLCall.EnsureSuccessStatusCode(status, () => $"{nameof(XLFunctions.xlGetName)} failed with status code {status}.");
 
@@ -45,6 +47,15 @@ namespace ExcelMvc.Functions
             Register(nameof(ExcelMvcRun), new[] { xll }.Concat(ExcelMvcRun).ToArray());
             for (var i = 0; i < functions.FunctionCount; i++)
                 Register(functions.Items[i], i, xll);
+        }
+
+        private static void RegisterEvents()
+        {
+            (var status, var result) = XLCall.Call(XLFunctions.xlEventRegister, "CalculationCanceled", XLFunctions.xlEventCalculationCanceled);
+            XLCall.EnsureSuccessStatusCode(status, () => $"{nameof(XLFunctions.xlEventRegister)} failed with status code {status}.");
+
+            (status, result) = XLCall.Call(XLFunctions.xlEventRegister, "CalculationEnded", XLFunctions.xlEventCalculationEnded);
+            XLCall.EnsureSuccessStatusCode(status, () => $"{nameof(XLFunctions.xlEventRegister)} failed with status code {status}.");
         }
 
         public static object Register(string name, object[] parameters)

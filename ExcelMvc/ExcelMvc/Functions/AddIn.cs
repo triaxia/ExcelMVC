@@ -53,6 +53,8 @@ namespace ExcelMvc.Functions
         private delegate HRESULT FuncDllGetClassObject(CLSID rclsid, IID riid, out IntPtr ppunk);
         private delegate void AutoOpenDelegate();
         private delegate void AutoCloseDelegate();
+        private delegate void CalculationCancelledDelegate();
+        private delegate void CalculationEndedDelegate();
 
         [StructLayout(LayoutKind.Sequential)]
         public struct AddInHead
@@ -62,6 +64,8 @@ namespace ExcelMvc.Functions
             public IntPtr pDllGetClassObject;
             public IntPtr pAutoOpen;
             public IntPtr pAutoClose;
+            public IntPtr pCalculationCancelled;
+            public IntPtr pCalculationEnded;
         }
 
         public static readonly ConcurrentBag<GCHandle> NoGarbageCollectableHandles
@@ -86,6 +90,14 @@ namespace ExcelMvc.Functions
                 AutoCloseDelegate fnAutoClose = AutoClose;
                 NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnAutoClose));
                 pAddInHead->pAutoClose = Marshal.GetFunctionPointerForDelegate(fnAutoClose);
+
+                CalculationCancelledDelegate fnCalculationCancelled = CalculationCancelled;
+                NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnCalculationCancelled));
+                pAddInHead->pCalculationCancelled = Marshal.GetFunctionPointerForDelegate(fnCalculationCancelled);
+
+                CalculationEndedDelegate fnCalculationEnded = CalculationEnded;
+                NoGarbageCollectableHandles.Add(GCHandle.Alloc(fnCalculationEnded));
+                pAddInHead->pCalculationEnded = Marshal.GetFunctionPointerForDelegate(fnCalculationEnded);
             }
         }
 
@@ -115,6 +127,14 @@ namespace ExcelMvc.Functions
             ObjectFactory<IFunctionAddIn>.Instances
                 .OrderBy(x => x.Ranking).ToList().ForEach(x => x.Close());
             RaisePosted($"IFunctionAddIn.Close({ObjectFactory<IFunctionAddIn>.Instances.Count})");
+        }
+
+        private static void CalculationCancelled()
+        {
+        }
+
+        private static void CalculationEnded()
+        {
         }
 
         private static void RaisePosted(string message) =>

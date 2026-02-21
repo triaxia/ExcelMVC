@@ -56,7 +56,7 @@ namespace ExcelMvc.Views
         private readonly string name;
 
         /// <summary>
-        /// Initialises an instances of ExcelMvc.Views.Panel
+        /// Initializes an instances of ExcelMvc.Views.Panel
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="bindings">Bindings for the view</param>

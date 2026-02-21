@@ -62,7 +62,7 @@ namespace ExcelMvc.Views
         private INotifyPropertyChanged notifyPropertyChanged;
 
         /// <summary>
-        /// Initialises an instances of ExcelMvc.Views.Table
+        /// Initializes an instances of ExcelMvc.Views.Table
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="bindings">Bindings for the view</param>

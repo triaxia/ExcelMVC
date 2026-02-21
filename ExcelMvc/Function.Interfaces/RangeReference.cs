@@ -41,7 +41,7 @@
         public string Address { get; }
 
         /// <summary>
-        /// Initialises a new instance of <see cref="RangeReference"/>
+        /// Initializes a new instance of <see cref="RangeReference"/>
         /// </summary>
         /// <param name="bookName"></param>
         /// <param name="sheetName"></param>

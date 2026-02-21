@@ -17,6 +17,7 @@ namespace ExcelMvc.Functions
         public const int xlSheetNm = 5 | xlSpecial;
         public const int xlfAddress = 219;
         public const int xlAsyncReturn = 16 | xlSpecial;
+        public const int xlEventRegister = 17 | xlSpecial;
         public const int xlFree = 0 | xlSpecial;
         public const int xlGetName = 9 | xlSpecial;
         public const int xlfRegister = 149;
@@ -25,6 +26,9 @@ namespace ExcelMvc.Functions
         public const int xlcFileClose = 144 | xlCommand;
         public const int xlcWorkbookInsert = 354 | xlCommand;
         public const int xlcNew = 119 | xlCommand;
+
+        public const int xlEventCalculationEnded = 1;
+        public const int xlEventCalculationCanceled = 2;
     }
 
     public static class XLCall

@@ -49,7 +49,7 @@ namespace Function.Interfaces
         public string Message { get; }
 
         /// <summary>
-        /// Initialises a new instance of <see cref="MessageEventArgs"/>.
+        /// Initializes a new instance of <see cref="MessageEventArgs"/>.
         /// </summary>
         /// <param name="message"></param>
         public MessageEventArgs(string message)
@@ -73,7 +73,7 @@ namespace Function.Interfaces
         public FunctionDefinition Function;
 
         /// <summary>
-        /// Initialises a new instance of <see cref="RegisteringEventArgs"/>.
+        /// Initializes a new instance of <see cref="RegisteringEventArgs"/>.
         /// </summary>
         /// <param name="function"></param>
         public RegisteringEventArgs(FunctionDefinition function)
@@ -107,7 +107,7 @@ namespace Function.Interfaces
         public TimeSpan Elapsed { get; }
 
         /// <summary>
-        /// Initialises a new instance of <see cref="ExecutingEventArgs"/>.
+        /// Initializes a new instance of <see cref="ExecutingEventArgs"/>.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="method"></param>

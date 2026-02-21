@@ -43,6 +43,8 @@ typedef HRESULT(__stdcall* PFN_DllGetClassObject)(CLSID clsid, IID iid, LPVOID* 
 typedef void(__stdcall* PFN_RegisterFunctions)(void* handle);
 typedef void(__stdcall* PFN_AutoOpen)();
 typedef void(__stdcall* PFN_AutoClose)();
+typedef void(__stdcall* PFN_CalculationCancelled)();
+typedef void(__stdcall* PFN_CalculationEnded)();
 
 
 struct AddInHead
@@ -52,6 +54,8 @@ struct AddInHead
 	PFN_DllGetClassObject pDllGetClassObject;
 	PFN_AutoOpen pAutoOpen;
 	PFN_AutoClose pAutoClose;
+	PFN_CalculationCancelled pCalculationCancelled;
+	PFN_CalculationEnded pCalculationEnded;
 };
 
 AddInHead* pAddInHead = NULL;
@@ -71,7 +75,8 @@ AddInHead* CreateAddInHead()
 	pAddInHead->pRegisterFunctions = RegisterFunctions;
 	pAddInHead->pDllGetClassObject = NULL;
 	pAddInHead->pAutoOpen = NULL;
-	pAddInHead->pAutoClose = NULL;
+	pAddInHead->pCalculationCancelled = NULL;
+	pAddInHead->pCalculationEnded = NULL;
 	return pAddInHead;
 }
 
@@ -144,4 +149,14 @@ HRESULT __stdcall DllGetClassObject(REFCLSID clsid, REFIID iid, void** ppv)
 HRESULT __stdcall DllCanUnloadNow()
 {
 	return S_FALSE;
+}
+
+void __stdcall CalculationCancelled()
+{
+	pAddInHead->pCalculationCancelled();
+}
+
+void __stdcall CalculationEnded()
+{
+	pAddInHead->pCalculationEnded();
 }

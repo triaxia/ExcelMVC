@@ -47,7 +47,7 @@ namespace ExcelMvc.Views
     {
 
         /// <summary>
-        /// Initialises an instance of SelectionChangedArgs
+        /// Initializes an instance of SelectionChangedArgs
         /// </summary>
         /// <param name="items">Items changed</param>
         /// <param name="bindings">Bindings selected</param>

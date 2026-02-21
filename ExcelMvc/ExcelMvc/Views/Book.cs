@@ -166,7 +166,7 @@ namespace ExcelMvc.Views
         }
 
         /// <summary>
-        /// Initialises the view
+        /// Initializes the view
         /// </summary>
         internal void Initialise()
         {
