@@ -104,6 +104,12 @@ namespace ExcelMvc.Functions
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
 
         /// <inheritdoc/>
+        public event EventHandler<EventArgs> CalculationCancelled;
+
+        /// <inheritdoc/>
+        public event EventHandler<EventArgs> CalculationEnded;
+
+        /// <inheritdoc/>
         public IDictionary<object, string> ErrorStrings { get; }
             = new Dictionary<object, string>
         {
@@ -373,6 +379,18 @@ namespace ExcelMvc.Functions
         public void Post(Action<object> action, object state)
         {
             AsyncActions.Post(action, state);
+        }
+
+        /// <inheritdoc/>
+        public void RaiseCalculationCancelled(object sender, EventArgs args)
+        {
+            CalculationCancelled?.Invoke(sender, args);
+        }
+
+        /// <inheritdoc/>
+        public void RaiseCalculationEnded(object sender, EventArgs args)
+        {
+            CalculationEnded?.Invoke(sender, args);
         }
 
         /// <inheritdoc/>

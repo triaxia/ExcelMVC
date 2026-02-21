@@ -100,6 +100,12 @@ namespace Function.Interfaces
         public event EventHandler<RtdServerUpdatedEventArgs> RtdUpdated;
 
         /// <inheritdoc/>
+        public event EventHandler<EventArgs> CalculationCancelled;
+
+        /// <inheritdoc/>
+        public event EventHandler<EventArgs> CalculationEnded;
+
+        /// <inheritdoc/>
         public IDictionary<object, string> ErrorStrings { get; }
             = new Dictionary<object, string>
         {
@@ -230,9 +236,22 @@ namespace Function.Interfaces
         {
         }
 
+        /// <inheritdoc/>
         public object Run(int function, params object[] args)
         {
             return null;
+        }
+
+        /// <inheritdoc/>
+        public void RaiseCalculationCancelled(object sender, EventArgs args)
+        {
+            CalculationCancelled?.Invoke(sender, args);
+        }
+
+        /// <inheritdoc/>
+        public void RaiseCalculationEnded(object sender, EventArgs args)
+        {
+            CalculationEnded?.Invoke(sender, args);
         }
 
         /// <inheritdoc/>

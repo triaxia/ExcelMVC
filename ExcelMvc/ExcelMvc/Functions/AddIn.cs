@@ -131,10 +131,12 @@ namespace ExcelMvc.Functions
 
         private static void CalculationCancelled()
         {
+            FunctionHost.Instance.RaiseCalculationCancelled(FunctionHost.Instance, EventArgs.Empty);
         }
 
         private static void CalculationEnded()
         {
+            FunctionHost.Instance.RaiseCalculationEnded(FunctionHost.Instance, EventArgs.Empty);
         }
 
         private static void RaisePosted(string message) =>

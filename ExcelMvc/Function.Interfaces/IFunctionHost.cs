@@ -412,6 +412,30 @@ namespace Function.Interfaces
         /// <param name="args"></param>
         /// <returns></returns>
         object Run(int function, params object[] args);
+
+        /// <summary>
+        /// Occurs whenever calculations are cancelled.
+        /// </summary>
+        event EventHandler<EventArgs> CalculationCancelled;
+
+        /// <summary>
+        /// Raise an <see cref="CalculationCancelled"/> event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void RaiseCalculationCancelled(object sender, EventArgs args);
+
+        /// <summary>
+        /// Occurs whenever calculations are ended.
+        /// </summary>
+        event EventHandler<EventArgs> CalculationEnded;
+
+        /// <summary>
+        /// Raise an <see cref="CalculationEnded"/> event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void RaiseCalculationEnded(object sender, EventArgs args);
     }
 }
 
